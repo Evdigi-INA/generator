@@ -1,0 +1,28 @@
+{
+    "name": "zzzul/generator",
+    "description": "Laravel starter app & simple crud generator",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Zzzul\\Generator\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mohammad Zulfahmi",
+            "email": "mohammad.zulfahmi03@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.1",
+        "intervention/image": "^2.7",
+        "laravel/fortify": "^1.13",
+        "spatie/laravel-permission": "^5.5",
+        "yajra/laravel-datatables-oracle": "^10.0"
+    },
+    "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.6"
+    }
+}
