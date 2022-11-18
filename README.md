@@ -28,7 +28,7 @@ https://user-images.githubusercontent.com/62506582/200510814-9b2ca922-bd35-4e02-
 ```sh
 composer require zzzul/generator --dev
 ```
-> This package must be installed after a fresh laravel installation because it will rewrite some of your files.
+> This package must be installed after a fresh laravel installation because it will rewrite some files.
 
 2. Register the provider in ``` config/app.php ```
 ```php
