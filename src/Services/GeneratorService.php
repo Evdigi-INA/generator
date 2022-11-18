@@ -96,6 +96,6 @@ class GeneratorService
         /** if the sidebar is static, then must be regenerated to update new menus */
         if (!str($sidebar)->contains("\$permissions = empty(\$menu['permission'])")) {
             Artisan::call('generator:sidebar dynamic');
-        };
+        }
     }
 }
