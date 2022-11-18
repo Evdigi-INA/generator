@@ -38,7 +38,7 @@ class PublishAllFiles extends Command
      */
     public function handle()
     {
-        $this->info('Publishing the required file for you...');
+        $this->info('Publishing all the required file...');
 
         Artisan::call('vendor:publish --tag=generator-view --force');
         Artisan::call('vendor:publish --tag=generator-config --force');

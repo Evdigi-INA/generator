@@ -67,7 +67,7 @@ class SetSidebarType extends Command
                             if ($menu['submenus'] == []) {
                                 $sidebarCode .= "
                                 @can('" . $menu['permission'] . "')
-                                    <li class=\"sidebar-item{{ Zzzul\Generator\Generators\GeneratorUtils::isActiveMenu('" . $menu['route'] . "') }}\">
+                                    <li class=\"sidebar-item{{ is_active_menu('" . $menu['route'] . "') }}\">
                                     <a href=\"{{ route('". str($menu['route'])->remove('/')->plural() . '.index' ."') }}\" class=\"sidebar-link\">
                                             " . $menu['icon'] . "
                                             <span>{{ __('" . $menu['title'] . "') }}</span>
@@ -75,7 +75,7 @@ class SetSidebarType extends Command
                                     </li>
                                 @endcan\n";
                             } else {
-                                $sidebarCode .= "<li class=\"sidebar-item has-sub{{  Zzzul\Generator\Generators\GeneratorUtils::isActiveMenu([" . GeneratorUtils::convertArraySidebarToString($permissions) . "]) }}\">
+                                $sidebarCode .= "<li class=\"sidebar-item has-sub{{  is_active_menu([" . GeneratorUtils::convertArraySidebarToString($permissions) . "]) }}\">
                                 <a href=\"#\" class=\"sidebar-link\">
                                     " . $menu['icon'] . "
                                     <span>{{ __('" . $menu['title'] . "') }}</span>
