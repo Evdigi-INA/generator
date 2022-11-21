@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Check sidebar menu with current uri
+ * Check the sidebar menu with the current Uri
  *
  * @param string|array $route
  * @return string
