@@ -88,13 +88,16 @@ class GeneratorServiceProvider extends ServiceProvider
             __DIR__ . '/../../assets' => public_path('mazer'),
         ], 'generator-assets');
 
-        AboutCommand::add('Generator', fn () => ['Version' => '0.1.0']);
+        AboutCommand::add('Generator', fn () => ['Version' => '0.1.1']);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                SetSidebarType::class,
                 PublishAllFiles::class
             ]);
         }
+
+        $this->commands([
+            SetSidebarType::class
+        ]);
     }
 }

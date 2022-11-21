@@ -28,7 +28,7 @@ https://user-images.githubusercontent.com/62506582/200510814-9b2ca922-bd35-4e02-
 ```sh
 composer require zzzul/generator --dev
 ```
-> This package must be installed after a fresh laravel installation because it will rewrite some of your files.
+> Since this package will overwrite some files, it must be installed after a brand-new Laravel installation.
 
 2. Register the provider in ``` config/app.php ```
 ```php
@@ -71,7 +71,7 @@ Login
 - [Laravel Debugbar - ^3.x](https://github.com/barryvdh/laravel-debugbar)
 - [Spatie permission - ^5.x](https://github.com/spatie/laravel-permission)
 - [Yajra datatable - ^10.x](https://yajrabox.com/docs/laravel-datatables/master/installation)
-- [intervention Image - ^2.x](https://image.intervention.io/v2)
+- [Intervention Image - ^2.x](https://image.intervention.io/v2)
 - [Mazer template - ^2.x](https://github.com/zuramai/mazer/)
 
 ## Features
@@ -88,7 +88,7 @@ Login
     - Datatables ([Yajra datatables](https://github.com/yajra/laravel-datatables))
     - BelongsTo relation
     - Model casting
-    - Upload image with crop using [Intervention Image](https://image.intervention.io/v2)
+    - Image upload ([Intervention Image](https://image.intervention.io/v2))
     - Support [HTML 5 Input](https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types)
     - Request validations supported: 
         - required, in, image, min, max, string, email, number, date, exists, nullable, unique, comfirmed
@@ -97,8 +97,8 @@ Login
 [MIT License](./LICENSE)
 
 ## Support
+You can support me at [Github Sponsors](https://github.com/sponsors/Zzzul), [Ko-fi](https://ko-fi.com/mzulfahmi) or [Saweria](https://saweria.co/zzzul)
+
 <a href="https://www.buymeacoffee.com/mzulfahmi" target="_blank">
 <img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;">
 </a>
-
-Or you can support me at [Ko-fi](https://ko-fi.com/mzulfahmi) or [Saweria](https://saweria.co/zzzul)
