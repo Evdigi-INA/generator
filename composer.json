@@ -6,7 +6,8 @@
     "keywords": ["package", "laravel", "starter-app", "crud-generator"],
     "autoload": {
         "psr-4": {
-            "Zzzul\\Generator\\": "src/"
+            "Zzzul\\Generator\\": "src/",
+            "Tests\\": "tests/"
         },
         "files": [
             "src/Helpers/helper.php"
@@ -26,12 +27,19 @@
         "yajra/laravel-datatables-oracle": "^10.0"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.6"
+        "barryvdh/laravel-debugbar": "^3.6",
+        "nunomaduro/collision": "^6.3",
+        "orchestra/testbench": "^7.14"
     },
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "scripts": {
+        "post-autoload-dump": [
+            "@php vendor/bin/testbench package:discover --ansi"
+        ]
+    }
 }
