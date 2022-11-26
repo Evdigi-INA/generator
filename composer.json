@@ -27,7 +27,6 @@
         "yajra/laravel-datatables-oracle": "^10.0"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.6",
         "nunomaduro/collision": "^6.3",
         "orchestra/testbench": "^7.14"
     },
@@ -36,10 +35,5 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "scripts": {
-        "post-autoload-dump": [
-            "@php vendor/bin/testbench package:discover --ansi"
-        ]
-    }
+    "prefer-stable": true
 }
