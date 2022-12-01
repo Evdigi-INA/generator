@@ -307,7 +307,7 @@ class ControllerGenerator
                         $updateDataAction,
                         $inputMonths
                     ],
-                    GeneratorUtils::getTemplate('controllers/controller-with-upload-file')
+                    isset($request['is_simple_generator']) ? eneratorUtils::getTemplate('controllers/simple/controller-with-upload-file') : GeneratorUtils::getTemplate('controllers/controller-with-upload-file')
                 );
                 break;
             default:
@@ -353,7 +353,7 @@ class ControllerGenerator
                         $updateDataAction,
                         $inputMonths
                     ],
-                    GeneratorUtils::getTemplate('controllers/controller')
+                    isset($request['is_simple_generator']) ? GeneratorUtils::getTemplate('controllers/simple/controller') : GeneratorUtils::getTemplate('controllers/controller')
                 );
                 break;
         }

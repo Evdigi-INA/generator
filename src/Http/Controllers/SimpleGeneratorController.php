@@ -5,10 +5,10 @@ namespace Zzzul\Generator\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Zzzul\Generator\Enums\GeneratorType;
 use Zzzul\Generator\Services\GeneratorService;
-use Zzzul\Generator\Http\Requests\StoreGeneratorRequest;
 use Symfony\Component\HttpFoundation\Response;
+use Zzzul\Generator\Http\Requests\StoreSimpleGeneratorRequest;
 
-class GeneratorController extends Controller
+class SimpleGeneratorController extends Controller
 {
     protected $generatorService;
 
@@ -24,16 +24,6 @@ class GeneratorController extends Controller
      */
     public function create()
     {
-        return view('generator::create');
-    }
-
-     /**
-     * Show the form for creating a new resource.(bootstrap only)
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function simpleCreate()
-    {
         return view('generator::simple-create');
     }
 
@@ -43,27 +33,17 @@ class GeneratorController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreGeneratorRequest $request)
+    public function store(StoreSimpleGeneratorRequest $request)
     {
+        $attrs = $request->validated();
+        $attrs['is_simple_generator'] = true;
+
         if ($request->generate_type == GeneratorType::ALL->value) {
-            $this->generatorService->generateAll($request->validated());
+            $this->generatorService->simpleGenerator($attrs);
         } else {
-            $this->generatorService->onlyGenerateModelAndMigration($request->validated());
+            $this->generatorService->onlyGenerateModelAndMigration($attrs);
         }
 
         return response()->json(['message' => 'success'], Response::HTTP_CREATED);
-    }
-
-    /**
-     * Get all sidebar menus on config by index.
-     *
-     * @param int $index
-     * @return \Illuminate\Http\Response
-     */
-    public function getSidebarMenus(int $index)
-    {
-        $sidebar = $this->generatorService->getSidebarMenusByIndex($index);
-
-        return response()->json($sidebar['menus'], Response::HTTP_OK);
     }
 }

@@ -72,6 +72,36 @@ class GeneratorService
     }
 
     /**
+     * Simple generator, only generate the core module(CRDU).
+     *
+     * @param array $request
+     * @return void
+     */
+    public function simpleGenerator(array $request): void
+    {
+        // (new ModelGenerator)->generate($request);
+        // (new MigrationGenerator)->generate($request);
+        // (new ControllerGenerator)->generate($request);
+        // (new RequestGenerator)->generate($request);
+
+        // (new IndexViewGenerator)->generate($request);
+        (new CreateViewGenerator)->generate($request);
+        // (new ShowViewGenerator)->generate($request);
+        // (new EditViewGenerator)->generate($request);
+        // (new ActionViewGenerator)->generate($request);
+        // (new FormViewGenerator)->generate($request);
+
+        // (new RouteGenerator)->generate($request);
+
+        // if (in_array('foreignId', $request['column_types'])) {
+        //     (new ViewComposerGenerator)->generate($request);
+        // }
+
+        // Artisan::call('migrate');
+    }
+
+
+    /**
      * Get sidebar menus by index.
      *
      * @param int $index
