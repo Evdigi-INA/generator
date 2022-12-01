@@ -68,6 +68,10 @@ class GeneratorServiceProvider extends ServiceProvider
             __DIR__ . '/../Providers/Published' => app_path('Providers')
         ], 'generator-provider');
 
+        $this->publishes([
+            __DIR__ . '/../Providers/Published/Simple' => app_path('Providers')
+        ], 'generator-view-provider');
+
         // Migrations
         $this->publishes([
             __DIR__ . '/../Database/Migrations' => database_path('migrations')
