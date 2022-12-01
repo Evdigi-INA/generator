@@ -37,9 +37,9 @@ class EditViewGenerator
                 $modelNamePluralKebabCase,
                 $modelNameSingularCamelCase,
                 in_array('file', $request['input_types']) ? ' enctype="multipart/form-data"' : '',
-                $path != '' ? str_replace('\\', '.', $path) . "." : ''
+                $path != '' ? str_replace('\\', '.', $path) . "." : '',
             ],
-            GeneratorUtils::getTemplate('views/edit')
+            empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/edit') : GeneratorUtils::getTemplate('views/simple/edit'),
         );
 
         if ($path != '') {

@@ -79,25 +79,25 @@ class GeneratorService
      */
     public function simpleGenerator(array $request): void
     {
-        // (new ModelGenerator)->generate($request);
-        // (new MigrationGenerator)->generate($request);
-        // (new ControllerGenerator)->generate($request);
-        // (new RequestGenerator)->generate($request);
+        (new ModelGenerator)->generate($request);
+        (new MigrationGenerator)->generate($request);
+        (new ControllerGenerator)->generate($request);
+        (new RequestGenerator)->generate($request);
 
-        // (new IndexViewGenerator)->generate($request);
+        (new IndexViewGenerator)->generate($request);
         (new CreateViewGenerator)->generate($request);
-        // (new ShowViewGenerator)->generate($request);
-        // (new EditViewGenerator)->generate($request);
-        // (new ActionViewGenerator)->generate($request);
-        // (new FormViewGenerator)->generate($request);
+        (new ShowViewGenerator)->generate($request);
+        (new EditViewGenerator)->generate($request);
+        (new ActionViewGenerator)->generate($request);
+        (new FormViewGenerator)->generate($request);
 
-        // (new RouteGenerator)->generate($request);
+        (new RouteGenerator)->generate($request);
 
-        // if (in_array('foreignId', $request['column_types'])) {
-        //     (new ViewComposerGenerator)->generate($request);
-        // }
+        if (in_array('foreignId', $request['column_types'])) {
+            (new ViewComposerGenerator)->generate($request);
+        }
 
-        // Artisan::call('migrate');
+        Artisan::call('migrate');
     }
 
 

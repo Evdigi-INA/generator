@@ -29,7 +29,7 @@ class ActionViewGenerator
                 $modelNameSingularLowercase,
                 $modelNamePluralKebabCase
             ],
-            GeneratorUtils::getTemplate('views/action')
+            empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/action') : GeneratorUtils::getTemplate('views/simple/action')
         );
 
         if ($path != '') {
