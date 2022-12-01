@@ -38,7 +38,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Zzzul\\Generator\\GeneratorServiceProvider",
+                "Zzzul\\Generator\\Providers\\GeneratorServiceProvider",
                 "Yajra\\DataTables\\DataTablesServiceProvider",
                 "Intervention\\Image\\ImageServiceProvider"
             ],
