@@ -45,7 +45,6 @@ class PublishAllFiles extends Command
 
                 Artisan::call('vendor:publish --tag=generator-view --force');
                 Artisan::call('vendor:publish --tag=generator-config --force');
-                // Artisan::call('vendor:publish --tag=generator-route --force');
                 Artisan::call('vendor:publish --tag=generator-controller --force');
                 Artisan::call('vendor:publish --tag=generator-request --force');
                 Artisan::call('vendor:publish --tag=generator-action --force');
@@ -73,7 +72,7 @@ class PublishAllFiles extends Command
                 Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
                 Artisan::call('vendor:publish --tag=datatables');
 
-                $this->info('All the required files was published successfully.');
+                $this->info('All the required files were published successfully.');
             break;
             default:
                 $this->error("The type must be 'all' or 'simple'!");
