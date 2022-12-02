@@ -40,7 +40,8 @@
             "providers": [
                 "Zzzul\\Generator\\Providers\\GeneratorServiceProvider",
                 "Yajra\\DataTables\\DataTablesServiceProvider",
-                "Intervention\\Image\\ImageServiceProvider"
+                "Intervention\\Image\\ImageServiceProvider",
+                "App\\Providers\\ViewComposerServiceProvider"
             ],
             "aliases": {
                  "DataTables": "Yajra\\DataTables\\Facades\\DataTables",

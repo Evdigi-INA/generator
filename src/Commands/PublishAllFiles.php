@@ -61,10 +61,10 @@ class PublishAllFiles extends Command
                 $this->info('All the required files were published successfully.');
             break;
             case 'simple':
-                Artisan::call('vendor:publish --tag=generator-config');
+                Artisan::call('vendor:publish --tag=generator-config-simple');
                 Artisan::call('vendor:publish --tag=generator-view-provider');
                 Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
-                Artisan::call('vendor:publish --tag=datatables --force');
+                Artisan::call('vendor:publish --tag=datatables');
 
                 $this->info('All the required files was published successfully.');
             break;

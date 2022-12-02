@@ -4,7 +4,7 @@ namespace Tests;
 
 use Zzzul\Generator\Generators\GeneratorUtils;
 
-class GeneratorUtilsTest extends TestCase
+class GeneratorUtilsTest extends BaseTestCase
 {
     /** @test */
     public function it_has_get_template_method()

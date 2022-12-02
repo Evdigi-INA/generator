@@ -66,7 +66,7 @@ class ViewComposerGenerator
                 );
             }
         }
-        $path = app_path('Providers/ViewServiceProvider.php');
+        $path = app_path('Providers/ViewComposerServiceProvider.php');
 
         $viewProviderTemplate = substr(file_get_contents($path), 0, -6). "\n\n\t\t" . $template . "\t}\n}";
 

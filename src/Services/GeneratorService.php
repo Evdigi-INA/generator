@@ -72,7 +72,7 @@ class GeneratorService
     }
 
     /**
-     * Simple generator, only generate the core module(CRDU).
+     * Simple generator, only generate the core module(CRUD).
      *
      * @param array $request
      * @return void
