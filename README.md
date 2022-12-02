@@ -15,83 +15,109 @@ https://user-images.githubusercontent.com/62506582/200510814-9b2ca922-bd35-4e02-
 </div>
 
 ## Table of Contents
-1. [Setup](#setup)
-2. [Usage](#usage)
-3. [Requirements](#requirements)
-4. [What's inside?](#what-inside) 
-5. [Features](#features)
-6. [License](#license)
-7. [Support](#support)
+1. [Requirements](#requirements)
+2. [Setup](#setup)
+3. [What's inside?](#what-inside) 
+4. [Features](#features)
+5. [License](#license)
+6. [Support](#support)
+
+## Requirements
+- [PHP ^8.1](https://www.php.net/releases/8.1/en.php)
+- [Laravel ^9.x](https://laravel.com/)
 
 ## Setup
-1. Installation
+Installation
 ```sh
 composer require zzzul/generator --dev
 ```
-> Since this package will overwrite some files, it must be installed after a brand-new Laravel installation.
 
-2. Register the provider in ``` config/app.php ```
-```php
- /*
-  * Package Service Providers...
-  */
-  Zzzul\Generator\Providers\GeneratorServiceProvider::class,
+## For this package, there are two variations: [Simpe Version](#simple-version) and [Full Version](#full-version)
+<h3 id="simple-version">Simple Version</h3>
+
+Only the generator. included: [Yajra Datatables](https://yajrabox.com/docs/laravel-datatables/master/installation), 
+[Intervention Image](https://image.intervention.io/v2), and [Bootstrap 5](https://getbootstrap.com/)
+
+#### Publish assets
+ ```sh
+php artisan generator:publish simple
 ```
 
-3. Publish vendor 
+#### Usage
+Go to ```/simple-generators/create/```
+
+<hr>
+
+<h3 id="full-version">Full Version</h3>
+
+The generator + starter app. included: 
+[Yajra Datatables](https://yajrabox.com/docs/laravel-datatables/master/installation), 
+[Intervention Image](https://image.intervention.io/v2), 
+[Laravel Fortify](https://laravel.com/docs/9.x/fortify), 
+[Spatie Permission](https://spatie.be/docs/laravel-permission/v5/installation-laravel), and 
+[Mazer Template](https://github.com/zuramai/mazer)
+
+> Installing this package after a fresh Laravel installation is necessary if you want to use the full version of it.  because several files will be overwritten.
+
+#### Install [Laravel Fortify](https://laravel.com/docs/9.x/fortify) & [Spatie Permission](https://spatie.be/docs/laravel-permission/v5/installation-laravel)
 ```sh
-php artisan generator:publish
+composer require laravel/fortify spatie/laravel-permission
 ```
 
-4.  Run migration and seeder
+#### Publish assets
+```sh
+php artisan generator:publish all
+```
+> Warning! Be careful with this command, it might overwrite several files, Don't run it multiple times.
+
+Run migration and seeder
 ```sh
 php artisan migrate --seed
 ``` 
 
-5. Start development server
-```sh
-php artisan serve
-``` 
-
-## Usage
+#### Usage
 Go to ```/generators/create```
 
 Login
 - Email: admin@example.com
 - Password: password
 
-
-## Requirements
-- [PHP ^8.1](https://www.php.net/releases/8.1/en.php)
-
 <h2 id="what-inside">What's inside?</h2>
 
-- [Laravel - ^9.x](https://laravel.com/)
-- [Laravel Forify - ^1.x](https://laravel.com/docs/9.x/fortify)
-- [Laravel Debugbar - ^3.x](https://github.com/barryvdh/laravel-debugbar)
-- [Spatie permission - ^5.x](https://github.com/spatie/laravel-permission)
+#### Simple Version
 - [Yajra datatable - ^10.x](https://yajrabox.com/docs/laravel-datatables/master/installation)
 - [Intervention Image - ^2.x](https://image.intervention.io/v2)
+- [Bootstrap ^5.x](https://getbootstrap.com/)
+
+#### Full Version
+- [Yajra datatable - ^10.x](https://yajrabox.com/docs/laravel-datatables/master/installation)
+- [Intervention Image - ^2.x](https://image.intervention.io/v2)
+- [Laravel Forify - ^1.x](https://laravel.com/docs/9.x/fortify)
+- [Spatie permission - ^5.x](https://github.com/spatie/laravel-permission)
 - [Mazer template - ^2.x](https://github.com/zuramai/mazer/)
 
 ## Features
-- [x] Authentication ([Laravel Fortify](https://laravel.com/docs/9.x/fortify))
-    - Login
-    - Register
-    - Forgot Password
-    - 2FA Authentication
-    - Update profile information 
-- [x] Roles and permissions ([Spatie Permission](https://spatie.be/docs/laravel-permission/v5/introduction))
-- [x] CRUD User
+#### Simple version
 - [x] CRUD Generator
     - Support more than [15 column type migration](https://laravel.com/docs/9.x/migrations#available-column-types), like string, char, date, year, etc.
-    - Datatables ([Yajra datatables](https://github.com/yajra/laravel-datatables))
+    - Datatables ([Yajra Datatables](https://github.com/yajra/laravel-datatables))
     - BelongsTo relation
     - Model casting
     - Image upload ([Intervention Image](https://image.intervention.io/v2))
     - Support [HTML 5 Input](https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types)
     - Request validations supported: 
         - required, in, image, min, max, string, email, number, date, exists, nullable, unique, comfirmed
+
+#### Full version
+- [x] CRUD  Generator
+- [x] CRUD User
+- [x] Roles and permissions ([Spatie Permission](https://spatie.be/docs/laravel-permission/v5/introduction))
+- [x] Authentication ([Laravel Fortify](https://laravel.com/docs/9.x/fortify))
+    - Login
+    - Register
+    - Forgot Password
+    - 2FA Authentication
+    - Update profile information 
 
 ## License
 [MIT License](./LICENSE)
