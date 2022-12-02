@@ -45,9 +45,9 @@ class GeneratorServiceProvider extends ServiceProvider
             ], 'generator-config-simple');
 
             // route
-            $this->publishes([
-                __DIR__ . '/../Routes/web.php' => app_path('../routes/web.php')
-            ], 'generator-route');
+            // $this->publishes([
+            //     __DIR__ . '/../Routes/web.php' => app_path('../routes/web.php')
+            // ], 'generator-route');
 
             // Controllers
             $this->publishes([

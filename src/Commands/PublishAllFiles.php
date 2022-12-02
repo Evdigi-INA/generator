@@ -4,6 +4,7 @@ namespace Zzzul\Generator\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Zzzul\Generator\Generators\GeneratorUtils;
 
 class PublishAllFiles extends Command
 {
@@ -40,11 +41,11 @@ class PublishAllFiles extends Command
     {
         switch ($this->argument('type')) {
             case 'all':
-                $this->info('Publishing all the required files..');
+                $this->info('Publishing all the required files...');
 
                 Artisan::call('vendor:publish --tag=generator-view --force');
                 Artisan::call('vendor:publish --tag=generator-config --force');
-                Artisan::call('vendor:publish --tag=generator-route --force');
+                // Artisan::call('vendor:publish --tag=generator-route --force');
                 Artisan::call('vendor:publish --tag=generator-controller --force');
                 Artisan::call('vendor:publish --tag=generator-request --force');
                 Artisan::call('vendor:publish --tag=generator-action --force');
@@ -57,10 +58,16 @@ class PublishAllFiles extends Command
 
                 Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
                 Artisan::call('vendor:publish --tag=datatables --force');
+
+                $template = GeneratorUtils::getTemplate('route');
+
+                File::append(base_path('routes/web.php'), $template);
                 
                 $this->info('All the required files were published successfully.');
             break;
             case 'simple':
+                $this->info('Publishing all the required files (simple version)...');
+
                 Artisan::call('vendor:publish --tag=generator-config-simple');
                 Artisan::call('vendor:publish --tag=generator-view-provider');
                 Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
