@@ -75,7 +75,7 @@ Publish assets
 ```sh
 php artisan generator:publish all
 ```
-> Warning! Be careful with this command, it will overwrite several files, Don't run it multiple times.
+> Warning! Be careful with this command, it will overwrite several files, don't run it multiple times.
 
 Register the provider in `config/app.php`
 ```php
@@ -114,7 +114,7 @@ Account
 ## Features
 #### Simple version
 - [x] CRUD Generator
-    - Support more than 15 [column types migration](https://laravel.com/docs/9.x/migrations#available-column-types), like string, char, date, year, etc.
+    - Support more than 15 [column types of migrations](https://laravel.com/docs/9.x/migrations#available-column-types), like string, char, date, year, etc.
     - Datatables ([Yajra Datatables](https://github.com/yajra/laravel-datatables))
     - BelongsTo relation
     - Model casting
