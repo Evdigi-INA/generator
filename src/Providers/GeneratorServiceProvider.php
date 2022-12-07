@@ -41,7 +41,7 @@ class GeneratorServiceProvider extends ServiceProvider
 
              // config simple
             $this->publishes([
-                __DIR__ . '/../Config/Simple/generator.php' => config_path()
+                __DIR__ . '/../Config/Simple/generator.php' => config_path('generator.php')
             ], 'generator-config-simple');
 
             // Controllers
