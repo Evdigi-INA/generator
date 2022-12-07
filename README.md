@@ -32,12 +32,14 @@ Installation
 composer require zzzul/generator --dev
 ```
 
-### For this package, there are two variations: [Simpe Version](#simple-version) and [Full Version](#full-version)
+#### For this package, there are two variations: [Simpe Version](#simple-version) and [Full Version](#full-version)
 <h3 id="simple-version">Simple Version</h3>
 
-Only the generator. included: [Yajra Datatables](https://yajrabox.com/docs/laravel-datatables/master/installation), 
+Only the generator, included: [Yajra Datatables](https://yajrabox.com/docs/laravel-datatables/master/installation), 
 [Intervention Image](https://image.intervention.io/v2), and [Bootstrap 5](https://getbootstrap.com/)
+##### [View all features](#simple-features)
 
+#### Usage
 Publish assets
  ```sh
 php artisan generator:publish simple
@@ -63,6 +65,7 @@ The generator + starter app. included:
 [Laravel Fortify](https://laravel.com/docs/9.x/fortify), 
 [Spatie Permission](https://spatie.be/docs/laravel-permission/v5/installation-laravel), and 
 [Mazer Template](https://github.com/zuramai/mazer)
+##### [View all features](#full-features).
 
 > Installing this package after a brand-new Laravel installation is necessary if you want to use the full version of it. because several files will be overwritten.
 
@@ -70,12 +73,12 @@ The generator + starter app. included:
 ```sh
 composer require laravel/fortify spatie/laravel-permission
 ```
-
+#### Usage
 Publish assets
 ```sh
 php artisan generator:publish all
 ```
-> Warning! Be careful with this command, it will overwrite several files, Don't run it multiple times.
+> Warning! Be careful with this command, it will overwrite several files, don't run it multiple times.
 
 Register the provider in `config/app.php`
 ```php
@@ -112,9 +115,11 @@ Account
 - [Mazer template - ^2.x](https://github.com/zuramai/mazer/)
 
 ## Features
-#### Simple version
+
+<h3 id="simple-features">Simple Version</h3>
+
 - [x] CRUD Generator
-    - Support more than 15 [column types migration](https://laravel.com/docs/9.x/migrations#available-column-types), like string, char, date, year, etc.
+    - Support more than 15 [column types of migrations](https://laravel.com/docs/9.x/migrations#available-column-types), like string, char, date, year, etc.
     - Datatables ([Yajra Datatables](https://github.com/yajra/laravel-datatables))
     - BelongsTo relation
     - Model casting
@@ -123,7 +128,8 @@ Account
     - Request validations supported: 
         - required, in, image, min, max, string, email, number, date, exists, nullable, unique, comfirmed
 
-#### Full version
+<h3 id="full-features">Full Version</h3>
+
 - [x] CRUD  Generator
 - [x] CRUD User
 - [x] Roles and permissions ([Spatie Permission](https://spatie.be/docs/laravel-permission/v5/introduction))
