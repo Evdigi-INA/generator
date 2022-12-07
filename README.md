@@ -32,7 +32,7 @@ Installation
 composer require zzzul/generator --dev
 ```
 
-### For this package, there are two variations: [Simpe Version](#simple-version) and [Full Version](#full-version)
+#### For this package, there are two variations: [Simpe Version](#simple-version) and [Full Version](#full-version)
 <h3 id="simple-version">Simple Version</h3>
 
 Only the generator. included: [Yajra Datatables](https://yajrabox.com/docs/laravel-datatables/master/installation), 
