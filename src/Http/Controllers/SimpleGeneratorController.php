@@ -7,6 +7,7 @@ use Zzzul\Generator\Enums\GeneratorType;
 use Zzzul\Generator\Services\GeneratorService;
 use Symfony\Component\HttpFoundation\Response;
 use Zzzul\Generator\Http\Requests\StoreSimpleGeneratorRequest;
+use Zzzul\Generator\Generators\GeneratorUtils;
 
 class SimpleGeneratorController extends Controller
 {
@@ -44,6 +45,11 @@ class SimpleGeneratorController extends Controller
             $this->generatorService->onlyGenerateModelAndMigration($attrs);
         }
 
-        return response()->json(['message' => 'success'], Response::HTTP_CREATED);
+        $model =  GeneratorUtils::setModelName($attrs['model']);
+
+        return response()->json([
+            'message' => 'success',
+            'route' => GeneratorUtils::pluralKebabCase($model)
+        ], Response::HTTP_CREATED);
     }
 }

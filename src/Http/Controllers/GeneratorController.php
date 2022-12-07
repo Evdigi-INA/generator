@@ -51,7 +51,12 @@ class GeneratorController extends Controller
             $this->generatorService->onlyGenerateModelAndMigration($request->validated());
         }
 
-        return response()->json(['message' => 'success'], Response::HTTP_CREATED);
+        $model =  GeneratorUtils::setModelName($request->model);
+
+        return response()->json([
+            'message' => 'success',
+            'route' => GeneratorUtils::pluralKebabCase($model)
+        ], Response::HTTP_CREATED);
     }
 
     /**

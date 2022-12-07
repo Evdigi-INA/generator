@@ -498,7 +498,7 @@
                     title: 'Success',
                     text: 'The module was generated successfully!'
                 }).then(function() {
-                    window.location = `/${uri}/create`
+                    window.location = `/${response.route}`
                 })
             },
             error: function(xhr, status, response) {
