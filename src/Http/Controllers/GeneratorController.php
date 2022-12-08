@@ -2,7 +2,6 @@
 
 namespace Zzzul\Generator\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Zzzul\Generator\Enums\GeneratorType;
 use Zzzul\Generator\Services\GeneratorService;
 use Zzzul\Generator\Http\Requests\StoreGeneratorRequest;
@@ -11,11 +10,8 @@ use Zzzul\Generator\Generators\GeneratorUtils;
 
 class GeneratorController extends Controller
 {
-    protected $generatorService;
-
-    public function __construct()
+    public function __construct(protected $generatorService = new GeneratorService())
     {
-        $this->generatorService = new GeneratorService();
     }
 
     /**

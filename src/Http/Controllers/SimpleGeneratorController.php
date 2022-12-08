@@ -2,7 +2,6 @@
 
 namespace Zzzul\Generator\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Zzzul\Generator\Enums\GeneratorType;
 use Zzzul\Generator\Services\GeneratorService;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,11 +10,8 @@ use Zzzul\Generator\Generators\GeneratorUtils;
 
 class SimpleGeneratorController extends Controller
 {
-    protected $generatorService;
-
-    public function __construct()
+    public function __construct(protected $generatorService = new GeneratorService())
     {
-        $this->generatorService = new GeneratorService();
     }
 
     /**
@@ -45,7 +41,7 @@ class SimpleGeneratorController extends Controller
             $this->generatorService->onlyGenerateModelAndMigration($attrs);
         }
 
-        $model =  GeneratorUtils::setModelName($attrs['model']);
+        $model = GeneratorUtils::setModelName($attrs['model']);
 
         return response()->json([
             'message' => 'success',
