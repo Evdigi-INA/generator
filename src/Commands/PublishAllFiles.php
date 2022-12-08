@@ -61,28 +61,17 @@ class PublishAllFiles extends Command
                         break;
                     default:
                         if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
-                             $this->info('Publishing all the required files...');
+                                
+                            $totalRunningCommand = $this->totalRunningCommand();
 
-                            Artisan::call('vendor:publish --tag=generator-view --force');
-                            Artisan::call('vendor:publish --tag=generator-config --force');
-                            Artisan::call('vendor:publish --tag=generator-controller --force');
-                            Artisan::call('vendor:publish --tag=generator-request --force');
-                            Artisan::call('vendor:publish --tag=generator-action --force');
-                            Artisan::call('vendor:publish --tag=generator-kernel --force');
-                            Artisan::call('vendor:publish --tag=generator-provider --force');
-                            Artisan::call('vendor:publish --tag=generator-migration --force');
-                            Artisan::call('vendor:publish --tag=generator-seeder --force');
-                            Artisan::call('vendor:publish --tag=generator-model --force');
-                            Artisan::call('vendor:publish --tag=generator-assets --force');
-
-                            Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
-                            Artisan::call('vendor:publish --tag=datatables --force');
-
-                            $template = GeneratorUtils::getTemplate('route');
-
-                            \File::append(base_path('routes/web.php'), $template);
-                            
-                            $this->info('All of the required files were successfully published..');
+                            if($totalRunningCommand == "1" || intval($totalRunningCommand) > 1){
+                                if ($this->confirm('Do you wish to continue? you are already this command a few ago.')) {
+                                    $this->runPublishAll();
+                                    break;
+                                }
+                            }else{
+                                $this->runPublishAll();
+                            }
                         }
                         break;
                 }
@@ -101,5 +90,75 @@ class PublishAllFiles extends Command
                 $this->error("The type must be 'all' or 'simple'!");
                 break;
         }
+    }
+
+    /**
+     * Check total running of generator:publish all command.
+     * 
+     * @return string
+     * */
+    public function totalRunningCommand(): string
+    {
+        if(!file_exists(__DIR__ . '/../../generator-cache.json')){
+            file_put_contents(__DIR__ . '/../../generator-cache.json', 
+                json_encode([
+                    'generator_publish_simple' => null,
+                    'generator_publish_all' => null
+                ])
+            );
+        }
+
+        $cache = file_get_contents(__DIR__ . '/../../generator-cache.json');
+
+        // will get "null" or "1"
+        $totalRunningCommand = \Str::before(\Str::after($cache, '"generator_publish_all":'), '}');
+
+        if($totalRunningCommand == "null"){
+            file_put_contents(__DIR__ . '/../../generator-cache.json', 
+                json_encode([
+                    'generator_publish_simple' => null,
+                    'generator_publish_all' => 1
+                ])
+            );
+        }else{
+            file_put_contents(__DIR__ . '/../../generator-cache.json', 
+                json_encode([
+                    'generator_publish_simple' => null,
+                    'generator_publish_all' => intval($totalRunningCommand) + 1
+                ])
+            );
+        }
+
+        return $totalRunningCommand;
+    }
+
+    /**
+     * Publish all the required file for full version.
+     * 
+     * @return void
+     * */
+    public function runPublishAll(): void 
+    {
+        $this->info('Publishing all the required files...');
+
+        Artisan::call('vendor:publish --tag=generator-view --force');
+        Artisan::call('vendor:publish --tag=generator-config --force');
+        Artisan::call('vendor:publish --tag=generator-controller --force');
+        Artisan::call('vendor:publish --tag=generator-request --force');
+        Artisan::call('vendor:publish --tag=generator-action --force');
+        Artisan::call('vendor:publish --tag=generator-kernel --force');
+        Artisan::call('vendor:publish --tag=generator-provider --force');
+        Artisan::call('vendor:publish --tag=generator-migration --force');
+        Artisan::call('vendor:publish --tag=generator-seeder --force');
+        Artisan::call('vendor:publish --tag=generator-model --force');
+        Artisan::call('vendor:publish --tag=generator-assets --force');
+        Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
+        Artisan::call('vendor:publish --tag=datatables --force');
+        
+        $template = GeneratorUtils::getTemplate('route');
+
+        \File::append(base_path('routes/web.php'), $template);
+                            
+        $this->info('All of the required files were successfully published..');
     }
 }
