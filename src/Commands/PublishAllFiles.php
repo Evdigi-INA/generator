@@ -60,7 +60,7 @@ class PublishAllFiles extends Command
 
                 $template = GeneratorUtils::getTemplate('route');
 
-                File::append(base_path('routes/web.php'), $template);
+                \File::append(base_path('routes/web.php'), $template);
                 
                 $this->info('All the required files were published successfully.');
             break;
