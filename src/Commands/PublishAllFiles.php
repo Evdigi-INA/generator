@@ -41,29 +41,52 @@ class PublishAllFiles extends Command
     {
         switch ($this->argument('type')) {
             case 'all':
-                $this->info('Publishing all the required files...');
+                $composer = file_get_contents(base_path('composer.json'));
 
-                Artisan::call('vendor:publish --tag=generator-view --force');
-                Artisan::call('vendor:publish --tag=generator-config --force');
-                Artisan::call('vendor:publish --tag=generator-controller --force');
-                Artisan::call('vendor:publish --tag=generator-request --force');
-                Artisan::call('vendor:publish --tag=generator-action --force');
-                Artisan::call('vendor:publish --tag=generator-kernel --force');
-                Artisan::call('vendor:publish --tag=generator-provider --force');
-                Artisan::call('vendor:publish --tag=generator-migration --force');
-                Artisan::call('vendor:publish --tag=generator-seeder --force');
-                Artisan::call('vendor:publish --tag=generator-model --force');
-                Artisan::call('vendor:publish --tag=generator-assets --force');
+                switch ($composer) {
+                    case !str_contains($composer, 'laravel/fortify') && !str_contains($composer, 'spatie/laravel-permission'):
+                        $this->error('You must install laravel/fortify and spatie/laravel-permission before running this command.');
 
-                Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
-                Artisan::call('vendor:publish --tag=datatables --force');
+                        $this->info('Install the package: composer require laravel/fortify spatie/laravel-permission');
+                        break;
+                    case !str_contains($composer, 'laravel/fortify'):
+                        $this->error('You must install laravel/fortify before running this command.');
 
-                $template = GeneratorUtils::getTemplate('route');
+                        $this->info('Install the package: composer require laravel/fortify');
+                        break;
+                    case !str_contains($composer, 'spatie/laravel-permission'):
+                        $this->error('You must install spatie/laravel-permission before running this command.');
 
-                \File::append(base_path('routes/web.php'), $template);
-                
-                $this->info('All the required files were published successfully.');
-            break;
+                        $this->info('Install the package: composer require spatie/laravel-permission');
+                        break;
+                    default:
+                        if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
+                             $this->info('Publishing all the required files...');
+
+                            Artisan::call('vendor:publish --tag=generator-view --force');
+                            Artisan::call('vendor:publish --tag=generator-config --force');
+                            Artisan::call('vendor:publish --tag=generator-controller --force');
+                            Artisan::call('vendor:publish --tag=generator-request --force');
+                            Artisan::call('vendor:publish --tag=generator-action --force');
+                            Artisan::call('vendor:publish --tag=generator-kernel --force');
+                            Artisan::call('vendor:publish --tag=generator-provider --force');
+                            Artisan::call('vendor:publish --tag=generator-migration --force');
+                            Artisan::call('vendor:publish --tag=generator-seeder --force');
+                            Artisan::call('vendor:publish --tag=generator-model --force');
+                            Artisan::call('vendor:publish --tag=generator-assets --force');
+
+                            Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
+                            Artisan::call('vendor:publish --tag=datatables --force');
+
+                            $template = GeneratorUtils::getTemplate('route');
+
+                            \File::append(base_path('routes/web.php'), $template);
+                            
+                            $this->info('All of the required files were successfully published..');
+                        }
+                        break;
+                }
+                break;
             case 'simple':
                 $this->info('Publishing all the required files (simple version)...');
 
@@ -73,10 +96,10 @@ class PublishAllFiles extends Command
                 Artisan::call('vendor:publish --tag=datatables');
 
                 $this->info('All the required files were published successfully.');
-            break;
+                break;
             default:
                 $this->error("The type must be 'all' or 'simple'!");
-            break;
+                break;
         }
     }
 }
