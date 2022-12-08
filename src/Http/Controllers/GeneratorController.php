@@ -7,6 +7,7 @@ use Zzzul\Generator\Enums\GeneratorType;
 use Zzzul\Generator\Services\GeneratorService;
 use Zzzul\Generator\Http\Requests\StoreGeneratorRequest;
 use Symfony\Component\HttpFoundation\Response;
+use Zzzul\Generator\Generators\GeneratorUtils;
 
 class GeneratorController extends Controller
 {
@@ -51,7 +52,7 @@ class GeneratorController extends Controller
             $this->generatorService->onlyGenerateModelAndMigration($request->validated());
         }
 
-        $model =  GeneratorUtils::setModelName($request->model);
+        $model = GeneratorUtils::setModelName($request->model);
 
         return response()->json([
             'message' => 'success',
