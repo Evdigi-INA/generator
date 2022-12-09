@@ -64,7 +64,7 @@ class PublishAllFiles extends Command
                                 
                             $totalRunningCommand = $this->totalRunningCommand();
 
-                            if($totalRunningCommand == "1" || intval($totalRunningCommand) > 1){
+                            if($totalRunningCommand['generator_publish_all'] == 1 || $totalRunningCommand['generator_publish_all'] > 1){
                                 if ($this->confirm('Do you wish to continue? you are already this command a few ago.')) {
                                     $this->runPublishAll();
                                     break;
@@ -95,9 +95,9 @@ class PublishAllFiles extends Command
     /**
      * Check total running of generator:publish all command.
      * 
-     * @return string
+     * @return array
      * */
-    public function totalRunningCommand(): string
+    public function totalRunningCommand(): array
     {
         if(!file_exists(__DIR__ . '/../../generator-cache.json')){
             file_put_contents(__DIR__ . '/../../generator-cache.json', 
@@ -110,10 +110,9 @@ class PublishAllFiles extends Command
 
         $cache = file_get_contents(__DIR__ . '/../../generator-cache.json');
 
-        // will get "null" or "1"
-        $totalRunningCommand = \Str::before(\Str::after($cache, '"generator_publish_all":'), '}');
+        $totalRunningCommand = collect(json_decode($cache))->toArray();
 
-        if($totalRunningCommand == "null"){
+        if($totalRunningCommand['generator_publish_all'] == null){
             file_put_contents(__DIR__ . '/../../generator-cache.json', 
                 json_encode([
                     'generator_publish_simple' => null,
@@ -124,7 +123,7 @@ class PublishAllFiles extends Command
             file_put_contents(__DIR__ . '/../../generator-cache.json', 
                 json_encode([
                     'generator_publish_simple' => null,
-                    'generator_publish_all' => intval($totalRunningCommand) + 1
+                    'generator_publish_all' => $totalRunningCommand['generator_publish_all'] + 1
                 ])
             );
         }
@@ -133,7 +132,7 @@ class PublishAllFiles extends Command
     }
 
     /**
-     * Publish all the required file for full version.
+     * Publish all files required by the full version.
      * 
      * @return void
      * */
@@ -141,23 +140,23 @@ class PublishAllFiles extends Command
     {
         $this->info('Publishing all the required files...');
 
-        Artisan::call('vendor:publish --tag=generator-view --force');
-        Artisan::call('vendor:publish --tag=generator-config --force');
-        Artisan::call('vendor:publish --tag=generator-controller --force');
-        Artisan::call('vendor:publish --tag=generator-request --force');
-        Artisan::call('vendor:publish --tag=generator-action --force');
-        Artisan::call('vendor:publish --tag=generator-kernel --force');
-        Artisan::call('vendor:publish --tag=generator-provider --force');
-        Artisan::call('vendor:publish --tag=generator-migration --force');
-        Artisan::call('vendor:publish --tag=generator-seeder --force');
-        Artisan::call('vendor:publish --tag=generator-model --force');
-        Artisan::call('vendor:publish --tag=generator-assets --force');
-        Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
-        Artisan::call('vendor:publish --tag=datatables --force');
+        // Artisan::call('vendor:publish --tag=generator-view --force');
+        // Artisan::call('vendor:publish --tag=generator-config --force');
+        // Artisan::call('vendor:publish --tag=generator-controller --force');
+        // Artisan::call('vendor:publish --tag=generator-request --force');
+        // Artisan::call('vendor:publish --tag=generator-action --force');
+        // Artisan::call('vendor:publish --tag=generator-kernel --force');
+        // Artisan::call('vendor:publish --tag=generator-provider --force');
+        // Artisan::call('vendor:publish --tag=generator-migration --force');
+        // Artisan::call('vendor:publish --tag=generator-seeder --force');
+        // Artisan::call('vendor:publish --tag=generator-model --force');
+        // Artisan::call('vendor:publish --tag=generator-assets --force');
+        // Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
+        // Artisan::call('vendor:publish --tag=datatables --force');
         
-        $template = GeneratorUtils::getTemplate('route');
+        // $template = GeneratorUtils::getTemplate('route');
 
-        \File::append(base_path('routes/web.php'), $template);
+        // \File::append(base_path('routes/web.php'), $template);
                             
         $this->info('All of the required files were successfully published..');
     }
