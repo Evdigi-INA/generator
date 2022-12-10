@@ -62,29 +62,32 @@ class PublishAllFiles extends Command
                     default:
                         $totalRunningCommand = $this->totalRunningCommand('generator_publish_all');
 
-                        if($totalRunningCommand['generator_publish_simple'] == 1 || $totalRunningCommand['generator_publish_simple'] > 1){
-                                if(!$this->confirm('Do you wish to continue? You are already using the simple version.')){
-                                    return;
-                                }
+                        if($totalRunningCommand['generator_publish_simple'] == 1 || $totalRunningCommand['generator_publish_simple'] > 1
+                        ){
+                            if(!$this->confirm('Do you wish to continue? You are already using the simple version.')){
+                                return;
+                            }
+                        }    
 
-                                if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
-                        
-                                        if($totalRunningCommand['generator_publish_all'] == 1 || $totalRunningCommand['generator_publish_all'] > 1){
-                                            
-                                            switch ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['generator_publish_all'] . ' times.')) {
-                                                case true:
-                                                    $this->runPublishAll();
-                                                    return;
-                                                    break;
-                                                default:
-                                                    return;
-                                                    break;
-                                            }
-                                        }
+                        if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
 
-                                    $this->runPublishAll();
+                            if($totalRunningCommand['generator_publish_all'] == 1 || $totalRunningCommand['generator_publish_all'] > 1){    
+
+                                switch ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['generator_publish_all'] . ' times.')) {
+                                    case true:
+                                        $this->runPublishAll();
+                                        return;
+                                        break;
+                                    default:
+                                        return;
+                                        break;
                                 }
-                            }                         
+                            }
+
+                            $this->runPublishAll();
+                        }               
+
+                        return;      
                         break;
                 }
                 break;
@@ -114,7 +117,7 @@ class PublishAllFiles extends Command
                 $this->info('All the required files were published successfully.');
                 break;
             default:
-                $this->error("The type must be 'all' or 'simple'!");
+                $this->error("The type must be 'all' to use the full version or 'simple' to use the simple version.");
                 break;
         }
     }
