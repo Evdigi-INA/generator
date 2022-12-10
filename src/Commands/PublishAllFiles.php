@@ -193,23 +193,23 @@ class PublishAllFiles extends Command
     {
         $this->info('Publishing all the required files...');
 
-        // Artisan::call('vendor:publish --tag=generator-view --force');
-        // Artisan::call('vendor:publish --tag=generator-config --force');
-        // Artisan::call('vendor:publish --tag=generator-controller --force');
-        // Artisan::call('vendor:publish --tag=generator-request --force');
-        // Artisan::call('vendor:publish --tag=generator-action --force');
-        // Artisan::call('vendor:publish --tag=generator-kernel --force');
-        // Artisan::call('vendor:publish --tag=generator-provider --force');
-        // Artisan::call('vendor:publish --tag=generator-migration --force');
-        // Artisan::call('vendor:publish --tag=generator-seeder --force');
-        // Artisan::call('vendor:publish --tag=generator-model --force');
-        // Artisan::call('vendor:publish --tag=generator-assets --force');
-        // Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
-        // Artisan::call('vendor:publish --tag=datatables --force');
+        Artisan::call('vendor:publish --tag=generator-view --force');
+        Artisan::call('vendor:publish --tag=generator-config --force');
+        Artisan::call('vendor:publish --tag=generator-controller --force');
+        Artisan::call('vendor:publish --tag=generator-request --force');
+        Artisan::call('vendor:publish --tag=generator-action --force');
+        Artisan::call('vendor:publish --tag=generator-kernel --force');
+        Artisan::call('vendor:publish --tag=generator-provider --force');
+        Artisan::call('vendor:publish --tag=generator-migration --force');
+        Artisan::call('vendor:publish --tag=generator-seeder --force');
+        Artisan::call('vendor:publish --tag=generator-model --force');
+        Artisan::call('vendor:publish --tag=generator-assets --force');
+        Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
+        Artisan::call('vendor:publish --tag=datatables --force');
         
-        // $template = GeneratorUtils::getTemplate('route');
+        $template = GeneratorUtils::getTemplate('route');
 
-        // \File::append(base_path('routes/web.php'), $template);
+        \File::append(base_path('routes/web.php'), $template);
                             
         $this->info('All of the required files were successfully published..');
     }
