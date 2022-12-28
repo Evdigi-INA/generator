@@ -40,6 +40,8 @@ class SetSidebarType extends Command
     {
         switch ($this->argument('type')) {
             case 'static':
+                $this->checkGeneratorVariant();
+
                 $sidebarCode = "";
                 $sidebarCode .= "@canany([";
 
@@ -48,6 +50,7 @@ class SetSidebarType extends Command
                         $sidebarCode .= GeneratorUtils::convertArraySidebarToString($sidebar['permissions']);
                     }
                 endforeach;
+
                 $sidebarCode .= "])\n\t";
 
                 foreach (config('generator.sidebars') as $i => $sidebar) :
@@ -113,16 +116,38 @@ class SetSidebarType extends Command
 
                 file_put_contents(resource_path('views/layouts/sidebar.blade.php'), $template);
 
-                $this->info('Now, sidebar menus are fully blade code.');
+                $this->info('Success change sidebar view to fully blade code..');
                 break;
             case 'dynamic':
+                $this->checkGeneratorVariant();
+
                 file_put_contents(resource_path('views/layouts/sidebar.blade.php'), GeneratorUtils::getTemplate('sidebar-dynamic'));
 
                 $this->info('The sidebar used a dynamic list from config.');
                 break;
             default:
-                $this->error("The type must be 'static' or 'dynamic'!");
+                $this->error("The type must be 'static' or 'dynamic'.");
                 break;
+        }
+    }
+
+    /**
+     * Check if user using the simple version or not.
+     * 
+     * @return void
+     * */
+    public function checkGeneratorVariant(): void
+    {
+        if(empty(config('generator.sidebars'))){
+            $this->error("This command is only accessible in the full version, it appears that you are using the simple version.");
+            die;
+        }
+
+        $sidebar = file_exists(resource_path('views/layouts/sidebar.blade.php'));
+
+        if(!$sidebar){
+            $this->error("We cant find the sidebar view, in views/layouts/sidebar.blade.php.");
+            die;
         }
     }
 }

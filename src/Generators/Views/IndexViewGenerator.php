@@ -52,6 +52,11 @@ class IndexViewGenerator
                      * },
                      */
 
+                    $imgStyle = '';
+                    if(isset($request['is_simple_generator'])){
+                        $imgStyle = 'class="rounded" width="50" height="40" style="object-fit: cover"';
+                    }
+
                     $tdColumns .=  "{
                     data: '" . str()->snake($field) . "',
                     name: '" . str()->snake($field) . "',
@@ -59,7 +64,7 @@ class IndexViewGenerator
                     searchable: false,
                     render: function(data, type, full, meta) {
                         return `<div class=\"avatar\">
-                            <img src=\"" . '$' . "{data}\" alt=\"" . GeneratorUtils::cleanSingularUcWords($field) . "\">
+                            <img src=\"" . '$' . "{data}\" alt=\"" . GeneratorUtils::cleanSingularUcWords($field) . "\" $imgStyle>
                         </div>`;
                         }
                     },";
@@ -109,7 +114,7 @@ class IndexViewGenerator
                 '{{modelNameSingularLowerCase}}',
                 '{{modelNamePluralLowerCase}}',
                 '{{thColumns}}',
-                '{{tdColumns}}'
+                '{{tdColumns}}',
             ],
             [
                 $modelNamePluralUcWords,
@@ -117,9 +122,9 @@ class IndexViewGenerator
                 $modelNameSingularLowercase,
                 $modelNamePluralLowerCase,
                 $thColums,
-                $tdColumns
+                $tdColumns,
             ],
-            GeneratorUtils::getTemplate('views/index')
+            empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/index') : GeneratorUtils::getTemplate('views/simple/index')
         );
 
         switch ($path) {

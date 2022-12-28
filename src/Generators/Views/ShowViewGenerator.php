@@ -119,7 +119,7 @@ class ShowViewGenerator
                 '{{modelNamePluralKebabCase}}',
                 '{{modelNameSingularCamelCase}}',
                 '{{trs}}',
-                '{{dateTimeFormat}}'
+                '{{dateTimeFormat}}',
             ],
             [
                 GeneratorUtils::cleanPluralUcWords($model),
@@ -127,9 +127,9 @@ class ShowViewGenerator
                 $modelNamePluralKebabCase,
                 $modelNameSingularCamelCase,
                 $trs,
-                $dateTimeFormat
+                $dateTimeFormat,
             ],
-            GeneratorUtils::getTemplate('views/show')
+            empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/show') : GeneratorUtils::getTemplate('views/simple/show')
         );
 
         switch ($path) {

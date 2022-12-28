@@ -1,6 +1,7 @@
 <script>
     let selectMenu = $('#select-menu')
-    let colNewMenu = $('#col-new-menu')
+    let colNewMenu = $('#col-new-menu') 
+    let uri = '{{ request()->segment(1) }}'
 
     $('#btn-add').click(function() {
         let table = $('#tbl-field tbody')
@@ -480,7 +481,7 @@
 
         $.ajax({
             type: 'POST',
-            url: '{{ route('generators.store') }}',
+            url: `/${uri}`,
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
@@ -497,7 +498,7 @@
                     title: 'Success',
                     text: 'The module was generated successfully!'
                 }).then(function() {
-                    window.location = '{{ route('generators.create') }}'
+                    window.location = `/${response.route}`
                 })
             },
             error: function(xhr, status, response) {
