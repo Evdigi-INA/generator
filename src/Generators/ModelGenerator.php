@@ -165,7 +165,8 @@ class ModelGenerator
                 '{{casts}}',
                 '{{relations}}',
                 '{{namespace}}',
-                '{{protectedHidden}}'
+                '{{protectedHidden}}',
+                '{{pluralSnakeCase}}',
             ],
             [
                 $model,
@@ -173,7 +174,8 @@ class ModelGenerator
                 $casts,
                 $relations,
                 $namespace,
-                $protectedHidden
+                $protectedHidden,
+                GeneratorUtils::pluralSnakeCase($model),
             ],
             GeneratorUtils::getTemplate('model')
         );

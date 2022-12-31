@@ -12,6 +12,7 @@ class GeneratorController extends Controller
 {
     public function __construct(protected $generatorService = new GeneratorService())
     {
+        //
     }
 
     /**
