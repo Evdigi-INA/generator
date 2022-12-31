@@ -12,6 +12,7 @@ class SimpleGeneratorController extends Controller
 {
     public function __construct(protected $generatorService = new GeneratorService())
     {
+        //
     }
 
     /**
@@ -35,6 +36,17 @@ class SimpleGeneratorController extends Controller
         $attrs = $request->validated();
         $attrs['is_simple_generator'] = true;
 
+        /**
+         * will added in next realease
+         * now it's not working, because it's not implemented
+         * only focus to fix the bug
+         */
+        // $checkFile = $this->generatorService->checkFilesAreSame($attrs);
+
+        // if(count($checkFile) > 0){
+        //     return response()->json($checkFile, 403);
+        // }
+
         if ($request->generate_type == GeneratorType::ALL->value) {
             $this->generatorService->simpleGenerator($attrs);
         } else {
@@ -44,7 +56,7 @@ class SimpleGeneratorController extends Controller
         $model = GeneratorUtils::setModelName($attrs['model']);
 
         return response()->json([
-            'message' => 'success',
+            'message' => 'qwerty',
             'route' => GeneratorUtils::pluralKebabCase($model)
         ], Response::HTTP_CREATED);
     }
