@@ -13,7 +13,7 @@ class ModelGenerator
     public function generate(array $request)
     {
         $path = GeneratorUtils::getModelLocation($request['model']);
-        $model = GeneratorUtils::setModelName($request['model']);
+        $model = GeneratorUtils::setModelName($request['model'], 'default');
 
         $fields = "[";
         $casts = "[";
@@ -114,7 +114,7 @@ class ModelGenerator
                      *     return $this->belongsTo(\App\Models\Product::class);
                      * }
                      */
-                    $relations .= "\n\tpublic function " . str()->snake($constrainName) . "()\n\t{\n\t\treturn \$this->belongsTo(" . $constrainPath . "::class" . $foreign_id . ");\n\t}";
+                    $relations .= "\n\tpublic function " . str()->snake($constrainName) . "()\n\t{\n\t\treturn \$this->belongsTo(" . $constrainPath . "::class" . $foreign_id . ");\\t}";
 
                     // if ($i + 1 != $totalFields) {
                     //     $relations .= "\n";
@@ -169,7 +169,7 @@ class ModelGenerator
                 '{{pluralSnakeCase}}',
             ],
             [
-                $model,
+                GeneratorUtils::singularPascalCase($model),
                 $fields,
                 $casts,
                 $relations,

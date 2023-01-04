@@ -106,9 +106,9 @@ class GeneratorService
      * Get sidebar menus by index.
      *
      * @param int $index
-     * @return array
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function getSidebarMenusByIndex(int $index): array
+    public function getSidebarMenusByIndex(int $index): \Illuminate\Http\JsonResponse
     {
         abort_if(!request()->ajax(), Response::HTTP_FORBIDDEN);
 

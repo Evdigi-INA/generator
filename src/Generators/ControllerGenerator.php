@@ -1,6 +1,7 @@
 <?php
 
 namespace Zzzul\Generator\Generators;
+
 class ControllerGenerator
 {
     /**

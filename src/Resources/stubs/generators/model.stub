@@ -29,7 +29,6 @@ class {{modelName}} extends Model
      * @var string[]
      */
     protected $casts = {{casts}};
-
     {{protectedHidden}}
 {{relations}}
 }
