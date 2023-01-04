@@ -53,7 +53,7 @@ class SimpleGeneratorController extends Controller
             $this->generatorService->onlyGenerateModelAndMigration($attrs);
         }
 
-        $model = GeneratorUtils::setModelName($attrs['model']);
+        $model = GeneratorUtils::setModelName($attrs['model'], 'default');
 
         return response()->json([
             'message' => 'qwerty',

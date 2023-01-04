@@ -49,7 +49,7 @@ class GeneratorController extends Controller
             $this->generatorService->onlyGenerateModelAndMigration($request->validated());
         }
 
-        $model = GeneratorUtils::setModelName($request->model);
+        $model = GeneratorUtils::setModelName($request->model, 'default');
 
         return response()->json([
             'message' => 'success',

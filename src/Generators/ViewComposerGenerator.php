@@ -16,7 +16,7 @@ class ViewComposerGenerator
     {
         $template = "";
 
-        $model = GeneratorUtils::setModelName($request['model']);
+        $model = GeneratorUtils::setModelName($request['model'], 'default');
         $viewPath = GeneratorUtils::getModelLocation($request['model']);
 
         foreach ($request['column_types'] as $i => $dataType) {

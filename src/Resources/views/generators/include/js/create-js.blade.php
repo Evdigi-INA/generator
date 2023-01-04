@@ -324,7 +324,7 @@
                     <option value="image">Image</option>
                 </select>
             </div>
-            <div class="form-group form-file-sizes">
+            <div class="form-group form-file-sizes mt-2">
                 <input type="number" name="files_sizes[]" class="form-control" placeholder="Max size(kb), e.g.: 1024" required>
             </div>
             <input type="hidden" name="mimes[]" class="form-mimes">
