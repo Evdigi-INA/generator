@@ -2,7 +2,7 @@
             <div class="footer clearfix mb-0 text-muted">
                 <div class="float-start">
                     <p>{{ date('Y') }} &copy; Generator by
-                        <a href="https://github.com/Zzzul" target="_blank">M. Zulfahmi</a>
+                        <a href="https://github.com/EvdigiIna" target="_blank">M. Zulfahmi</a>
                     </p>
                 </div>
                 <div class="float-end">

@@ -1,10 +1,10 @@
 <?php
 
-namespace Zzzul\Generator\Providers;
+namespace EvdigiIna\Generator\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\Console\AboutCommand;
-use Zzzul\Generator\Commands\{SetSidebarType, PublishAllFiles};
+use EvdigiIna\Generator\Commands\{SetSidebarType, PublishAllFiles};
 
 class GeneratorServiceProvider extends ServiceProvider
 {
@@ -25,7 +25,7 @@ class GeneratorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadRoutesFrom(__DIR__.'/../Routes/generator.php');
+        $this->loadRoutesFrom(__DIR__ . '/../Routes/generator.php');
         $this->loadViewsFrom(__DIR__ . '/../Resources/views/generators', 'generator');
 
         // views

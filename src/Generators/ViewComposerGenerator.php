@@ -1,6 +1,6 @@
 <?php
 
-namespace Zzzul\Generator\Generators;
+namespace EvdigiIna\Generator\Generators;
 
 use Illuminate\Support\Facades\Schema;
 
@@ -68,7 +68,7 @@ class ViewComposerGenerator
         }
         $path = app_path('Providers/ViewServiceProvider.php');
 
-        $viewProviderTemplate = substr(file_get_contents($path), 0, -6). "\n\n\t\t" . $template . "\t}\n}";
+        $viewProviderTemplate = substr(file_get_contents($path), 0, -6) . "\n\n\t\t" . $template . "\t}\n}";
 
         file_put_contents($path, $viewProviderTemplate);
     }

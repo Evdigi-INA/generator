@@ -1,10 +1,10 @@
 <?php
 
-namespace Zzzul\Generator\Services;
+namespace EvdigiIna\Generator\Services;
 
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
-use Zzzul\Generator\Generators\{
+use EvdigiIna\Generator\Generators\{
     ControllerGenerator,
     MenuGenerator,
     ModelGenerator,
@@ -14,7 +14,7 @@ use Zzzul\Generator\Generators\{
     RouteGenerator,
     ViewComposerGenerator
 };
-use Zzzul\Generator\Generators\Views\{
+use EvdigiIna\Generator\Generators\Views\{
     ActionViewGenerator,
     CreateViewGenerator,
     EditViewGenerator,

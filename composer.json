@@ -1,12 +1,17 @@
 {
-    "name": "zzzul/generator",
+    "name": "evdigiina/generator",
     "description": "Laravel starter app & simple crud generator",
     "type": "library",
     "license": "MIT",
-    "keywords": ["package", "laravel", "starter-app", "crud-generator"],
+    "keywords": [
+        "package",
+        "laravel",
+        "starter-app",
+        "crud-generator"
+    ],
     "autoload": {
         "psr-4": {
-            "Zzzul\\Generator\\": "src/"
+            "EvdigiIna\\Generator\\": "src/"
         },
         "files": [
             "src/Helpers/helper.php"

@@ -20,7 +20,7 @@
         <p class="mb-2">Generate Type</p>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="generate_type" id="generate-type-1"
-                value="{{ \Zzzul\Generator\Enums\GeneratorType::ALL->value }}" checked>
+                value="{{ \EvdigiIna\Generator\Enums\GeneratorType::ALL->value }}" checked>
             <label class="form-check-label" for="generate-type-1">
                 {{ __('All (Migration, Model, View, Controller, Route, & Request)') }}
             </label>
@@ -28,7 +28,7 @@
 
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="generate_type" id="generate-type-2"
-                value="{{ \Zzzul\Generator\Enums\GeneratorType::ONLY_MODEL_AND_MIGRATION->value }}">
+                value="{{ \EvdigiIna\Generator\Enums\GeneratorType::ONLY_MODEL_AND_MIGRATION->value }}">
             <label class="form-check-label" for="generate-type-2">
                 {{ __('Only Model & Migration') }}
             </label>

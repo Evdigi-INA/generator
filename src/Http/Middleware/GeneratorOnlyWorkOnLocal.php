@@ -1,6 +1,6 @@
 <?php
 
-namespace Zzzul\Generator\Http\Middleware;
+namespace EvdigiIna\Generator\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
