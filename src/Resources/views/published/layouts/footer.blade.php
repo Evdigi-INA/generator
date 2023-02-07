@@ -2,20 +2,20 @@
             <div class="footer clearfix mb-0 text-muted">
                 <div class="float-start">
                     <p>{{ date('Y') }} &copy; Generator by
-                        <a href="https://github.com/EvdigiIna" target="_blank">M. Zulfahmi</a>
+                        <a href="https://github.com/Evdigi-INA" target="_blank">Evdigi & all contributors</a>
                     </p>
                 </div>
                 <div class="float-end">
-                    <p>Mazer Admin by
-                        <a href="http://ahmadsaugi.com" target="_blank">A. Saugi</a>
+                    <p>Mazer Template by
+                        <a href="https://github.com/zuramai/mazer" target="_blank">A. Saugi</a>
                     </p>
                 </div>
             </div>
         </footer>
-    </div>
+        </div>
 
-    <script src="{{ asset('mazer') }}/js/app.js"></script>
-    @stack('js')
-</body>
+        <script src="{{ asset('mazer') }}/js/app.js"></script>
+        @stack('js')
+        </body>
 
-</html>
+        </html>
