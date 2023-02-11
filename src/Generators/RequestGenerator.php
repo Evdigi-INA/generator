@@ -1,6 +1,6 @@
 <?php
 
-namespace Zzzul\Generator\Generators;
+namespace EvdigiIna\Generator\Generators;
 
 class RequestGenerator
 {
@@ -82,11 +82,11 @@ class RequestGenerator
             if ($request['input_types'][$i] == 'file' && $request['file_types'][$i] == 'image') {
 
                 $maxSize = 1024;
-                if(config('generator.image.size_max')){
+                if (config('generator.image.size_max')) {
                     $maxSize = config('generator.image.size_max');
                 }
 
-                if($request['files_sizes'][$i]){
+                if ($request['files_sizes'][$i]) {
                     $maxSize = $request['files_sizes'][$i];
                 }
 

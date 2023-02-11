@@ -1,8 +1,8 @@
 <?php
 
-namespace Zzzul\Generator\Generators\Views;
+namespace EvdigiIna\Generator\Generators\Views;
 
-use Zzzul\Generator\Generators\GeneratorUtils;
+use EvdigiIna\Generator\Generators\GeneratorUtils;
 
 class EditViewGenerator
 {

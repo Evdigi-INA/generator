@@ -5,12 +5,12 @@ https://user-images.githubusercontent.com/62506582/200510814-9b2ca922-bd35-4e02-
 
 <div align="center">
 
-[![All Contributors](https://img.shields.io/github/contributors/Zzzul/generator-src?style=flat-square)](https://github.com/Zzzul/generator/graphs/contributors)
-![GitHub last commit](https://img.shields.io/github/last-commit/Zzzul/generator-src.svg?style=flat-square)
-[![License](https://img.shields.io/github/license/Zzzul/generator-src.svg?style=flat-square)](LICENSE)
-[![Issues](https://img.shields.io/github/issues/Zzzul/generator-src?style=flat-square)](Issues)
-[![Forks](https://img.shields.io/github/forks/Zzzul/generator-src?style=flat-square)](Forks)
-[![Stars](https://img.shields.io/github/stars/Zzzul/generator-src?style=flat-square)](Stars)
+[![All Contributors](https://img.shields.io/github/contributors/EvdigiIna/generator-src?style=flat-square)](https://github.com/EvdigiIna/generator/graphs/contributors)
+![GitHub last commit](https://img.shields.io/github/last-commit/EvdigiIna/generator-src.svg?style=flat-square)
+[![License](https://img.shields.io/github/license/EvdigiIna/generator-src.svg?style=flat-square)](LICENSE)
+[![Issues](https://img.shields.io/github/issues/EvdigiIna/generator-src?style=flat-square)](Issues)
+[![Forks](https://img.shields.io/github/forks/EvdigiIna/generator-src?style=flat-square)](Forks)
+[![Stars](https://img.shields.io/github/stars/EvdigiIna/generator-src?style=flat-square)](Stars)
 
 </div>
 
@@ -26,7 +26,7 @@ https://user-images.githubusercontent.com/62506582/200510814-9b2ca922-bd35-4e02-
 ## Setup
 1. Installation
 ```sh
-composer require zzzul/generator --dev
+composer require EvdigiIna/generator --dev
 ```
 > Since this package will overwrite some files, it must be installed after a brand-new Laravel installation.
 
@@ -35,7 +35,7 @@ composer require zzzul/generator --dev
  /*
   * Package Service Providers...
   */
-  Zzzul\Generator\Providers\GeneratorServiceProvider::class,
+  EvdigiIna\Generator\Providers\GeneratorServiceProvider::class,
 ```
 
 3. Publish vendor 
@@ -95,10 +95,4 @@ Login
 
 ## License
 [MIT License](./LICENSE)
-
-## Support
-You can support me at [Github Sponsors](https://github.com/sponsors/Zzzul), [Ko-fi](https://ko-fi.com/mzulfahmi) or [Saweria](https://saweria.co/zzzul)
-
-<a href="https://www.buymeacoffee.com/mzulfahmi" target="_blank">
-<img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;">
 </a>

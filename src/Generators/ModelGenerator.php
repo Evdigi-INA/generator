@@ -1,6 +1,6 @@
 <?php
 
-namespace Zzzul\Generator\Generators;
+namespace EvdigiIna\Generator\Generators;
 
 class ModelGenerator
 {

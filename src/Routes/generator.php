@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Zzzul\Generator\Http\Controllers\GeneratorController;
-use Zzzul\Generator\Http\Middleware\GeneratorOnlyWorkOnLocal;
+use EvdigiIna\Generator\Http\Controllers\GeneratorController;
+use EvdigiIna\Generator\Http\Middleware\GeneratorOnlyWorkOnLocal;
 
 Route::middleware(['web'])->group(function () {
     Route::middleware(GeneratorOnlyWorkOnLocal::class)->group(function () {
@@ -11,4 +11,3 @@ Route::middleware(['web'])->group(function () {
         Route::resource('generators', GeneratorController::class)->only('create', 'store');
     });
 });
-

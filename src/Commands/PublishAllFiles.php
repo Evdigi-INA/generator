@@ -1,6 +1,6 @@
 <?php
 
-namespace Zzzul\Generator\Commands;
+namespace EvdigiIna\Generator\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;

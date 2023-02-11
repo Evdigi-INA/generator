@@ -1,8 +1,8 @@
 <?php
 
-namespace Zzzul\Generator\Generators\Views;
+namespace EvdigiIna\Generator\Generators\Views;
 
-use Zzzul\Generator\Generators\GeneratorUtils;
+use EvdigiIna\Generator\Generators\GeneratorUtils;
 
 class ShowViewGenerator
 {
@@ -45,8 +45,8 @@ class ShowViewGenerator
                     $trs .= "<tr>
                                         <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
                                         <td>
-                                            @if (". $default['form_code'] .")
-                                            <img src=\"". $default['image'] ."\" alt=\"$fieldUcWords\"  class=\"rounded\" width=\"200\" height=\"150\" style=\"object-fit: cover\">
+                                            @if (" . $default['form_code'] . ")
+                                            <img src=\"" . $default['image'] . "\" alt=\"$fieldUcWords\"  class=\"rounded\" width=\"200\" height=\"150\" style=\"object-fit: cover\">
                                             @else
                                                 <img src=\"{{ asset('$uploadPath" . str($field)->plural()->snake() . "/' . $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . ") }}\" alt=\"$fieldUcWords\" class=\"rounded\" width=\"200\" height=\"150\" style=\"object-fit: cover\">
                                             @endif
