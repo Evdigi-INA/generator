@@ -16,7 +16,7 @@ class ViewComposerGenerator
     {
         $template = "";
 
-        $model = GeneratorUtils::setModelName($request['model']);
+        $model = GeneratorUtils::setModelName($request['model'], 'default');
         $viewPath = GeneratorUtils::getModelLocation($request['model']);
 
         foreach ($request['column_types'] as $i => $dataType) {
@@ -66,7 +66,7 @@ class ViewComposerGenerator
                 );
             }
         }
-        $path = app_path('Providers/ViewServiceProvider.php');
+        $path = app_path('Providers/ViewComposerServiceProvider.php');
 
         $viewProviderTemplate = substr(file_get_contents($path), 0, -6) . "\n\n\t\t" . $template . "\t}\n}";
 

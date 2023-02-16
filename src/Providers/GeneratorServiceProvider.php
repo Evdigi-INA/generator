@@ -35,13 +35,13 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // config
         $this->publishes([
-            __DIR__ . '/../Config/' => config_path()
+            __DIR__ . '/../Config/Full' => config_path()
         ], 'generator-config');
 
-        // route
+        // config simple
         $this->publishes([
-            __DIR__ . '/../Routes/web.php' => app_path('../routes/web.php')
-        ], 'generator-route');
+            __DIR__ . '/../Config/Simple/generator.php' => config_path('generator.php')
+        ], 'generator-config-simple');
 
         // Controllers
         $this->publishes([
@@ -68,6 +68,10 @@ class GeneratorServiceProvider extends ServiceProvider
             __DIR__ . '/../Providers/Published' => app_path('Providers')
         ], 'generator-provider');
 
+        $this->publishes([
+            __DIR__ . '/../Providers/Published/Simple' => app_path('Providers')
+        ], 'generator-view-provider');
+
         // Migrations
         $this->publishes([
             __DIR__ . '/../Database/Migrations' => database_path('migrations')
@@ -88,7 +92,7 @@ class GeneratorServiceProvider extends ServiceProvider
             __DIR__ . '/../../assets' => public_path('mazer'),
         ], 'generator-assets');
 
-        AboutCommand::add('Generator', fn () => ['Version' => '0.1.1']);
+        AboutCommand::add('Generator', fn () => ['Version' => '0.2.0']);
 
         if ($this->app->runningInConsole()) {
             $this->commands([

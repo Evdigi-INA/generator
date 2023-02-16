@@ -1,6 +1,7 @@
 <script>
     let selectMenu = $('#select-menu')
-    let colNewMenu = $('#col-new-menu')
+    let colNewMenu = $('#col-new-menu') 
+    let uri = '{{ request()->segment(1) }}'
 
     $('#btn-add').click(function() {
         let table = $('#tbl-field tbody')
@@ -323,7 +324,7 @@
                     <option value="image">Image</option>
                 </select>
             </div>
-            <div class="form-group form-file-sizes">
+            <div class="form-group form-file-sizes mt-2">
                 <input type="number" name="files_sizes[]" class="form-control" placeholder="Max size(kb), e.g.: 1024" required>
             </div>
             <input type="hidden" name="mimes[]" class="form-mimes">
@@ -480,7 +481,7 @@
 
         $.ajax({
             type: 'POST',
-            url: '{{ route('generators.store') }}',
+            url: `/${uri}`,
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
@@ -497,7 +498,7 @@
                     title: 'Success',
                     text: 'The module was generated successfully!'
                 }).then(function() {
-                    window.location = '{{ route('generators.create') }}'
+                    window.location = `/${response.route}`
                 })
             },
             error: function(xhr, status, response) {

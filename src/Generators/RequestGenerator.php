@@ -12,7 +12,7 @@ class RequestGenerator
      */
     public function generate(array $request): void
     {
-        $model = GeneratorUtils::setModelName($request['model']);
+        $model = GeneratorUtils::setModelName($request['model'], 'default');
         $path = GeneratorUtils::getModelLocation($request['model']);
 
         $validations = '';
@@ -23,19 +23,19 @@ class RequestGenerator
                 $namespace = "namespace App\Http\Requests;";
                 break;
             default:
-                $namespace = "namespace App\Http\Requests\\$path;";
+                $namespace = "namespace App\Http\Requests\\" . GeneratorUtils::singularPascalCase($path) . ";";
                 break;
         }
 
         foreach ($request['fields'] as $i => $field) {
             /**
-             * will generate like:
+             * result:
              * 'name' =>
              */
             $validations .= "'" . str($field)->snake() . "' => ";
 
             /**
-             * will generate like:
+             * result:
              * 'name' => 'required
              */
             match ($request['requireds'][$i]) {
@@ -46,7 +46,7 @@ class RequestGenerator
             switch ($request['input_types'][$i]) {
                 case 'url':
                     /**
-                     * will generate like:
+                     * result:
                      * 'name' => 'required|url',
                      */
                     $validations .= "|url";
@@ -55,21 +55,21 @@ class RequestGenerator
                     $uniqueValidation = 'unique:' . GeneratorUtils::pluralSnakeCase($model) . ',' . GeneratorUtils::singularSnakeCase($field);
 
                     /**
-                     * will generate like:
+                     * result:
                      * 'name' => 'required|email',
                      */
                     $validations .= "|email|" . $uniqueValidation;
                     break;
                 case 'date':
                     /**
-                     * will generate like:
+                     * result:
                      * 'name' => 'required|date',
                      */
                     $validations .= "|date";
                     break;
                 case 'password':
                     /**
-                     * will generate like:
+                     * result:
                      * 'name' => 'required|confirmed',
                      */
                     $validations .= "|confirmed";
@@ -91,13 +91,13 @@ class RequestGenerator
                 }
 
                 /**
-                 * will generate like:
+                 * result:
                  * 'cover' => 'required|image|size:1024',
                  */
                 $validations .= "|image|max:" . $maxSize;
             } elseif ($request['input_types'][$i] == 'file' && $request['file_types'][$i] == 'mimes') {
                 /**
-                 * will generate like:
+                 * result:
                  * 'name' => 'required|mimes|size:1024',
                  */
                 $validations .= "|mimes:" . $request['mimes'][$i] . "|size:" . $request['files_sizes'][$i];
@@ -105,7 +105,7 @@ class RequestGenerator
 
             if ($request['column_types'][$i] == 'enum') {
                 /**
-                 * will generate like:
+                 * result:
                  * 'name' => 'required|in:water,fire',
                  */
                 $in = "|in:";
@@ -128,7 +128,7 @@ class RequestGenerator
 
             if ($request['input_types'][$i] == 'text' || $request['input_types'][$i] == 'textarea') {
                 /**
-                 * will generate like:
+                 * result:
                  * 'name' => 'required|string',
                  */
                 $validations .= "|string";
@@ -136,7 +136,7 @@ class RequestGenerator
 
             if ($request['input_types'][$i] == 'number' || $request['column_types'][$i] == 'year' || $request['input_types'][$i] == 'range') {
                 /**
-                 * will generate like:
+                 * result:
                  * 'name' => 'required|numeric',
                  */
                 $validations .= "|numeric";
@@ -144,7 +144,7 @@ class RequestGenerator
 
             if ($request['input_types'][$i] == 'range' && $request['max_lengths'][$i] >= 0) {
                 /**
-                 * will generate like:
+                 * result:
                  * 'name' => 'numeric|between:1,10',
                  */
                 $validations .= "|between:" . $request['min_lengths'][$i] . "," . $request['max_lengths'][$i];
@@ -152,7 +152,7 @@ class RequestGenerator
 
             if ($request['min_lengths'][$i] && $request['input_types'][$i] !== 'range') {
                 /**
-                 * will generate like:
+                 * result:
                  * 'name' => 'required|min:5',
                  */
                 $validations .= "|min:" . $request['min_lengths'][$i];
@@ -160,7 +160,7 @@ class RequestGenerator
 
             if ($request['max_lengths'][$i] && $request['max_lengths'][$i] >= 0 && $request['input_types'][$i] !== 'range') {
                 /**
-                 * will generate like:
+                 * result:
                  * 'name' => 'required|max:30',
                  */
                 $validations .= "|max:" . $request['max_lengths'][$i];
@@ -169,7 +169,7 @@ class RequestGenerator
             switch ($request['column_types'][$i]) {
                 case 'boolean':
                     /**
-                     * will generate like:
+                     * result:
                      * 'name' => 'required|boolean',
                      */
                     $validations .= "|boolean',";
@@ -182,14 +182,14 @@ class RequestGenerator
                     switch ($constrainpath != '') {
                         case true:
                             /**
-                             * will generate like:
+                             * result:
                              * 'name' => 'required|max:30|exists:App\Models\Master\Product,id',
                              */
                             $validations .= "|exists:App\Models\\" . str_replace('/', '\\', $constrainpath) . "\\" . GeneratorUtils::singularPascalCase($constrainModel) . ",id',";
                             break;
                         default:
                             /**
-                             * will generate like:
+                             * result:
                              * 'name' => 'required|max:30|exists:App\Models\Product,id',
                              */
                             $validations .= "|exists:App\Models\\" . GeneratorUtils::singularPascalCase($constrainModel) . ",id',";
@@ -198,7 +198,7 @@ class RequestGenerator
                     break;
                 default:
                     /**
-                     * will generate like:
+                     * result:
                      * 'name' => 'required|max:30|exists:App\Models\Product,id',
                      */
                     $validations .= "',";
@@ -211,6 +211,8 @@ class RequestGenerator
         }
         // end of foreach
 
+        $modelSingularPascalCase = GeneratorUtils::singularPascalCase($model);
+
         $storeRequestTemplate = str_replace(
             [
                 '{{modelNamePascalCase}}',
@@ -218,7 +220,7 @@ class RequestGenerator
                 '{{namespace}}',
             ],
             [
-                "Store$model",
+                "Store$modelSingularPascalCase",
                 $validations,
                 $namespace
             ],
@@ -264,7 +266,7 @@ class RequestGenerator
                 }
             }
         }
-
+        
         $updateRequestTemplate = str_replace(
             [
                 '{{modelNamePascalCase}}',
@@ -272,7 +274,7 @@ class RequestGenerator
                 '{{namespace}}',
             ],
             [
-                "Update$model",
+                "Update$modelSingularPascalCase",
                 $updateValidations,
                 $namespace
             ],
@@ -285,14 +287,14 @@ class RequestGenerator
         switch ($path) {
             case '':
                 GeneratorUtils::checkFolder(app_path('/Http/Requests'));
-                file_put_contents(app_path("/Http/Requests/Store{$model}Request.php"), $storeRequestTemplate);
-                file_put_contents(app_path("/Http/Requests/Update{$model}Request.php"), $updateRequestTemplate);
+                file_put_contents(app_path("/Http/Requests/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
+                file_put_contents(app_path("/Http/Requests/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
                 break;
             default:
                 $fullPath = app_path("/Http/Requests/$path");
                 GeneratorUtils::checkFolder($fullPath);
-                file_put_contents("$fullPath/Store{$model}Request.php", $storeRequestTemplate);
-                file_put_contents("$fullPath/Update{$model}Request.php", $updateRequestTemplate);
+                file_put_contents("$fullPath/Store{$modelSingularPascalCase}Request.php", $storeRequestTemplate);
+                file_put_contents("$fullPath/Update{$modelSingularPascalCase}Request.php", $updateRequestTemplate);
                 break;
         }
     }

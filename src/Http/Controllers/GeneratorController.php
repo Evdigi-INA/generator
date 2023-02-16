@@ -7,14 +7,13 @@ use EvdigiIna\Generator\Enums\GeneratorType;
 use EvdigiIna\Generator\Services\GeneratorService;
 use EvdigiIna\Generator\Http\Requests\StoreGeneratorRequest;
 use Symfony\Component\HttpFoundation\Response;
+use EvdigiIna\Generator\Generators\GeneratorUtils;
 
 class GeneratorController extends Controller
 {
-    protected $generatorService;
-
-    public function __construct()
+    public function __construct(protected $generatorService = new GeneratorService())
     {
-        $this->generatorService = new GeneratorService();
+        //
     }
 
     /**
@@ -25,6 +24,16 @@ class GeneratorController extends Controller
     public function create()
     {
         return view('generator::create');
+    }
+
+    /**
+     * Show the form for creating a new resource.(bootstrap only)
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function simpleCreate()
+    {
+        return view('generator::simple-create');
     }
 
     /**
@@ -41,7 +50,12 @@ class GeneratorController extends Controller
             $this->generatorService->onlyGenerateModelAndMigration($request->validated());
         }
 
-        return response()->json(['message' => 'success'], Response::HTTP_CREATED);
+        $model = GeneratorUtils::setModelName($request->model, 'default');
+
+        return response()->json([
+            'message' => 'success',
+            'route' => GeneratorUtils::pluralKebabCase($model)
+        ], Response::HTTP_CREATED);
     }
 
     /**
