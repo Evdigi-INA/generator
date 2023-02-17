@@ -5,12 +5,12 @@ https://user-images.githubusercontent.com/62506582/200510814-9b2ca922-bd35-4e02-
 
 <div align="center">
 
-[![All Contributors](https://img.shields.io/github/contributors/Zzzul/generator-src?style=flat-square)](https://github.com/Zzzul/generator/graphs/contributors)
-![GitHub last commit](https://img.shields.io/github/last-commit/Zzzul/generator-src.svg?style=flat-square)
-[![License](https://img.shields.io/github/license/Zzzul/generator-src.svg?style=flat-square)](LICENSE)
-[![Issues](https://img.shields.io/github/issues/Zzzul/generator-src?style=flat-square)](Issues)
-[![Forks](https://img.shields.io/github/forks/Zzzul/generator-src?style=flat-square)](Forks)
-[![Stars](https://img.shields.io/github/stars/Zzzul/generator-src?style=flat-square)](Stars)
+[![All Contributors](https://img.shields.io/github/contributors/Evdigi-INA/generator?style=flat-square)](https://github.com/Evdigi-INA/generator/graphs/contributors)
+![GitHub last commit](https://img.shields.io/github/last-commit/Evdigi-INA/generator.svg?style=flat-square)
+[![License](https://img.shields.io/github/license/Evdigi-INA/generator.svg?style=flat-square)](LICENSE)
+[![Issues](https://img.shields.io/github/issues/Evdigi-INA/generator?style=flat-square)](Issues)
+[![Forks](https://img.shields.io/github/forks/Evdigi-INA/generator?style=flat-square)](Forks)
+[![Stars](https://img.shields.io/github/stars/Evdigi-INA/generator?style=flat-square)](Stars)
 
 </div>
 
@@ -29,7 +29,7 @@ https://user-images.githubusercontent.com/62506582/200510814-9b2ca922-bd35-4e02-
 ## Setup
 Installation
 ```sh
-composer require zzzul/generator --dev
+composer require Evdigi-INA/generator --dev
 ```
 
 #### For this package, there are two variations: [Simpe Version](#simple-version) and [Full Version](#full-version)
