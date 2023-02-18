@@ -9,6 +9,13 @@ class {{modelName}} extends Model
 {
     use HasFactory;
 
+     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = '{{pluralSnakeCase}}';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,7 +29,6 @@ class {{modelName}} extends Model
      * @var string[]
      */
     protected $casts = {{casts}};
-
     {{protectedHidden}}
 {{relations}}
 }

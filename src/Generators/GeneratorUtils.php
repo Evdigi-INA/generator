@@ -38,7 +38,25 @@ class GeneratorUtils
      */
     public static function singularPascalCase(string $string): string
     {
+        /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return ucfirst(str(GeneratorUtils::fromCamelCase($string))->camel());
+        }
+
         return ucfirst(str(GeneratorUtils::fromCamelCase($string))->singular()->camel());
+    }
+
+    /**
+     * Convert string to singular pascal case.
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function pascalCase(string $string): string
+    {
+        return ucfirst(str(GeneratorUtils::fromCamelCase($string))->camel());
     }
 
     /**
@@ -49,6 +67,13 @@ class GeneratorUtils
      */
     public static function pluralPascalCase(string $string): string
     {
+         /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return ucfirst(str(GeneratorUtils::fromCamelCase($string))->camel()) . 's';
+        }
+
         return ucfirst(str(GeneratorUtils::fromCamelCase($string))->plural()->camel());
     }
 
@@ -60,6 +85,13 @@ class GeneratorUtils
      */
     public static function pluralSnakeCase(string $string): string
     {
+        /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return str(GeneratorUtils::fromCamelCase($string))->snake()->lower() . 's';
+        }
+
         return str(GeneratorUtils::fromCamelCase($string))->plural()->snake()->lower();
     }
 
@@ -71,6 +103,13 @@ class GeneratorUtils
      */
     public static function singularSnakeCase(string $string): string
     {
+        /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return str(GeneratorUtils::fromCamelCase($string))->snake()->lower();
+        }
+
         return str(GeneratorUtils::fromCamelCase($string))->singular()->snake()->lower();
     }
 
@@ -82,6 +121,13 @@ class GeneratorUtils
      */
     public static function pluralCamelCase(string $string): string
     {
+        /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return str(GeneratorUtils::fromCamelCase($string))->camel() . 's';
+        }
+
         return str(GeneratorUtils::fromCamelCase($string))->plural()->camel();
     }
 
@@ -93,6 +139,13 @@ class GeneratorUtils
      */
     public static function singularCamelCase(string $string): string
     {
+        /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return str(GeneratorUtils::fromCamelCase($string))->camel();
+        }
+
         return str(GeneratorUtils::fromCamelCase($string))->singular()->camel();
     }
 
@@ -104,6 +157,13 @@ class GeneratorUtils
      */
     public static function pluralKebabCase(string $string): string
     {
+         /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->kebab()->lower() . 's';
+        }
+
         return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->plural()->kebab()->lower();
     }
 
@@ -126,6 +186,13 @@ class GeneratorUtils
      */
     public static function singularKebabCase(string $string): string
     {
+         /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->kebab()->lower();
+        }
+
         return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->singular()->kebab()->lower();
     }
 
@@ -137,6 +204,13 @@ class GeneratorUtils
      */
     public static function cleanSingularLowerCase(string $string): string
     {
+         /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->lower();
+        }
+
         return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->singular()->lower();
     }
 
@@ -159,6 +233,13 @@ class GeneratorUtils
      */
     public static function cleanPluralUcWords(string $string): string
     {
+        /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->lower()) . 's';
+        }
+
         return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->plural()->lower());
     }
 
@@ -170,6 +251,13 @@ class GeneratorUtils
      */
     public static function cleanSingularUcWords(string $string): string
     {
+         /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->lower());
+        }
+
         return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->singular()->lower());
     }
 
@@ -191,7 +279,14 @@ class GeneratorUtils
      * @return string
      */
     public static function cleanPluralLowerCase(string $string): string
-    {
+    { 
+         /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($string, -2) == 'ia' || substr($string, -3) == 'ium'){
+            return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->lower() . 's';
+        }
+
         return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->plural()->lower();
     }
 
@@ -288,12 +383,20 @@ class GeneratorUtils
         /**
          * get the latest index value of array
          */
+        $actualModelName = $arrModel[$totalArrModel - 1];
 
-        if ($style == 'pascal case') {
-            return GeneratorUtils::singularPascalCase($arrModel[$totalArrModel - 1]);
+        /**
+         * check string ended with 'ia' or 'ium'
+         */
+        if(substr($actualModelName, -2) == 'ia' || substr($actualModelName, -3) == 'ium'){
+            return self::pascalCase($actualModelName);
         }
 
-        return $arrModel[$totalArrModel - 1];
+        if ($style == 'pascal case') {
+            return GeneratorUtils::singularPascalCase($actualModelName);
+        }
+
+        return $actualModelName;
     }
 
     /**

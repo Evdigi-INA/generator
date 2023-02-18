@@ -72,16 +72,46 @@ class GeneratorService
     }
 
     /**
+     * Simple generator, only generate the core module(CRUD).
+     *
+     * @param array $request
+     * @return void
+     */
+    public function simpleGenerator(array $request): void
+    {
+        (new ModelGenerator)->generate($request);
+        (new MigrationGenerator)->generate($request);
+        (new ControllerGenerator)->generate($request);
+        (new RequestGenerator)->generate($request);
+
+        (new IndexViewGenerator)->generate($request);
+        (new CreateViewGenerator)->generate($request);
+        (new ShowViewGenerator)->generate($request);
+        (new EditViewGenerator)->generate($request);
+        (new ActionViewGenerator)->generate($request);
+        (new FormViewGenerator)->generate($request);
+
+        (new RouteGenerator)->generate($request);
+
+        if (in_array('foreignId', $request['column_types'])) {
+            (new ViewComposerGenerator)->generate($request);
+        }
+
+        Artisan::call('migrate');
+    }
+
+
+    /**
      * Get sidebar menus by index.
      *
      * @param int $index
-     * @return array
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function getSidebarMenusByIndex(int $index): array
+    public function getSidebarMenusByIndex(int $index): \Illuminate\Http\JsonResponse
     {
         abort_if(!request()->ajax(), Response::HTTP_FORBIDDEN);
 
-        return config('generator.sidebars')[$index];
+        return response()->json(config('generator.sidebars')[$index], Response::HTTP_OK);
     }
 
     /**
@@ -97,5 +127,49 @@ class GeneratorService
         if (!str($sidebar)->contains("\$permissions = empty(\$menu['permission'])")) {
             Artisan::call('generator:sidebar dynamic');
         }
+    }
+
+    /**
+     * Check to see if any files are the same as the generated files. (will be used in the future)
+     *
+     * @param array $request
+     * @return array
+     * */
+    public function checkFilesAreSame(array $request): array
+    {
+        $sameFile = [];
+
+        $path = GeneratorUtils::getModelLocation($request['model']);
+        $model = GeneratorUtils::singularPascalCase(GeneratorUtils::setModelName($request['model']));
+
+        if (
+            file_exists(app_path("/Models/$model.php")) ||
+            file_exists(app_path("/Models/$path") . "/$model.php")
+        ) {
+            $sameFile[] = [
+                'model' => "The $model model is already exists"
+            ];
+        }
+
+        $checkMigrationFile = array_diff(scandir(database_path('/migrations')), array('.', '..'));
+
+        foreach ($checkMigrationFile as $file) {
+            if (str($file)->contains(GeneratorUtils::pluralSnakeCase($model))) {
+                $sameFile[] = [
+                    'migration' => "The $model migration is already exists"
+                ];
+            }
+        }
+
+        if (
+            file_exists(app_path("/Http/Controllers/${model}Controller.php")) ||
+            file_exists(app_path("/Http/Controllers/$path") . "/${model}Controller.php")
+        ) {
+            $sameFile[] = [
+                'controller' => "The ${model}Controller is already exists"
+            ];
+        }
+
+        return $sameFile;
     }
 }

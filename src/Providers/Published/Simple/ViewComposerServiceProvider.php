@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\Models\Role;
 
-class ViewServiceProvider extends ServiceProvider
+class ViewComposerServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -25,11 +25,6 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::composer(['users.create', 'users.edit'], function ($view) {
-            return $view->with(
-                'roles',
-                Role::select('id', 'name')->get()
-            );
-        });
+        
     }
 }
