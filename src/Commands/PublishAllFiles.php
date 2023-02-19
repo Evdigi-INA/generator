@@ -45,17 +45,17 @@ class PublishAllFiles extends Command
 
                 switch ($composer) {
                     case !str_contains($composer, 'laravel/fortify') && !str_contains($composer, 'spatie/laravel-permission'):
-                        $this->error('You must install laravel/fortify and spatie/laravel-permission before running this command.');
+                        $this->error('You must be install laravel/fortify and spatie/laravel-permission before running this command.');
 
                         $this->info('Install the package: composer require laravel/fortify spatie/laravel-permission');
                         break;
                     case !str_contains($composer, 'laravel/fortify'):
-                        $this->error('You must install laravel/fortify before running this command.');
+                        $this->error('You must be install laravel/fortify before running this command.');
 
                         $this->info('Install the package: composer require laravel/fortify');
                         break;
                     case !str_contains($composer, 'spatie/laravel-permission'):
-                        $this->error('You must install spatie/laravel-permission before running this command.');
+                        $this->error('You must be install spatie/laravel-permission before running this command.');
 
                         $this->info('Install the package: composer require spatie/laravel-permission');
                         break;
@@ -115,10 +115,10 @@ class PublishAllFiles extends Command
                 Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
                 Artisan::call('vendor:publish --tag=datatables');
 
-                $this->info('Installed successfully, go to "/simple-generators/create" to create your first CRUD.');
+                $this->info('Installed successfully.');
                 break;
             default:
-                $this->error("The type must be 'all' to use the full version or 'simple' to use the simple version.");
+                $this->error("The type must be 'full' to use the full version or 'simple' to use the simple version.");
                 break;
         }
     }
@@ -217,6 +217,6 @@ class PublishAllFiles extends Command
 
         \File::append(base_path('routes/web.php'), $template);
 
-        $this->info('Installed successfully, go to "/generators/create" to create your first CRUD.');
+        $this->info('Installed successfully.');
     }
 }
