@@ -1,11 +1,10 @@
 <?php
 
-namespace Zzzul\Generator\Services;
+namespace EvdigiIna\Generator\Services;
 
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
-use Zzzul\Generator\Generators\GeneratorUtils;
-use Zzzul\Generator\Generators\{
+use EvdigiIna\Generator\Generators\{
     ControllerGenerator,
     MenuGenerator,
     ModelGenerator,
@@ -15,7 +14,7 @@ use Zzzul\Generator\Generators\{
     RouteGenerator,
     ViewComposerGenerator
 };
-use Zzzul\Generator\Generators\Views\{
+use EvdigiIna\Generator\Generators\Views\{
     ActionViewGenerator,
     CreateViewGenerator,
     EditViewGenerator,
@@ -106,13 +105,13 @@ class GeneratorService
      * Get sidebar menus by index.
      *
      * @param int $index
-     * @return \Illuminate\Http\JsonResponse
+     * @return array
      */
-    public function getSidebarMenusByIndex(int $index): \Illuminate\Http\JsonResponse
+    public function getSidebarMenusByIndex(int $index): array
     {
         abort_if(!request()->ajax(), Response::HTTP_FORBIDDEN);
 
-        return response()->json(config('generator.sidebars')[$index], Response::HTTP_OK);
+        return config('generator.sidebars')[$index];
     }
 
     /**
@@ -132,7 +131,7 @@ class GeneratorService
 
     /**
      * Check to see if any files are the same as the generated files. (will be used in the future)
-     * 
+     *
      * @param array $request
      * @return array
      * */

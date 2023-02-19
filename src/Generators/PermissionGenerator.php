@@ -1,6 +1,6 @@
 <?php
 
-namespace Zzzul\Generator\Generators;
+namespace EvdigiIna\Generator\Generators;
 
 use Spatie\Permission\Models\{Role, Permission};
 
@@ -65,10 +65,10 @@ class PermissionGenerator
     {
         $role = Role::findByName('admin');
 
-        Permission::create(['name' => "$model view"]);
-        Permission::create(['name' => "$model create"]);
-        Permission::create(['name' => "$model edit"]);
-        Permission::create(['name' => "$model delete"]);
+        Permission::firstOrCreate(['name' => "$model view"]);
+        Permission::firstOrCreate(['name' => "$model create"]);
+        Permission::firstOrCreate(['name' => "$model edit"]);
+        Permission::firstOrCreate(['name' => "$model delete"]);
 
         $role->givePermissionTo([
             "$model view",

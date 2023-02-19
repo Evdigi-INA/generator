@@ -1,12 +1,13 @@
 <?php
 
-namespace Zzzul\Generator\Http\Controllers;
+namespace EvdigiIna\Generator\Http\Controllers;
 
-use Zzzul\Generator\Enums\GeneratorType;
-use Zzzul\Generator\Services\GeneratorService;
-use Zzzul\Generator\Http\Requests\StoreGeneratorRequest;
+use App\Http\Controllers\Controller;
+use EvdigiIna\Generator\Enums\GeneratorType;
+use EvdigiIna\Generator\Services\GeneratorService;
+use EvdigiIna\Generator\Http\Requests\StoreGeneratorRequest;
 use Symfony\Component\HttpFoundation\Response;
-use Zzzul\Generator\Generators\GeneratorUtils;
+use EvdigiIna\Generator\Generators\GeneratorUtils;
 
 class GeneratorController extends Controller
 {
@@ -25,7 +26,7 @@ class GeneratorController extends Controller
         return view('generator::create');
     }
 
-     /**
+    /**
      * Show the form for creating a new resource.(bootstrap only)
      *
      * @return \Illuminate\Http\Response

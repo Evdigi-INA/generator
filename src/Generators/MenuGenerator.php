@@ -1,6 +1,6 @@
 <?php
 
-namespace Zzzul\Generator\Generators;
+namespace EvdigiIna\Generator\Generators;
 
 use Spatie\Permission\Models\Permission;
 
@@ -82,7 +82,7 @@ class MenuGenerator
     protected function generateNewMenu(array $request, string $model, array $configSidebar)
     {
         // push to permissions on header
-        array_push($configSidebar[$request['header']]['permissions'], GeneratorUtils::cleanSingularLowerCase($model). ' view');
+        array_push($configSidebar[$request['header']]['permissions'], GeneratorUtils::cleanSingularLowerCase($model) . ' view');
 
         // push new menu
         array_push($configSidebar[$request['header']]['menus'], $this->setNewMenu(
@@ -110,7 +110,7 @@ class MenuGenerator
         $indexSidebar = $menu['sidebar'];
         $indexMenu = $menu['menus'];
 
-        $newPermission = GeneratorUtils::cleanSingularLowerCase($model). ' view';
+        $newPermission = GeneratorUtils::cleanSingularLowerCase($model) . ' view';
 
         /**
          * Push to permissions on header
@@ -132,7 +132,7 @@ class MenuGenerator
              */
             array_push(
                 $configSidebar[$indexSidebar]['menus'][$indexMenu]['permissions'],
-                $configSidebar[$indexSidebar]['menus'][$indexMenu]['permission'] . "', '". $newPermission
+                $configSidebar[$indexSidebar]['menus'][$indexMenu]['permission'] . "', '" . $newPermission
             );
 
             $configSidebar[$indexSidebar]['menus'][$indexMenu]['route'] = null;
@@ -204,7 +204,7 @@ class MenuGenerator
                 'title' => GeneratorUtils::cleanPluralUcWords($title),
                 'icon' => $icon,
                 'route' => '/' . str(GeneratorUtils::pluralKebabCase($route))->remove('/'),
-                'permission' => GeneratorUtils::cleanSingularLowerCase($title). ' view',
+                'permission' => GeneratorUtils::cleanSingularLowerCase($title) . ' view',
                 'permissions' => [],
                 'submenus' =>  []
             ];

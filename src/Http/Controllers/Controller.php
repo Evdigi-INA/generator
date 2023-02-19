@@ -1,6 +1,6 @@
 <?php
 
-namespace Zzzul\Generator\Http\Controllers;
+namespace EvdigiIna\Generator\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;

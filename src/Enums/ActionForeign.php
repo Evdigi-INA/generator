@@ -1,6 +1,6 @@
 <?php
 
-namespace Zzzul\Generator\Enums;
+namespace EvdigiIna\Generator\Enums;
 
 enum ActionForeign: int
 {

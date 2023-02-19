@@ -1,8 +1,8 @@
 <?php
 
-namespace Zzzul\Generator\Commands;
+namespace EvdigiIna\Generator\Commands;
 
-use Zzzul\Generator\Generators\GeneratorUtils;
+use EvdigiIna\Generator\Generators\GeneratorUtils;
 use Illuminate\Console\Command;
 
 class SetSidebarType extends Command
@@ -71,7 +71,7 @@ class SetSidebarType extends Command
                                 $sidebarCode .= "
                                 @can('" . $menu['permission'] . "')
                                     <li class=\"sidebar-item{{ is_active_menu('" . $menu['route'] . "') }}\">
-                                    <a href=\"{{ route('". str($menu['route'])->remove('/')->plural() . '.index' ."') }}\" class=\"sidebar-link\">
+                                    <a href=\"{{ route('" . str($menu['route'])->remove('/')->plural() . '.index' . "') }}\" class=\"sidebar-link\">
                                             " . $menu['icon'] . "
                                             <span>{{ __('" . $menu['title'] . "') }}</span>
                                         </a>
@@ -90,7 +90,7 @@ class SetSidebarType extends Command
                                     $sidebarCode .= "
                                     @can('" . $submenu['permission'] . "')
                                         <li class=\"submenu-item\">
-                                        <a href=\"{{ route('". str($submenu['route'])->remove('/')->plural() . '.index' ."') }}\">{{ __('" . $submenu['title'] . "') }}</a>
+                                        <a href=\"{{ route('" . str($submenu['route'])->remove('/')->plural() . '.index' . "') }}\">{{ __('" . $submenu['title'] . "') }}</a>
                                         </li>
                                     @endcan\n";
                                 }

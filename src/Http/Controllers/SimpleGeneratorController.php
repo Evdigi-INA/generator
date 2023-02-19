@@ -1,12 +1,12 @@
 <?php
 
-namespace Zzzul\Generator\Http\Controllers;
+namespace EvdigiIna\Generator\Http\Controllers;
 
-use Zzzul\Generator\Enums\GeneratorType;
-use Zzzul\Generator\Services\GeneratorService;
+use EvdigiIna\Generator\Enums\GeneratorType;
+use EvdigiIna\Generator\Services\GeneratorService;
 use Symfony\Component\HttpFoundation\Response;
-use Zzzul\Generator\Http\Requests\StoreSimpleGeneratorRequest;
-use Zzzul\Generator\Generators\GeneratorUtils;
+use EvdigiIna\Generator\Http\Requests\StoreSimpleGeneratorRequest;
+use EvdigiIna\Generator\Generators\GeneratorUtils;
 
 class SimpleGeneratorController extends Controller
 {

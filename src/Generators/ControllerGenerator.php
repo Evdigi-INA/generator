@@ -1,6 +1,6 @@
 <?php
 
-namespace Zzzul\Generator\Generators;
+namespace EvdigiIna\Generator\Generators;
 
 class ControllerGenerator
 {
@@ -96,10 +96,10 @@ class ControllerGenerator
                     $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself($constrainName);
                     $columnAfterId = GeneratorUtils::getColumnAfterId($constrainName);
 
-                    if($countForeidnId + 1 < $i){
+                    if ($countForeidnId + 1 < $i) {
                         $relations .= "'$constrainSnakeCase:$selectedColumns', ";
                         $query .= "'$constrainSnakeCase:$selectedColumns', ";
-                    }else{
+                    } else {
                         $relations .= "'$constrainSnakeCase:$selectedColumns'";
                         $query .= "'$constrainSnakeCase:$selectedColumns'";
                     }

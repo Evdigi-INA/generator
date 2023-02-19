@@ -1,13 +1,15 @@
 <?php
 
+use EvdigiIna\Generator\Http\Controllers\GeneratorController;
+use EvdigiIna\Generator\Http\Controllers\SimpleGeneratorController;
+use EvdigiIna\Generator\Http\Middleware\OnlyAvailableInTheFullVersion;
+use EvdigiIna\Generator\Http\Middleware\TheGeneratorOnlyWorksInTheLocalEnv;
 use Illuminate\Support\Facades\Route;
-use Zzzul\Generator\Http\Controllers\{GeneratorController, SimpleGeneratorController};
-use Zzzul\Generator\Http\Middleware\{TheGeneratorOnlyWorksInTheLocalEnv, OnlyAvailableInTheFullVersion};
 
 Route::middleware(['web', TheGeneratorOnlyWorksInTheLocalEnv::class])->group(function () {
     Route::get('/generators/get-sidebar-menus/{index}', [GeneratorController::class, 'getSidebarMenus'])
         ->name('generators.get-sidebar-menus');
-        
+
     Route::resource('simple-generators', SimpleGeneratorController::class)
         ->only('create', 'store');
 

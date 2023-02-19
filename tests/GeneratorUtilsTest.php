@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use Zzzul\Generator\Generators\GeneratorUtils;
+use EvdigiIna\Generator\Generators\GeneratorUtils;
 
 class GeneratorUtilsTest extends BaseTestCase
 {

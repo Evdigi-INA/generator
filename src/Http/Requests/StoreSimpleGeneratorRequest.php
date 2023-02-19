@@ -1,8 +1,8 @@
 <?php
 
-namespace Zzzul\Generator\Http\Requests;
+namespace EvdigiIna\Generator\Http\Requests;
 
-use Zzzul\Generator\Enums\GeneratorType;
+use EvdigiIna\Generator\Enums\GeneratorType;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Foundation\Http\FormRequest;
 

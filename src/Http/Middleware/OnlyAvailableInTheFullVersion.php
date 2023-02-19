@@ -1,6 +1,6 @@
 <?php
 
-namespace Zzzul\Generator\Http\Middleware;
+namespace EvdigiIna\Generator\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
@@ -25,8 +25,8 @@ class OnlyAvailableInTheFullVersion
 
         $selectedVersion = collect(json_decode($cache))->toArray();
 
-        if($selectedVersion['generator_publish_all'] == null || $selectedVersion['generator_publish_all'] < 1){
-              abort(Response::HTTP_FORBIDDEN, 'You are using the simple version, to use this feature, you must be running the artisan command: "php artisan generator:publish all", and then you can use the full version.');
+        if ($selectedVersion['generator_publish_all'] == null || $selectedVersion['generator_publish_all'] < 1) {
+            abort(Response::HTTP_FORBIDDEN, 'You are using the simple version, to use this feature, you must be running the artisan command: "php artisan generator:publish all", and then you can use the full version.');
         }
 
         return $next($request);
