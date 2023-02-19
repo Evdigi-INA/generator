@@ -13,7 +13,7 @@ class PublishAllFiles extends Command
      *
      * @var string
      */
-    protected $signature = 'generator:publish {type}';
+    protected $signature = 'generator:install {type}';
 
     /**
      * The console command description.
@@ -40,7 +40,7 @@ class PublishAllFiles extends Command
     public function handle()
     {
         switch ($this->argument('type')) {
-            case 'all':
+            case 'full':
                 $composer = file_get_contents(base_path('composer.json'));
 
                 switch ($composer) {
@@ -108,14 +108,14 @@ class PublishAllFiles extends Command
                     return;
                 }
 
-                $this->info('Publishing all the required files (simple version)...');
+                $this->info('Installing the simple version...');
 
                 Artisan::call('vendor:publish --tag=generator-config-simple');
                 Artisan::call('vendor:publish --tag=generator-view-provider');
                 Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
                 Artisan::call('vendor:publish --tag=datatables');
 
-                $this->info('All the required files were published successfully.');
+                $this->info('Installed successfully, go to "/simple-generators/create" to create your first CRUD.');
                 break;
             default:
                 $this->error("The type must be 'all' to use the full version or 'simple' to use the simple version.");
@@ -197,7 +197,7 @@ class PublishAllFiles extends Command
      * */
     public function runPublishAll(): void
     {
-        $this->info('Publishing all the required files...');
+        $this->info('Installing...');
 
         Artisan::call('vendor:publish --tag=generator-view --force');
         Artisan::call('vendor:publish --tag=generator-config --force');
@@ -217,6 +217,6 @@ class PublishAllFiles extends Command
 
         \File::append(base_path('routes/web.php'), $template);
 
-        $this->info('All of the required files were successfully published..');
+        $this->info('Installed successfully, go to "/generators/create" to create your first CRUD.');
     }
 }

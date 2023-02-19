@@ -105,13 +105,13 @@ class GeneratorService
      * Get sidebar menus by index.
      *
      * @param int $index
-     * @return \Illuminate\Http\JsonResponse
+     * @return array
      */
-    public function getSidebarMenusByIndex(int $index): \Illuminate\Http\JsonResponse
+    public function getSidebarMenusByIndex(int $index): array
     {
         abort_if(!request()->ajax(), Response::HTTP_FORBIDDEN);
 
-        return response()->json(config('generator.sidebars')[$index], Response::HTTP_OK);
+        return config('generator.sidebars')[$index];
     }
 
     /**

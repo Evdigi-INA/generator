@@ -3,6 +3,7 @@
 use EvdigiIna\Generator\Http\Controllers\GeneratorController;
 use EvdigiIna\Generator\Http\Controllers\SimpleGeneratorController;
 use EvdigiIna\Generator\Http\Middleware\OnlyAvailableInTheFullVersion;
+use EvdigiIna\Generator\Http\Middleware\TheGeneratorOnlyWorksInTheLocalEnv;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', TheGeneratorOnlyWorksInTheLocalEnv::class])->group(function () {
