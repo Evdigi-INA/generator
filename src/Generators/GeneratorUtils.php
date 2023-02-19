@@ -14,7 +14,7 @@ class GeneratorUtils
      */
     public static function getTemplate(string $path): string
     {
-        return file_get_contents(__DIR__ . "/../Resources/stubs/generators/$path.stub");
+        return file_get_contents(__DIR__ . "/../../stubs/generators/$path.stub");
     }
 
     /**
