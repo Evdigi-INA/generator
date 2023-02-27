@@ -80,7 +80,7 @@
                         <p>
                             <a class="font-bold" href="{{ route('password.request') }}">
                                 {{ __('Forgot password') }}?
-                            </a>.
+                            </a>
                         </p>
                     @endif
                 </div>

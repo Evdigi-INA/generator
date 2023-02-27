@@ -34,9 +34,9 @@ class CreateViewGenerator
                 $modelNameSingularLowerCase,
                 $modelNamePluralKebabCase,
                 in_array('file', $request['input_types']) ? ' enctype="multipart/form-data"' : '',
-                $path != '' ? str_replace('\\', '.', $path) . "." : ''
+                $path != '' ? str_replace('\\', '.', $path) . "." : '',
             ],
-            GeneratorUtils::getTemplate('views/create')
+            empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/create') : GeneratorUtils::getTemplate('views/simple/create')
         );
 
         switch ($path) {
