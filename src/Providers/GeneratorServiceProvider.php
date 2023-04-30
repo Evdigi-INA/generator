@@ -3,7 +3,6 @@
 namespace EvdigiIna\Generator\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Foundation\Console\AboutCommand;
 use EvdigiIna\Generator\Commands\{SetSidebarType, PublishAllFiles};
 
 class GeneratorServiceProvider extends ServiceProvider
@@ -92,7 +91,7 @@ class GeneratorServiceProvider extends ServiceProvider
             __DIR__ . '/../../assets' => public_path('mazer'),
         ], 'generator-assets');
 
-        AboutCommand::add('Generator', fn () => ['Version' => '0.2.0']);
+        // Illuminate\Foundation\Console\AboutCommand::add('Generator', fn () => ['Version' => '0.2.0']);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
