@@ -14,6 +14,7 @@ class ModelGenerator
     {
         $path = GeneratorUtils::getModelLocation($request['model']);
         $model = GeneratorUtils::setModelName($request['model'], 'default');
+        $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
 
         $fields = "[";
         $casts = "[";
@@ -169,7 +170,7 @@ class ModelGenerator
                 '{{pluralSnakeCase}}',
             ],
             [
-                GeneratorUtils::singularPascalCase($model),
+                $modelNameSingularPascalCase,
                 $fields,
                 $casts,
                 $relations,
@@ -182,12 +183,12 @@ class ModelGenerator
 
         switch ($path) {
             case '':
-                file_put_contents(app_path("/Models/$model.php"), $template);
+                file_put_contents(app_path("/Models/$modelNameSingularPascalCase.php"), $template);
                 break;
             default:
                 $fullPath = app_path("/Models/$path");
                 GeneratorUtils::checkFolder($fullPath);
-                file_put_contents($fullPath . "/$model.php", $template);
+                file_put_contents($fullPath . "/$modelNameSingularPascalCase.php", $template);
                 break;
         }
     }

@@ -4,7 +4,8 @@
 use {{modelPath}};
 use {{requestPath}};
 use Yajra\DataTables\Facades\DataTables;
-use Image;
+use Intervention\Image\Facades\Image;
+
 
 class {{modelNameSingularPascalCase}}Controller extends Controller
 {
@@ -18,10 +19,8 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
     {
         if (request()->ajax()) {
             ${{modelNamePluralCamleCase}} = {{query}};
@@ -38,92 +37,66 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): \Illuminate\Contracts\View\View
     {
         return view('{{viewPath}}{{modelNamePluralKebabCase}}.create');
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(Store{{modelNameSingularPascalCase}}Request $request)
+    public function store(Store{{modelNameSingularPascalCase}}Request $request): \Illuminate\Http\RedirectResponse
     {
         $attr = $request->validated();
         {{passwordFieldStore}}{{inputMonths}}
 {{storeCode}}
         {{modelNameSingularPascalCase}}::create($attr);
 
-        return redirect()
-            ->route('{{modelNamePluralKebabCase}}.index')
-            ->with('success', __('The {{modelNameSingularCamelCase}} was created successfully.'));
+        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was created successfully.'));
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\{{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}
-     * @return \Illuminate\Http\Response
      */
-    public function show({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}})
+    public function show({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Contracts\View\View
     {
         {{loadRelation}}return view('{{viewPath}}{{modelNamePluralKebabCase}}.show', compact('{{modelNameSingularCamelCase}}'));
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\{{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}
-     * @return \Illuminate\Http\Response
      */
-    public function edit({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}})
+    public function edit({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Contracts\View\View
     {
         {{loadRelation}}return view('{{viewPath}}{{modelNamePluralKebabCase}}.edit', compact('{{modelNameSingularCamelCase}}'));
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\{{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}
-     * @return \Illuminate\Http\Response
      */
-    public function update(Update{{modelNameSingularPascalCase}}Request $request, {{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}})
+    public function update(Update{{modelNameSingularPascalCase}}Request $request, {{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Http\RedirectResponse
     {
         $attr = $request->validated();
         {{passwordFieldUpdate}}{{inputMonths}}
 {{updateCode}}
         {{updateDataAction}}
 
-        return redirect()
-            ->route('{{modelNamePluralKebabCase}}.index')
-            ->with('success', __('The {{modelNameSingularCamelCase}} was updated successfully.'));
+        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was updated successfully.'));
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\{{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}
-     * @return \Illuminate\Http\Response
      */
-    public function destroy({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}})
+    public function destroy({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Http\RedirectResponse
     {
         try {
         {{deleteCode}}
             ${{modelNameSingularCamelCase}}->delete();
 
-            return redirect()
-                ->route('{{modelNamePluralKebabCase}}.index')
-                ->with('success', __('The {{modelNameSingularCamelCase}} was deleted successfully.'));
+            return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was deleted successfully.'));
         } catch (\Throwable $th) {
-            return redirect()
-                ->route('{{modelNamePluralKebabCase}}.index')
-                ->with('error', __("The {{modelNameSingularCamelCase}} can't be deleted because it's related to another table."));
+            return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameSingularCamelCase}} can't be deleted because it's related to another table."));
         }
     }
 }
