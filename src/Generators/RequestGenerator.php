@@ -17,13 +17,14 @@ class RequestGenerator
 
         $validations = '';
         $totalFields = count($request['fields']);
+        $modelNamePascalCase = GeneratorUtils::singularPascalCase($model);
 
         switch ($path) {
             case '':
-                $namespace = "namespace App\Http\Requests;";
+                $namespace = "namespace App\Http\Requests\\$modelNamePascalCase;";
                 break;
             default:
-                $namespace = "namespace App\Http\Requests\\" . GeneratorUtils::singularPascalCase($path) . ";";
+                $namespace = "namespace App\Http\Requests\\$modelNamePascalCase\\" . GeneratorUtils::singularPascalCase($path) . ";";
                 break;
         }
 
@@ -266,7 +267,7 @@ class RequestGenerator
                 }
             }
         }
-        
+
         $updateRequestTemplate = str_replace(
             [
                 '{{modelNamePascalCase}}',
@@ -286,12 +287,12 @@ class RequestGenerator
          */
         switch ($path) {
             case '':
-                GeneratorUtils::checkFolder(app_path('/Http/Requests'));
-                file_put_contents(app_path("/Http/Requests/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
-                file_put_contents(app_path("/Http/Requests/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
+                GeneratorUtils::checkFolder(app_path("/Http/Requests/$modelNamePascalCase"));
+                file_put_contents(app_path("/Http/Requests/$modelNamePascalCase/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
+                file_put_contents(app_path("/Http/Requests/$modelNamePascalCase/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
                 break;
             default:
-                $fullPath = app_path("/Http/Requests/$path");
+                $fullPath = app_path("/Http/Requests/$modelNamePascalCase/$path");
                 GeneratorUtils::checkFolder($fullPath);
                 file_put_contents("$fullPath/Store{$modelSingularPascalCase}Request.php", $storeRequestTemplate);
                 file_put_contents("$fullPath/Update{$modelSingularPascalCase}Request.php", $updateRequestTemplate);

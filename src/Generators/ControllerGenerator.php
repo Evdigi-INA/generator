@@ -6,11 +6,8 @@ class ControllerGenerator
 {
     /**
      * Generate a controller file.
-     *
-     * @param array $request
-     * @return void
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $path = GeneratorUtils::getModelLocation($request['model']);
@@ -32,7 +29,7 @@ class ControllerGenerator
                  *
                  * use App\Http\Requests\{StoreProductRequest, UpdateProductRequest};
                  */
-                $requestPath = "App\Http\Requests\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
+                $requestPath = "App\Http\Requests\\$modelNameSingularPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
                 break;
             default:
                 /**
@@ -49,7 +46,7 @@ class ControllerGenerator
                  *
                  * use App\Http\Requests\Inventory\{StoreProductRequest, UpdateProductRequest};
                  */
-                $requestPath = "App\Http\Requests\\" . $path . "\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
+                $requestPath = "App\Http\Requests\\$modelNameSingularPascalCase\\" . $path . "\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
                 break;
         }
 
@@ -361,26 +358,17 @@ class ControllerGenerator
         /**
          * Create a controller file.
          */
-        switch ($path) {
-            case '':
-                file_put_contents(app_path("/Http/Controllers/{$modelNameSingularPascalCase}Controller.php"), $template);
-                break;
-            default:
-                $fullPath = app_path("/Http/Controllers/$path/");
-                GeneratorUtils::checkFolder($fullPath);
-                file_put_contents("$fullPath" . $modelNameSingularPascalCase . "Controller.php", $template);
-                break;
+        if (!$path) {
+            file_put_contents(app_path("/Http/Controllers/{$modelNameSingularPascalCase}Controller.php"), $template);
+        } else {
+            $fullPath = app_path("/Http/Controllers/$path/");
+            GeneratorUtils::checkFolder($fullPath);
+            file_put_contents("$fullPath" . $modelNameSingularPascalCase . "Controller.php", $template);
         }
     }
 
     /**
      * Generate an upload file code.
-     *
-     * @param string $field
-     * @param string $path
-     * @param string $model
-     * @param ?string $defaultValue
-     * @return string
      */
     protected function generateUploadFileCode(string $field, string $path, string $model, ?string $defaultValue = null): string
     {
