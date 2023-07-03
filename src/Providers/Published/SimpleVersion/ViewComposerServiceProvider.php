@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use Spatie\Permission\Models\Role;
 
 class ViewComposerServiceProvider extends ServiceProvider
 {
@@ -25,6 +24,6 @@ class ViewComposerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
+        //
     }
 }

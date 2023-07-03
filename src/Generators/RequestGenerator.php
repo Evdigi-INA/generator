@@ -18,13 +18,14 @@ class RequestGenerator
         $validations = '';
         $totalFields = count($request['fields']);
         $modelNamePascalCase = GeneratorUtils::singularPascalCase($model);
+        $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase($model);
 
         switch ($path) {
             case '':
-                $namespace = "namespace App\Http\Requests\\$modelNamePascalCase;";
+                $namespace = "namespace App\Http\Requests\\$modelNamePluralPascalCase;";
                 break;
             default:
-                $namespace = "namespace App\Http\Requests\\$modelNamePascalCase\\" . GeneratorUtils::singularPascalCase($path) . ";";
+                $namespace = "namespace App\Http\Requests\\$modelNamePluralPascalCase\\" . GeneratorUtils::singularPascalCase($path) . ";";
                 break;
         }
 

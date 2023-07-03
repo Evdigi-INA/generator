@@ -5,6 +5,7 @@ namespace EvdigiIna\Generator\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
+use Illuminate\Support\Facades\File;
 
 class PublishAllFiles extends Command
 {
@@ -34,62 +35,60 @@ class PublishAllFiles extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): void
     {
         switch ($this->argument('type')) {
             case 'full':
                 $composer = file_get_contents(base_path('composer.json'));
 
-                switch ($composer) {
-                    case !str_contains($composer, 'laravel/fortify') && !str_contains($composer, 'spatie/laravel-permission'):
-                        $this->error('You must be install laravel/fortify and spatie/laravel-permission before running this command.');
+                if (!in_array($composer, ['laravel/fortify', 'spatie/laravel-permission'])) {
+                    $this->error('You must be install laravel/fortify and spatie/laravel-permission before running this command.');
 
-                        $this->info('Install the package: composer require laravel/fortify spatie/laravel-permission');
-                        break;
-                    case !str_contains($composer, 'laravel/fortify'):
-                        $this->error('You must be install laravel/fortify before running this command.');
+                    $this->info('Install the package: composer require laravel/fortify spatie/laravel-permission');
+                    return;
+                }
 
-                        $this->info('Install the package: composer require laravel/fortify');
-                        break;
-                    case !str_contains($composer, 'spatie/laravel-permission'):
-                        $this->error('You must be install spatie/laravel-permission before running this command.');
+                if (!str_contains($composer, 'laravel/fortify')) {
+                    $this->error('You must be install laravel/fortify before running this command.');
 
-                        $this->info('Install the package: composer require spatie/laravel-permission');
-                        break;
-                    default:
-                        $totalRunningCommand = $this->totalRunningCommand('generator_publish_all');
+                    $this->info('Install the package: composer require laravel/fortify');
+                    return;
+                }
 
-                        if (
-                            $totalRunningCommand['generator_publish_simple'] == 1 || $totalRunningCommand['generator_publish_simple'] > 1
-                        ) {
-                            if (!$this->confirm('Do you wish to continue? You are already using the simple version.')) {
-                                return;
-                            }
-                        }
+                if (!str_contains($composer, 'spatie/laravel-permission')) {
+                    $this->error('You must be install spatie/laravel-permission before running this command.');
 
-                        if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
+                    $this->info('Install the package: composer require spatie/laravel-permission');
+                    return;
+                }
 
-                            if ($totalRunningCommand['generator_publish_all'] == 1 || $totalRunningCommand['generator_publish_all'] > 1) {
+                $totalRunningCommand = $this->totalRunningCommand('generator_publish_all');
 
-                                switch ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['generator_publish_all'] . ' times.')) {
-                                    case true:
-                                        $this->runPublishAll();
-                                        return;
-                                        break;
-                                    default:
-                                        return;
-                                        break;
-                                }
-                            }
-
-                            $this->runPublishAll();
-                        }
-
+                if (
+                    $totalRunningCommand['generator_publish_simple'] == 1 || $totalRunningCommand['generator_publish_simple'] > 1
+                ) {
+                    if (!$this->confirm('Do you wish to continue? You are already using the simple version.')) {
                         return;
-                        break;
+                    }
+                }
+
+                if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
+                    if ($totalRunningCommand['generator_publish_all'] == 1 || $totalRunningCommand['generator_publish_all'] > 1) {
+                        switch ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['generator_publish_all'] . ' times.')) {
+                            case true:
+                                $this->runPublishAll();
+                                return;
+                                break;
+                            default:
+                                return;
+                                break;
+                        }
+                    }
+
+                    $this->runPublishAll();
+
+                    return;
                 }
                 break;
             case 'simple':
@@ -125,8 +124,6 @@ class PublishAllFiles extends Command
 
     /**
      * Check total running of generator:publish all command.
-     *
-     * @return array
      * */
     public function totalRunningCommand(string $type = 'generator_publish_all'): array
     {
@@ -192,8 +189,6 @@ class PublishAllFiles extends Command
 
     /**
      * Publish all files required by the full version.
-     *
-     * @return void
      * */
     public function runPublishAll(): void
     {
@@ -215,7 +210,7 @@ class PublishAllFiles extends Command
 
         $template = GeneratorUtils::getTemplate('route');
 
-        \File::append(base_path('routes/web.php'), $template);
+        File::append(base_path('routes/web.php'), $template);
 
         $this->info('Installed successfully.');
     }

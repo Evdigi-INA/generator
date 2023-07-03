@@ -1,6 +1,6 @@
 <?php
 
-namespace EvdigiIna\Generator\Generators;
+namespace App\Utils;
 
 use Illuminate\Support\Facades\Schema;
 

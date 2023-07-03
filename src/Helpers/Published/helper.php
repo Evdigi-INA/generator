@@ -1,6 +1,6 @@
 <?php
 
-use EvdigiIna\Generator\Generators\GeneratorUtils;
+use App\Utils\GeneratorUtils;
 
 /**
  * Check the sidebar menu with the current Uri
