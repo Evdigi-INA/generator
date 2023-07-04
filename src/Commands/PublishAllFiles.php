@@ -40,33 +40,33 @@ class PublishAllFiles extends Command
     {
         switch ($this->argument('type')) {
             case 'full':
-                $composer = file_get_contents(base_path('composer.json'));
+                $composerFileText = file_get_contents(base_path('composer.json'));
 
-                if (!in_array($composer, ['laravel/fortify', 'spatie/laravel-permission'])) {
+                if (!in_array($composerFileText, ['laravel/fortify', 'spatie/laravel-permission'])) {
                     $this->error('You must be install laravel/fortify and spatie/laravel-permission before running this command.');
 
                     $this->info('Install the package: composer require laravel/fortify spatie/laravel-permission');
                     return;
                 }
 
-                if (!str_contains($composer, 'laravel/fortify')) {
+                if (!str_contains($composerFileText, 'laravel/fortify')) {
                     $this->error('You must be install laravel/fortify before running this command.');
 
                     $this->info('Install the package: composer require laravel/fortify');
                     return;
                 }
 
-                if (!str_contains($composer, 'spatie/laravel-permission')) {
+                if (!str_contains($composerFileText, 'spatie/laravel-permission')) {
                     $this->error('You must be install spatie/laravel-permission before running this command.');
 
                     $this->info('Install the package: composer require spatie/laravel-permission');
                     return;
                 }
 
-                $totalRunningCommand = $this->totalRunningCommand('generator_publish_all');
+                $totalRunningCommand = $this->totalRunningCommand('full_version_publish_count');
 
                 if (
-                    $totalRunningCommand['generator_publish_simple'] == 1 || $totalRunningCommand['generator_publish_simple'] > 1
+                    $totalRunningCommand['simple_version_publish_count'] == 1 || $totalRunningCommand['simple_version_publish_count'] > 1
                 ) {
                     if (!$this->confirm('Do you wish to continue? You are already using the simple version.')) {
                         return;
@@ -74,8 +74,8 @@ class PublishAllFiles extends Command
                 }
 
                 if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
-                    if ($totalRunningCommand['generator_publish_all'] == 1 || $totalRunningCommand['generator_publish_all'] > 1) {
-                        switch ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['generator_publish_all'] . ' times.')) {
+                    if ($totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1) {
+                        switch ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['full_version_publish_count'] . ' times.')) {
                             case true:
                                 $this->runPublishAll();
                                 return;
@@ -93,16 +93,16 @@ class PublishAllFiles extends Command
                 break;
             case 'simple':
 
-                $totalRunningCommand = $this->totalRunningCommand('generator_publish_simple');
+                $totalRunningCommand = $this->totalRunningCommand('simple_version_publish_count');
 
-                if ($totalRunningCommand['generator_publish_all'] == 1 || $totalRunningCommand['generator_publish_all'] > 1) {
+                if ($totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1) {
                     $this->info('You are using the full version, which already includes the simple version. So this command may not be affected.');
 
                     return;
                 }
 
-                if ($totalRunningCommand['generator_publish_simple'] == 1 || $totalRunningCommand['generator_publish_simple'] > 1) {
-                    $this->info('You are already running this command ' . $totalRunningCommand['generator_publish_simple'] . ' times.');
+                if ($totalRunningCommand['simple_version_publish_count'] == 1 || $totalRunningCommand['simple_version_publish_count'] > 1) {
+                    $this->info('You are already running this command ' . $totalRunningCommand['simple_version_publish_count'] . ' times.');
 
                     return;
                 }
@@ -125,7 +125,7 @@ class PublishAllFiles extends Command
     /**
      * Check total running of generator:publish all command.
      * */
-    public function totalRunningCommand(string $type = 'generator_publish_all'): array
+    public function totalRunningCommand(string $type = 'full_version_publish_count'): array
     {
         $dir = __DIR__ . '/../../generator-cache.json';
 
@@ -133,51 +133,51 @@ class PublishAllFiles extends Command
             file_put_contents(
                 $dir,
                 json_encode([
-                    'generator_publish_simple' => null,
-                    'generator_publish_all' => null
+                    'simple_version_publish_count' => null,
+                    'full_version_publish_count' => null
                 ])
             );
         }
 
         $cache = file_get_contents($dir);
 
-        $totalRunningCommand = collect(json_decode($cache))->toArray();
+        $totalRunningCommand = json_decode($cache);
 
         switch ($type) {
-            case 'generator_publish_all':
-                if ($totalRunningCommand['generator_publish_all'] == null) {
+            case 'full_version_publish_count':
+                if ($totalRunningCommand['full_version_publish_count'] == null) {
                     file_put_contents(
                         $dir,
                         json_encode([
-                            'generator_publish_simple' => $totalRunningCommand['generator_publish_simple'],
-                            'generator_publish_all' => 1
+                            'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'],
+                            'full_version_publish_count' => 1
                         ])
                     );
                 } else {
                     file_put_contents(
                         $dir,
                         json_encode([
-                            'generator_publish_simple' => $totalRunningCommand['generator_publish_simple'],
-                            'generator_publish_all' => $totalRunningCommand['generator_publish_all'] + 1
+                            'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'],
+                            'full_version_publish_count' => $totalRunningCommand['full_version_publish_count'] + 1
                         ])
                     );
                 }
                 break;
             default:
-                if ($totalRunningCommand['generator_publish_simple'] == null) {
+                if ($totalRunningCommand['simple_version_publish_count'] == null) {
                     file_put_contents(
                         $dir,
                         json_encode([
-                            'generator_publish_simple' => 1,
-                            'generator_publish_all' => $totalRunningCommand['generator_publish_all']
+                            'simple_version_publish_count' => 1,
+                            'full_version_publish_count' => $totalRunningCommand['full_version_publish_count']
                         ])
                     );
                 } else {
                     file_put_contents(
                         $dir,
                         json_encode([
-                            'generator_publish_simple' => $totalRunningCommand['generator_publish_simple'] + 1,
-                            'generator_publish_all' => $totalRunningCommand['generator_publish_all']
+                            'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'] + 1,
+                            'full_version_publish_count' => $totalRunningCommand['full_version_publish_count']
                         ])
                     );
                 }

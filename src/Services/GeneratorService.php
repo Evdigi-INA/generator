@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Generators\{
     ControllerGenerator,
+    GeneratorUtils,
     MenuGenerator,
     ModelGenerator,
     MigrationGenerator,
@@ -27,9 +28,6 @@ class GeneratorService
 {
     /**
      * Generate all CRUD modules.
-     *
-     * @param array $request
-     * @return void
      */
     public function generateAll(array $request): void
     {
@@ -60,9 +58,6 @@ class GeneratorService
 
     /**
      * Generate only model and migration.
-     *
-     * @param array $request
-     * @return void
      */
     public function onlyGenerateModelAndMigration(array $request): void
     {
@@ -73,9 +68,6 @@ class GeneratorService
 
     /**
      * Simple generator, only generate the core module(CRUD).
-     *
-     * @param array $request
-     * @return void
      */
     public function simpleGenerator(array $request): void
     {
@@ -103,9 +95,6 @@ class GeneratorService
 
     /**
      * Get sidebar menus by index.
-     *
-     * @param int $index
-     * @return array
      */
     public function getSidebarMenusByIndex(int $index): array
     {
@@ -116,8 +105,6 @@ class GeneratorService
 
     /**
      * Check sidebar view.
-     *
-     * @return void
      */
     public function checkSidebarType(): void
     {
@@ -131,9 +118,6 @@ class GeneratorService
 
     /**
      * Check to see if any files are the same as the generated files. (will be used in the future)
-     *
-     * @param array $request
-     * @return array
      * */
     public function checkFilesAreSame(array $request): array
     {
