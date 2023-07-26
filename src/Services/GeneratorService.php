@@ -146,11 +146,11 @@ class GeneratorService
         }
 
         if (
-            file_exists(app_path("/Http/Controllers/${model}Controller.php")) ||
-            file_exists(app_path("/Http/Controllers/$path") . "/${model}Controller.php")
+            file_exists(app_path("/Http/Controllers/{$model}Controller.php")) ||
+            file_exists(app_path("/Http/Controllers/$path") . "/{$model}Controller.php")
         ) {
             $sameFile[] = [
-                'controller' => "The ${model}Controller is already exists"
+                'controller' => "The {$model}Controller is already exists"
             ];
         }
 
