@@ -42,7 +42,7 @@ class PublishAllFiles extends Command
             case 'full':
                 $composerFileText = file_get_contents(base_path('composer.json'));
 
-                if (!in_array($composerFileText, ['laravel/fortify', 'spatie/laravel-permission'])) {
+                if (!str_contains($composerFileText, 'laravel/fortify') && !str_contains($composerFileText, 'spatie/laravel-permission')) {
                     $this->error('You must be install laravel/fortify and spatie/laravel-permission before running this command.');
 
                     $this->info('Install the package: composer require laravel/fortify spatie/laravel-permission');
@@ -113,6 +113,7 @@ class PublishAllFiles extends Command
                 Artisan::call('vendor:publish --tag=generator-view-provider');
                 Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
                 Artisan::call('vendor:publish --tag=datatables');
+                Artisan::call('vendor:publish --tag=generator-helper');
 
                 $this->info('Installed successfully.');
                 break;
@@ -133,19 +134,19 @@ class PublishAllFiles extends Command
             file_put_contents(
                 $dir,
                 json_encode([
-                    'simple_version_publish_count' => null,
-                    'full_version_publish_count' => null
+                    'simple_version_publish_count' => 0,
+                    'full_version_publish_count' => 0
                 ])
             );
         }
 
         $cache = file_get_contents($dir);
 
-        $totalRunningCommand = json_decode($cache);
+        $totalRunningCommand = json_decode($cache, true);
 
         switch ($type) {
             case 'full_version_publish_count':
-                if ($totalRunningCommand['full_version_publish_count'] == null) {
+                if ($totalRunningCommand['full_version_publish_count'] == 0) {
                     file_put_contents(
                         $dir,
                         json_encode([
@@ -164,7 +165,7 @@ class PublishAllFiles extends Command
                 }
                 break;
             default:
-                if ($totalRunningCommand['simple_version_publish_count'] == null) {
+                if ($totalRunningCommand['simple_version_publish_count'] == 0) {
                     file_put_contents(
                         $dir,
                         json_encode([
@@ -205,6 +206,7 @@ class PublishAllFiles extends Command
         Artisan::call('vendor:publish --tag=generator-seeder --force');
         Artisan::call('vendor:publish --tag=generator-model --force');
         Artisan::call('vendor:publish --tag=generator-assets --force');
+        Artisan::call('vendor:publish --tag=generator-helper --force');
         Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
         Artisan::call('vendor:publish --tag=datatables --force');
 
@@ -215,3 +217,4 @@ class PublishAllFiles extends Command
         $this->info('Installed successfully.');
     }
 }
+

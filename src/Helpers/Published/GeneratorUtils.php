@@ -197,7 +197,7 @@ class GeneratorUtils
     }
 
     /**
-     * Convert string to singular, remove special caracters, and lowercase.
+     * Convert string to singular, remove special character, and lowercase.
      *
      * @param string $string
      * @return string
@@ -215,7 +215,7 @@ class GeneratorUtils
     }
 
     /**
-     * Remove special caracters, and lowercase.
+     * Remove special character, and lowercase.
      *
      * @param string $string
      * @return string
@@ -226,7 +226,7 @@ class GeneratorUtils
     }
 
     /**
-     * Convert string to plural, remove special caracters, and uppercase every first letters.
+     * Convert string to plural, remove special character, and uppercase every first letters.
      *
      * @param string $string
      * @return string
@@ -244,7 +244,7 @@ class GeneratorUtils
     }
 
     /**
-     * Convert string to singular, remove special caracters, and uppercase every first letters.
+     * Convert string to singular, remove special character, and uppercase every first letters.
      *
      * @param string $string
      * @return string
@@ -262,7 +262,7 @@ class GeneratorUtils
     }
 
     /**
-     * Remove special caracters, and uppercase every first letters.
+     * Remove special character, and uppercase every first letters.
      *
      * @param string $string
      * @return string
@@ -273,7 +273,7 @@ class GeneratorUtils
     }
 
     /**
-     * Convert string to plural, remove special caracters, and lowercase.
+     * Convert string to plural, remove special character, and lowercase.
      *
      * @param string $string
      * @return string
@@ -526,3 +526,4 @@ class GeneratorUtils
         return '';
     }
 }
+
