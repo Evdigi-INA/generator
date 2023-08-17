@@ -92,9 +92,9 @@ class GeneratorServiceProvider extends ServiceProvider
         ], 'generator-assets');
 
         $this->publishes([
-            __DIR__ . '/../Helpers/Published/helper.php' => app_path('Utils/helper.php'),
-            __DIR__ . '/../Helpers/Published/GeneratorUtils.php' => app_path('Utils/GeneratorUtils.php')
-        ], 'generator-helper');
+            __DIR__ . '/../Helpers/Published/helper.php' => app_path('Generators/helper.php'),
+            __DIR__ . '/../Helpers/Published/GeneratorUtils.php' => app_path('Generators/GeneratorUtils.php')
+        ], 'generator-utils');
 
         // Illuminate\Foundation\Console\AboutCommand::add('Generator', fn () => ['Version' => '0.2.0']);
 

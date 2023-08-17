@@ -113,7 +113,7 @@ class PublishAllFiles extends Command
                 Artisan::call('vendor:publish --tag=generator-view-provider');
                 Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
                 Artisan::call('vendor:publish --tag=datatables');
-                Artisan::call('vendor:publish --tag=generator-helper');
+                Artisan::call('vendor:publish --tag=generator-utils');
 
                 $this->info('Installed successfully.');
                 break;
@@ -206,7 +206,7 @@ class PublishAllFiles extends Command
         Artisan::call('vendor:publish --tag=generator-seeder --force');
         Artisan::call('vendor:publish --tag=generator-model --force');
         Artisan::call('vendor:publish --tag=generator-assets --force');
-        Artisan::call('vendor:publish --tag=generator-helper --force');
+        Artisan::call('vendor:publish --tag=generator-utils --force');
         Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
         Artisan::call('vendor:publish --tag=datatables --force');
 
