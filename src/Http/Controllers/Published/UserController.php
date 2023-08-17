@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\{StoreUserRequest, UpdateUserRequest};
+use App\Http\Requests\Users\{StoreUserRequest, UpdateUserRequest};
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
 use Image;
@@ -26,10 +26,8 @@ class UserController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
     {
         if (request()->ajax()) {
             $users = User::with('roles:id,name');
@@ -53,21 +51,16 @@ class UserController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): \Illuminate\Contracts\View\View
     {
         return view('users.create');
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request): \Illuminate\Http\RedirectResponse
     {
         $attr = $request->validated();
 
@@ -93,18 +86,13 @@ class UserController extends Controller
 
         $user->assignRole($request->role);
 
-        return redirect()
-            ->route('users.index')
-            ->with('success', __('The user was created successfully.'));
+        return to_route('users.index')->with('success', __('The user was created successfully.'));
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show(User $user): \Illuminate\Contracts\View\View
     {
         $user->load('roles:id,name');
 
@@ -113,11 +101,8 @@ class UserController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit(User $user): \Illuminate\Contracts\View\View
     {
         $user->load('roles:id,name');
 
@@ -126,12 +111,8 @@ class UserController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, User $user): \Illuminate\Http\RedirectResponse
     {
         $attr = $request->validated();
 
@@ -139,18 +120,15 @@ class UserController extends Controller
 
             $filename = $request->file('avatar')->hashName();
 
-            // if folder dont exist, then create folder
             if (!file_exists($folder = public_path($this->avatarPath))) {
                 mkdir($folder, 0777, true);
             }
 
-            // Intervention Image
             Image::make($request->file('avatar')->getRealPath())->resize(500, 500, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             })->save(public_path($this->avatarPath) . $filename);
 
-            // delete old avatar from storage
             if ($user->avatar != null && file_exists($oldAvatar = public_path($this->avatarPath .
                 $user->avatar))) {
                 unlink($oldAvatar);
@@ -174,18 +152,13 @@ class UserController extends Controller
 
         $user->syncRoles($request->role);
 
-        return redirect()
-            ->route('users.index')
-            ->with('success', __('The user was updated successfully.'));
+        return to_route('users.index')->with('success', __('The user was updated successfully.'));
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(User $user): \Illuminate\Http\RedirectResponse
     {
         if ($user->avatar != null && file_exists($oldAvatar = public_path($this->avatarPath . $user->avatar))) {
             unlink($oldAvatar);
@@ -193,8 +166,6 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()
-            ->route('users.index')
-            ->with('success', __('The user was deleted successfully.'));
+        return to_route('users.index')->with('success', __('The user was deleted successfully.'));
     }
 }

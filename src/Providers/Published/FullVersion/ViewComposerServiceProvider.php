@@ -10,20 +10,16 @@ class ViewComposerServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         //
     }
 
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         View::composer(['users.create', 'users.edit'], function ($view) {
             return $view->with(

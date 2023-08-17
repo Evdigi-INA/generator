@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\{StoreRoleRequest, UpdateRoleRequest};
-use Spatie\Permission\Models\{Role, Permission};
+use App\Http\Requests\Roles\{StoreRoleRequest, UpdateRoleRequest};
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 
 class RoleAndPermissionController extends Controller
@@ -21,7 +21,7 @@ class RoleAndPermissionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
     {
         if (request()->ajax()) {
             $users = Role::query();
@@ -42,38 +42,28 @@ class RoleAndPermissionController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): \Illuminate\Contracts\View\View
     {
         return view('roles.create');
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(StoreRoleRequest $request)
+    public function store(StoreRoleRequest $request): \Illuminate\Http\RedirectResponse
     {
         $role = Role::create(['name' => $request->name]);
 
         $role->givePermissionTo($request->permissions);
 
-        return redirect()
-            ->route('roles.index')
-            ->with('success', __('The role was created successfully.'));
+        return to_route('roles.index')->with('success', __('The role was created successfully.'));
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function show(int $id)
+    public function show(int $id): \Illuminate\Contracts\View\View
     {
         $role = Role::with('permissions')->findOrFail($id);
 
@@ -82,11 +72,8 @@ class RoleAndPermissionController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function edit(int $id)
+    public function edit(int $id): \Illuminate\Contracts\View\View
     {
         $role = Role::with('permissions')->findOrFail($id);
 
@@ -95,12 +82,8 @@ class RoleAndPermissionController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRoleRequest $request, $id)
+    public function update(UpdateRoleRequest $request, string $id): \Illuminate\Http\RedirectResponse
     {
         $role = Role::findOrFail($id);
 
@@ -108,34 +91,22 @@ class RoleAndPermissionController extends Controller
 
         $role->syncPermissions($request->permissions);
 
-        return redirect()
-            ->route('roles.index')
-            ->with('success', __('The role was updated successfully.'));
+        return to_route('roles.index')->with('success', __('The role was updated successfully.'));
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(int $id)
+    public function destroy(string $id): \Illuminate\Http\RedirectResponse
     {
         $role = Role::withCount('users')->findOrFail($id);
 
-        // if any user where role.id = $id
         if ($role->users_count < 1) {
             $role->delete();
 
-            return redirect()
-                ->route('roles.index')
-                ->with('success', __('The role was deleted successfully.'));
-        } else {
-            return redirect()
-                ->route('roles.index')
-                ->with('error', __('Can`t delete role.'));
-        }
+            return to_route('roles.index')->with('success', __('The role was deleted successfully.'));
+        } 
 
-        return redirect()->route('role.index');
+        return to_route('roles.index')->with('error', __('Can`t delete role.'));
     }
 }
