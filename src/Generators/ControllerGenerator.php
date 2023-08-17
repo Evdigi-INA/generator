@@ -17,6 +17,7 @@ class ControllerGenerator
         $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase($model);
         $modelNameSpaceLowercase = GeneratorUtils::cleanSingularLowerCase($model);
         $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
+        $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase($model);
 
         $query = "$modelNameSingularPascalCase::query()";
 
@@ -29,7 +30,7 @@ class ControllerGenerator
                  *
                  * use App\Http\Requests\{StoreProductRequest, UpdateProductRequest};
                  */
-                $requestPath = "App\Http\Requests\\$modelNameSingularPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
+                $requestPath = "App\Http\Requests\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
                 break;
             default:
                 /**
@@ -46,7 +47,7 @@ class ControllerGenerator
                  *
                  * use App\Http\Requests\Inventory\{StoreProductRequest, UpdateProductRequest};
                  */
-                $requestPath = "App\Http\Requests\\$modelNameSingularPascalCase\\" . $path . "\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
+                $requestPath = "App\Http\Requests\\$modelNamePluralPascalCase\\" . $path . "\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
                 break;
         }
 

@@ -288,12 +288,12 @@ class RequestGenerator
          */
         switch ($path) {
             case '':
-                GeneratorUtils::checkFolder(app_path("/Http/Requests/$modelNamePascalCase"));
-                file_put_contents(app_path("/Http/Requests/$modelNamePascalCase/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
-                file_put_contents(app_path("/Http/Requests/$modelNamePascalCase/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
+                GeneratorUtils::checkFolder(app_path("/Http/Requests/$modelNamePluralPascalCase"));
+                file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
+                file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
                 break;
             default:
-                $fullPath = app_path("/Http/Requests/$modelNamePascalCase/$path");
+                $fullPath = app_path("/Http/Requests/$modelNamePluralPascalCase/$path");
                 GeneratorUtils::checkFolder($fullPath);
                 file_put_contents("$fullPath/Store{$modelSingularPascalCase}Request.php", $storeRequestTemplate);
                 file_put_contents("$fullPath/Update{$modelSingularPascalCase}Request.php", $updateRequestTemplate);
