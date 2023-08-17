@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Utils;
+namespace App\Generators;
 
 use Illuminate\Support\Facades\Schema;
 
