@@ -54,7 +54,7 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // Actions fortify
         $this->publishes([
-            __DIR__ . '/../../stubs/generators/publish/fortify' => app_path('Actions')
+            __DIR__ . '/../../stubs/generators/publish/fortify' => app_path('Actions/Fortify')
         ], 'generator-action');
 
         // Kernel
@@ -73,12 +73,12 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // Migrations
         $this->publishes([
-            __DIR__ . '/../../stubs/generators/publish/migrations' => database_path('migrations')
+            __DIR__ . '/../../stubs/generators/publish/database/migrations' => database_path('migrations')
         ], 'generator-migration');
 
         // Seeder
         $this->publishes([
-            __DIR__ . '/../../stubs/generators/publish/seeders' => database_path('seeders')
+            __DIR__ . '/../../stubs/generators/publish/database/seeders' => database_path('seeders')
         ], 'generator-seeder');
 
         // Model
