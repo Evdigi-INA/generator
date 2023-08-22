@@ -29,61 +29,61 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // views
         $this->publishes([
-            __DIR__ . '/../Resources/views/published' => resource_path('views'),
+            __DIR__ . '/../../stubs/generators/publish/views/' => resource_path('views'),
         ], 'generator-view');
 
         // config
         $this->publishes([
-            __DIR__ . '/../Config/Full' => config_path()
+            __DIR__ . '/../../stubs/generators/publish/config/full-version' => config_path()
         ], 'generator-config');
 
         // config simple
         $this->publishes([
-            __DIR__ . '/../Config/Simple/generator.php' => config_path('generator.php')
+            __DIR__ . '/../../stubs/generators/publish/config/simple-version/generator.php' => config_path('generator.php')
         ], 'generator-config-simple');
 
         // Controllers
         $this->publishes([
-            __DIR__ . '/../Http/Controllers/Published' => app_path('Http/Controllers')
+            __DIR__ . '/../../stubs/generators/publish/controllers' => app_path('Http/Controllers')
         ], 'generator-controller');
 
         // Requests
         $this->publishes([
-            __DIR__ . '/../Http/Requests/Published' => app_path('Http/Requests')
+            __DIR__ . '/../../stubs/generators/publish/requests' => app_path('Http/Requests')
         ], 'generator-request');
 
         // Actions fortify
         $this->publishes([
-            __DIR__ . '/../Actions' => app_path('Actions')
+            __DIR__ . '/../../stubs/generators/publish/fortify' => app_path('Actions')
         ], 'generator-action');
 
         // Kernel
         $this->publishes([
-            __DIR__ . '/../Http/Kernel.php' => app_path('Http/Kernel.php')
+            __DIR__ . '/../../stubs/generators/publish/Kernel.php' => app_path('Http/Kernel.php')
         ], 'generator-kernel');
 
         // Providers
         $this->publishes([
-            __DIR__ . '/../Providers/Published/FullVersion' => app_path('Providers')
+            __DIR__ . '/../../stubs/generators/publish/providers/full-version' => app_path('Providers')
         ], 'generator-provider');
 
         $this->publishes([
-            __DIR__ . '/../Providers/Published/SimpleVersion' => app_path('Providers')
+            __DIR__ . '/../../stubs/generators/publish/simple-version' => app_path('Providers')
         ], 'generator-view-provider');
 
         // Migrations
         $this->publishes([
-            __DIR__ . '/../Database/Migrations' => database_path('migrations')
+            __DIR__ . '/../../stubs/generators/publish/migrations' => database_path('migrations')
         ], 'generator-migration');
 
         // Seeder
         $this->publishes([
-            __DIR__ . '/../Database/Seeders' => database_path('seeders')
+            __DIR__ . '/../../stubs/generators/publish/seeders' => database_path('seeders')
         ], 'generator-seeder');
 
         // Model
         $this->publishes([
-            __DIR__ . '/../Models/User.php' => app_path('Models/User.php')
+            __DIR__ . '/../../stubs/generators/publish/models/User.php' => app_path('Models/User.php')
         ], 'generator-model');
 
         // asset/mazer template
@@ -92,8 +92,8 @@ class GeneratorServiceProvider extends ServiceProvider
         ], 'generator-assets');
 
         $this->publishes([
-            __DIR__ . '/../Helpers/Published/helper.php' => app_path('Generators/helper.php'),
-            __DIR__ . '/../Helpers/Published/GeneratorUtils.php' => app_path('Generators/GeneratorUtils.php')
+            __DIR__ . '/../../stubs/generators/publish/utils/helper.php' => app_path('Generators/helper.php'),
+            __DIR__ . '/../../stubs/generators/publish/utils/GeneratorUtils.php' => app_path('Generators/GeneratorUtils.php')
         ], 'generator-utils');
 
         // Illuminate\Foundation\Console\AboutCommand::add('Generator', fn () => ['Version' => '0.2.0']);

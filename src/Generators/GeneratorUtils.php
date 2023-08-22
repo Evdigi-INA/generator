@@ -18,6 +18,17 @@ class GeneratorUtils
     }
 
     /**
+     * Get published files
+     *
+     * @param string $path
+     * @return string
+     */
+    public static function getPublishedFiles(string $path): string
+    {
+        return __DIR__ . "/../../stubs/publish/$path";
+    }
+
+    /**
      * Check folder if doesnt exist, then make folder.
      *
      * @param string $path
