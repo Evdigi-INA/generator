@@ -88,8 +88,7 @@ class GeneratorServiceProvider extends ServiceProvider
         ], 'generator-assets');
 
         $this->publishes([
-            __DIR__ . '/../../stubs/generators/publish/utils/helper.php' => app_path('Generators/helper.php'),
-            __DIR__ . '/../../stubs/generators/publish/utils/GeneratorUtils.php' => app_path('Generators/GeneratorUtils.php')
+            __DIR__ . '/../../stubs/generators/publish/utils' => app_path('Generators')
         ], 'generator-utils');
 
         // Illuminate\Foundation\Console\AboutCommand::add('Generator', fn () => ['Version' => '0.2.0']);
