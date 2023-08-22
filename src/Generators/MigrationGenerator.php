@@ -8,9 +8,6 @@ class MigrationGenerator
 {
     /**
      * Generate a migration file.
-     *
-     * @param array $request
-     * @return void
      */
     public function generate(array $request)
     {

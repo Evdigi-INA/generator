@@ -1,7 +1,8 @@
 <?php
 
-namespace EvdigiIna\Generator\Services;
+namespace EvdigiIna\Generator\Generators\Services;
 
+use EvdigiIna\Generator\Generators\Interfaces\GeneratorServiceInterface;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Generators\{
@@ -24,7 +25,7 @@ use EvdigiIna\Generator\Generators\Views\{
     ShowViewGenerator,
 };
 
-class GeneratorService
+class GeneratorService implements GeneratorServiceInterface
 {
     /**
      * Generate all CRUD modules.

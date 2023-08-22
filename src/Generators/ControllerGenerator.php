@@ -264,7 +264,7 @@ class ControllerGenerator
                     [
                         '{{modelNameSingularPascalCase}}',
                         '{{modelNameSingularCamelCase}}',
-                        '{{modelNamePluralCamleCase}}',
+                        '{{modelNamePluralCamelCase}}',
                         '{{modelNamePluralKebabCase}}',
                         '{{modelNameSpaceLowercase}}',
                         '{{indexCode}}',

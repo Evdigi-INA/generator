@@ -8,9 +8,6 @@ class PermissionGenerator
 {
     /**
      * Generate new permissions to confg.permissions.permissions(used for peermissios seeder).
-     *
-     * @param array $request
-     * @return void
      */
     public function generate(array $request)
     {

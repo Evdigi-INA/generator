@@ -8,9 +8,6 @@ class ViewComposerGenerator
 {
     /**
      * Generate view composer on viewServiceProvider, if any belongsTo relation.
-     *
-     * @param array $request
-     * @return void
      */
     public function generate(array $request)
     {

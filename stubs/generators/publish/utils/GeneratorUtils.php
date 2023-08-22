@@ -3,14 +3,12 @@
 namespace App\Generators;
 
 use Illuminate\Support\Facades\Schema;
+use App\Generators\Interfaces\GeneratorUtilsInterface;
 
-class GeneratorUtils
+class GeneratorUtils implements GeneratorUtilsInterface
 {
     /**
      * Get template/stub file.
-     *
-     * @param string $path
-     * @return string
      */
     public static function getTemplate(string $path): string
     {
@@ -18,10 +16,15 @@ class GeneratorUtils
     }
 
     /**
-     * Check folder if doesnt exist, then make folder.
-     *
-     * @param string $path
-     * @return void
+     * Get published files.
+     */
+    public static function getPublishedFiles(string $path): string
+    {
+        return __DIR__ . "/../../stubs/publish/$path";
+    }
+
+    /**
+     * Check folder if not exist, then make folder.
      */
     public static function checkFolder(string $path): void
     {
@@ -32,9 +35,6 @@ class GeneratorUtils
 
     /**
      * Convert string to singular pascal case.
-     *
-     * @param string $string
-     * @return string
      */
     public static function singularPascalCase(string $string): string
     {
@@ -50,9 +50,6 @@ class GeneratorUtils
 
     /**
      * Convert string to singular pascal case.
-     *
-     * @param string $string
-     * @return string
      */
     public static function pascalCase(string $string): string
     {
@@ -61,9 +58,6 @@ class GeneratorUtils
 
     /**
      * Convert string to plural pascal case.
-     *
-     * @param string $string
-     * @return string
      */
     public static function pluralPascalCase(string $string): string
     {
@@ -79,9 +73,6 @@ class GeneratorUtils
 
     /**
      * Convert string to plural snake case.
-     *
-     * @param string $string
-     * @return string
      */
     public static function pluralSnakeCase(string $string): string
     {
@@ -97,9 +88,6 @@ class GeneratorUtils
 
     /**
      * Convert string to singular snake case.
-     *
-     * @param string $string
-     * @return string
      */
     public static function singularSnakeCase(string $string): string
     {
@@ -115,9 +103,6 @@ class GeneratorUtils
 
     /**
      * Convert string to plural pascal case.
-     *
-     * @param string $string
-     * @return string
      */
     public static function pluralCamelCase(string $string): string
     {
@@ -133,9 +118,6 @@ class GeneratorUtils
 
     /**
      * Convert string to singular pascal case.
-     *
-     * @param string $string
-     * @return string
      */
     public static function singularCamelCase(string $string): string
     {
@@ -151,9 +133,6 @@ class GeneratorUtils
 
     /**
      * Convert string to plural, kebab case, and lowercase.
-     *
-     * @param string $string
-     * @return string
      */
     public static function pluralKebabCase(string $string): string
     {
@@ -168,10 +147,7 @@ class GeneratorUtils
     }
 
     /**
-     * Convert string kebab case, and lowercase.
-     *
-     * @param string $string
-     * @return string
+     * Convert string to kebab case, and lowercase.
      */
     public static function kebabCase(string $string): string
     {
@@ -180,9 +156,6 @@ class GeneratorUtils
 
     /**
      * Convert string to singular, kebab case, and lowercase.
-     *
-     * @param string $string
-     * @return string
      */
     public static function singularKebabCase(string $string): string
     {
@@ -197,10 +170,7 @@ class GeneratorUtils
     }
 
     /**
-     * Convert string to singular, remove special character, and lowercase.
-     *
-     * @param string $string
-     * @return string
+     * Convert string to singular, remove special characters, and lowercase.
      */
     public static function cleanSingularLowerCase(string $string): string
     {
@@ -215,10 +185,7 @@ class GeneratorUtils
     }
 
     /**
-     * Remove special character, and lowercase.
-     *
-     * @param string $string
-     * @return string
+     * Remove special characters, and lowercase.
      */
     public static function cleanLowerCase(string $string): string
     {
@@ -226,10 +193,7 @@ class GeneratorUtils
     }
 
     /**
-     * Convert string to plural, remove special character, and uppercase every first letters.
-     *
-     * @param string $string
-     * @return string
+     * Convert string to plural, remove special characters, and uppercase every first letters.
      */
     public static function cleanPluralUcWords(string $string): string
     {
@@ -244,10 +208,7 @@ class GeneratorUtils
     }
 
     /**
-     * Convert string to singular, remove special character, and uppercase every first letters.
-     *
-     * @param string $string
-     * @return string
+     * Convert string to singular, remove special characters, and uppercase every first letters.
      */
     public static function cleanSingularUcWords(string $string): string
     {
@@ -262,10 +223,7 @@ class GeneratorUtils
     }
 
     /**
-     * Remove special character, and uppercase every first letters.
-     *
-     * @param string $string
-     * @return string
+     * Remove special characters, and uppercase every first letters.
      */
     public static function cleanUcWords(string $string): string
     {
@@ -273,10 +231,7 @@ class GeneratorUtils
     }
 
     /**
-     * Convert string to plural, remove special character, and lowercase.
-     *
-     * @param string $string
-     * @return string
+     * Convert string to plural, remove special characters, and lowercase.
      */
     public static function cleanPluralLowerCase(string $string): string
     {
@@ -292,17 +247,14 @@ class GeneratorUtils
 
     /**
      * Get 1 column after id on the table.
-     *
-     * @param string $table
-     * @return string $column
      */
     public static function getColumnAfterId(string $table): string
     {
         $table = GeneratorUtils::pluralSnakeCase($table);
-        $allColums = Schema::getColumnListing($table);
+        $allColumns = Schema::getColumnListing($table);
 
-        if (sizeof($allColums) > 0) {
-            $column = $allColums[1];
+        if (sizeof($allColumns) > 0) {
+            $column = $allColumns[1];
         } else {
             $column = "id";
         }
@@ -312,17 +264,14 @@ class GeneratorUtils
 
     /**
      * Select id and column after id on the table.
-     *
-     * @param string $table
-     * @return string $selectedField
      */
     public static function selectColumnAfterIdAndIdItself(string $table): string
     {
         $table = GeneratorUtils::pluralSnakeCase($table);
-        $allColums = Schema::getColumnListing($table);
+        $allColumns = Schema::getColumnListing($table);
 
-        if (sizeof($allColums) > 0) {
-            $selectedField = "id,$allColums[1]";
+        if (sizeof($allColumns) > 0) {
+            $selectedField = "id,$allColumns[1]";
         } else {
             $selectedField = "id";
         }
@@ -331,10 +280,7 @@ class GeneratorUtils
     }
 
     /**
-     * Get model location/path if contains '/'.
-     *
-     * @param string $model
-     * @return string $path
+     * Get model location or path if contains '/'.
      */
     public static function getModelLocation(string $model): string
     {
@@ -358,9 +304,6 @@ class GeneratorUtils
 
     /**
      * Converts camelCase string to have spaces between each.
-     *
-     * @param string $string
-     * @return string
      */
     public static function fromCamelCase(string $string): string
     {
@@ -370,10 +313,6 @@ class GeneratorUtils
 
     /**
      * Set model name from the latest of array(if exists).
-     *
-     * @param string $model
-     * @param string $style
-     * @return string
      */
     public static function setModelName(string $model, string $style = 'pascal case'): string
     {
@@ -401,11 +340,6 @@ class GeneratorUtils
 
     /**
      * Set default image and code to controller.
-     *
-     * @param null|string $default,
-     * @param string $field
-     * @param string $model
-     * @return array
      */
     public static function setDefaultImage(null|string $default, string $field, string $model): array
     {
@@ -461,9 +395,6 @@ class GeneratorUtils
 
     /**
      * Convert array from config to string like array.
-     *
-     * @param array $idebars
-     * @return string
      */
     public static function convertArraySidebarToString(array $sidebars): string
     {
@@ -526,4 +457,3 @@ class GeneratorUtils
         return '';
     }
 }
-

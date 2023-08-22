@@ -8,9 +8,6 @@ class RouteGenerator
 {
     /**
      * Generate a route on web.php.
-     *
-     * @param array $request
-     * @return void
      */
     public function generate(array $request)
     {
@@ -21,7 +18,7 @@ class RouteGenerator
         $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase($model);
 
         $middleware = "->middleware('auth')";
-        
+
         if(isset($request['is_simple_generator'])){
             $middleware = "";
         }

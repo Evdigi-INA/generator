@@ -14,9 +14,9 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     public function index(): \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
     {
         if (request()->ajax()) {
-            ${{modelNamePluralCamleCase}} = {{query}};
+            ${{modelNamePluralCamelCase}} = {{query}};
 
-            return Datatables::of(${{modelNamePluralCamleCase}})
+            return Datatables::of(${{modelNamePluralCamelCase}})
                 {{addColumns}}
 {{indexCode}}
                 ->addColumn('action', '{{viewPath}}{{modelNamePluralKebabCase}}.include.action')

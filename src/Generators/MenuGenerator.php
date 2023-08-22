@@ -8,9 +8,6 @@ class MenuGenerator
 {
     /**
      * Generate a menu from a given array.
-     *
-     * @param array $request
-     * @return void
      */
     public function generate(array $request)
     {

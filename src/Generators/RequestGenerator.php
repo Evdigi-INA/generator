@@ -6,9 +6,6 @@ class RequestGenerator
 {
     /**
      * Generate a request validation class file.
-     *
-     * @param array $request
-     * @return void
      */
     public function generate(array $request): void
     {

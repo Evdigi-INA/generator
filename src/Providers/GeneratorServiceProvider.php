@@ -9,20 +9,16 @@ class GeneratorServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         //
     }
 
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__ . '/../Routes/generator.php');
         $this->loadViewsFrom(__DIR__ . '/../Resources/views/generators', 'generator');
