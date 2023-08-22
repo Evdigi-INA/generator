@@ -192,7 +192,7 @@ class ControllerGenerator
         if (in_array('month', $request['input_types'])) {
             if (!in_array('password', $request['input_types'])) {
                 /**
-                 * dont concat string if any input type password, cause already concating ahead.
+                 * don't concat string if any input type password, cause already concating ahead.
                  */
                 $inputMonths .= $requestValidatedAttr;
             }

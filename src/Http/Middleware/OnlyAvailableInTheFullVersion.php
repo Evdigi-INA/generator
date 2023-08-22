@@ -11,7 +11,7 @@ class OnlyAvailableInTheFullVersion
     /**
      * Handle an incoming request.
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         $dir = __DIR__ . '/../../../generator-cache.json';
 

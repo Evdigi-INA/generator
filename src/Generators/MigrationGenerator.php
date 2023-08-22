@@ -9,7 +9,7 @@ class MigrationGenerator
     /**
      * Generate a migration file.
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $tableNamePluralLowercase = GeneratorUtils::pluralSnakeCase($model);

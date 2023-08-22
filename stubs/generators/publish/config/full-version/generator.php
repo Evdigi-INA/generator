@@ -8,7 +8,7 @@ return [
         /**
          * Path for store the image.
          *
-         * avaiable options:
+         * available options:
          * 1. public
          * 2. storage
          */

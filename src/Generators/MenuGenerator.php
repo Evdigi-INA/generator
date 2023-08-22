@@ -9,7 +9,7 @@ class MenuGenerator
     /**
      * Generate a menu from a given array.
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $configSidebar = config('generator.sidebars');
@@ -37,12 +37,8 @@ class MenuGenerator
 
     /**
      * Generate a all new sidebar menu(header, menu and submenu) on config.
-     *
-     * @param array $request
-     * @param array $configSidebar
-     * @return void
      */
-    protected function generateNewAllMenu(array $request, string $model, array $configSidebar)
+    protected function generateNewAllMenu(array $request, string $model, array $configSidebar): void
     {
         $newConfigSidebar = [
             'header' => GeneratorUtils::cleanPluralUcWords($request['new_header']),
@@ -70,13 +66,8 @@ class MenuGenerator
 
     /**
      * Generate a new sidebar menu on config.
-     *
-     * @param array $request
-     * @param string $model
-     * @param array $configSidebar
-     * @return void
      */
-    protected function generateNewMenu(array $request, string $model, array $configSidebar)
+    protected function generateNewMenu(array $request, string $model, array $configSidebar): void
     {
         // push to permissions on header
         array_push($configSidebar[$request['header']]['permissions'], GeneratorUtils::cleanSingularLowerCase($model) . ' view');
@@ -96,13 +87,8 @@ class MenuGenerator
 
     /**
      * Generate a new sidebar submenu on config.
-     *
-     * @param array $menu
-     * @param string $model
-     * @param array $configSidebar
-     * @return void
      */
-    protected function generateNewSubMenu(array $menu, string $model, array $configSidebar)
+    protected function generateNewSubMenu(array $menu, string $model, array $configSidebar): void
     {
         $indexSidebar = $menu['sidebar'];
         $indexMenu = $menu['menus'];
@@ -157,11 +143,8 @@ class MenuGenerator
 
     /**
      * Replace code on config with newly string code.
-     *
-     * @param string $jsonToArrayString
-     * @return void
      */
-    protected function generateFile(string $jsonToArrayString)
+    protected function generateFile(string $jsonToArrayString): void
     {
         $configStringCode = str(file_get_contents(config_path('generator.php')))->before("'sidebars' => ");
 
@@ -172,14 +155,8 @@ class MenuGenerator
 
     /**
      * Set new menu and check if request submenu exist or not, if exist push submenu to menu.
-     *
-     * @param string $title
-     * @param string $icon
-     * @param string $route
-     * @param string|null $submenu
-     * @return array $newMenu
      */
-    protected function setNewMenu(string $title, string $icon, string $route, string|null $submenu = null)
+    protected function setNewMenu(string $title, string $icon, string $route, string|null $submenu = null): array
     {
         if (isset($submenu)) {
             $newMenu = [
@@ -212,11 +189,8 @@ class MenuGenerator
 
     /**
      * Convert json to string with format like an array.
-     *
-     * @param array $replace
-     * @return string
      */
-    protected function convertJsonToArrayString(array $replace)
+    protected function convertJsonToArrayString(array $replace): string
     {
         return str_replace(
             [

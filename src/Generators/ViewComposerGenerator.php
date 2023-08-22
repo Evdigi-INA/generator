@@ -9,7 +9,7 @@ class ViewComposerGenerator
     /**
      * Generate view composer on viewServiceProvider, if any belongsTo relation.
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $template = "";
 

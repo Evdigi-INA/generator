@@ -9,7 +9,7 @@ class RouteGenerator
     /**
      * Generate a route on web.php.
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $path = GeneratorUtils::getModelLocation($request['model']);

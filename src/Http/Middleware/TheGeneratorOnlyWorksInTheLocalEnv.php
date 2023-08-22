@@ -11,7 +11,7 @@ class TheGeneratorOnlyWorksInTheLocalEnv
     /**
      * Handle an incoming request.
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         abort_if(env('APP_ENV') !== 'local', Response::HTTP_FORBIDDEN, 'Generator only work on local or development environment');
 
