@@ -47,7 +47,7 @@ class ControllerGenerator
                  *
                  * use App\Http\Requests\Inventory\{StoreProductRequest, UpdateProductRequest};
                  */
-                $requestPath = "App\Http\Requests\\$modelNamePluralPascalCase\\" . $path . "\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
+                $requestPath = "App\Http\Requests\\$path\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
                 break;
         }
 
@@ -81,7 +81,7 @@ class ControllerGenerator
 
             $relations .= "$" . $modelNameSingularCamelCase . "->load(";
 
-            $countForeidnId = count(array_keys($request['column_types'], 'foreignId'));
+            $countForeignId = count(array_keys($request['column_types'], 'foreignId'));
 
             $query = "$modelNameSingularPascalCase::with(";
 
@@ -94,7 +94,7 @@ class ControllerGenerator
                     $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself($constrainName);
                     $columnAfterId = GeneratorUtils::getColumnAfterId($constrainName);
 
-                    if ($countForeidnId + 1 < $i) {
+                    if ($countForeignId + 1 < $i) {
                         $relations .= "'$constrainSnakeCase:$selectedColumns', ";
                         $query .= "'$constrainSnakeCase:$selectedColumns', ";
                     } else {
