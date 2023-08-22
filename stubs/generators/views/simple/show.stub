@@ -14,20 +14,20 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                                <table class="table table-hover table-striped">
-                                    {{trs}}
-                                    <tr>
-                                        <td class="fw-bold">{{ __('Created at') }}</td>
-                                        <td>{{ ${{modelNameSingularCamelCase}}->created_at->format('{{dateTimeFormat}}') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">{{ __('Updated at') }}</td>
-                                        <td>{{ ${{modelNameSingularCamelCase}}->updated_at->format('{{dateTimeFormat}}') }}</td>
-                                    </tr>
-                                </table>
-                            </div>
+                            <table class="table table-hover table-striped">
+                                {{trs}}
+                                <tr>
+                                    <td class="fw-bold">{{ __('Created at') }}</td>
+                                    <td>{{ ${{modelNameSingularCamelCase}}->created_at->format('{{dateTimeFormat}}') }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">{{ __('Updated at') }}</td>
+                                    <td>{{ ${{modelNameSingularCamelCase}}->updated_at->format('{{dateTimeFormat}}') }}</td>
+                                </tr>
+                            </table>
+                        </div>
 
-                            <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __('Back') }}</a>
+                        <a href="{{ route('{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
                     </div>
                 </div>
             </div>
