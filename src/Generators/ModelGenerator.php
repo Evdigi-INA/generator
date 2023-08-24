@@ -130,7 +130,7 @@ class ModelGenerator
         }
 
         if ($protectedHidden != "") {
-            // removoe "', " and then change to "'" in the of array for better code.
+            // remove "', " and then change to "'" in the of array for better code.
             // $protectedHidden  = str_replace("', ", "'", $protectedHidden);
             $protectedHidden = substr($protectedHidden, 0, -2) . "];";
         }

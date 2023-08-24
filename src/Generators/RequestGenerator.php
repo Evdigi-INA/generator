@@ -175,15 +175,15 @@ class RequestGenerator
                 case 'foreignId':
                     // remove '/' or sub folders
                     $constrainModel = GeneratorUtils::setModelName($request['constrains'][$i]);
-                    $constrainpath = GeneratorUtils::getModelLocation($request['constrains'][$i]);
+                    $constrainsPath = GeneratorUtils::getModelLocation($request['constrains'][$i]);
 
-                    switch ($constrainpath != '') {
+                    switch ($constrainsPath != '') {
                         case true:
                             /**
                              * result:
                              * 'name' => 'required|max:30|exists:App\Models\Master\Product,id',
                              */
-                            $validations .= "|exists:App\Models\\" . str_replace('/', '\\', $constrainpath) . "\\" . GeneratorUtils::singularPascalCase($constrainModel) . ",id',";
+                            $validations .= "|exists:App\Models\\" . str_replace('/', '\\', $constrainsPath) . "\\" . GeneratorUtils::singularPascalCase($constrainModel) . ",id',";
                             break;
                         default:
                             /**
@@ -226,7 +226,7 @@ class RequestGenerator
         );
 
         /**
-         * on update request if any image validation, then set 'required' to nullbale
+         * on update request if any image validation, then set 'required' to nullable
          */
         switch (str_contains($storeRequestTemplate, "required|image")) {
             case true:
