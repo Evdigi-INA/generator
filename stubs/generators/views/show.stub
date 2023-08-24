@@ -46,7 +46,7 @@
                                 </table>
                             </div>
 
-                            <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __('Back') }}</a>
+                            <a href="{{ route('{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
                         </div>
                     </div>
                 </div>

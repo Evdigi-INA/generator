@@ -6,14 +6,12 @@ class ModelGenerator
 {
     /**
      * Generate a model file.
-     *
-     * @param array $request
-     * @return void
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $path = GeneratorUtils::getModelLocation($request['model']);
         $model = GeneratorUtils::setModelName($request['model'], 'default');
+        $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
 
         $fields = "[";
         $casts = "[";
@@ -33,14 +31,7 @@ class ModelGenerator
             PHP;
         }
 
-        switch ($path) {
-            case '':
-                $namespace = "namespace App\\Models;";
-                break;
-            default:
-                $namespace = "namespace App\\Models\\$path;";
-                break;
-        }
+        $namespace = !$path ? "namespace App\\Models;" : "namespace App\\Models\\$path;";
 
         foreach ($request['fields'] as $i => $field) {
             switch ($i + 1 != $totalFields) {
@@ -114,11 +105,7 @@ class ModelGenerator
                      *     return $this->belongsTo(\App\Models\Product::class);
                      * }
                      */
-                    $relations .= "\n\tpublic function " . str()->snake($constrainName) . "()\n\t{\n\t\treturn \$this->belongsTo(" . $constrainPath . "::class" . $foreign_id . ");\\t}";
-
-                    // if ($i + 1 != $totalFields) {
-                    //     $relations .= "\n";
-                    // }
+                    $relations .= "\n\tpublic function " . str()->snake($constrainName) . "()\n\t{\n\t\treturn \$this->belongsTo(" . $constrainPath . "::class" . $foreign_id . ");\n\t}";
                     break;
             }
 
@@ -132,26 +119,20 @@ class ModelGenerator
                     break;
             }
 
+            // integer/bigInteger/tinyInteger/
             if (str_contains($request['column_types'][$i], 'integer')) {
                 $casts .= "'" . str()->snake($field) . "' => 'integer', ";
             }
 
-            if (
-                str_contains($request['column_types'][$i], 'string') ||
-                str_contains($request['column_types'][$i], 'text') ||
-                str_contains($request['column_types'][$i], 'char')
-            ) {
-                if ($request['input_types'][$i] != 'week') {
-                    $casts .= "'" . str()->snake($field) . "' => 'string', ";
-                }
+            if (in_array($request['column_types'][$i], ['string', 'text', 'char']) && $request['input_types'][$i] != 'week') {
+                $casts .= "'" . str()->snake($field) . "' => 'string', ";
             }
         }
 
         if ($protectedHidden != "") {
-            // removoe "', " and then change to "'" in the of array for better code.
+            // remove "', " and then change to "'" in the of array for better code.
             // $protectedHidden  = str_replace("', ", "'", $protectedHidden);
-            $protectedHidden = substr($protectedHidden, 0, -2);
-            $protectedHidden .= "];";
+            $protectedHidden = substr($protectedHidden, 0, -2) . "];";
         }
 
         $casts .= <<<PHP
@@ -169,7 +150,7 @@ class ModelGenerator
                 '{{pluralSnakeCase}}',
             ],
             [
-                GeneratorUtils::singularPascalCase($model),
+                $modelNameSingularPascalCase,
                 $fields,
                 $casts,
                 $relations,
@@ -180,15 +161,12 @@ class ModelGenerator
             GeneratorUtils::getTemplate('model')
         );
 
-        switch ($path) {
-            case '':
-                file_put_contents(app_path("/Models/$model.php"), $template);
-                break;
-            default:
-                $fullPath = app_path("/Models/$path");
-                GeneratorUtils::checkFolder($fullPath);
-                file_put_contents($fullPath . "/$model.php", $template);
-                break;
+        if (!$path) {
+            file_put_contents(app_path("/Models/$modelNameSingularPascalCase.php"), $template);
+        } else {
+            $fullPath = app_path("/Models/$path");
+            GeneratorUtils::checkFolder($fullPath);
+            file_put_contents($fullPath . "/$modelNameSingularPascalCase.php", $template);
         }
     }
 }

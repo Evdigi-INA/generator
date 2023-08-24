@@ -38,7 +38,7 @@
 
                                 @include('{{viewPath}}{{modelNamePluralKebabCase}}.include.form')
 
-                                <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __('Back') }}</a>
+                                <a href="{{ route('{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
 
                                 <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
                             </form>

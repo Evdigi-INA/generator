@@ -6,11 +6,8 @@ class ControllerGenerator
 {
     /**
      * Generate a controller file.
-     *
-     * @param array $request
-     * @return void
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $path = GeneratorUtils::getModelLocation($request['model']);
@@ -20,6 +17,7 @@ class ControllerGenerator
         $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase($model);
         $modelNameSpaceLowercase = GeneratorUtils::cleanSingularLowerCase($model);
         $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
+        $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase($model);
 
         $query = "$modelNameSingularPascalCase::query()";
 
@@ -32,7 +30,7 @@ class ControllerGenerator
                  *
                  * use App\Http\Requests\{StoreProductRequest, UpdateProductRequest};
                  */
-                $requestPath = "App\Http\Requests\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
+                $requestPath = "App\Http\Requests\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
                 break;
             default:
                 /**
@@ -49,7 +47,7 @@ class ControllerGenerator
                  *
                  * use App\Http\Requests\Inventory\{StoreProductRequest, UpdateProductRequest};
                  */
-                $requestPath = "App\Http\Requests\\" . $path . "\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
+                $requestPath = "App\Http\Requests\\$path\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
                 break;
         }
 
@@ -83,7 +81,7 @@ class ControllerGenerator
 
             $relations .= "$" . $modelNameSingularCamelCase . "->load(";
 
-            $countForeidnId = count(array_keys($request['column_types'], 'foreignId'));
+            $countForeignId = count(array_keys($request['column_types'], 'foreignId'));
 
             $query = "$modelNameSingularPascalCase::with(";
 
@@ -96,7 +94,7 @@ class ControllerGenerator
                     $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself($constrainName);
                     $columnAfterId = GeneratorUtils::getColumnAfterId($constrainName);
 
-                    if ($countForeidnId + 1 < $i) {
+                    if ($countForeignId + 1 < $i) {
                         $relations .= "'$constrainSnakeCase:$selectedColumns', ";
                         $query .= "'$constrainSnakeCase:$selectedColumns', ";
                     } else {
@@ -194,7 +192,7 @@ class ControllerGenerator
         if (in_array('month', $request['input_types'])) {
             if (!in_array('password', $request['input_types'])) {
                 /**
-                 * dont concat string if any input type password, cause already concating ahead.
+                 * don't concat string if any input type password, cause already concating ahead.
                  */
                 $inputMonths .= $requestValidatedAttr;
             }
@@ -266,7 +264,7 @@ class ControllerGenerator
                     [
                         '{{modelNameSingularPascalCase}}',
                         '{{modelNameSingularCamelCase}}',
-                        '{{modelNamePluralCamleCase}}',
+                        '{{modelNamePluralCamelCase}}',
                         '{{modelNamePluralKebabCase}}',
                         '{{modelNameSpaceLowercase}}',
                         '{{indexCode}}',
@@ -361,26 +359,17 @@ class ControllerGenerator
         /**
          * Create a controller file.
          */
-        switch ($path) {
-            case '':
-                file_put_contents(app_path("/Http/Controllers/{$modelNameSingularPascalCase}Controller.php"), $template);
-                break;
-            default:
-                $fullPath = app_path("/Http/Controllers/$path/");
-                GeneratorUtils::checkFolder($fullPath);
-                file_put_contents("$fullPath" . $modelNameSingularPascalCase . "Controller.php", $template);
-                break;
+        if (!$path) {
+            file_put_contents(app_path("/Http/Controllers/{$modelNameSingularPascalCase}Controller.php"), $template);
+        } else {
+            $fullPath = app_path("/Http/Controllers/$path/");
+            GeneratorUtils::checkFolder($fullPath);
+            file_put_contents("$fullPath" . $modelNameSingularPascalCase . "Controller.php", $template);
         }
     }
 
     /**
      * Generate an upload file code.
-     *
-     * @param string $field
-     * @param string $path
-     * @param string $model
-     * @param ?string $defaultValue
-     * @return string
      */
     protected function generateUploadFileCode(string $field, string $path, string $model, ?string $defaultValue = null): string
     {

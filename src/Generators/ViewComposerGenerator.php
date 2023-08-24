@@ -8,11 +8,8 @@ class ViewComposerGenerator
 {
     /**
      * Generate view composer on viewServiceProvider, if any belongsTo relation.
-     *
-     * @param array $request
-     * @return void
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $template = "";
 
@@ -33,10 +30,10 @@ class ViewComposerGenerator
                     $relatedModelPath = "\App\Models\\" . GeneratorUtils::singularPascalCase($constrainModel);
                 }
 
-                $allColums = Schema::getColumnListing($table);
+                $allColumns = Schema::getColumnListing($table);
 
-                if (sizeof($allColums) > 0) {
-                    $fieldsSelect = "'id', '$allColums[1]'";
+                if (sizeof($allColumns) > 0) {
+                    $fieldsSelect = "'id', '$allColumns[1]'";
                 } else {
                     $fieldsSelect = "'id'";
                 }

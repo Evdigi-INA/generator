@@ -6,9 +6,6 @@ class RequestGenerator
 {
     /**
      * Generate a request validation class file.
-     *
-     * @param array $request
-     * @return void
      */
     public function generate(array $request): void
     {
@@ -17,13 +14,14 @@ class RequestGenerator
 
         $validations = '';
         $totalFields = count($request['fields']);
+        $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase($model);
 
         switch ($path) {
             case '':
-                $namespace = "namespace App\Http\Requests;";
+                $namespace = "namespace App\Http\Requests\\$modelNamePluralPascalCase;";
                 break;
             default:
-                $namespace = "namespace App\Http\Requests\\" . GeneratorUtils::singularPascalCase($path) . ";";
+                $namespace = "namespace App\Http\Requests\\$path\\$modelNamePluralPascalCase;";
                 break;
         }
 
@@ -177,15 +175,15 @@ class RequestGenerator
                 case 'foreignId':
                     // remove '/' or sub folders
                     $constrainModel = GeneratorUtils::setModelName($request['constrains'][$i]);
-                    $constrainpath = GeneratorUtils::getModelLocation($request['constrains'][$i]);
+                    $constrainsPath = GeneratorUtils::getModelLocation($request['constrains'][$i]);
 
-                    switch ($constrainpath != '') {
+                    switch ($constrainsPath != '') {
                         case true:
                             /**
                              * result:
                              * 'name' => 'required|max:30|exists:App\Models\Master\Product,id',
                              */
-                            $validations .= "|exists:App\Models\\" . str_replace('/', '\\', $constrainpath) . "\\" . GeneratorUtils::singularPascalCase($constrainModel) . ",id',";
+                            $validations .= "|exists:App\Models\\" . str_replace('/', '\\', $constrainsPath) . "\\" . GeneratorUtils::singularPascalCase($constrainModel) . ",id',";
                             break;
                         default:
                             /**
@@ -228,7 +226,7 @@ class RequestGenerator
         );
 
         /**
-         * on update request if any image validation, then set 'required' to nullbale
+         * on update request if any image validation, then set 'required' to nullable
          */
         switch (str_contains($storeRequestTemplate, "required|image")) {
             case true:
@@ -266,7 +264,7 @@ class RequestGenerator
                 }
             }
         }
-        
+
         $updateRequestTemplate = str_replace(
             [
                 '{{modelNamePascalCase}}',
@@ -286,12 +284,12 @@ class RequestGenerator
          */
         switch ($path) {
             case '':
-                GeneratorUtils::checkFolder(app_path('/Http/Requests'));
-                file_put_contents(app_path("/Http/Requests/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
-                file_put_contents(app_path("/Http/Requests/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
+                GeneratorUtils::checkFolder(app_path("/Http/Requests/$modelNamePluralPascalCase"));
+                file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
+                file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
                 break;
             default:
-                $fullPath = app_path("/Http/Requests/$path");
+                $fullPath = app_path("/Http/Requests/$path/$modelNamePluralPascalCase");
                 GeneratorUtils::checkFolder($fullPath);
                 file_put_contents("$fullPath/Store{$modelSingularPascalCase}Request.php", $storeRequestTemplate);
                 file_put_contents("$fullPath/Update{$modelSingularPascalCase}Request.php", $updateRequestTemplate);

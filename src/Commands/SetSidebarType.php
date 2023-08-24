@@ -33,10 +33,8 @@ class SetSidebarType extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): void
     {
         switch ($this->argument('type')) {
             case 'static':
@@ -133,19 +131,17 @@ class SetSidebarType extends Command
 
     /**
      * Check if user using the simple version or not.
-     * 
-     * @return void
-     * */
+     */
     public function checkGeneratorVariant(): void
     {
-        if(empty(config('generator.sidebars'))){
+        if (empty(config('generator.sidebars'))) {
             $this->error("This command is only accessible in the full version, it appears that you are using the simple version.");
             die;
         }
 
         $sidebar = file_exists(resource_path('views/layouts/sidebar.blade.php'));
 
-        if(!$sidebar){
+        if (!$sidebar) {
             $this->error("We cant find the sidebar view, in views/layouts/sidebar.blade.php.");
             die;
         }

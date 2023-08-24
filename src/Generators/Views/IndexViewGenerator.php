@@ -8,11 +8,8 @@ class IndexViewGenerator
 {
     /**
      * Generate an index view.
-     *
-     * @param array $request
-     * @return void
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $path = GeneratorUtils::getModelLocation($request['model']);
@@ -22,7 +19,7 @@ class IndexViewGenerator
         $modelNamePluralLowerCase = GeneratorUtils::cleanPluralLowerCase($model);
         $modelNameSingularLowercase = GeneratorUtils::cleanSingularLowerCase($model);
 
-        $thColums = '';
+        $thColumns = '';
         $tdColumns = '';
         $totalFields = count($request['fields']);
 
@@ -33,7 +30,7 @@ class IndexViewGenerator
                  * <th>{{ __('Price') }}</th>
                  */
                 if ($request['column_types'][$i] != 'foreignId') {
-                    $thColums .= "<th>{{ __('" .  GeneratorUtils::cleanUcWords($field) . "') }}</th>";
+                    $thColumns .= "<th>{{ __('" .  GeneratorUtils::cleanUcWords($field) . "') }}</th>";
                 }
 
                 if ($request['input_types'][$i] == 'file') {
@@ -72,7 +69,7 @@ class IndexViewGenerator
                     // remove '/' or sub folders
                     $constrainModel = GeneratorUtils::setModelName($request['constrains'][$i], 'default');
 
-                    $thColums .= "<th>{{ __('" .  GeneratorUtils::cleanSingularUcWords($constrainModel) . "') }}</th>";
+                    $thColumns .= "<th>{{ __('" .  GeneratorUtils::cleanSingularUcWords($constrainModel) . "') }}</th>";
 
                     /**
                      * will generate something like:
@@ -101,7 +98,7 @@ class IndexViewGenerator
 
                 if ($i + 1 != $totalFields) {
                     // add new line and tab
-                    $thColums .= "\n\t\t\t\t\t\t\t\t\t\t\t";
+                    $thColumns .= "\n\t\t\t\t\t\t\t\t\t\t\t";
                     $tdColumns .= "\n\t\t\t\t";
                 }
             }
@@ -121,7 +118,7 @@ class IndexViewGenerator
                 $modelNamePluralKebabCase,
                 $modelNameSingularLowercase,
                 $modelNamePluralLowerCase,
-                $thColums,
+                $thColumns,
                 $tdColumns,
             ],
             empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/index') : GeneratorUtils::getTemplate('views/simple/index')

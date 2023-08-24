@@ -8,11 +8,8 @@ class CreateViewGenerator
 {
     /**
      * Generate a create view.
-     *
-     * @param array $request
-     * @return void
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $path = GeneratorUtils::getModelLocation($request['model']);
@@ -34,21 +31,19 @@ class CreateViewGenerator
                 $modelNameSingularLowerCase,
                 $modelNamePluralKebabCase,
                 in_array('file', $request['input_types']) ? ' enctype="multipart/form-data"' : '',
-                $path != '' ? str_replace('\\', '.', $path) . "." : '',
+                $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
             ],
             empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/create') : GeneratorUtils::getTemplate('views/simple/create')
         );
 
-        switch ($path) {
-            case '':
-                GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase"));
-                file_put_contents(resource_path("/views/$modelNamePluralKebabCase/create.blade.php"), $template);
-                break;
-            default:
-                $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase");
-                GeneratorUtils::checkFolder($fullPath);
-                file_put_contents($fullPath . "/create.blade.php", $template);
-                break;
+
+        if (!$path) {
+            GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase"));
+            file_put_contents(resource_path("/views/$modelNamePluralKebabCase/create.blade.php"), $template);
+        } else {
+            $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase");
+            GeneratorUtils::checkFolder($fullPath);
+            file_put_contents($fullPath . "/create.blade.php", $template);
         }
     }
 }

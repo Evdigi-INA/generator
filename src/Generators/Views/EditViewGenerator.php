@@ -8,11 +8,8 @@ class EditViewGenerator
 {
     /**
      * Generate an edit view.
-     *
-     * @param array $request
-     * @return void
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $path = GeneratorUtils::getModelLocation($request['model']);
@@ -37,21 +34,18 @@ class EditViewGenerator
                 $modelNamePluralKebabCase,
                 $modelNameSingularCamelCase,
                 in_array('file', $request['input_types']) ? ' enctype="multipart/form-data"' : '',
-                $path != '' ? str_replace('\\', '.', $path) . "." : '',
+                $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
             ],
             empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/edit') : GeneratorUtils::getTemplate('views/simple/edit'),
         );
 
-        if ($path != '') {
-            $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase");
-
-            GeneratorUtils::checkFolder($fullPath);
-
-            file_put_contents($fullPath . "/edit.blade.php", $template);
-        } else {
+        if (!$path) {
             GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase"));
-
             file_put_contents(resource_path("/views/$modelNamePluralKebabCase/edit.blade.php"), $template);
+        } else {
+            $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase");
+            GeneratorUtils::checkFolder($fullPath);
+            file_put_contents($fullPath . "/edit.blade.php", $template);
         }
     }
 }

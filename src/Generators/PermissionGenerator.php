@@ -7,12 +7,9 @@ use Spatie\Permission\Models\{Role, Permission};
 class PermissionGenerator
 {
     /**
-     * Generate new permissions to confg.permissions.permissions(used for peermissios seeder).
-     *
-     * @param array $request
-     * @return void
+     * Generate new permissions to config.permissions.permissions(used for permissions seeder).
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $modelNamePlural = GeneratorUtils::cleanPluralLowerCase($model);
@@ -57,11 +54,8 @@ class PermissionGenerator
 
     /**
      * Insert new role & permissions then give an admin that permissions.
-     *
-     * @param array $request
-     * @return void
      */
-    protected function insertRoleAndPermissions(string $model)
+    protected function insertRoleAndPermissions(string $model): void
     {
         $role = Role::findByName('admin');
 

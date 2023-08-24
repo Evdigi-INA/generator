@@ -1,8 +1,8 @@
 <td>
     @can('{{modelNameSingularLowercase}} view')
-    <a href="{{ route('{{modelNamePluralKebabCase}}.show', $model->id) }}" class="btn btn-outline-success btn-sm">
-        <i class="fa fa-eye"></i>
-    </a>
+        <a href="{{ route('{{modelNamePluralKebabCase}}.show', $model->id) }}" class="btn btn-outline-success btn-sm">
+            <i class="fa fa-eye"></i>
+        </a>
     @endcan
 
     @can('{{modelNameSingularLowercase}} edit')

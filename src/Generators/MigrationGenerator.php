@@ -8,11 +8,8 @@ class MigrationGenerator
 {
     /**
      * Generate a migration file.
-     *
-     * @param array $request
-     * @return void
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $tableNamePluralLowercase = GeneratorUtils::pluralSnakeCase($model);
@@ -134,20 +131,28 @@ class MigrationGenerator
 
                     $setFields .= "->constrained('" . GeneratorUtils::pluralSnakeCase($constrainName) . "')";
 
-                    if ($request['on_update_foreign'][$i] == ActionForeign::CASCADE->value) {
-                        $setFields .= "->cascadeOnUpdate()";
-                    } elseif ($request['on_update_foreign'][$i] == ActionForeign::RESTRICT->value) {
-                        $setFields .= "->restrictOnUpdate()";
+                    switch($request['on_update_foreign'][$i]) {
+                        case ActionForeign::CASCADE->value:
+                            $setFields .= "->cascadeOnUpdate()";
+                            break;
+                        case ActionForeign::RESTRICT->value:
+                            $setFields .= "->restrictOnUpdate()";
+                            break;
                     }
 
-                    if ($request['on_delete_foreign'][$i] == ActionForeign::CASCADE->value) {
-                        $setFields .= "->cascadeOnDelete();\n\t\t\t";
-                    } elseif ($request['on_delete_foreign'][$i] == ActionForeign::RESTRICT->value) {
-                        $setFields .= "->restrictOnDelete();\n\t\t\t";
-                    } elseif ($request['on_delete_foreign'][$i] == ActionForeign::NULL->value) {
-                        $setFields .= "->nullOnDelete();\n\t\t\t";
-                    } else {
-                        $setFields .= ";\n\t\t\t";
+                    switch($request['on_delete_foreign'][$i]) {
+                        case ActionForeign::CASCADE->value:
+                            $setFields .= "->cascadeOnDelete();\n\t\t\t";
+                            break;
+                        case ActionForeign::RESTRICT->value:
+                            $setFields .= "->restrictOnDelete();\n\t\t\t";
+                            break;
+                        case ActionForeign::NULL->value:
+                            $setFields .= "->nullOnDelete();\n\t\t\t";
+                            break;
+                        default:
+                            $setFields .= ";\n\t\t\t";
+                            break;
                     }
                 } else {
                     $setFields .= ";\n\t\t\t";
@@ -156,20 +161,28 @@ class MigrationGenerator
                 if ($request['column_types'][$i] == 'foreignId') {
                     $setFields .= "->constrained('" . GeneratorUtils::pluralSnakeCase($constrainName) . "')";
 
-                    if ($request['on_update_foreign'][$i] == ActionForeign::CASCADE->value) {
-                        $setFields .= "->cascadeOnUpdate()";
-                    } elseif ($request['on_update_foreign'][$i] == ActionForeign::RESTRICT->value) {
-                        $setFields .= "->restrictOnUpdate()";
+                    switch($request['on_update_foreign'][$i]) {
+                        case ActionForeign::CASCADE->value:
+                            $setFields .= "->cascadeOnUpdate()";
+                            break;
+                        case ActionForeign::RESTRICT->value:
+                            $setFields .= "->restrictOnUpdate()";
+                            break;
                     }
 
-                    if ($request['on_delete_foreign'][$i] == ActionForeign::CASCADE->value) {
-                        $setFields .= "->cascadeOnDelete();";
-                    } elseif ($request['on_delete_foreign'][$i] == ActionForeign::RESTRICT->value) {
-                        $setFields .= "->restrictOnDelete();";
-                    } elseif ($request['on_delete_foreign'][$i] == ActionForeign::NULL->value) {
-                        $setFields .= "->nullOnDelete();";
-                    } else {
-                        $setFields .= ";";
+                    switch($request['on_delete_foreign'][$i]) {
+                        case ActionForeign::CASCADE->value:
+                            $setFields .= "->cascadeOnDelete();";
+                            break;
+                        case ActionForeign::RESTRICT->value:
+                            $setFields .= "->restrictOnDelete();";
+                            break;
+                        case ActionForeign::NULL->value:
+                            $setFields .= "->nullOnDelete();";
+                            break;
+                        default:
+                            $setFields .= ";";
+                            break;
                     }
                 } else {
                     $setFields .= ";";
@@ -179,7 +192,7 @@ class MigrationGenerator
 
         $template = str_replace(
             [
-                '{{tableNamePluralLowecase}}',
+                '{{tableNamePluralLowercase}}',
                 '{{fields}}'
             ],
             [

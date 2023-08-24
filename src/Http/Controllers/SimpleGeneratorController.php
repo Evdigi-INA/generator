@@ -3,35 +3,30 @@
 namespace EvdigiIna\Generator\Http\Controllers;
 
 use EvdigiIna\Generator\Enums\GeneratorType;
-use EvdigiIna\Generator\Services\GeneratorService;
+use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Http\Requests\StoreSimpleGeneratorRequest;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
 
 class SimpleGeneratorController extends Controller
 {
-    public function __construct(protected $generatorService = new GeneratorService())
+    public function __construct(protected GeneratorService $generatorService)
     {
         //
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): \Illuminate\Contracts\View\View
     {
-        return view('generator::simple-create');
+        return view('generator::create');
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(StoreSimpleGeneratorRequest $request)
+    public function store(StoreSimpleGeneratorRequest $request): \Illuminate\Http\JsonResponse
     {
         $attrs = $request->validated();
         $attrs['is_simple_generator'] = true;

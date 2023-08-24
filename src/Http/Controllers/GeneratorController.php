@@ -4,45 +4,38 @@ namespace EvdigiIna\Generator\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use EvdigiIna\Generator\Enums\GeneratorType;
-use EvdigiIna\Generator\Services\GeneratorService;
+use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use EvdigiIna\Generator\Http\Requests\StoreGeneratorRequest;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
 
 class GeneratorController extends Controller
 {
-    public function __construct(protected $generatorService = new GeneratorService())
+    public function __construct(protected GeneratorService $generatorService)
     {
         //
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): \Illuminate\Contracts\View\View
     {
         return view('generator::create');
     }
 
     /**
      * Show the form for creating a new resource.(bootstrap only)
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function simpleCreate()
+    public function simpleCreate(): \Illuminate\Contracts\View\View
     {
         return view('generator::simple-create');
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(StoreGeneratorRequest $request)
+    public function store(StoreGeneratorRequest $request): \Illuminate\Http\JsonResponse
     {
         if ($request->generate_type == GeneratorType::ALL->value) {
             $this->generatorService->generateAll($request->validated());
@@ -60,11 +53,8 @@ class GeneratorController extends Controller
 
     /**
      * Get all sidebar menus on config by index.
-     *
-     * @param int $index
-     * @return \Illuminate\Http\Response
      */
-    public function getSidebarMenus(int $index)
+    public function getSidebarMenus(int $index): \Illuminate\Http\JsonResponse
     {
         $sidebar = $this->generatorService->getSidebarMenusByIndex($index);
 

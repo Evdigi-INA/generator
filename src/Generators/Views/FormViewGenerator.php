@@ -8,11 +8,8 @@ class FormViewGenerator
 {
     /**
      * Generate a form/input for create and edit.
-     *
-     * @param array $request
-     * @return void
      */
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $path = GeneratorUtils::getModelLocation($request['model']);
@@ -351,7 +348,6 @@ class FormViewGenerator
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    model: $model,
                                     field: $field,
                                     formatValue: $formatValue
                                 );
@@ -369,7 +365,6 @@ class FormViewGenerator
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    model: $model,
                                     field: $field,
                                     formatValue: $formatValue
                                 );
@@ -387,7 +382,6 @@ class FormViewGenerator
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    model: $model,
                                     field: $field,
                                     formatValue: $formatValue
                                 );
@@ -405,7 +399,6 @@ class FormViewGenerator
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    model: $model,
                                     field: $field,
                                     formatValue: $formatValue
                                 );
@@ -423,7 +416,6 @@ class FormViewGenerator
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    model: $model,
                                     field: $field,
                                     formatValue: $formatValue
                                 );
@@ -533,7 +525,6 @@ class FormViewGenerator
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    model: $model,
                                     field: $field,
                                     formatValue: $formatValue
                                 );
@@ -562,14 +553,8 @@ class FormViewGenerator
 
     /**
      * Set input type from .stub file.
-     *
-     * @param string $field
-     * @param array $request
-     * @param string $model
-     * @param string $formatValue
-     * @return string
      */
-    public function setInputTypeTemplate(string $field, array $request, string $model, string $formatValue): string
+    public function setInputTypeTemplate(string $field, array $request, string $formatValue): string
     {
         return str_replace(
             [

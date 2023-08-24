@@ -5,6 +5,7 @@ namespace EvdigiIna\Generator\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
+use Illuminate\Support\Facades\File;
 
 class PublishAllFiles extends Command
 {
@@ -34,76 +35,74 @@ class PublishAllFiles extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): void
     {
         switch ($this->argument('type')) {
             case 'full':
-                $composer = file_get_contents(base_path('composer.json'));
+                $composerFileText = file_get_contents(base_path('composer.json'));
 
-                switch ($composer) {
-                    case !str_contains($composer, 'laravel/fortify') && !str_contains($composer, 'spatie/laravel-permission'):
-                        $this->error('You must be install laravel/fortify and spatie/laravel-permission before running this command.');
+                if (!str_contains($composerFileText, 'laravel/fortify') && !str_contains($composerFileText, 'spatie/laravel-permission')) {
+                    $this->error('You must be install laravel/fortify and spatie/laravel-permission before running this command.');
 
-                        $this->info('Install the package: composer require laravel/fortify spatie/laravel-permission');
-                        break;
-                    case !str_contains($composer, 'laravel/fortify'):
-                        $this->error('You must be install laravel/fortify before running this command.');
+                    $this->info('Install the package: composer require laravel/fortify spatie/laravel-permission');
+                    return;
+                }
 
-                        $this->info('Install the package: composer require laravel/fortify');
-                        break;
-                    case !str_contains($composer, 'spatie/laravel-permission'):
-                        $this->error('You must be install spatie/laravel-permission before running this command.');
+                if (!str_contains($composerFileText, 'laravel/fortify')) {
+                    $this->error('You must be install laravel/fortify before running this command.');
 
-                        $this->info('Install the package: composer require spatie/laravel-permission');
-                        break;
-                    default:
-                        $totalRunningCommand = $this->totalRunningCommand('generator_publish_all');
+                    $this->info('Install the package: composer require laravel/fortify');
+                    return;
+                }
 
-                        if (
-                            $totalRunningCommand['generator_publish_simple'] == 1 || $totalRunningCommand['generator_publish_simple'] > 1
-                        ) {
-                            if (!$this->confirm('Do you wish to continue? You are already using the simple version.')) {
-                                return;
-                            }
-                        }
+                if (!str_contains($composerFileText, 'spatie/laravel-permission')) {
+                    $this->error('You must be install spatie/laravel-permission before running this command.');
 
-                        if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
+                    $this->info('Install the package: composer require spatie/laravel-permission');
+                    return;
+                }
 
-                            if ($totalRunningCommand['generator_publish_all'] == 1 || $totalRunningCommand['generator_publish_all'] > 1) {
+                $totalRunningCommand = $this->totalRunningCommand('full_version_publish_count');
 
-                                switch ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['generator_publish_all'] . ' times.')) {
-                                    case true:
-                                        $this->runPublishAll();
-                                        return;
-                                        break;
-                                    default:
-                                        return;
-                                        break;
-                                }
-                            }
-
-                            $this->runPublishAll();
-                        }
-
+                if (
+                    $totalRunningCommand['simple_version_publish_count'] == 1 || $totalRunningCommand['simple_version_publish_count'] > 1
+                ) {
+                    if (!$this->confirm('Do you wish to continue? You are already using the simple version.')) {
                         return;
-                        break;
+                    }
+                }
+
+                if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
+                    if ($totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1) {
+                        switch ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['full_version_publish_count'] . ' times.')) {
+                            case true:
+                                $this->runPublishAll();
+                                return;
+                                break;
+                            default:
+                                return;
+                                break;
+                        }
+                    }
+
+                    $this->runPublishAll();
+
+                    return;
                 }
                 break;
             case 'simple':
 
-                $totalRunningCommand = $this->totalRunningCommand('generator_publish_simple');
+                $totalRunningCommand = $this->totalRunningCommand('simple_version_publish_count');
 
-                if ($totalRunningCommand['generator_publish_all'] == 1 || $totalRunningCommand['generator_publish_all'] > 1) {
+                if ($totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1) {
                     $this->info('You are using the full version, which already includes the simple version. So this command may not be affected.');
 
                     return;
                 }
 
-                if ($totalRunningCommand['generator_publish_simple'] == 1 || $totalRunningCommand['generator_publish_simple'] > 1) {
-                    $this->info('You are already running this command ' . $totalRunningCommand['generator_publish_simple'] . ' times.');
+                if ($totalRunningCommand['simple_version_publish_count'] == 1 || $totalRunningCommand['simple_version_publish_count'] > 1) {
+                    $this->info('You are already running this command ' . $totalRunningCommand['simple_version_publish_count'] . ' times.');
 
                     return;
                 }
@@ -114,6 +113,7 @@ class PublishAllFiles extends Command
                 Artisan::call('vendor:publish --tag=generator-view-provider');
                 Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
                 Artisan::call('vendor:publish --tag=datatables');
+                Artisan::call('vendor:publish --tag=generator-utils');
 
                 $this->info('Installed successfully.');
                 break;
@@ -125,10 +125,8 @@ class PublishAllFiles extends Command
 
     /**
      * Check total running of generator:publish all command.
-     *
-     * @return array
      * */
-    public function totalRunningCommand(string $type = 'generator_publish_all'): array
+    public function totalRunningCommand(string $type = 'full_version_publish_count'): array
     {
         $dir = __DIR__ . '/../../generator-cache.json';
 
@@ -136,51 +134,51 @@ class PublishAllFiles extends Command
             file_put_contents(
                 $dir,
                 json_encode([
-                    'generator_publish_simple' => null,
-                    'generator_publish_all' => null
+                    'simple_version_publish_count' => 0,
+                    'full_version_publish_count' => 0
                 ])
             );
         }
 
         $cache = file_get_contents($dir);
 
-        $totalRunningCommand = collect(json_decode($cache))->toArray();
+        $totalRunningCommand = json_decode($cache, true);
 
         switch ($type) {
-            case 'generator_publish_all':
-                if ($totalRunningCommand['generator_publish_all'] == null) {
+            case 'full_version_publish_count':
+                if ($totalRunningCommand['full_version_publish_count'] == 0) {
                     file_put_contents(
                         $dir,
                         json_encode([
-                            'generator_publish_simple' => $totalRunningCommand['generator_publish_simple'],
-                            'generator_publish_all' => 1
+                            'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'],
+                            'full_version_publish_count' => 1
                         ])
                     );
                 } else {
                     file_put_contents(
                         $dir,
                         json_encode([
-                            'generator_publish_simple' => $totalRunningCommand['generator_publish_simple'],
-                            'generator_publish_all' => $totalRunningCommand['generator_publish_all'] + 1
+                            'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'],
+                            'full_version_publish_count' => $totalRunningCommand['full_version_publish_count'] + 1
                         ])
                     );
                 }
                 break;
             default:
-                if ($totalRunningCommand['generator_publish_simple'] == null) {
+                if ($totalRunningCommand['simple_version_publish_count'] == 0) {
                     file_put_contents(
                         $dir,
                         json_encode([
-                            'generator_publish_simple' => 1,
-                            'generator_publish_all' => $totalRunningCommand['generator_publish_all']
+                            'simple_version_publish_count' => 1,
+                            'full_version_publish_count' => $totalRunningCommand['full_version_publish_count']
                         ])
                     );
                 } else {
                     file_put_contents(
                         $dir,
                         json_encode([
-                            'generator_publish_simple' => $totalRunningCommand['generator_publish_simple'] + 1,
-                            'generator_publish_all' => $totalRunningCommand['generator_publish_all']
+                            'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'] + 1,
+                            'full_version_publish_count' => $totalRunningCommand['full_version_publish_count']
                         ])
                     );
                 }
@@ -192,8 +190,6 @@ class PublishAllFiles extends Command
 
     /**
      * Publish all files required by the full version.
-     *
-     * @return void
      * */
     public function runPublishAll(): void
     {
@@ -210,13 +206,15 @@ class PublishAllFiles extends Command
         Artisan::call('vendor:publish --tag=generator-seeder --force');
         Artisan::call('vendor:publish --tag=generator-model --force');
         Artisan::call('vendor:publish --tag=generator-assets --force');
+        Artisan::call('vendor:publish --tag=generator-utils --force');
         Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
         Artisan::call('vendor:publish --tag=datatables --force');
 
         $template = GeneratorUtils::getTemplate('route');
 
-        \File::append(base_path('routes/web.php'), $template);
+        File::append(base_path('routes/web.php'), $template);
 
         $this->info('Installed successfully.');
     }
 }
+
