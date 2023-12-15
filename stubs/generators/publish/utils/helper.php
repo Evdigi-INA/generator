@@ -1,6 +1,6 @@
 <?php
 
-use App\Utils\GeneratorUtils;
+use App\Generators\GeneratorUtils;
 
 /**
  * Check the sidebar menu with the current Uri
