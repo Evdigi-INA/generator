@@ -1,6 +1,6 @@
 <script>
     let selectMenu = $('#select-menu')
-    let colNewMenu = $('#col-new-menu') 
+    let colNewMenu = $('#col-new-menu')
     let uri = '{{ request()->segment(1) }}'
 
     $('#btn-add').click(function() {

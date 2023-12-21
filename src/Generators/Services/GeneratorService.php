@@ -14,6 +14,7 @@ use EvdigiIna\Generator\Generators\{
     PermissionGenerator,
     RequestGenerator,
     RouteGenerator,
+    SeederGenerator,
     ViewComposerGenerator
 };
 use EvdigiIna\Generator\Generators\Views\{
@@ -53,6 +54,10 @@ class GeneratorService implements GeneratorServiceInterface
         }
 
         Artisan::call('migrate');
+
+        if(isset($request['generate_seeder']) && $request['generate_seeder'] != null) {
+            (new SeederGenerator)->generate($request);
+        }
 
         $this->checkSidebarType();
     }
