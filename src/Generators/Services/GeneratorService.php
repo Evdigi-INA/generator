@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Generators\{
     ControllerGenerator,
+    FactoryGenerator,
     GeneratorUtils,
     MenuGenerator,
     ModelGenerator,
@@ -57,6 +58,10 @@ class GeneratorService implements GeneratorServiceInterface
 
         if(isset($request['generate_seeder']) && $request['generate_seeder'] != null) {
             (new SeederGenerator)->generate($request);
+        }
+
+        if(isset($request['generate_factory']) && $request['generate_factory'] != null) {
+            (new FactoryGenerator)->generate($request);
         }
 
         $this->checkSidebarType();
