@@ -1,0 +1,21 @@
+<?php
+
+namespace {{namespace}};
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class {{modelNameSingularPascalCase}}Resource extends JsonResource
+{
+    public $wrap = '{{modelNameSingularSnakeCase}}';
+
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return parent::toArray($request);
+    }
+}

@@ -1,0 +1,53 @@
+<?php
+
+{{namespace}}
+
+use App\Http\Resources\{{modelPath}}\{{{modelNameSingularPascalCase}}Collection, {{modelNameSingularPascalCase}}Resource};
+use {{modelPath}};
+use {{requestPath}};
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\JsonResponse;
+
+class {{modelNameSingularPascalCase}}Controller extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(): {{modelNameSingularPascalCase}}Collection|{{modelNameSingularPascalCase}}Resource
+    {
+        return new {{modelNameSingularPascalCase}}Collection({{modelNameSingularPascalCase}}::paginate());
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Store{{modelNameSingularPascalCase}}Request $request): {{modelNameSingularPascalCase}}Resource|JsonResponse
+    {
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::create($request->validated());
+        return (new CobaResource(${{modelNameSingularCamelCase}}))->response()->setStatusCode(Response::HTTP_CREATED);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id): {{modelNameSingularPascalCase}}Resource
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id): {{modelNameSingularPascalCase}}Resource
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Update{{modelNameSingularPascalCase}}Request $id): {{modelNameSingularPascalCase}}Resource
+    {
+        //
+    }
+}
