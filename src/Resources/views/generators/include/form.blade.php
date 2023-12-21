@@ -47,8 +47,8 @@
         </div>
         <div class="form-check">
             <div class="checkbox">
-                <input type="checkbox" class="form-check-input" id="generate-factory" name="generate_factory" disabled>
-                <label for="generate-factory">{{ __('Generate Factory (coming soon)') }}</label>
+                <input type="checkbox" class="form-check-input" id="generate-factory" name="generate_factory">
+                <label for="generate-factory">{{ __('Generate Factory') }}</label>
             </div>
         </div>
     </div>
