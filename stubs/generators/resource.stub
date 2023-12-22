@@ -1,13 +1,13 @@
 <?php
 
-namespace {{namespace}};
+{{namespace}}
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class {{modelNameSingularPascalCase}}Resource extends JsonResource
 {
-    public $wrap = '{{modelNameSingularSnakeCase}}';
+    public static  $wrap = '{{modelNameSingularSnakeCase}}';
 
     /**
      * Transform the resource into an array.

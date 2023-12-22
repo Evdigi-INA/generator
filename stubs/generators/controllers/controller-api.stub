@@ -2,9 +2,9 @@
 
 {{namespace}}
 
-use App\Http\Resources\{{modelPath}}\{{{modelNameSingularPascalCase}}Collection, {{modelNameSingularPascalCase}}Resource};
 use {{modelPath}};
 use {{requestPath}};
+use {{resourceApiPath}}\{{{modelNameSingularPascalCase}}Collection, {{modelNameSingularPascalCase}}Resource};
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\JsonResponse;
 
@@ -15,7 +15,11 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function index(): {{modelNameSingularPascalCase}}Collection|{{modelNameSingularPascalCase}}Resource
     {
-        return new {{modelNameSingularPascalCase}}Collection({{modelNameSingularPascalCase}}::paginate());
+        return (new {{modelNameSingularPascalCase}}Collection({{modelNameSingularPascalCase}}::paginate()))->additional([
+            'message' => 'The {{modelNameCleanPlural}} was received successfully.',
+            'success' => true,
+            'code' => Response::HTTP_OK
+        ]);
     }
 
     /**
@@ -23,8 +27,17 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function store(Store{{modelNameSingularPascalCase}}Request $request): {{modelNameSingularPascalCase}}Resource|JsonResponse
     {
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::create($request->validated());
-        return (new CobaResource(${{modelNameSingularCamelCase}}))->response()->setStatusCode(Response::HTTP_CREATED);
+        {{passwordFieldStore}}{{inputMonths}}
+        {{insertDataAction}}
+
+        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))
+            ->additional([
+                'message' => 'The {{modelNameCleanSingular}} was created successfully.',
+                'success' => true,
+                'code' => Response::HTTP_OK
+            ])
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
@@ -32,22 +45,52 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function show(string $id): {{modelNameSingularPascalCase}}Resource
     {
-        //
+        return (new {{modelNameSingularPascalCase}}Resource({{modelNameSingularPascalCase}}::findOrFail($id)))->additional([
+            'message' => 'The {{modelNameCleanSingular}} was received successfully.',
+            'success' => true,
+            'code' => Response::HTTP_OK
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id): {{modelNameSingularPascalCase}}Resource
+    public function update(Update{{modelNameSingularPascalCase}}Request $request, string $id): {{modelNameSingularPascalCase}}Resource
     {
-        //
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail($id);
+        {{passwordFieldUpdate}}{{inputMonths}}
+        {{updateDataAction}}
+
+        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))->additional([
+            'message' => 'The {{modelNameCleanSingular}} was updated successfully.',
+            'success' => true,
+            'code' => Response::HTTP_OK
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Update{{modelNameSingularPascalCase}}Request $id): {{modelNameSingularPascalCase}}Resource
+    public function destroy(string $id): {{modelNameSingularPascalCase}}Resource|JsonResponse
     {
-        //
+        try {
+            {{modelNameSingularPascalCase}}::destroy($id);
+
+            return (new {{modelNameSingularPascalCase}}Resource(null))
+                ->additional([
+                    'message' => 'The {{modelNameCleanSingular}} was deleted successfully.',
+                    'success' => true,
+                    'code' => Response::HTTP_OK
+                ]);
+        } catch (\Exception $e) {
+            return (new {{modelNameSingularPascalCase}}Resource(null))
+                ->additional([
+                    'message' => $e->getMessage(),
+                    'success' => false,
+                    'code' => Response::HTTP_INTERNAL_SERVER_ERROR
+                ])
+                ->response()
+                ->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

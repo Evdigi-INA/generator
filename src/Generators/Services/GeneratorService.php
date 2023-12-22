@@ -14,6 +14,7 @@ use EvdigiIna\Generator\Generators\{
     MigrationGenerator,
     PermissionGenerator,
     RequestGenerator,
+    ResourceApiGenerator,
     RouteGenerator,
     SeederGenerator,
     ViewComposerGenerator
@@ -34,37 +35,39 @@ class GeneratorService implements GeneratorServiceInterface
      */
     public function generateAll(array $request): void
     {
-        (new ModelGenerator)->generate($request);
-        (new MigrationGenerator)->generate($request);
+        // (new ModelGenerator)->generate($request);
+        // (new MigrationGenerator)->generate($request);
         (new ControllerGenerator)->generate($request);
-        (new RequestGenerator)->generate($request);
+        // (new RequestGenerator)->generate($request);
 
-        (new IndexViewGenerator)->generate($request);
-        (new CreateViewGenerator)->generate($request);
-        (new ShowViewGenerator)->generate($request);
-        (new EditViewGenerator)->generate($request);
-        (new ActionViewGenerator)->generate($request);
-        (new FormViewGenerator)->generate($request);
+        // (new IndexViewGenerator)->generate($request);
+        // (new CreateViewGenerator)->generate($request);
+        // (new ShowViewGenerator)->generate($request);
+        // (new EditViewGenerator)->generate($request);
+        // (new ActionViewGenerator)->generate($request);
+        // (new FormViewGenerator)->generate($request);
 
-        (new MenuGenerator)->generate($request);
-        (new RouteGenerator)->generate($request);
-        (new PermissionGenerator)->generate($request);
+        // (new MenuGenerator)->generate($request);
+        // (new RouteGenerator)->generate($request);
+        // (new PermissionGenerator)->generate($request);
 
-        if (in_array('foreignId', $request['column_types'])) {
-            (new ViewComposerGenerator)->generate($request);
-        }
+        // if (in_array('foreignId', $request['column_types'])) {
+        //     (new ViewComposerGenerator)->generate($request);
+        // }
 
-        Artisan::call('migrate');
+        // Artisan::call('migrate');
 
-        if(isset($request['generate_seeder']) && $request['generate_seeder'] != null) {
-            (new SeederGenerator)->generate($request);
-        }
+        // if(isset($request['generate_seeder']) && $request['generate_seeder'] != null) {
+        //     (new SeederGenerator)->generate($request);
+        // }
 
-        if(isset($request['generate_factory']) && $request['generate_factory'] != null) {
-            (new FactoryGenerator)->generate($request);
-        }
+        // if(isset($request['generate_factory']) && $request['generate_factory'] != null) {
+        //     (new FactoryGenerator)->generate($request);
+        // }
 
-        $this->checkSidebarType();
+        (new ResourceApiGenerator)->generate($request);
+
+        // $this->checkSidebarType();
     }
 
     /**

@@ -1,13 +1,13 @@
 <?php
 
-namespace {{namespace}};
+{{namespace}}
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class {{modelNameSingularPascalCase}}Collection extends ResourceCollection
 {
-    public $wrap = '{{modelNamePluralSnakeCase}}';
+    public static  $wrap = '{{modelNamePluralSnakeCase}}';
 
     /**
      * Transform the resource collection into an array.

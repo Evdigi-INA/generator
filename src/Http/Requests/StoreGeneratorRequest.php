@@ -73,6 +73,7 @@ class StoreGeneratorRequest extends FormRequest
             'generate_factory' => ['nullable'],
             // 'new_route' => ['required_if:header,new'],
             'new_submenu' => ['nullable'],
+            'generate_variant' => ['required'],
         ];
     }
 }

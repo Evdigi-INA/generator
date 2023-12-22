@@ -1,6 +1,6 @@
 <div class="row mb-2">
     {{-- model name --}}
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="form-group">
             <label for="model">{{ __('Model') }}</label>
             <input type="text" name="model" id="model" class="form-control @error('model') is-invalid @enderror"
@@ -16,7 +16,7 @@
     {{-- end of model name --}}
 
     {{-- generate type --}}
-    <div class="col-md-5">
+    <div class="col-md-3">
         <p class="mb-2">{{ __('Generate Type') }}</p>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="generate_type" id="generate-type-1"
@@ -31,6 +31,26 @@
                 value="{{ \EvdigiIna\Generator\Enums\GeneratorType::ONLY_MODEL_AND_MIGRATION->value }}">
             <label class="form-check-label" for="generate-type-2">
                 {{ __('Only Model & Migration') }}
+            </label>
+        </div>
+    </div>
+    {{-- end of generate type --}}
+
+    {{-- generate type --}}
+    <div class="col-md-3">
+        <p class="mb-2">{{ __('Variant') }}</p>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="generate_variant" id="generate-type-2" value="default"
+                checked>
+            <label class="form-check-label" for="generate-type-2">
+                {{ __('Default (blade)') }}
+            </label>
+        </div>
+
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="generate_variant" id="generate-type-1" value="api">
+            <label class="form-check-label" for="generate-type-1">
+                {{ __('API') }}
             </label>
         </div>
     </div>

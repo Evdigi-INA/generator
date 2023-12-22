@@ -18,6 +18,8 @@ class ControllerGenerator
         $modelNameSpaceLowercase = GeneratorUtils::cleanSingularLowerCase($model);
         $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
         $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase($model);
+        $modelNameCleanSingular = GeneratorUtils::cleanSingularLowerCase($model);
+        $modelNameCleanPlural = GeneratorUtils::cleanPluralLowerCase($model);
 
         $query = "$modelNameSingularPascalCase::query()";
 
@@ -128,7 +130,7 @@ class ControllerGenerator
          * User::create($request->validated());
          * $user->update($request->validated());
          */
-        $insertDataAction = $modelNameSingularPascalCase  . "::create(\$request->validated());";
+        $insertDataAction = "$$modelNameSingularCamelCase = " . $modelNameSingularPascalCase  . "::create(\$request->validated());";
         $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$request->validated());";
         $requestValidatedAttr = "";
 
@@ -136,12 +138,12 @@ class ControllerGenerator
             /**
              * * will generate something like:
              *
-             *  User::create($attr);
-             *  $user->update($attr);
+             *  User::create($validated);
+             *  $user->update($validated);
              */
-            $insertDataAction = $modelNameSingularPascalCase  . "::create(\$attr);";
-            $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$attr);";
-            $requestValidatedAttr = "\$attr = \$request->validated();\n";
+            $insertDataAction = "$$modelNameSingularCamelCase = " . $modelNameSingularPascalCase  . "::create(\$validated);";
+            $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$validated);";
+            $requestValidatedAttr = "\$validated = \$request->validated();\n";
         }
 
         $passwordFieldStore = "";
@@ -155,30 +157,27 @@ class ControllerGenerator
                     /**
                      * will generate something like:
                      *
-                     * $attr['password'] = bcrypt($request->password);
+                     * $validated['password'] = bcrypt($request->password);
                      */
-                    $passwordFieldStore .= "\t\t\$attr['" . str()->snake($request['fields'][$i]) . "'] = bcrypt(\$request->" . str()->snake($request['fields'][$i]) . ");\n";
+                    $passwordFieldStore .= "\t\t\$validated['" . str()->snake($request['fields'][$i]) . "'] = bcrypt(\$request->" . str()->snake($request['fields'][$i]) . ");\n";
 
                     /**
                      * will generate something like:
                      *
                      * switch (is_null($request->password)) {
                      *   case true:
-                     *      unset($attr['password']);
+                     *      unset($validated['password']);
                      *       break;
                      *   default:
-                     *       $attr['password'] = bcrypt($request->password);
+                     *       $validated['password'] = bcrypt($request->password);
                      *       break;
                      *   }
                      */
                     $passwordFieldUpdate .= "
-        switch (is_null(\$request->" . str()->snake($request['fields'][$i]) . ")) {
-            case true:
-                unset(\$attr['" . str()->snake($request['fields'][$i]) . "']);
-                break;
-            default:
-                \$attr['" . str()->snake($request['fields'][$i]) . "'] = bcrypt(\$request->" . str()->snake($request['fields'][$i]) . ");
-                break;
+        if (is_null(\$request->" . str()->snake($request['fields'][$i]) . ")) {
+            unset(\$validated['" . str()->snake($request['fields'][$i]) . "']);
+        } else {
+            \$validated['" . str()->snake($request['fields'][$i]) . "'] = bcrypt(\$request->" . str()->snake($request['fields'][$i]) . ");
         }\n";
                 }
             }
@@ -202,9 +201,9 @@ class ControllerGenerator
                     /**
                      * will generate something like:
                      *
-                     * $attr['month'] = $request->month ? \Carbon\Carbon::createFromFormat('Y-m', $request->month)->toDateTimeString() : null;
+                     * $validated['month'] = $request->month ? \Carbon\Carbon::createFromFormat('Y-m', $request->month)->toDateTimeString() : null;
                      */
-                    $inputMonths .= "\t\t\$attr['" . str()->snake($request['fields'][$i]) . "'] = \$request->" . str()->snake($request['fields'][$i]) . " ? \Carbon\Carbon::createFromFormat('Y-m', \$request->" . str()->snake($request['fields'][$i]) . ")->toDateTimeString() : null;\n";
+                    $inputMonths .= "\t\t\$validated['" . str()->snake($request['fields'][$i]) . "'] = \$request->" . str()->snake($request['fields'][$i]) . " ? \Carbon\Carbon::createFromFormat('Y-m', \$request->" . str()->snake($request['fields'][$i]) . ")->toDateTimeString() : null;\n";
                 }
             }
         }
@@ -249,13 +248,23 @@ class ControllerGenerator
                 }
 
                 /**
-                 * Remove $attr = $request->validated(); because is already exist in template (.stub)
+                 * Remove $validated = $request->validated(); because is already exist in template (.stub)
                  */
-                $passwordFieldStore = str_replace('$attr = $request->validated();', '', $passwordFieldStore);
-                $passwordFieldUpdate = str_replace('$attr = $request->validated();', '', $passwordFieldUpdate);
+                $passwordFieldStore = str_replace('$validated = $request->validated();', '', $passwordFieldStore);
+                $passwordFieldUpdate = str_replace('$validated = $request->validated();', '', $passwordFieldUpdate);
 
-                $inputMonths = str_replace('$attr = $request->validated();', '', $inputMonths);
-                $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$attr);";
+                $inputMonths = str_replace('$validated = $request->validated();', '', $inputMonths);
+                $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$validated);";
+
+                if (isset($request['is_simple_generator'])) {
+                    $getTemplate = GeneratorUtils::getTemplate('controllers/simple/controller-with-upload-file');
+                } else {
+                    if (isset($request['generate_variant']) && $request['generate_variant'] == 'api') {
+                        $getTemplate = GeneratorUtils::getTemplate('controllers/controller-api');
+                    } else {
+                        $getTemplate = GeneratorUtils::getTemplate('controllers/controller-with-upload-file');
+                    }
+                }
 
                 /**
                  * controller with upload file code
@@ -282,6 +291,9 @@ class ControllerGenerator
                         '{{passwordFieldUpdate}}',
                         '{{updateDataAction}}',
                         '{{inputMonths}}',
+                        '{{resourceApiPath}}',
+                        '{{modelNameCleanSingular}}',
+                        '{{modelNameCleanPlural}}'
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -303,12 +315,26 @@ class ControllerGenerator
                         $passwordFieldStore,
                         $passwordFieldUpdate,
                         $updateDataAction,
-                        $inputMonths
+                        $inputMonths,
+                        $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
+                        $modelNameCleanSingular,
+                        $modelNameCleanPlural
                     ],
-                    isset($request['is_simple_generator']) ? GeneratorUtils::getTemplate('controllers/simple/controller-with-upload-file') : GeneratorUtils::getTemplate('controllers/controller-with-upload-file')
+                    $getTemplate
                 );
                 break;
             default:
+
+                if (isset($request['is_simple_generator'])) {
+                    $getTemplate = GeneratorUtils::getTemplate('controllers/simple/controller');
+                } else {
+                    if (isset($request['generate_variant']) && $request['generate_variant'] == 'api') {
+                        $getTemplate = GeneratorUtils::getTemplate('controllers/controller-api');
+                    } else {
+                        $getTemplate = GeneratorUtils::getTemplate('controllers/controller');
+                    }
+                }
+
                 /**
                  * default controller
                  */
@@ -331,6 +357,9 @@ class ControllerGenerator
                         '{{insertDataAction}}',
                         '{{updateDataAction}}',
                         '{{inputMonths}}',
+                        '{{resourceApiPath}}',
+                        '{{modelNameCleanSingular}}',
+                        '{{modelNameCleanPlural}}'
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -349,9 +378,12 @@ class ControllerGenerator
                         $passwordFieldUpdate,
                         $insertDataAction,
                         $updateDataAction,
-                        $inputMonths
+                        $inputMonths,
+                        $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
+                        $modelNameCleanSingular,
+                        $modelNameCleanPlural
                     ],
-                    isset($request['is_simple_generator']) ? GeneratorUtils::getTemplate('controllers/simple/controller') : GeneratorUtils::getTemplate('controllers/controller')
+                    $getTemplate
                 );
                 break;
         }
