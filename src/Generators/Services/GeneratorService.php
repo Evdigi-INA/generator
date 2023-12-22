@@ -35,39 +35,46 @@ class GeneratorService implements GeneratorServiceInterface
      */
     public function generateAll(array $request): void
     {
-        // (new ModelGenerator)->generate($request);
-        // (new MigrationGenerator)->generate($request);
+        (new ModelGenerator)->generate($request);
+        (new MigrationGenerator)->generate($request);
         (new ControllerGenerator)->generate($request);
-        // (new RequestGenerator)->generate($request);
+        (new RequestGenerator)->generate($request);
 
-        // (new IndexViewGenerator)->generate($request);
-        // (new CreateViewGenerator)->generate($request);
-        // (new ShowViewGenerator)->generate($request);
-        // (new EditViewGenerator)->generate($request);
-        // (new ActionViewGenerator)->generate($request);
-        // (new FormViewGenerator)->generate($request);
+        if (empty($request['generate_variant']) || $request['generate_variant'] != 'api') {
+            (new IndexViewGenerator)->generate($request);
+            (new CreateViewGenerator)->generate($request);
+            (new ShowViewGenerator)->generate($request);
+            (new EditViewGenerator)->generate($request);
+            (new ActionViewGenerator)->generate($request);
+            (new FormViewGenerator)->generate($request);
+            (new MenuGenerator)->generate($request);
 
-        // (new MenuGenerator)->generate($request);
-        // (new RouteGenerator)->generate($request);
-        // (new PermissionGenerator)->generate($request);
+            if (in_array('foreignId', $request['column_types'])) {
+                (new ViewComposerGenerator)->generate($request);
+            }
+        }
 
-        // if (in_array('foreignId', $request['column_types'])) {
-        //     (new ViewComposerGenerator)->generate($request);
-        // }
+        (new RouteGenerator)->generate($request);
 
-        // Artisan::call('migrate');
+        if (empty($request['is_simple_generator'])) {
+            (new PermissionGenerator)->generate($request);
+        }
 
-        // if(isset($request['generate_seeder']) && $request['generate_seeder'] != null) {
-        //     (new SeederGenerator)->generate($request);
-        // }
+        if(isset($request['generate_seeder']) && $request['generate_seeder'] != null) {
+            (new SeederGenerator)->generate($request);
+        }
 
-        // if(isset($request['generate_factory']) && $request['generate_factory'] != null) {
-        //     (new FactoryGenerator)->generate($request);
-        // }
+        if(isset($request['generate_factory']) && $request['generate_factory'] != null) {
+            (new FactoryGenerator)->generate($request);
+        }
 
-        (new ResourceApiGenerator)->generate($request);
+        if (isset($request['generate_variant']) && $request['generate_variant'] == 'api') {
+            (new ResourceApiGenerator)->generate($request);
+        }
 
-        // $this->checkSidebarType();
+        Artisan::call('migrate');
+
+        $this->checkSidebarType();
     }
 
     /**

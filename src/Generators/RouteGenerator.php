@@ -19,16 +19,22 @@ class RouteGenerator
 
         $middleware = "->middleware('auth')";
 
-        if(isset($request['is_simple_generator'])){
+        if (isset($request['is_simple_generator']) || isset($request['generate_variant']) && $request['generate_variant'] == 'api') {
             $middleware = "";
         }
 
-        if ($path != '') {
-            $controllerClass = "\n" . "Route::resource('" . $modelNamePluralKebabCase . "', App\Http\Controllers\\" . str_replace('/', '\\', $path) . "\\" . $modelNameSingularPascalCase . "Controller::class)$middleware;";
+        if (isset($request['generate_variant']) && $request['generate_variant'] == 'api') {
+            $routeFacade = "Route::apiResource('";
         } else {
-            $controllerClass = "\n" . "Route::resource('" . $modelNamePluralKebabCase . "', App\Http\Controllers\\" . $modelNameSingularPascalCase . "Controller::class)$middleware;";
+            $routeFacade = "Route::resource('";
         }
 
-        File::append(base_path('routes/web.php'), $controllerClass);
+        if ($path != '') {
+            $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\" . str_replace('/', '\\', $path) . "\\" . $modelNameSingularPascalCase . "Controller::class)$middleware;";
+        } else {
+            $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\" . $modelNameSingularPascalCase . "Controller::class)$middleware;";
+        }
+
+        File::append(base_path(isset($request['generate_variant']) && $request['generate_variant'] == 'api' ? 'routes/api.php' : 'routes/web.php'), $controllerClass);
     }
 }

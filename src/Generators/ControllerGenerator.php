@@ -257,10 +257,10 @@ class ControllerGenerator
                 $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$validated);";
 
                 if (isset($request['is_simple_generator'])) {
-                    $getTemplate = GeneratorUtils::getTemplate('controllers/simple/controller-with-upload-file');
+                    $getTemplate = GeneratorUtils::getTemplate('controllers/simple/controller');
                 } else {
                     if (isset($request['generate_variant']) && $request['generate_variant'] == 'api') {
-                        $getTemplate = GeneratorUtils::getTemplate('controllers/controller-api');
+                        $getTemplate = GeneratorUtils::getTemplate('controllers/controller-api-with-upload-file');
                     } else {
                         $getTemplate = GeneratorUtils::getTemplate('controllers/controller-with-upload-file');
                     }

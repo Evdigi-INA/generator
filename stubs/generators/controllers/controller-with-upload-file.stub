@@ -48,10 +48,10 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function store(Store{{modelNameSingularPascalCase}}Request $request): \Illuminate\Http\RedirectResponse
     {
-        $attr = $request->validated();
+        $validated = $request->validated();
         {{passwordFieldStore}}{{inputMonths}}
 {{storeCode}}
-        {{modelNameSingularPascalCase}}::create($attr);
+        {{modelNameSingularPascalCase}}::create($validated);
 
         return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was created successfully.'));
     }
@@ -77,7 +77,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function update(Update{{modelNameSingularPascalCase}}Request $request, {{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Http\RedirectResponse
     {
-        $attr = $request->validated();
+        $validated = $request->validated();
         {{passwordFieldUpdate}}{{inputMonths}}
 {{updateCode}}
         {{updateDataAction}}

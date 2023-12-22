@@ -7,6 +7,7 @@ use {{requestPath}};
 use {{resourceApiPath}}\{{{modelNameSingularPascalCase}}Collection, {{modelNameSingularPascalCase}}Resource};
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\JsonResponse;
+use Intervention\Image\Facades\Image;
 
 class {{modelNameSingularPascalCase}}Controller extends Controller
 {
@@ -35,8 +36,10 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function store(Store{{modelNameSingularPascalCase}}Request $request): {{modelNameSingularPascalCase}}Resource|JsonResponse
     {
+        $validated = $request->validated();
         {{passwordFieldStore}}{{inputMonths}}
-        {{insertDataAction}}
+{{storeCode}}
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::create($validated);
 
         return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))
             ->additional([
@@ -66,7 +69,9 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     public function update(Update{{modelNameSingularPascalCase}}Request $request, string $id): {{modelNameSingularPascalCase}}Resource
     {
         ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail($id);
+        $validated = $request->validated();
         {{passwordFieldUpdate}}{{inputMonths}}
+{{updateCode}}
         {{updateDataAction}}
 
         return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))->additional([

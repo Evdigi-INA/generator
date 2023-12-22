@@ -2,8 +2,6 @@
 
 namespace EvdigiIna\Generator\Generators;
 
-use Illuminate\Support\Facades\Log;
-
 class FactoryGenerator
 {
     public function generate(array $request)
