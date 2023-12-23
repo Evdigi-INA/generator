@@ -22,9 +22,9 @@
                             @csrf
                             @method('POST')
 
-                            <div class="row mb-2">
+                            <div class="row mb-3">
                                 {{-- model name --}}
-                                <div class="col-md-5">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="model">{{ __('Model') }}</label>
                                         <input type="text" name="model" id="model"
@@ -43,7 +43,7 @@
                                 {{-- end of model name --}}
 
                                 {{-- generate type --}}
-                                <div class="col-md-7">
+                                <div class="col-md-3">
                                     <p class="mb-2">Generate Type</p>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="generate_type"
@@ -64,6 +64,46 @@
                                     </div>
                                 </div>
                                 {{-- end of generate type --}}
+
+                                {{-- generate type --}}
+                                <div class="col-md-3">
+                                    <p class="mb-2">{{ __('Variant') }}</p>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="generate_variant"
+                                            id="generate-type-2" value="default" checked>
+                                        <label class="form-check-label" for="generate-type-2">
+                                            {{ __('Default (blade)') }}
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="generate_variant"
+                                            id="generate-type-1" value="api">
+                                        <label class="form-check-label" for="generate-type-1">
+                                            {{ __('API') }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {{-- end of generate type --}}
+
+                                <div class="col-md-3">
+                                    <p class="mb-2">{{ __('Ads on') }}</p>
+
+                                    <div class="form-check">
+                                        <div class="checkbox">
+                                            <input type="checkbox" class="form-check-input" id="generate-seeder"
+                                                name="generate_seeder">
+                                            <label for="generate-seeder">{{ __('Generate Seeder') }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check">
+                                        <div class="checkbox">
+                                            <input type="checkbox" class="form-check-input" id="generate-factory"
+                                                name="generate_factory">
+                                            <label for="generate-factory">{{ __('Generate Factory') }}</label>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-md-6 mt-3">
                                     <h6>{{ __('Table Fields') }}</h6>
@@ -124,15 +164,15 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <input type="number" name="min_lengths[]"
-                                                                    class="form-control form-min-lengths" min="1"
-                                                                    placeholder="Min Length">
+                                                                    class="form-control form-min-lengths"
+                                                                    min="1" placeholder="Min Length">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <input type="number" name="max_lengths[]"
-                                                                    class="form-control form-max-lengths" min="1"
-                                                                    placeholder="Max Length">
+                                                                    class="form-control form-max-lengths"
+                                                                    min="1" placeholder="Max Length">
                                                             </div>
                                                         </div>
                                                     </div>

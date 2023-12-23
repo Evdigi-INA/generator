@@ -1,5 +1,6 @@
 <?php
 
+use EvdigiIna\Generator\Http\Controllers\ApiGeneratorController;
 use EvdigiIna\Generator\Http\Controllers\GeneratorController;
 use EvdigiIna\Generator\Http\Controllers\SimpleGeneratorController;
 use EvdigiIna\Generator\Http\Middleware\OnlyAvailableInTheFullVersion;

@@ -20,7 +20,7 @@ class SimpleGeneratorController extends Controller
      */
     public function create(): \Illuminate\Contracts\View\View
     {
-        return view('generator::create');
+        return view('generator::simple-create');
     }
 
     /**
@@ -28,31 +28,31 @@ class SimpleGeneratorController extends Controller
      */
     public function store(StoreSimpleGeneratorRequest $request): \Illuminate\Http\JsonResponse
     {
-        $attrs = $request->validated();
-        $attrs['is_simple_generator'] = true;
+        $validated = $request->validated();
+        $validated['is_simple_generator'] = true;
 
         /**
          * will added in next realease
          * now it's not working, because it's not implemented
          * only focus to fix the bug
          */
-        // $checkFile = $this->generatorService->checkFilesAreSame($attrs);
+        // $checkFile = $this->generatorService->checkFilesAreSame($validated);
 
         // if(count($checkFile) > 0){
         //     return response()->json($checkFile, 403);
         // }
 
         if ($request->generate_type == GeneratorType::ALL->value) {
-            $this->generatorService->simpleGenerator($attrs);
+            $this->generatorService->generate($validated);
         } else {
-            $this->generatorService->onlyGenerateModelAndMigration($attrs);
+            $this->generatorService->onlyGenerateModelAndMigration($validated);
         }
 
-        $model = GeneratorUtils::setModelName($attrs['model'], 'default');
+        $model = GeneratorUtils::setModelName($validated['model'], 'default');
 
         return response()->json([
-            'message' => 'qwerty',
-            'route' => GeneratorUtils::pluralKebabCase($model)
+            'message' => 'Success',
+            'route' => isset($request['generate_variant']) && $request['generate_variant'] == 'api' ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model)
         ], Response::HTTP_CREATED);
     }
 }

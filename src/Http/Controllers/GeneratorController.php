@@ -25,20 +25,12 @@ class GeneratorController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.(bootstrap only)
-     */
-    public function simpleCreate(): \Illuminate\Contracts\View\View
-    {
-        return view('generator::simple-create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreGeneratorRequest $request): \Illuminate\Http\JsonResponse
     {
         if ($request->generate_type == GeneratorType::ALL->value) {
-            $this->generatorService->generateAll($request->validated());
+            $this->generatorService->generate($request->validated());
         } else {
             $this->generatorService->onlyGenerateModelAndMigration($request->validated());
         }
@@ -47,7 +39,7 @@ class GeneratorController extends Controller
 
         return response()->json([
             'message' => 'success',
-            'route' => GeneratorUtils::pluralKebabCase($model)
+            'route' => isset($request['generate_variant']) && $request['generate_variant'] == 'api' ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model)
         ], Response::HTTP_CREATED);
     }
 

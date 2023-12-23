@@ -2,6 +2,8 @@
 
 namespace EvdigiIna\Generator\Generators;
 
+use Illuminate\Support\Facades\Log;
+
 class ControllerGenerator
 {
     /**
@@ -253,17 +255,15 @@ class ControllerGenerator
                 $passwordFieldStore = str_replace('$validated = $request->validated();', '', $passwordFieldStore);
                 $passwordFieldUpdate = str_replace('$validated = $request->validated();', '', $passwordFieldUpdate);
 
+                Log::info('variant', [$request['generate_variant']]);
+
                 $inputMonths = str_replace('$validated = $request->validated();', '', $inputMonths);
                 $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$validated);";
 
-                if (isset($request['is_simple_generator'])) {
-                    $getTemplate = GeneratorUtils::getTemplate('controllers/simple/controller');
+                if ($request['generate_variant'] == 'api') {
+                    $getTemplate = GeneratorUtils::getTemplate('controllers/controller-api-with-upload-file');
                 } else {
-                    if (isset($request['generate_variant']) && $request['generate_variant'] == 'api') {
-                        $getTemplate = GeneratorUtils::getTemplate('controllers/controller-api-with-upload-file');
-                    } else {
-                        $getTemplate = GeneratorUtils::getTemplate('controllers/controller-with-upload-file');
-                    }
+                    $getTemplate = GeneratorUtils::getTemplate('controllers/controller-with-upload-file');
                 }
 
                 /**
@@ -324,15 +324,10 @@ class ControllerGenerator
                 );
                 break;
             default:
-
-                if (isset($request['is_simple_generator'])) {
-                    $getTemplate = GeneratorUtils::getTemplate('controllers/simple/controller');
+                if ($request['generate_variant'] == 'api') {
+                    $getTemplate = GeneratorUtils::getTemplate('controllers/controller-api');
                 } else {
-                    if (isset($request['generate_variant']) && $request['generate_variant'] == 'api') {
-                        $getTemplate = GeneratorUtils::getTemplate('controllers/controller-api');
-                    } else {
-                        $getTemplate = GeneratorUtils::getTemplate('controllers/controller');
-                    }
+                    $getTemplate = GeneratorUtils::getTemplate('controllers/controller');
                 }
 
                 /**

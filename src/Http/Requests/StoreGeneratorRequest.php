@@ -3,6 +3,7 @@
 namespace EvdigiIna\Generator\Http\Requests;
 
 use EvdigiIna\Generator\Enums\GeneratorType;
+use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -21,29 +22,6 @@ class StoreGeneratorRequest extends FormRequest
      */
     public function rules(): array
     {
-        $columnTypes = [
-            'string',
-            'integer',
-            'text',
-            'bigInteger',
-            'boolean',
-            'char',
-            'date',
-            'time',
-            'year',
-            'dateTime',
-            'decimal',
-            'double',
-            'enum',
-            'float',
-            'foreignId',
-            'tinyInteger',
-            'mediumInteger',
-            'tinyText',
-            'mediumText',
-            'longText'
-        ];
-
         return [
             // regex only for string, underscores("_") and slash("/")
             'model' => ['required', 'regex:/^[A-Za-z_\/]+$/'],
@@ -61,7 +39,7 @@ class StoreGeneratorRequest extends FormRequest
             'select_options.*' => ['nullable', 'required_if:column_types.*,enum'],
             'constrains.*' => ['nullable', 'required_if:column_types.*,foreignId'],
             'file_types.*' => ['nullable', 'required_if:input_types.*,file', 'in:image,mimes'],
-            'column_types.*' => ['required', 'in:' . implode(',', $columnTypes)],
+            'column_types.*' => ['required', 'in:' . implode(',', (new GeneratorService)->columnTypes())],
             'on_update_foreign.*' => ['nullable'],
             'on_delete_foreign.*' => ['nullable'],
             'menu' => ['required_unless:header,new'],

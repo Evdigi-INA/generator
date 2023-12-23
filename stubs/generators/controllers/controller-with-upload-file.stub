@@ -9,13 +9,14 @@ use Intervention\Image\Facades\Image;
 
 class {{modelNameSingularPascalCase}}Controller extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('permission:{{modelNameSpaceLowercase}} view')->only('index', 'show');
-        $this->middleware('permission:{{modelNameSpaceLowercase}} create')->only('create', 'store');
-        $this->middleware('permission:{{modelNameSpaceLowercase}} edit')->only('edit', 'update');
-        $this->middleware('permission:{{modelNameSpaceLowercase}} delete')->only('destroy');
-    }
+    // TODO: uncomment this if you are using spatie permission
+    // public function __construct()
+    // {
+    //     $this->middleware('permission:{{modelNameSpaceLowercase}} view')->only('index', 'show');
+    //     $this->middleware('permission:{{modelNameSpaceLowercase}} create')->only('create', 'store');
+    //     $this->middleware('permission:{{modelNameSpaceLowercase}} edit')->only('edit', 'update');
+    //     $this->middleware('permission:{{modelNameSpaceLowercase}} delete')->only('destroy');
+    // }
 
     /**
      * Display a listing of the resource.
