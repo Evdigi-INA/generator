@@ -9,5 +9,5 @@
 
             $request->file('{{fieldSnakeCase}}')->move($path, $filename);
 
-            $attr['{{fieldSnakeCase}}'] = $filename;
+            $validated['{{fieldSnakeCase}}'] = $filename;
         }

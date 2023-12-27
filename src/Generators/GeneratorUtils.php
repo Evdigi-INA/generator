@@ -456,4 +456,12 @@ class GeneratorUtils implements GeneratorUtilsInterface
 
         return '';
     }
+
+    /**
+     * Check if generate blade(default) or api.
+     */
+    public static function isGenerateApi(): bool
+    {
+        return request()->filled('generate_variant') && request()->get('generate_variant') == 'api';
+    }
 }

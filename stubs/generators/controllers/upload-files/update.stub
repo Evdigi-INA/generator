@@ -14,5 +14,5 @@
                 unlink($path . ${{modelNameSingularCamelCase}}->{{fieldSnakeCase}});
             }
 
-            $attr['{{fieldSnakeCase}}'] = $filename;
+            $validated['{{fieldSnakeCase}}'] = $filename;
         }

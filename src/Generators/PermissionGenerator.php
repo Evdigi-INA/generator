@@ -2,6 +2,7 @@
 
 namespace EvdigiIna\Generator\Generators;
 
+use Illuminate\Support\Facades\Artisan;
 use Spatie\Permission\Models\{Role, Permission};
 
 class PermissionGenerator
@@ -57,12 +58,32 @@ class PermissionGenerator
      */
     protected function insertRoleAndPermissions(string $model): void
     {
+        Artisan::call('optimize:clear');
+
         $role = Role::findByName('admin');
 
-        Permission::firstOrCreate(['name' => "$model view"]);
-        Permission::firstOrCreate(['name' => "$model create"]);
-        Permission::firstOrCreate(['name' => "$model edit"]);
-        Permission::firstOrCreate(['name' => "$model delete"]);
+        $permissions = [
+            [
+                'name' => "$model view",
+                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+            ],
+            [
+                'name' => "$model create",
+                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+            ],
+            [
+                'name' => "$model edit",
+                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+            ],
+            [
+                'name' => "$model delete",
+                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+            ]
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate($permission);
+        }
 
         $role->givePermissionTo([
             "$model view",

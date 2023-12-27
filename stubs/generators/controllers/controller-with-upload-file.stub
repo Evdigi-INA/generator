@@ -9,7 +9,7 @@ use Intervention\Image\Facades\Image;
 
 class {{modelNameSingularPascalCase}}Controller extends Controller
 {
-    // TODO: uncomment this if you are using spatie permission
+    // TODO: uncomment this code if you are using spatie permission
     // public function __construct()
     // {
     //     $this->middleware('permission:{{modelNameSpaceLowercase}} view')->only('index', 'show');

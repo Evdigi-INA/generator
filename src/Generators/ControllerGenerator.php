@@ -29,6 +29,10 @@ class ControllerGenerator
             case '':
                 $namespace = "namespace App\Http\Controllers;\n";
 
+                if (GeneratorUtils::isGenerateApi()) {
+                    $namespace = "namespace App\Http\Controllers\Api;\n\nuse App\Http\Controllers\Controller;";
+                }
+
                 /**
                  * will generate something like:
                  *
@@ -45,6 +49,10 @@ class ControllerGenerator
                  * use App\Http\Controllers\Controller;
                  */
                 $namespace = "namespace App\Http\Controllers\\$path;\n\nuse App\Http\Controllers\Controller;";
+
+                if (GeneratorUtils::isGenerateApi()) {
+                    $namespace = "namespace App\Http\Controllers\Api\\$path;\n\nuse App\Http\Controllers\Controller;";
+                }
 
                 /**
                  * Will generate something like:
@@ -387,12 +395,30 @@ class ControllerGenerator
          * Create a controller file.
          */
         if (!$path) {
-            file_put_contents(app_path("/Http/Controllers/{$modelNameSingularPascalCase}Controller.php"), $template);
+            GeneratorUtils::checkFolder(app_path("/Http/Controllers/Api"));
+
+            if (GeneratorUtils::isGenerateApi()) {
+                file_put_contents(app_path("/Http/Controllers/Api/{$modelNameSingularPascalCase}Controller.php"), $template);
+            } else {
+                file_put_contents(app_path("/Http/Controllers/{$modelNameSingularPascalCase}Controller.php"), $template);
+            }
         } else {
-            $fullPath = app_path("/Http/Controllers/$path/");
+            if (GeneratorUtils::isGenerateApi()) {
+                $fullPath = app_path("/Http/Controllers/Api/$path/");
+            } else {
+                $fullPath = app_path("/Http/Controllers/$path/");
+            }
+
             GeneratorUtils::checkFolder($fullPath);
+
             file_put_contents("$fullPath" . $modelNameSingularPascalCase . "Controller.php", $template);
         }
+
+        Log::info('Controller created successfully.', [
+            'generated_code' => $template,
+            'is_api' => GeneratorUtils::isGenerateApi(),
+            'request' => $request
+        ]);
     }
 
     /**

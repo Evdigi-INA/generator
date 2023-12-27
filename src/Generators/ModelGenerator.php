@@ -17,7 +17,7 @@ class ModelGenerator
         $casts = "[";
         $relations = "";
         $totalFields = count($request['fields']);
-        $dateTimeFormat = config('generator.format.datetime') ? config('generator.format.datetime') : 'd/m/Y H:i';
+        $dateTimeFormat = config('generator.format.datetime') ? config('generator.format.datetime') : 'Y-m-d H:i:s';
         $protectedHidden = "";
 
         if (in_array('password', $request['input_types'])) {
@@ -135,9 +135,9 @@ class ModelGenerator
             $protectedHidden = substr($protectedHidden, 0, -2) . "];";
         }
 
-        $casts .= <<<PHP
-        'created_at' => 'datetime:$dateTimeFormat', 'updated_at' => 'datetime:$dateTimeFormat']
-        PHP;
+        // $casts .= <<<PHP
+        // 'created_at' => 'datetime:$dateTimeFormat', 'updated_at' => 'datetime:$dateTimeFormat']
+        // PHP;
 
         $template = str_replace(
             [

@@ -11,5 +11,5 @@
                 $constraint->upsize();{{aspectRatio}}
             })->save($path . $filename);
 
-            $attr['{{fieldSnakeCase}}'] = $filename;
+            $validated['{{fieldSnakeCase}}'] = $filename;
         }

@@ -39,7 +39,7 @@ class GeneratorController extends Controller
 
         return response()->json([
             'message' => 'success',
-            'route' => isset($request['generate_variant']) && $request['generate_variant'] == 'api' ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model)
+            'route' => GeneratorUtils::isGenerateApi() ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model)
         ], Response::HTTP_CREATED);
     }
 

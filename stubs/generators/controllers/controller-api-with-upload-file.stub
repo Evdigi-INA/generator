@@ -11,7 +11,7 @@ use Intervention\Image\Facades\Image;
 
 class {{modelNameSingularPascalCase}}Controller extends Controller
 {
-    // TODO: uncomment this if you are using spatie permission
+    // TODO: uncomment this code if you are using spatie permission
     // public function __construct()
     // {
     //     $this->middleware('permission:{{modelNameSpaceLowercase}} view')->only('index', 'show');
@@ -46,7 +46,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
             ->additional([
                 'message' => 'The {{modelNameCleanSingular}} was created successfully.',
                 'success' => true,
-                'code' => Response::HTTP_OK
+                'code' => Response::HTTP_CREATED
             ])
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);

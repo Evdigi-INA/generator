@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Generators\{
     ControllerGenerator,
     FactoryGenerator,
+    GeneratorUtils,
     MenuGenerator,
     ModelGenerator,
     MigrationGenerator,
@@ -34,6 +35,10 @@ class GeneratorService implements GeneratorServiceInterface
      */
     public function generate(array $request): void
     {
+        if (empty($request['is_simple_generator'])) {
+            (new PermissionGenerator)->generate($request);
+        }
+
         (new ModelGenerator)->generate($request);
         (new MigrationGenerator)->generate($request);
         (new ControllerGenerator)->generate($request);
@@ -59,10 +64,6 @@ class GeneratorService implements GeneratorServiceInterface
 
         (new RouteGenerator)->generate($request);
 
-        if (empty($request['is_simple_generator'])) {
-            (new PermissionGenerator)->generate($request);
-        }
-
         if(isset($request['generate_seeder']) && $request['generate_seeder'] != null) {
             (new SeederGenerator)->generate($request);
         }
@@ -71,7 +72,7 @@ class GeneratorService implements GeneratorServiceInterface
             (new FactoryGenerator)->generate($request);
         }
 
-        if (isset($request['generate_variant']) && $request['generate_variant'] == 'api') {
+        if (GeneratorUtils::isGenerateApi()) {
             (new ResourceApiGenerator)->generate($request);
         }
 
