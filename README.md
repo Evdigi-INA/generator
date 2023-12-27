@@ -1,8 +1,4 @@
-![image](https://user-images.githubusercontent.com/62506582/219942571-63c42764-1702-4df3-b165-4217e5558713.png)
-
-![image](https://user-images.githubusercontent.com/62506582/219941448-94c46fca-6a9f-422b-bdd1-29f642c3ccf6.png)
-
-`Generator` is a Laravel-based open-source toolkit for building basic needs for administration interface setup like Create, Read, Update, and Delete. It's the minimalistic template or a starting point for developing CMS system, admin panel, or any other web application that requires CRUD functionality.
+![image](https://banners.beyondco.de/Generator.png?theme=light&packageManager=composer+require&packageName=evdigiina%2Fgenerator+--dev&pattern=architect&style=style_1&description=Package+for+building+basic+needs+administration+interface+setup+like+Create%2C+Read%2C+Update%2C+and+Delete.+Is+minimalistic.&md=1&showWatermark=0&fontSize=100px&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg)
 
 [Docs](https://evdigi-ina.github.io/generator-docs/)
 
