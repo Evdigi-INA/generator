@@ -65,19 +65,19 @@ class PermissionGenerator
         $permissions = [
             [
                 'name' => "$model view",
-                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+                // 'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
             ],
             [
                 'name' => "$model create",
-                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+                // 'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
             ],
             [
                 'name' => "$model edit",
-                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+                // 'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
             ],
             [
                 'name' => "$model delete",
-                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+                // 'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
             ]
         ];
 

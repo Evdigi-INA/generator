@@ -13,7 +13,7 @@ class ResourceApiGenerator
         $path = GeneratorUtils::getModelLocation($request['model']);
         $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
         $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase($model);
-        $namespace = !$path ? "namespace App\Http\Resources\\$modelNamePluralPascalCase;" : "namespace App\Http\Resources\\$modelNamePluralPascalCase\\$path;";
+        $namespace = !$path ? "namespace App\Http\Resources\\$modelNamePluralPascalCase;" : "namespace App\Http\Resources\\$path\\$modelNamePluralPascalCase;";
 
         $resourceTemplate = str_replace(
             [

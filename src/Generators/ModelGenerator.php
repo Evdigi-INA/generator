@@ -139,6 +139,8 @@ class ModelGenerator
         // 'created_at' => 'datetime:$dateTimeFormat', 'updated_at' => 'datetime:$dateTimeFormat']
         // PHP;
 
+        $casts .= "]";
+
         $template = str_replace(
             [
                 '{{modelName}}',
