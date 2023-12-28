@@ -50,7 +50,7 @@ class ResourceApiGenerator
 
             file_put_contents(app_path("/Http/Resources/$modelNamePluralPascalCase/" . $modelNameSingularPascalCase . "Collection.php"), $collectionTemplate);
         } else {
-            $fullPath = app_path("/Http/Resources/$modelNamePluralPascalCase/$path");
+            $fullPath = app_path("/Http/Resources/$path/$modelNamePluralPascalCase");
 
             GeneratorUtils::checkFolder($fullPath);
 

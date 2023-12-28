@@ -25,7 +25,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function index(): {{modelNameSingularPascalCase}}Collection|{{modelNameSingularPascalCase}}Resource
     {
-        return (new {{modelNameSingularPascalCase}}Collection({{modelNameSingularPascalCase}}::paginate()))->additional([
+        return (new {{modelNameSingularPascalCase}}Collection({{modelNameSingularPascalCase}}::{{relations}}paginate()))->additional([
             'message' => 'The {{modelNameCleanPlural}} was received successfully.',
             'success' => true,
             'code' => Response::HTTP_OK
@@ -57,7 +57,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function show(string $id): {{modelNameSingularPascalCase}}Resource
     {
-        return (new {{modelNameSingularPascalCase}}Resource({{modelNameSingularPascalCase}}::findOrFail($id)))->additional([
+        return (new {{modelNameSingularPascalCase}}Resource({{modelNameSingularPascalCase}}::{{relations}}findOrFail($id)))->additional([
             'message' => 'The {{modelNameCleanSingular}} was received successfully.',
             'success' => true,
             'code' => Response::HTTP_OK
@@ -69,7 +69,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function update(Update{{modelNameSingularPascalCase}}Request $request, string $id): {{modelNameSingularPascalCase}}Resource
     {
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail($id);
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail($id);
         $validated = $request->validated();
         {{passwordFieldUpdate}}{{inputMonths}}
 {{updateCode}}

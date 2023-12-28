@@ -19,7 +19,7 @@ class ShowViewGenerator
 
         $trs = "";
         $totalFields = count($request['fields']);
-        $dateTimeFormat = config('generator.format.datetime') ? config('generator.format.datetime') : 'd/m/Y H:i';
+        $dateTimeFormat = config('generator.format.datetime') ? config('generator.format.datetime') : 'Y-m-d H:i:s';
 
         foreach ($request['fields'] as $i => $field) {
             if ($request['input_types'][$i] != 'password') {

@@ -62,7 +62,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): \Illuminate\Http\RedirectResponse
     {
-        $attr = $request->validated();
+        $validated = $request->validated();
 
         if ($request->file('avatar') && $request->file('avatar')->isValid()) {
 
@@ -77,12 +77,12 @@ class UserController extends Controller
                 $constraint->upsize();
             })->save($this->avatarPath . $filename);
 
-            $attr['avatar'] = $filename;
+            $validated['avatar'] = $filename;
         }
 
-        $attr['password'] = bcrypt($request->password);
+        $validated['password'] = bcrypt($request->password);
 
-        $user = User::create($attr);
+        $user = User::create($validated);
 
         $user->assignRole($request->role);
 
@@ -114,7 +114,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user): \Illuminate\Http\RedirectResponse
     {
-        $attr = $request->validated();
+        $validated = $request->validated();
 
         if ($request->file('avatar') && $request->file('avatar')->isValid()) {
 
@@ -134,21 +134,21 @@ class UserController extends Controller
                 unlink($oldAvatar);
             }
 
-            $attr['avatar'] = $filename;
+            $validated['avatar'] = $filename;
         } else {
-            $attr['avatar'] = $user->avatar;
+            $validated['avatar'] = $user->avatar;
         }
 
         switch (is_null($request->password)) {
             case true:
-                unset($attr['password']);
+                unset($validated['password']);
                 break;
             default:
-                $attr['password'] = bcrypt($request->password);
+                $validated['password'] = bcrypt($request->password);
                 break;
         }
 
-        $user->update($attr);
+        $user->update($validated);
 
         $user->syncRoles($request->role);
 

@@ -3,7 +3,6 @@
 namespace EvdigiIna\Generator\Generators;
 
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 
 class RouteGenerator
 {
@@ -45,8 +44,6 @@ class RouteGenerator
                 $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\";
             }
         }
-
-        Log::info('is_api_route', [GeneratorUtils::isGenerateApi()]);
 
         $controllerClass .=  $modelNameSingularPascalCase . "Controller::class)$middleware;";
 

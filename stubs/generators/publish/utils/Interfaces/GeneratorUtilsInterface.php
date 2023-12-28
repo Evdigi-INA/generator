@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Generators\Interfaces;
+namespace EvdigiIna\Generator\Generators\Interfaces;
 
 interface GeneratorUtilsInterface
 {
@@ -137,4 +137,9 @@ interface GeneratorUtilsInterface
      * Check if menu is active.
      */
     public static function isActiveMenu(string|array $route): string;
+
+    /**
+     * Check if generate blade(default) or api.
+     */
+    public static function isGenerateApi(): bool;
 }

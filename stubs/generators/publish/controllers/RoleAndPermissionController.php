@@ -29,9 +29,9 @@ class RoleAndPermissionController extends Controller
             return DataTables::of($users)
                 ->addIndexColumn()
                 ->addColumn('created_at', function ($row) {
-                    return $row->created_at->format('d/m/Y H:i');
+                    return $row->created_at->format('Y-m-d H:i:s');
                 })->addColumn('updated_at', function ($row) {
-                    return $row->updated_at->format('d/m/Y H:i');
+                    return $row->updated_at->format('Y-m-d H:i:s');
                 })
                 ->addColumn('action', 'roles.include.action')
                 ->toJson();
@@ -105,7 +105,7 @@ class RoleAndPermissionController extends Controller
             $role->delete();
 
             return to_route('roles.index')->with('success', __('The role was deleted successfully.'));
-        } 
+        }
 
         return to_route('roles.index')->with('error', __('Can`t delete role.'));
     }

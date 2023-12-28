@@ -65,7 +65,7 @@ return [
         /**
          * If any datetime column type or datetime-local on input, will cast and display used this format.
          */
-        'datetime' => 'd/m/Y H:i',
+        'datetime' => 'Y-m-d H:i:s',
 
         /**
          * Limit string on index view for any column type text or longtext.

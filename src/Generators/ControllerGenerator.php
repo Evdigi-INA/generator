@@ -2,8 +2,6 @@
 
 namespace EvdigiIna\Generator\Generators;
 
-use Illuminate\Support\Facades\Log;
-
 class ControllerGenerator
 {
     /**
@@ -90,48 +88,74 @@ class ControllerGenerator
 
         // load the relations for create, show, and edit
         if (in_array('foreignId', $request['column_types'])) {
+            if (GeneratorUtils::isGenerateApi()) {
+                $relations .= "with([";
 
-            $relations .= "$" . $modelNameSingularCamelCase . "->load(";
+                $countForeignId = count(array_keys($request['column_types'], 'foreignId'));
 
-            $countForeignId = count(array_keys($request['column_types'], 'foreignId'));
+                foreach ($request['constrains'] as $i => $constrain) {
+                    if ($constrain != null) {
+                        // remove path or '/' if exists
+                        $constrainName = GeneratorUtils::setModelName($request['constrains'][$i]);
 
-            $query = "$modelNameSingularPascalCase::with(";
+                        $constrainSnakeCase = GeneratorUtils::singularSnakeCase($constrainName);
+                        $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself($constrainName);
+                        $columnAfterId = GeneratorUtils::getColumnAfterId($constrainName);
 
-            foreach ($request['constrains'] as $i => $constrain) {
-                if ($constrain != null) {
-                    // remove path or '/' if exists
-                    $constrainName = GeneratorUtils::setModelName($request['constrains'][$i]);
-
-                    $constrainSnakeCase = GeneratorUtils::singularSnakeCase($constrainName);
-                    $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself($constrainName);
-                    $columnAfterId = GeneratorUtils::getColumnAfterId($constrainName);
-
-                    if ($countForeignId + 1 < $i) {
-                        $relations .= "'$constrainSnakeCase:$selectedColumns', ";
-                        $query .= "'$constrainSnakeCase:$selectedColumns', ";
-                    } else {
-                        $relations .= "'$constrainSnakeCase:$selectedColumns'";
-                        $query .= "'$constrainSnakeCase:$selectedColumns'";
+                        if ($countForeignId + 1 < $i) {
+                            $relations .= "'$constrainSnakeCase:$selectedColumns', ";
+                            $query .= "'$constrainSnakeCase:$selectedColumns', ";
+                        } else {
+                            $relations .= "'$constrainSnakeCase:$selectedColumns'";
+                            $query .= "'$constrainSnakeCase:$selectedColumns'";
+                        }
                     }
+                }
 
-                    /**
-                     * Will generate something like:
-                     *
-                     * ->addColumn('category', function($row){
-                     *     return $row->category ? $row->category->name : '-';
-                     * })
-                     */
-                    $addColumns .= "->addColumn('$constrainSnakeCase', function (\$row) {
+                $relations .= "])->";
+            } else {
+                $relations .= "$" . $modelNameSingularCamelCase . "->load(";
+
+                $countForeignId = count(array_keys($request['column_types'], 'foreignId'));
+
+                $query = "$modelNameSingularPascalCase::with(";
+
+                foreach ($request['constrains'] as $i => $constrain) {
+                    if ($constrain != null) {
+                        // remove path or '/' if exists
+                        $constrainName = GeneratorUtils::setModelName($request['constrains'][$i]);
+
+                        $constrainSnakeCase = GeneratorUtils::singularSnakeCase($constrainName);
+                        $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself($constrainName);
+                        $columnAfterId = GeneratorUtils::getColumnAfterId($constrainName);
+
+                        if ($countForeignId + 1 < $i) {
+                            $relations .= "'$constrainSnakeCase:$selectedColumns', ";
+                            $query .= "'$constrainSnakeCase:$selectedColumns', ";
+                        } else {
+                            $relations .= "'$constrainSnakeCase:$selectedColumns'";
+                            $query .= "'$constrainSnakeCase:$selectedColumns'";
+                        }
+
+                        /**
+                         * Will generate something like:
+                         *
+                         * ->addColumn('category', function($row){
+                         *     return $row->category ? $row->category->name : '-';
+                         * })
+                         */
+                        $addColumns .= "->addColumn('$constrainSnakeCase', function (\$row) {
                     return \$row->" . $constrainSnakeCase . " ? \$row->" . $constrainSnakeCase . "->$columnAfterId : '';
                 })";
+                    }
                 }
+
+                $query .= ")";
+                $relations .= ");\n\n\t\t";
+
+                $query = str_replace("''", "', '", $query);
+                $relations = str_replace("''", "', '", $relations);
             }
-
-            $query .= ")";
-            $relations .= ");\n\n\t\t";
-
-            $query = str_replace("''", "', '", $query);
-            $relations = str_replace("''", "', '", $relations);
         }
 
         /**
@@ -263,8 +287,6 @@ class ControllerGenerator
                 $passwordFieldStore = str_replace('$validated = $request->validated();', '', $passwordFieldStore);
                 $passwordFieldUpdate = str_replace('$validated = $request->validated();', '', $passwordFieldUpdate);
 
-                Log::info('variant', [$request['generate_variant']]);
-
                 $inputMonths = str_replace('$validated = $request->validated();', '', $inputMonths);
                 $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$validated);";
 
@@ -301,7 +323,8 @@ class ControllerGenerator
                         '{{inputMonths}}',
                         '{{resourceApiPath}}',
                         '{{modelNameCleanSingular}}',
-                        '{{modelNameCleanPlural}}'
+                        '{{modelNameCleanPlural}}',
+                        '{{relations}}'
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -326,7 +349,8 @@ class ControllerGenerator
                         $inputMonths,
                         $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
                         $modelNameCleanSingular,
-                        $modelNameCleanPlural
+                        $modelNameCleanPlural,
+                        $relations
                     ],
                     $getTemplate
                 );
@@ -362,7 +386,8 @@ class ControllerGenerator
                         '{{inputMonths}}',
                         '{{resourceApiPath}}',
                         '{{modelNameCleanSingular}}',
-                        '{{modelNameCleanPlural}}'
+                        '{{modelNameCleanPlural}}',
+                        '{{relations}}'
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -384,7 +409,8 @@ class ControllerGenerator
                         $inputMonths,
                         $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
                         $modelNameCleanSingular,
-                        $modelNameCleanPlural
+                        $modelNameCleanPlural,
+                        $relations
                     ],
                     $getTemplate
                 );
@@ -395,9 +421,8 @@ class ControllerGenerator
          * Create a controller file.
          */
         if (!$path) {
-            GeneratorUtils::checkFolder(app_path("/Http/Controllers/Api"));
-
             if (GeneratorUtils::isGenerateApi()) {
+                GeneratorUtils::checkFolder(app_path("/Http/Controllers/Api"));
                 file_put_contents(app_path("/Http/Controllers/Api/{$modelNameSingularPascalCase}Controller.php"), $template);
             } else {
                 file_put_contents(app_path("/Http/Controllers/{$modelNameSingularPascalCase}Controller.php"), $template);
@@ -413,12 +438,6 @@ class ControllerGenerator
 
             file_put_contents("$fullPath" . $modelNameSingularPascalCase . "Controller.php", $template);
         }
-
-        Log::info('Controller created successfully.', [
-            'generated_code' => $template,
-            'is_api' => GeneratorUtils::isGenerateApi(),
-            'request' => $request
-        ]);
     }
 
     /**
