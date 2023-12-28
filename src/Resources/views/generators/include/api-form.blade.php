@@ -15,6 +15,8 @@
     </div>
     {{-- end of model name --}}
 
+    <input  type="hidden" name="generate_variant" id="generate-type-1" value="api">
+
     {{-- generate type --}}
     <div class="col-md-5">
         <p class="mb-2">{{ __('Generate Type') }}</p>
@@ -35,8 +37,6 @@
         </div>
     </div>
     {{-- end of generate type --}}
-
-    <input type="hidden" name="generate_variant" id="generate-type-2" value="default">
 
     <div class="col-md-4">
         <p class="mb-2">{{ __('Add-ons') }}</p>
@@ -75,7 +75,11 @@
                     <th>{{ __('Field name') }}</th>
                     <th>{{ __('Column Type') }}</th>
                     <th width="310">{{ __('Length') }}</th>
-                    <th>{{ __('Input Type') }}</th>
+                    <th>
+                        {{ __('Input Type') }}
+                        <br>
+                        <small>{{ __('Used for validation request') }}</small>
+                    </th>
                     <th>{{ __('Required') }}</th>
                     <th>{{ __('Action') }}</th>
                 </tr>
@@ -148,41 +152,6 @@
         </table>
     </div>
     {{-- end of table fields --}}
-
-    <h6 class="mt-3">{{ __('Sidebar Menus') }}</h6>
-
-    {{-- sidebar menu --}}
-    <div class="col-md-6">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="select-header">{{ __('Header') }}</label>
-                    <select name="header" id="select-header" class="form-select" required>
-                        <option value="" disabled selected>-- {{ __('Select header') }} --</option>
-                        <option value="new">{{ __('Create a New Header') }}</option>
-                        @foreach (config('generator.sidebars') as $keySidebar => $header)
-                            <option value="{{ $keySidebar }}">{{ $header['header'] }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group" id="input-menu">
-                    <label for="select-menu">{{ __('Menu') }}</label>
-                    <select name="menu" id="select-menu" class="form-select" required disabled>
-                        <option value="" disabled selected>-- {{ __('Select header first') }} --</option>
-                    </select>
-                    <small id="helper-text-menu"></small>
-                </div>
-            </div>
-        </div>
-    </div>
-    {{-- end of sidebar menu --}}
 
     <div id="col-new-menu" style="display: none;"></div>
 </div>

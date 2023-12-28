@@ -87,7 +87,7 @@
                                 {{-- end of generate type --}}
 
                                 <div class="col-md-3">
-                                    <p class="mb-2">{{ __('Ads on') }}</p>
+                                    <p class="mb-2">{{ __('Add-ons') }}</p>
 
                                     <div class="form-check">
                                         <div class="checkbox">
@@ -125,7 +125,11 @@
                                                 <th>{{ __('Field name') }}</th>
                                                 <th>{{ __('Column Type') }}</th>
                                                 <th width="310">{{ __('Length') }}</th>
-                                                <th>{{ __('Input Type') }}</th>
+                                                <th>
+                                                    {{ __('Input Type') }}
+                                                    <br>
+                                                    <small>{{ __('Used for validation request') }}</small>
+                                                </th>
                                                 <th>{{ __('Required') }}</th>
                                                 <th>{{ __('Action') }}</th>
                                             </tr>

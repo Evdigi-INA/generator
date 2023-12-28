@@ -102,8 +102,22 @@
 
                     <li class="sidebar-item{{ request()->is('generators/create') ? ' active' : '' }}">
                         <a class="sidebar-link" href="{{ route('generators.create') }}">
-                            <i class="bi bi-grid-fill"></i>
+                            <i class="bi bi-fire"></i>
                             <span> {{ __('CRUD Generator') }}</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item{{ request()->is('api-generators/create') ? ' active' : '' }}">
+                        <a class="sidebar-link" href="/api-generators/create">
+                            <i class="bi bi-rocket"></i>
+                            <span> {{ __('API CRUD Generator') }}</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item{{ request()->is('simple-generators/create') ? ' active' : '' }}">
+                        <a class="sidebar-link" href="/simple-generators/create">
+                            <i class="bi bi-droplet"></i>
+                            <span> {{ __('Simple CRUD Generator') }}</span>
                         </a>
                     </li>
                 @endif

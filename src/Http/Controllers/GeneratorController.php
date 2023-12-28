@@ -52,4 +52,9 @@ class GeneratorController extends Controller
 
         return response()->json($sidebar['menus'], Response::HTTP_OK);
     }
+
+    public function apiCreate()
+    {
+        return view('generator::api-create');
+    }
 }

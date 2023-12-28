@@ -14,6 +14,9 @@ Route::middleware(['web', TheGeneratorOnlyWorksInTheLocalEnv::class])->group(fun
     Route::resource('simple-generators', SimpleGeneratorController::class)
         ->only('create', 'store');
 
+    Route::get('/api-generators/create', [GeneratorController::class, 'apiCreate']);
+    Route::post('/api-generators', [GeneratorController::class, 'store']);
+
     Route::resource('generators', GeneratorController::class)
         ->only('create', 'store')
         ->middleware(OnlyAvailableInTheFullVersion::class);
