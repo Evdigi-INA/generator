@@ -59,7 +59,7 @@ class ViewComposerGenerator
                         $relatedModelPath,
                         $viewPath != '' ? str_replace('\\', '.', strtolower($viewPath)) . "." : '',
                     ],
-                    GeneratorUtils::getTemplate('view-composer')
+                    GeneratorUtils::getStub('view-composer')
                 );
             }
         }

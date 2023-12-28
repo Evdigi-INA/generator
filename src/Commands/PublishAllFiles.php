@@ -210,7 +210,7 @@ class PublishAllFiles extends Command
         Artisan::call('vendor:publish --provider="Intervention\Image\ImageServiceProviderLaravelRecent"');
         Artisan::call('vendor:publish --tag=datatables --force');
 
-        $template = GeneratorUtils::getTemplate('route');
+        $template = GeneratorUtils::getStub('route');
 
         File::append(base_path('routes/web.php'), $template);
 

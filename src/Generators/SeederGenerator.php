@@ -40,7 +40,7 @@ class SeederGenerator
                 GeneratorUtils::singularCamelCase($model),
                 GeneratorUtils::pluralCamelCase($model)
             ],
-            GeneratorUtils::getTemplate('seeder')
+            GeneratorUtils::getStub('seeder')
         );
 
         file_put_contents(app_path("../database/seeders/" . $modelNameSingularPascalCase . "Seeder.php"), $template);

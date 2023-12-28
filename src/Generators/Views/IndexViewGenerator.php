@@ -121,7 +121,7 @@ class IndexViewGenerator
                 $thColumns,
                 $tdColumns,
             ],
-            empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/index') : GeneratorUtils::getTemplate('views/simple/index')
+            empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/index') : GeneratorUtils::getStub('views/simple/index')
         );
 
         switch ($path) {

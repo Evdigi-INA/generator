@@ -199,7 +199,7 @@ class MigrationGenerator
                 $tableNamePluralLowercase,
                 $setFields
             ],
-            GeneratorUtils::getTemplate('migration')
+            GeneratorUtils::getStub('migration')
         );
 
         $migrationName = date('Y') . '_' . date('m') . '_' . date('d')  . '_' . date('h') .  date('i') . date('s') . '_create_' . $tableNamePluralLowercase . '_table.php';

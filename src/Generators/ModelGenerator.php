@@ -160,7 +160,7 @@ class ModelGenerator
                 $protectedHidden,
                 GeneratorUtils::pluralSnakeCase($model),
             ],
-            GeneratorUtils::getTemplate('model')
+            GeneratorUtils::getStub('model')
         );
 
         if (!$path) {

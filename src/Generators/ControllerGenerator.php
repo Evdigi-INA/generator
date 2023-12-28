@@ -291,9 +291,9 @@ class ControllerGenerator
                 $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$validated);";
 
                 if ($request['generate_variant'] == 'api') {
-                    $getTemplate = GeneratorUtils::getTemplate('controllers/controller-api-with-upload-file');
+                    $getTemplate = GeneratorUtils::getStub('controllers/controller-api-with-upload-file');
                 } else {
-                    $getTemplate = GeneratorUtils::getTemplate('controllers/controller-with-upload-file');
+                    $getTemplate = GeneratorUtils::getStub('controllers/controller-with-upload-file');
                 }
 
                 /**
@@ -357,9 +357,9 @@ class ControllerGenerator
                 break;
             default:
                 if ($request['generate_variant'] == 'api') {
-                    $getTemplate = GeneratorUtils::getTemplate('controllers/controller-api');
+                    $getTemplate = GeneratorUtils::getStub('controllers/controller-api');
                 } else {
-                    $getTemplate = GeneratorUtils::getTemplate('controllers/controller');
+                    $getTemplate = GeneratorUtils::getStub('controllers/controller');
                 }
 
                 /**
@@ -481,14 +481,14 @@ class ControllerGenerator
                 return str_replace(
                     $replaceString,
                     $replaceWith,
-                    GeneratorUtils::getTemplate("controllers/upload-files/with-crop/$path")
+                    GeneratorUtils::getStub("controllers/upload-files/with-crop/$path")
                 );
                 break;
             default:
                 return str_replace(
                     $replaceString,
                     $replaceWith,
-                    GeneratorUtils::getTemplate("controllers/upload-files/$path")
+                    GeneratorUtils::getStub("controllers/upload-files/$path")
                 );
                 break;
         }

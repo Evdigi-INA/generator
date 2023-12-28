@@ -109,7 +109,7 @@ class SetSidebarType extends Command
                         "']",
                         $sidebarCode
                     ),
-                    GeneratorUtils::getTemplate('sidebar-static')
+                    GeneratorUtils::getStub('sidebar-static')
                 );
 
                 file_put_contents(resource_path('views/layouts/sidebar.blade.php'), $template);
@@ -119,7 +119,7 @@ class SetSidebarType extends Command
             case 'dynamic':
                 $this->checkGeneratorVariant();
 
-                file_put_contents(resource_path('views/layouts/sidebar.blade.php'), GeneratorUtils::getTemplate('sidebar-dynamic'));
+                file_put_contents(resource_path('views/layouts/sidebar.blade.php'), GeneratorUtils::getStub('sidebar-dynamic'));
 
                 $this->info('The sidebar used a dynamic list from config.');
                 break;

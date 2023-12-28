@@ -126,7 +126,7 @@ class ShowViewGenerator
                 $trs,
                 $dateTimeFormat,
             ],
-            empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/show') : GeneratorUtils::getTemplate('views/simple/show')
+            empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/show') : GeneratorUtils::getStub('views/simple/show')
         );
 
         switch ($path) {

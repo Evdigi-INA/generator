@@ -26,7 +26,7 @@ class ResourceApiGenerator
                 $modelNameSingularPascalCase,
                 GeneratorUtils::singularSnakeCase($model)
             ],
-            GeneratorUtils::getTemplate('resource')
+            GeneratorUtils::getStub('resource')
         );
 
         $collectionTemplate = str_replace(
@@ -40,7 +40,7 @@ class ResourceApiGenerator
                 $modelNameSingularPascalCase,
                 GeneratorUtils::pluralSnakeCase($model),
             ],
-            GeneratorUtils::getTemplate('resource-collection')
+            GeneratorUtils::getStub('resource-collection')
         );
 
         GeneratorUtils::checkFolder(app_path("/Http/Resources/$modelNamePluralPascalCase"));

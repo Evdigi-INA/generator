@@ -34,7 +34,7 @@ class FactoryGenerator
                 $fields,
                 $modelNameSingularPascalCase,
             ],
-            GeneratorUtils::getTemplate('factory')
+            GeneratorUtils::getStub('factory')
         );
 
         file_put_contents(app_path("../database/factories/" . $modelNameSingularPascalCase . "Factory.php"), $template);

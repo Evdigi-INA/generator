@@ -65,7 +65,7 @@ class FormViewGenerator
                                         $options,
                                         $request['requireds'][$i] == 'yes' ? ' required' : '',
                                     ],
-                                    GeneratorUtils::getTemplate('views/forms/select')
+                                    GeneratorUtils::getStub('views/forms/select')
                                 );
                                 break;
                             case 'datalist':
@@ -98,7 +98,7 @@ class FormViewGenerator
                                         $request['requireds'][$i] == 'yes' ? ' required' : '',
                                         "{{ isset($" . $modelNameSingularCamelCase . ") && $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . " ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . " : old('" . $fieldSnakeCase . "') }}"
                                     ],
-                                    GeneratorUtils::getTemplate('views/forms/datalist')
+                                    GeneratorUtils::getStub('views/forms/datalist')
                                 );
                                 break;
                             default:
@@ -123,7 +123,7 @@ class FormViewGenerator
                                             "{{ isset($" . $modelNameSingularCamelCase . ") && $" . $modelNameSingularCamelCase . "->$field == '$value' ? 'checked' : (old('$field') == '$value' ? 'checked' : '') }}",
                                             $request['requireds'][$i] == 'yes' ? ' required' : '',
                                         ],
-                                        GeneratorUtils::getTemplate('views/forms/radio')
+                                        GeneratorUtils::getStub('views/forms/radio')
                                     );
                                 }
 
@@ -169,7 +169,7 @@ class FormViewGenerator
                                         $request['requireds'][$i] == 'yes' ? ' required' : '',
                                         "{{ isset($" . $modelNameSingularCamelCase . ") && $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . " ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . " : old('" . $fieldSnakeCase . "') }}"
                                     ],
-                                    GeneratorUtils::getTemplate('views/forms/datalist')
+                                    GeneratorUtils::getStub('views/forms/datalist')
                                 );
                                 break;
                             default:
@@ -191,7 +191,7 @@ class FormViewGenerator
                                         $request['requireds'][$i] == 'yes' ? ' required' : '',
                                         $fieldSnakeCase
                                     ],
-                                    GeneratorUtils::getTemplate('views/forms/select')
+                                    GeneratorUtils::getStub('views/forms/select')
                                 );
                                 break;
                         }
@@ -240,7 +240,7 @@ class FormViewGenerator
                                         $request['requireds'][$i] == 'yes' ? ' required' : '',
                                         "{{ isset($" . $modelNameSingularCamelCase . ") && $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . " ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . " : old('" . $fieldSnakeCase . "') }}"
                                     ],
-                                    GeneratorUtils::getTemplate('views/forms/datalist')
+                                    GeneratorUtils::getStub('views/forms/datalist')
                                 );
                                 break;
                             default:
@@ -261,7 +261,7 @@ class FormViewGenerator
                                         $options,
                                         $request['requireds'][$i] == 'yes' ? ' required' : '',
                                     ],
-                                    GeneratorUtils::getTemplate('views/forms/select')
+                                    GeneratorUtils::getStub('views/forms/select')
                                 );
                                 break;
                         }
@@ -289,7 +289,7 @@ class FormViewGenerator
                                         $options,
                                         $request['requireds'][$i] == 'yes' ? ' required' : '',
                                     ],
-                                    GeneratorUtils::getTemplate('views/forms/select')
+                                    GeneratorUtils::getStub('views/forms/select')
                                 );
                                 break;
 
@@ -438,7 +438,7 @@ class FormViewGenerator
                                         $request['requireds'][$i] == 'yes' ? ' required' : '',
                                         $fieldSnakeCase
                                     ],
-                                    GeneratorUtils::getTemplate('views/forms/textarea')
+                                    GeneratorUtils::getStub('views/forms/textarea')
                                 );
                                 break;
                             case 'file':
@@ -473,7 +473,7 @@ class FormViewGenerator
                                         $default['image'],
                                         $default['form_code']
                                     ],
-                                    GeneratorUtils::getTemplate('views/forms/image')
+                                    GeneratorUtils::getStub('views/forms/image')
                                 );
                                 break;
                             case 'range':
@@ -496,7 +496,7 @@ class FormViewGenerator
                                         $request['max_lengths'][$i],
                                         $request['steps'][$i] ? 'step="' . $request['steps'][$i] . '"' : '',
                                     ],
-                                    GeneratorUtils::getTemplate('views/forms/range')
+                                    GeneratorUtils::getStub('views/forms/range')
                                 );
                                 break;
                             case 'hidden':
@@ -516,7 +516,7 @@ class FormViewGenerator
                                         GeneratorUtils::singularKebabCase($field),
                                         $modelNameSingularCamelCase
                                     ],
-                                    GeneratorUtils::getTemplate('views/forms/input-password')
+                                    GeneratorUtils::getStub('views/forms/input-password')
                                 );
                                 break;
                             default:
@@ -573,7 +573,7 @@ class FormViewGenerator
                 $formatValue,
                 $request['requireds'] == 'yes' ? ' required' : '',
             ],
-            GeneratorUtils::getTemplate('views/forms/input')
+            GeneratorUtils::getStub('views/forms/input')
         );
     }
 }

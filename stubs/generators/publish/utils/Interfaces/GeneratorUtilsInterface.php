@@ -7,7 +7,7 @@ interface GeneratorUtilsInterface
     /**
      * Get template/stub file.
      */
-    public static function getTemplate(string $path): string;
+    public static function getStub(string $path): string;
 
     /**
      * Get published files.

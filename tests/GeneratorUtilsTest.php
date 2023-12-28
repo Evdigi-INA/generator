@@ -9,7 +9,7 @@ class GeneratorUtilsTest extends BaseTestCase
     /** @test */
     public function it_has_get_template_method()
     {
-        $this->assertTrue(method_exists(GeneratorUtils::class, 'getTemplate'));
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'getStub'));
     }
 
     /** @test */

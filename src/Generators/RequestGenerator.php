@@ -222,7 +222,7 @@ class RequestGenerator
                 $validations,
                 $namespace
             ],
-            GeneratorUtils::getTemplate('request')
+            GeneratorUtils::getStub('request')
         );
 
         /**
@@ -276,7 +276,7 @@ class RequestGenerator
                 $updateValidations,
                 $namespace
             ],
-            GeneratorUtils::getTemplate('request')
+            GeneratorUtils::getStub('request')
         );
 
         /**

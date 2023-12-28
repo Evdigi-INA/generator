@@ -33,7 +33,7 @@ class CreateViewGenerator
                 in_array('file', $request['input_types']) ? ' enctype="multipart/form-data"' : '',
                 $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
             ],
-            empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/create') : GeneratorUtils::getTemplate('views/simple/create')
+            empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/create') : GeneratorUtils::getStub('views/simple/create')
         );
 
 
