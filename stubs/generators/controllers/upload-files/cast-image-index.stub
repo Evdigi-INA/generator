@@ -1,0 +1,10 @@
+        ${{modelNamePluralCamelCase}}->through(function (${{modelNameSingularCamelCase}}) {
+            if (!${{modelNameSingularCamelCase}}->{{field}}) {
+                ${{modelNameSingularCamelCase}}->{{field}} = '{{defaultImage}}';
+            } else {
+                ${{modelNameSingularCamelCase}}->{{field}} = {{publicOrStorage}} . {{fieldPluralKebabCase}} . '/' . ${{modelNameSingularCamelCase}}->{{field}});
+            }
+
+            return ${{modelNameSingularCamelCase}};
+        });
+

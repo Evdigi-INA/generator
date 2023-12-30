@@ -252,31 +252,39 @@ class ControllerGenerator
                 $updateCode = "";
                 $deleteCode = "";
 
+                $castImageIndex = "";
+
                 foreach ($request['input_types'] as $i => $input) {
                     if ($input == 'file') {
-                        $indexCode .= $this->generateUploadFileCode(
+                        $indexCode .= $this->generateUploadImageCode(
                             field: $request['fields'][$i],
                             path: 'index',
                             defaultValue: $request['default_values'][$i],
                             model: $modelNameSingularCamelCase
                         );
 
-                        $storeCode .= $this->generateUploadFileCode(
+                        $storeCode .= $this->generateUploadImageCode(
                             field: $request['fields'][$i],
                             path: 'store',
                             model: $modelNameSingularCamelCase
                         );
 
-                        $updateCode .= $this->generateUploadFileCode(
+                        $updateCode .= $this->generateUploadImageCode(
                             field: $request['fields'][$i],
                             path: 'update',
                             model: $modelNameSingularCamelCase
                         );
 
-                        $deleteCode .= $this->generateUploadFileCode(
+                        $deleteCode .= $this->generateUploadImageCode(
                             field: $request['fields'][$i],
                             path: 'delete',
                             model: $modelNameSingularCamelCase
+                        );
+
+                        $castImageIndex .= $this->generateCastImageCode(
+                            field: $request['fields'][$i],
+                            path: 'index',
+                            model: $modelNameSingularCamelCase,
                         );
                     }
                 }
@@ -290,7 +298,7 @@ class ControllerGenerator
                 $inputMonths = str_replace('$validated = $request->validated();', '', $inputMonths);
                 $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$validated);";
 
-                if ($request['generate_variant'] == 'api') {
+                if (GeneratorUtils::isGenerateApi()) {
                     $getTemplate = GeneratorUtils::getStub('controllers/controller-api-with-upload-file');
                 } else {
                     $getTemplate = GeneratorUtils::getStub('controllers/controller-with-upload-file');
@@ -324,7 +332,8 @@ class ControllerGenerator
                         '{{resourceApiPath}}',
                         '{{modelNameCleanSingular}}',
                         '{{modelNameCleanPlural}}',
-                        '{{relations}}'
+                        '{{relations}}',
+                        '{{castImageIndex}}',
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -350,13 +359,13 @@ class ControllerGenerator
                         $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
                         $modelNameCleanSingular,
                         $modelNameCleanPlural,
-                        $relations
+                        $castImageIndex
                     ],
                     $getTemplate
                 );
                 break;
             default:
-                if ($request['generate_variant'] == 'api') {
+                if (GeneratorUtils::isGenerateApi()) {
                     $getTemplate = GeneratorUtils::getStub('controllers/controller-api');
                 } else {
                     $getTemplate = GeneratorUtils::getStub('controllers/controller');
@@ -443,7 +452,7 @@ class ControllerGenerator
     /**
      * Generate an upload file code.
      */
-    protected function generateUploadFileCode(string $field, string $path, string $model, ?string $defaultValue = null): string
+    protected function generateUploadImageCode(string $field, string $path, string $model, ?string $defaultValue = null): string
     {
         $replaceString = [
             '{{fieldSnakeCase}}',
@@ -492,5 +501,27 @@ class ControllerGenerator
                 );
                 break;
         }
+    }
+
+    public function generateCastImageCode(string $field, string $path, string $model, ?string $defaultValue = null): string
+    {
+        $stub = str_replace([
+            '{{modelNamePluralCamelCase}}',
+            '{{modelNameSingularCamelCase}}',
+            '{{field}}',
+            '{{defaultImage}}',
+            '{{publicOrStorage}}',
+            '{{fieldPluralKebabCase}}'
+        ], [
+            GeneratorUtils::pluralCamelCase($model),
+            GeneratorUtils::singularCamelCase($model),
+            $field,
+            config('generator.image.default', 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
+            config('generator.image.path') == 'storage' ? "storage_path('app/public/uploads/' " : "public_path('uploads/' ",
+            GeneratorUtils::pluralKebabCase($field),
+
+        ], GeneratorUtils::getStub('/controllers/upload-files/cast-image-' . $path));
+
+        return $stub;
     }
 }

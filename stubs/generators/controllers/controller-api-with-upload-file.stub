@@ -11,6 +11,9 @@ use Intervention\Image\Facades\Image;
 
 class {{modelNameSingularPascalCase}}Controller extends Controller
 {
+    // const ASSET_PATH = '{{assetPath}}';
+    // const UPLOAD_PATH = '{{uploadPath}}';
+
     // TODO: uncomment this code if you are using spatie permission
     // public function __construct()
     // {
@@ -25,7 +28,11 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function index(): {{modelNameSingularPascalCase}}Collection|{{modelNameSingularPascalCase}}Resource
     {
-        return (new {{modelNameSingularPascalCase}}Collection({{modelNameSingularPascalCase}}::{{relations}}paginate()))->additional([
+        ${{modelNamePluralCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}paginate();
+
+        {{castImageIndex}}
+
+        return (new {{modelNameSingularPascalCase}}Collection(${{modelNamePluralCamelCase}}))->additional([
             'message' => 'The {{modelNameCleanPlural}} was received successfully.',
             'success' => true,
             'code' => Response::HTTP_OK
@@ -57,7 +64,10 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function show(string $id): {{modelNameSingularPascalCase}}Resource
     {
-        return (new {{modelNameSingularPascalCase}}Resource({{modelNameSingularPascalCase}}::{{relations}}findOrFail($id)))->additional([
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail($id);
+        {{castImageShow}}
+
+        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))->additional([
             'message' => 'The {{modelNameCleanSingular}} was received successfully.',
             'success' => true,
             'code' => Response::HTTP_OK
@@ -88,7 +98,11 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     public function destroy(string $id): {{modelNameSingularPascalCase}}Resource|JsonResponse
     {
         try {
-            {{modelNameSingularPascalCase}}::destroy($id);
+            ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail($id);
+
+            {{deleteCode}}
+
+             ${{modelNameSingularCamelCase}}->delete();
 
             return (new {{modelNameSingularPascalCase}}Resource(null))
                 ->additional([
