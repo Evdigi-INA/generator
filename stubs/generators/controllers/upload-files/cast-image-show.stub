@@ -1,5 +1,5 @@
-        if (!${{modelNameSingularCamelCase}}->{{field}}) {
-            ${{modelNameSingularCamelCase}}->{{field}} = {{defaultImage}};
+if (!${{modelNameSingularCamelCase}}->{{field}}) {
+            ${{modelNameSingularCamelCase}}->{{field}} = '{{defaultImage}}';
         } else {
-            ${{modelNameSingularCamelCase}}->{{field}} = asset(self::ASSET_PATH . ${{modelNameSingularCamelCase}}->{{field}});
+            ${{modelNameSingularCamelCase}}->{{field}} = {{publicOrStorage}} . '{{fieldPluralKebabCase}}/' . ${{modelNameSingularCamelCase}}->{{field}});
         }

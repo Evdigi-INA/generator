@@ -252,7 +252,10 @@ class ControllerGenerator
                 $updateCode = "";
                 $deleteCode = "";
 
+                //cast image in index method
                 $castImageIndex = "";
+                // cast image in show method
+                $castImageShow = "";
 
                 foreach ($request['input_types'] as $i => $input) {
                     if ($input == 'file') {
@@ -284,6 +287,12 @@ class ControllerGenerator
                         $castImageIndex .= $this->generateCastImageCode(
                             field: $request['fields'][$i],
                             path: 'index',
+                            model: $modelNameSingularCamelCase,
+                        );
+
+                        $castImageShow .= $this->generateCastImageCode(
+                            field: $request['fields'][$i],
+                            path: 'show',
                             model: $modelNameSingularCamelCase,
                         );
                     }
@@ -334,6 +343,7 @@ class ControllerGenerator
                         '{{modelNameCleanPlural}}',
                         '{{relations}}',
                         '{{castImageIndex}}',
+                        '{{castImageShow}}',
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -359,7 +369,9 @@ class ControllerGenerator
                         $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
                         $modelNameCleanSingular,
                         $modelNameCleanPlural,
-                        $castImageIndex
+                        $relations,
+                        $castImageIndex,
+                        $castImageShow,
                     ],
                     $getTemplate
                 );
@@ -519,7 +531,6 @@ class ControllerGenerator
             config('generator.image.default', 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
             config('generator.image.path') == 'storage' ? "storage_path('app/public/uploads/' " : "public_path('uploads/' ",
             GeneratorUtils::pluralKebabCase($field),
-
         ], GeneratorUtils::getStub('/controllers/upload-files/cast-image-' . $path));
 
         return $stub;

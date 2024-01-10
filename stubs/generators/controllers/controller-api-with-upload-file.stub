@@ -29,9 +29,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     public function index(): {{modelNameSingularPascalCase}}Collection|{{modelNameSingularPascalCase}}Resource
     {
         ${{modelNamePluralCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}paginate();
-
         {{castImageIndex}}
-
         return (new {{modelNameSingularPascalCase}}Collection(${{modelNamePluralCamelCase}}))->additional([
             'message' => 'The {{modelNameCleanPlural}} was received successfully.',
             'success' => true,
@@ -66,7 +64,6 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     {
         ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail($id);
         {{castImageShow}}
-
         return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))->additional([
             'message' => 'The {{modelNameCleanSingular}} was received successfully.',
             'success' => true,
