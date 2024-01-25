@@ -11,9 +11,6 @@ use Intervention\Image\Facades\Image;
 
 class {{modelNameSingularPascalCase}}Controller extends Controller
 {
-    // const ASSET_PATH = '{{assetPath}}';
-    // const UPLOAD_PATH = '{{uploadPath}}';
-
     // TODO: uncomment this code if you are using spatie permission
     // public function __construct()
     // {
@@ -98,8 +95,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
             ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail($id);
 
             {{deleteCode}}
-
-             ${{modelNameSingularCamelCase}}->delete();
+            ${{modelNameSingularCamelCase}}->delete();
 
             return (new {{modelNameSingularPascalCase}}Resource(null))
                 ->additional([

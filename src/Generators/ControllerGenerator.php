@@ -225,7 +225,7 @@ class ControllerGenerator
         if (in_array('month', $request['input_types'])) {
             if (!in_array('password', $request['input_types'])) {
                 /**
-                 * don't concat string if any input type password, cause already concating ahead.
+                 * don't concat string if any input type password, cause already concat ahead.
                  */
                 $inputMonths .= $requestValidatedAttr;
             }
@@ -515,7 +515,7 @@ class ControllerGenerator
         }
     }
 
-    public function generateCastImageCode(string $field, string $path, string $model, ?string $defaultValue = null): string
+    public function generateCastImageCode(string $field, string $path, string $model): string
     {
         $stub = str_replace([
             '{{modelNamePluralCamelCase}}',
@@ -529,7 +529,7 @@ class ControllerGenerator
             GeneratorUtils::singularCamelCase($model),
             $field,
             config('generator.image.default', 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
-            config('generator.image.path') == 'storage' ? "storage_path('app/public/uploads/' " : "public_path('uploads/' ",
+            config('generator.image.path') == 'storage' ? "storage" : "",
             GeneratorUtils::pluralKebabCase($field),
         ], GeneratorUtils::getStub('/controllers/upload-files/cast-image-' . $path));
 

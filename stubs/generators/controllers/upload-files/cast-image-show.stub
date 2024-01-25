@@ -1,5 +1,5 @@
 if (!${{modelNameSingularCamelCase}}->{{field}}) {
             ${{modelNameSingularCamelCase}}->{{field}} = '{{defaultImage}}';
         } else {
-            ${{modelNameSingularCamelCase}}->{{field}} = {{publicOrStorage}} . '{{fieldPluralKebabCase}}/' . ${{modelNameSingularCamelCase}}->{{field}});
+            ${{modelNameSingularCamelCase}}->{{field}} =  asset('/{{publicOrStorage}}/uploads/{{fieldPluralKebabCase}}/' . ${{modelNameSingularCamelCase}}->{{field}});
         }
