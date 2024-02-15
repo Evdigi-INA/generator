@@ -16,14 +16,10 @@ class RequestGenerator
         $totalFields = count($request['fields']);
         $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase($model);
 
-        switch ($path) {
-            case '':
-                $namespace = "namespace App\Http\Requests\\$modelNamePluralPascalCase;";
-                break;
-            default:
-                $namespace = "namespace App\Http\Requests\\$path\\$modelNamePluralPascalCase;";
-                break;
-        }
+        $namespace = match ($path) {
+            '' => "namespace App\Http\Requests\\$modelNamePluralPascalCase;",
+            default => "namespace App\Http\Requests\\$path\\$modelNamePluralPascalCase;",
+        };
 
         foreach ($request['fields'] as $i => $field) {
             /**
@@ -228,14 +224,10 @@ class RequestGenerator
         /**
          * on update request if any image validation, then set 'required' to nullable
          */
-        switch (str_contains($storeRequestTemplate, "required|image")) {
-            case true:
-                $updateValidations = str_replace("required|image", "nullable|image", $validations);
-                break;
-            default:
-                $updateValidations = $validations;
-                break;
-        }
+        $updateValidations = match (str_contains($storeRequestTemplate, "required|image")) {
+            true => str_replace("required|image", "nullable|image", $validations),
+            default => $validations,
+        };
 
         if (isset($uniqueValidation)) {
             /**

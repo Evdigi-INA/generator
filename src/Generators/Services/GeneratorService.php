@@ -42,7 +42,7 @@ class GeneratorService implements GeneratorServiceInterface
         (new ControllerGenerator)->generate($request);
         (new RequestGenerator)->generate($request);
 
-        // api
+        // blade template
         if (empty($request['generate_variant']) || $request['generate_variant'] != 'api') {
             (new IndexViewGenerator)->generate($request);
             (new CreateViewGenerator)->generate($request);

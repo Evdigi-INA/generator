@@ -7,7 +7,7 @@ use EvdigiIna\Generator\Http\Middleware\OnlyAvailableInTheFullVersion;
 use EvdigiIna\Generator\Http\Middleware\TheGeneratorOnlyWorksInTheLocalEnv;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', TheGeneratorOnlyWorksInTheLocalEnv::class])->group(function () {
+Route::middleware(['web', 'auth', TheGeneratorOnlyWorksInTheLocalEnv::class])->group(function () {
     Route::get('/generators/get-sidebar-menus/{index}', [GeneratorController::class, 'getSidebarMenus'])
         ->name('generators.get-sidebar-menus');
 

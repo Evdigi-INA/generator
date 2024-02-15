@@ -53,7 +53,7 @@ class GeneratorController extends Controller
         return response()->json($sidebar['menus'], Response::HTTP_OK);
     }
 
-    public function apiCreate()
+    public function apiCreate(): \Illuminate\Contracts\View\View
     {
         return view('generator::api-create');
     }

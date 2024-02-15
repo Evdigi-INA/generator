@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 
 class SeederGenerator
 {
-    public function generate(array $request)
+    public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $path = GeneratorUtils::getModelLocation($request['model']);

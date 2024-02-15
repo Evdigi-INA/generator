@@ -58,9 +58,7 @@ class StoreGeneratorRequest extends FormRequest
             'generate_variant' => ['required'],
         ];
 
-        if(GeneratorUtils::isGenerateApi()){
-            return $validations;
-        }
+        if(GeneratorUtils::isGenerateApi()) return $validations;
 
         return [...$validations, ...$menuValidations];
     }

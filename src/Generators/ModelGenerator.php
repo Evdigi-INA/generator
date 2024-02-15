@@ -34,14 +34,10 @@ class ModelGenerator
         $namespace = !$path ? "namespace App\\Models;" : "namespace App\\Models\\$path;";
 
         foreach ($request['fields'] as $i => $field) {
-            switch ($i + 1 != $totalFields) {
-                case true:
-                    $fields .= "'" . str()->snake($field) . "', ";
-                    break;
-                default:
-                    $fields .= "'" . str()->snake($field) . "']";
-                    break;
-            }
+            $fields .= match ($i + 1 != $totalFields) {
+                true => "'" . str()->snake($field) . "', ",
+                default => "'" . str()->snake($field) . "']",
+            };
 
             if ($request['input_types'][$i] == 'password') {
                 $protectedHidden .= "'" . str()->snake($field) . "', ";

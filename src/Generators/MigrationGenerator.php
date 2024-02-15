@@ -170,20 +170,12 @@ class MigrationGenerator
                             break;
                     }
 
-                    switch($request['on_delete_foreign'][$i]) {
-                        case ActionForeign::CASCADE->value:
-                            $setFields .= "->cascadeOnDelete();";
-                            break;
-                        case ActionForeign::RESTRICT->value:
-                            $setFields .= "->restrictOnDelete();";
-                            break;
-                        case ActionForeign::NULL->value:
-                            $setFields .= "->nullOnDelete();";
-                            break;
-                        default:
-                            $setFields .= ";";
-                            break;
-                    }
+                    $setFields .= match ($request['on_delete_foreign'][$i]) {
+                        ActionForeign::CASCADE->value => "->cascadeOnDelete();",
+                        ActionForeign::RESTRICT->value => "->restrictOnDelete();",
+                        ActionForeign::NULL->value => "->nullOnDelete();",
+                        default => ";",
+                    };
                 } else {
                     $setFields .= ";";
                 }

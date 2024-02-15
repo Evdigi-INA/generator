@@ -100,7 +100,6 @@ class ControllerGenerator
 
                         $constrainSnakeCase = GeneratorUtils::singularSnakeCase($constrainName);
                         $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself($constrainName);
-                        $columnAfterId = GeneratorUtils::getColumnAfterId($constrainName);
 
                         if ($countForeignId + 1 < $i) {
                             $relations .= "'$constrainSnakeCase:$selectedColumns', ";
@@ -262,8 +261,8 @@ class ControllerGenerator
                         $indexCode .= $this->generateUploadImageCode(
                             field: $request['fields'][$i],
                             path: 'index',
-                            defaultValue: $request['default_values'][$i],
-                            model: $modelNameSingularCamelCase
+                            model: $modelNameSingularCamelCase,
+                            defaultValue: $request['default_values'][$i]
                         );
 
                         $storeCode .= $this->generateUploadImageCode(
@@ -493,31 +492,27 @@ class ControllerGenerator
         ];
 
         if ($model != null) {
-            array_push($replaceString, '{{modelNameSingularCamelCase}}');
-            array_push($replaceWith, $model);
+            $replaceString[] = '{{modelNameSingularCamelCase}}';
+            $replaceWith[] = $model;
         }
 
-        switch (config('generator.image.crop')) {
-            case true:
-                return str_replace(
-                    $replaceString,
-                    $replaceWith,
-                    GeneratorUtils::getStub("controllers/upload-files/with-crop/$path")
-                );
-                break;
-            default:
-                return str_replace(
-                    $replaceString,
-                    $replaceWith,
-                    GeneratorUtils::getStub("controllers/upload-files/$path")
-                );
-                break;
-        }
+        return match (config('generator.image.crop')) {
+            true => str_replace(
+                $replaceString,
+                $replaceWith,
+                GeneratorUtils::getStub("controllers/upload-files/with-crop/$path")
+            ),
+            default => str_replace(
+                $replaceString,
+                $replaceWith,
+                GeneratorUtils::getStub("controllers/upload-files/$path")
+            ),
+        };
     }
 
     public function generateCastImageCode(string $field, string $path, string $model): string
     {
-        $stub = str_replace([
+        return str_replace([
             '{{modelNamePluralCamelCase}}',
             '{{modelNameSingularCamelCase}}',
             '{{field}}',
@@ -532,7 +527,5 @@ class ControllerGenerator
             config('generator.image.path') == 'storage' ? "storage" : "",
             GeneratorUtils::pluralKebabCase($field),
         ], GeneratorUtils::getStub('/controllers/upload-files/cast-image-' . $path));
-
-        return $stub;
     }
 }

@@ -93,14 +93,8 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // Illuminate\Foundation\Console\AboutCommand::add('Generator', fn () => ['Version' => '0.2.0']);
 
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                PublishAllFiles::class
-            ]);
-        }
+        if ($this->app->runningInConsole()) $this->commands([PublishAllFiles::class]);
 
-        $this->commands([
-            SetSidebarType::class
-        ]);
+        $this->commands([SetSidebarType::class]);
     }
 }
