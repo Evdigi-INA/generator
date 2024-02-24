@@ -27,9 +27,7 @@ class ControllerGenerator
             case '':
                 $namespace = "namespace App\Http\Controllers;\n";
 
-                if (GeneratorUtils::isGenerateApi()) {
-                    $namespace = "namespace App\Http\Controllers\Api;\n\nuse App\Http\Controllers\Controller;";
-                }
+                if (GeneratorUtils::isGenerateApi()) $namespace = "namespace App\Http\Controllers\Api;\n\nuse App\Http\Controllers\Controller;";
 
                 /**
                  * will generate something like:
@@ -48,9 +46,7 @@ class ControllerGenerator
                  */
                 $namespace = "namespace App\Http\Controllers\\$path;\n\nuse App\Http\Controllers\Controller;";
 
-                if (GeneratorUtils::isGenerateApi()) {
-                    $namespace = "namespace App\Http\Controllers\Api\\$path;\n\nuse App\Http\Controllers\Controller;";
-                }
+                if (GeneratorUtils::isGenerateApi()) $namespace = "namespace App\Http\Controllers\Api\\$path;\n\nuse App\Http\Controllers\Controller;";
 
                 /**
                  * Will generate something like:
@@ -218,7 +214,7 @@ class ControllerGenerator
 
         /**
          * Generate code for insert input type month with datatype date.
-         * by default will getting an error, cause invalid format.
+         * by default will get an error, cause invalid format.
          */
         $inputMonths = "";
         if (in_array('month', $request['input_types'])) {
@@ -255,9 +251,21 @@ class ControllerGenerator
                 $castImageIndex = "";
                 // cast image in show method
                 $castImageShow = "";
+                $uploadPaths = "";
+                $assignUploadPaths = "";
+
+                /**
+                 *  $generators->through(function ($generator) {
+                 *     return $generator;
+                 * });
+                 */
+                $castImageIndex .= "$". $modelNamePluralCamelCase ."->through(function ($". $modelNameSingularCamelCase .") {";
 
                 foreach ($request['input_types'] as $i => $input) {
                     if ($input == 'file') {
+                        $uploadPaths .= ", public string $" . str($request['fields'][$i])->snake($request['fields'][$i]) . "Path = ''";
+                        $assignUploadPaths .= "\$this->" . GeneratorUtils::pluralSnakeCase($request['fields'][$i]) . "Path = " . GeneratorUtils::setDiskCodeForController($request['fields'][$i]) . ";\n\t\t";
+
                         $indexCode .= $this->generateUploadImageCode(
                             field: $request['fields'][$i],
                             path: 'index',
@@ -296,6 +304,15 @@ class ControllerGenerator
                         );
                     }
                 }
+
+                /**
+                 *   if (!$generator->image) {
+                 *     $generator->image = 'https://via.placeholder.com/350?text=No+Image+Avaiable';
+                 *   } else {
+                 *      $generator->image =  asset('/uploads/images/' . $generator->image);
+                 *    }
+                 */
+                $castImageIndex .= "\n\t\t\treturn $". $modelNameSingularCamelCase .";\n\t\t\t});";
 
                 /**
                  * Remove $validated = $request->validated(); because is already exist in template (.stub)
@@ -343,6 +360,8 @@ class ControllerGenerator
                         '{{relations}}',
                         '{{castImageIndex}}',
                         '{{castImageShow}}',
+                        '{{uploadPaths}}',
+                        '{{assignUploadPaths}}'
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -371,6 +390,8 @@ class ControllerGenerator
                         $relations,
                         $castImageIndex,
                         $castImageShow,
+                        $uploadPaths,
+                        $assignUploadPaths
                     ],
                     $getTemplate
                 );
@@ -407,7 +428,8 @@ class ControllerGenerator
                         '{{resourceApiPath}}',
                         '{{modelNameCleanSingular}}',
                         '{{modelNameCleanPlural}}',
-                        '{{relations}}'
+                        '{{relations}}',
+                        '{{publicOrStorage}}',
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -430,7 +452,8 @@ class ControllerGenerator
                         $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
                         $modelNameCleanSingular,
                         $modelNameCleanPlural,
-                        $relations
+                        $relations,
+                        config('generator.image.disk', 'storage'),
                     ],
                     $getTemplate
                 );
@@ -475,6 +498,8 @@ class ControllerGenerator
             '{{height}}',
             '{{aspectRatio}}',
             '{{defaultImageCode}}',
+            '{{fieldUploadPath}}',
+            '{{defaultImage}}'
         ];
 
         $default = GeneratorUtils::setDefaultImage(default: $defaultValue, field: $field, model: $model);
@@ -483,12 +508,14 @@ class ControllerGenerator
             str()->snake($field),
             GeneratorUtils::pluralSnakeCase($field),
             GeneratorUtils::pluralKebabCase($field),
-            config('generator.image.path') == 'storage' ? "storage_path('app/public/uploads" : "public_path('uploads",
-            config('generator.image.path') == 'storage' ? "storage/uploads" : "uploads",
+            config('generator.image.disk') == 'storage' ? "storage_path('app/public/uploads" : "public_path('uploads",
+            config('generator.image.disk') == 'storage' ? "storage/uploads" : "uploads",
             is_int(config('generator.image.width')) ? config('generator.image.width') : 500,
             is_int(config('generator.image.height')) ? config('generator.image.height') : 500,
             config('generator.image.aspect_ratio') ? "\n\t\t\t\t\$constraint->aspectRatio();" : '',
             $default['index_code'],
+            str($field)->snake(),
+            "$" . GeneratorUtils::singularCamelCase($field) . "->" . str($field)->snake()
         ];
 
         if ($model != null) {
@@ -517,14 +544,14 @@ class ControllerGenerator
             '{{modelNameSingularCamelCase}}',
             '{{field}}',
             '{{defaultImage}}',
-            '{{publicOrStorage}}',
+            '{{castImage}}',
             '{{fieldPluralKebabCase}}'
         ], [
             GeneratorUtils::pluralCamelCase($model),
             GeneratorUtils::singularCamelCase($model),
             $field,
             config('generator.image.default', 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
-            config('generator.image.path') == 'storage' ? "storage" : "",
+            GeneratorUtils::setDiskCodeForCastImage($model, $field),
             GeneratorUtils::pluralKebabCase($field),
         ], GeneratorUtils::getStub('/controllers/upload-files/cast-image-' . $path));
     }

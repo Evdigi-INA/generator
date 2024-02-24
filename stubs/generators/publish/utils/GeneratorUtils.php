@@ -28,9 +28,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
      */
     public static function checkFolder(string $path): void
     {
-        if (!file_exists($path)) {
-            mkdir($path, 0777, true);
-        }
+        if (!file_exists($path)) mkdir($path, 0777, true);
     }
 
     /**
@@ -41,11 +39,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return ucfirst(str(GeneratorUtils::fromCamelCase($string))->camel());
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return ucfirst(str(self::fromCamelCase($string))->camel());
 
-        return ucfirst(str(GeneratorUtils::fromCamelCase($string))->singular()->camel());
+        return ucfirst(str(self::fromCamelCase($string))->singular()->camel());
     }
 
     /**
@@ -53,7 +49,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
      */
     public static function pascalCase(string $string): string
     {
-        return ucfirst(str(GeneratorUtils::fromCamelCase($string))->camel());
+        return ucfirst(str(self::fromCamelCase($string))->camel());
     }
 
     /**
@@ -64,11 +60,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return ucfirst(str(GeneratorUtils::fromCamelCase($string))->camel()) . 's';
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return ucfirst(str(self::fromCamelCase($string))->camel()) . 's';
 
-        return ucfirst(str(GeneratorUtils::fromCamelCase($string))->plural()->camel());
+        return ucfirst(str(self::fromCamelCase($string))->plural()->camel());
     }
 
     /**
@@ -79,11 +73,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return str(GeneratorUtils::fromCamelCase($string))->snake()->lower() . 's';
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return str(self::fromCamelCase($string))->snake()->lower() . 's';
 
-        return str(GeneratorUtils::fromCamelCase($string))->plural()->snake()->lower();
+        return str(self::fromCamelCase($string))->plural()->snake()->lower();
     }
 
     /**
@@ -94,11 +86,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return str(GeneratorUtils::fromCamelCase($string))->snake()->lower();
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return str(self::fromCamelCase($string))->snake()->lower();
 
-        return str(GeneratorUtils::fromCamelCase($string))->singular()->snake()->lower();
+        return str(self::fromCamelCase($string))->singular()->snake()->lower();
     }
 
     /**
@@ -109,11 +99,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return str(GeneratorUtils::fromCamelCase($string))->camel() . 's';
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return str(self::fromCamelCase($string))->camel() . 's';
 
-        return str(GeneratorUtils::fromCamelCase($string))->plural()->camel();
+        return str(self::fromCamelCase($string))->plural()->camel();
     }
 
     /**
@@ -124,11 +112,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return str(GeneratorUtils::fromCamelCase($string))->camel();
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return str(self::fromCamelCase($string))->camel();
 
-        return str(GeneratorUtils::fromCamelCase($string))->singular()->camel();
+        return str(self::fromCamelCase($string))->singular()->camel();
     }
 
     /**
@@ -139,11 +125,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->kebab()->lower() . 's';
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->kebab()->lower() . 's';
 
-        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->plural()->kebab()->lower();
+        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->plural()->kebab()->lower();
     }
 
     /**
@@ -151,7 +135,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
      */
     public static function kebabCase(string $string): string
     {
-        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->kebab()->lower();
+        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->kebab()->lower();
     }
 
     /**
@@ -162,11 +146,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->kebab()->lower();
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->kebab()->lower();
 
-        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->singular()->kebab()->lower();
+        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->singular()->kebab()->lower();
     }
 
     /**
@@ -177,11 +159,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->lower();
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->lower();
 
-        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->singular()->lower();
+        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->singular()->lower();
     }
 
     /**
@@ -189,7 +169,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
      */
     public static function cleanLowerCase(string $string): string
     {
-        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->lower();
+        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->lower();
     }
 
     /**
@@ -200,11 +180,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->lower()) . 's';
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->lower()) . 's';
 
-        return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->plural()->lower());
+        return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->plural()->lower());
     }
 
     /**
@@ -215,11 +193,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->lower());
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->lower());
 
-        return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->singular()->lower());
+        return ucwords(str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->singular()->lower());
     }
 
     /**
@@ -227,7 +203,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
      */
     public static function cleanUcWords(string $string): string
     {
-        return ucwords(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)));
+        return ucwords(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)));
     }
 
     /**
@@ -238,11 +214,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($string, -2) == 'ia' || substr($string, -3) == 'ium') {
-            return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->lower() . 's';
-        }
+        if (str_ends_with($string, 'ia') || str_ends_with($string, 'ium')) return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->lower() . 's';
 
-        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', GeneratorUtils::fromCamelCase($string)))->plural()->lower();
+        return str(preg_replace('/[^A-Za-z0-9() -]/', ' ', self::fromCamelCase($string)))->plural()->lower();
     }
 
     /**
@@ -250,7 +224,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
      */
     public static function getColumnAfterId(string $table): string
     {
-        $table = GeneratorUtils::pluralSnakeCase($table);
+        $table = self::pluralSnakeCase($table);
         $allColumns = Schema::getColumnListing($table);
 
         if (sizeof($allColumns) > 0) {
@@ -267,7 +241,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
      */
     public static function selectColumnAfterIdAndIdItself(string $table): string
     {
-        $table = GeneratorUtils::pluralSnakeCase($table);
+        $table = self::pluralSnakeCase($table);
         $allColumns = Schema::getColumnListing($table);
 
         if (sizeof($allColumns) > 0) {
@@ -293,10 +267,8 @@ class GeneratorUtils implements GeneratorUtilsInterface
          */
         $path = "";
         for ($i = 0; $i < $totalArrModel - 1; $i++) {
-            $path .= GeneratorUtils::pluralPascalCase($arrModel[$i]);
-            if ($i + 1 != $totalArrModel - 1) {
-                $path .= "\\";
-            }
+            $path .= self::pluralPascalCase($arrModel[$i]);
+            if ($i + 1 != $totalArrModel - 1) $path .= "\\";
         }
 
         return $path;
@@ -308,6 +280,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
     public static function fromCamelCase(string $string): string
     {
         $a = preg_split('/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/x', $string);
+
         return trim(implode(' ', $a));
     }
 
@@ -327,13 +300,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (substr($actualModelName, -2) == 'ia' || substr($actualModelName, -3) == 'ium') {
-            return self::pascalCase($actualModelName);
-        }
+        if (str_ends_with($actualModelName, 'ia') || str_ends_with($actualModelName, 'ium')) return self::pascalCase($actualModelName);
 
-        if ($style == 'pascal case') {
-            return GeneratorUtils::singularPascalCase($actualModelName);
-        }
+        if ($style == 'pascal case') return self::singularPascalCase($actualModelName);
 
         return $actualModelName;
     }
@@ -359,7 +328,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
                  * Generated code:
                  * $book->cover == null || $book->cover == 'https://via.placeholder.com/350?text=No+Image+Avaiable'"
                  */
-                'form_code' => "$" . GeneratorUtils::singularCamelCase($model) . "->" . str()->snake($field) . " == null || $" . GeneratorUtils::singularCamelCase($model) . "->" . str()->snake($field) . " == '" . $default . "'",
+                'form_code' => "$" . self::singularCamelCase($model) . "->" . str()->snake($field) . " == null || $" . self::singularCamelCase($model) . "->" . str()->snake($field) . " == '" . $default . "'",
             ];
         }
 
@@ -380,7 +349,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
                  *
                  *  $book->photo == null
                  */
-                'form_code' => "$" . GeneratorUtils::singularCamelCase($model) . "->" . str()->snake($field) . " == null",
+                'form_code' => "$" . self::singularCamelCase($model) . "->" . str()->snake($field) . " == null",
             ];
         }
 
@@ -389,7 +358,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
             'index_code' => "if (\$row->" . str()->snake($field) . " == null) {
                 return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
             }",
-            'form_code' => "$" . GeneratorUtils::singularCamelCase($model) . "->" . str()->snake($field) . " == null",
+            'form_code' => "$" . self::singularCamelCase($model) . "->" . str()->snake($field) . " == null",
         ];
     }
 
@@ -400,9 +369,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
     {
         $menu = "";
 
-        foreach ($sidebars as $sidebar) {
-            $menu .= "'" . $sidebar . "', ";
-        }
+        foreach ($sidebars as $sidebar) $menu .= "'" . $sidebar . "', ";
 
         return $menu;
     }
@@ -415,53 +382,74 @@ class GeneratorUtils implements GeneratorUtilsInterface
         $activeClass = ' active';
 
         if (is_string($route)) {
-            if (request()->is(substr($route . '*', 1))) {
-                return $activeClass;
-            }
+            if (request()->is(substr($route . '*', 1))) return $activeClass;
 
-            if (request()->is(str($route)->slug() . '*')) {
-                return $activeClass;
-            }
+            if (request()->is(str($route)->slug() . '*')) return $activeClass;
 
-            if (request()->segment(2) == str($route)->before('/')) {
-                return $activeClass;
-            }
+            if (request()->segment(2) == str($route)->before('/')) return $activeClass;
 
-            if (request()->segment(3) == str($route)->after('/')) {
-                return $activeClass;
-            }
+            if (request()->segment(3) == str($route)->after('/')) return $activeClass;
         }
 
         if (is_array($route)) {
             foreach ($route as $value) {
                 $actualRoute = str($value)->remove(' view')->plural();
 
-                if (request()->is(substr($actualRoute . '*', 1))) {
-                    return $activeClass;
-                }
+                if (request()->is(substr($actualRoute . '*', 1))) return $activeClass;
 
-                if (request()->is(str($actualRoute)->slug() . '*')) {
-                    return $activeClass;
-                }
+                if (request()->is(str($actualRoute)->slug() . '*')) return $activeClass;
 
-                if (request()->segment(2) == $actualRoute) {
-                    return $activeClass;
-                }
+                if (request()->segment(2) == $actualRoute) return $activeClass;
 
-                if (request()->segment(3) == $actualRoute) {
-                    return $activeClass;
-                }
+                if (request()->segment(3) == $actualRoute) return $activeClass;
             }
         }
 
         return '';
     }
 
-    /**
-     * Check if generate blade(default) or api.
-     */
     public static function isGenerateApi(): bool
     {
         return request()->filled('generate_variant') && request()->get('generate_variant') == 'api';
+    }
+
+    /**
+     * Check if package exist in composer.
+     */
+    public static function checkPackage(string $name): bool
+    {
+        if(self::getComposerPackage($name) == '{') return false;
+
+        return true;
+    }
+
+    /**
+     * Check if package exist in composer and return version.
+     * @throws \Exception
+     */
+    public static function checkPackageVersion(string $name, bool $strict = false): string
+    {
+        $str = self::getComposerPackage($name);
+
+        if(str_contains($str, '{')){
+            $message = 'The package '.$name.' is not installed.';
+
+            if($strict)  throw new \Exception($message);
+
+            return $message;
+        }
+
+        return $str;
+
+    }
+
+    /**
+     * Check package in composer.json
+     */
+    public static function getComposerPackage(string $name): string
+    {
+        $composer = file_get_contents(base_path('composer.json'));
+
+        return str($composer)->after('"'.$name.'": "')->before('"');
     }
 }

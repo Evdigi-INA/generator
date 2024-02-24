@@ -468,7 +468,7 @@ class FormViewGenerator
                                         GeneratorUtils::cleanSingularLowerCase($field),
                                         $fieldUcWords,
                                         $request['requireds'][$i] == 'yes' ? ' required' : '',
-                                        config('generator.image.path') == 'storage' ? "storage/uploads" : "uploads",
+                                        config('generator.image.disk') == 'storage' ? "storage/uploads" : "uploads",
                                         str()->kebab($field),
                                         $default['image'],
                                         $default['form_code']

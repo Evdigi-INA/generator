@@ -1,9 +1,6 @@
-${{modelNamePluralCamelCase}}->through(function (${{modelNameSingularCamelCase}}) {
+
             if (!${{modelNameSingularCamelCase}}->{{field}}) {
                 ${{modelNameSingularCamelCase}}->{{field}} = '{{defaultImage}}';
             } else {
-                ${{modelNameSingularCamelCase}}->{{field}} =  asset('/{{publicOrStorage}}/uploads/{{fieldPluralKebabCase}}/' . ${{modelNameSingularCamelCase}}->{{field}});
+                ${{modelNameSingularCamelCase}}->{{field}} =  {{castImage}};
             }
-
-            return ${{modelNameSingularCamelCase}};
-        });

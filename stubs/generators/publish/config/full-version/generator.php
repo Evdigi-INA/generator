@@ -2,7 +2,7 @@
 
 return [
     /**
-     * If any input file(image) as default will used options below.
+     * If any input file(image) as default will use options below.
      */
     'image' => [
         /**
@@ -15,7 +15,14 @@ return [
         'path' => 'storage',
 
         /**
-         * Will used if image is nullable and default value is null.
+         * Supported disk
+         * 1. local
+         * 2. S3
+         */
+        'disk' => 'local',
+
+        /**
+         * Will be used if image is nullable and default value is null.
          */
         'default' => 'https://via.placeholder.com/350?text=No+Image+Avaiable',
 
@@ -38,7 +45,7 @@ return [
 
     'format' => [
         /**
-         * Will used to first year on select, if any column type year.
+         * Will be used to first year on select, if any column type year.
          */
         'first_year' => 1900,
 
@@ -74,7 +81,7 @@ return [
     ],
 
     /**
-     * It will used for generator to manage and showing menus on sidebar views.
+     * It will be used for generator to manage and showing menus on sidebar views.
      *
      * Example:
      * [
@@ -106,13 +113,13 @@ return [
      *       ],
      *  ],
      *
-     * This code below always changes when you use a generator and maybe you must lint or format the code.
+     * This code below always changes when you use a generator, and maybe you must format the code.
      */
     'sidebars' => [
         [
             'header' => 'Main',
             'permissions' => [
-                'test view'
+                'test view',
             ],
             'menus' => [
                 [
@@ -121,14 +128,14 @@ return [
                     'route' => null,
                     'permission' => null,
                     'permissions' => [
-                        'test view'
+                        'test view',
                     ],
                     'submenus' => [
                         [
                             'title' => 'Tests',
                             'route' => '/tests',
                             'permission' => 'test view'
-                        ]
+                        ],
                     ]
                 ]
             ]
@@ -155,8 +162,8 @@ return [
                     'permission' => 'role & permission view',
                     'permissions' => [],
                     'submenus' => []
-                ],
+                ]
             ]
-        ],
-    ],
+        ]
+    ]
 ];

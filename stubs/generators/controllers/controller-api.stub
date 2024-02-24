@@ -24,7 +24,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
      */
     public function index(): {{modelNameSingularPascalCase}}Collection|{{modelNameSingularPascalCase}}Resource
     {
-        return (new {{modelNameSingularPascalCase}}Collection({{modelNameSingularPascalCase}}::{{relations}}paginate()))->additional([
+        return (new {{modelNameSingularPascalCase}}Collection({{modelNameSingularPascalCase}}::{{relations}}latest()->paginate()))->additional([
             'message' => 'The {{modelNameCleanPlural}} was received successfully.',
             'success' => true,
             'code' => Response::HTTP_OK

@@ -37,7 +37,7 @@ class ShowViewGenerator
                         model: $model
                     );
 
-                    $uploadPath =  config('generator.image.path') == 'storage' ? "storage/uploads/" : "uploads/";
+                    $uploadPath =  config('generator.image.disk') == 'storage' ? "storage/uploads/" : "uploads/";
 
                     $trs .= "<tr>
                                         <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>

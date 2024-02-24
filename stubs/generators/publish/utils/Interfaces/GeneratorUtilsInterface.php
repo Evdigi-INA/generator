@@ -142,4 +142,19 @@ interface GeneratorUtilsInterface
      * Check if generate blade(default) or api.
      */
     public static function isGenerateApi(): bool;
+
+    /**
+     * Check if package exist in composer.
+     */
+    public static function checkPackage(string $name): bool;
+
+    /**
+     * Check if package exist in composer and return version.
+     */
+    public static function checkPackageVersion(string $name): string;
+
+    /**
+     * Check package in composer.json
+     */
+    public static function getComposerPackage(string $name): string;
 }
