@@ -318,17 +318,17 @@ class GeneratorUtils implements GeneratorUtilsInterface
                 /**
                  * Generated code:
                  *
-                 *  if ($row->photo == null || $row->photo == $defaultImage = 'https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg') {
+                 *  if (!$row->photo || $row->photo == $defaultImage = 'https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg') {
                  *      return $defaultImage;
                  */
-                'index_code' => "if (\$row->" . str()->snake($field) . " == null || \$row->" . str()->snake($field) . " == \$defaultImage = '" . $default . "') {
+                'index_code' => "if (!\$row->" . str()->snake($field) . " || \$row->" . str()->snake($field) . " == \$defaultImage = '" . $default . "') {
                     return \$defaultImage;
                 }",
                 /**
                  * Generated code:
-                 * $book->cover == null || $book->cover == 'https://via.placeholder.com/350?text=No+Image+Avaiable'"
+                 * !$book->cover || $book->cover == 'https://via.placeholder.com/350?text=No+Image+Avaiable'"
                  */
-                'form_code' => "$" . self::singularCamelCase($model) . "->" . str()->snake($field) . " == null || $" . self::singularCamelCase($model) . "->" . str()->snake($field) . " == '" . $default . "'",
+                'form_code' => "!$" . self::singularCamelCase($model) . "->" . str()->snake($field) . " || $" . self::singularCamelCase($model) . "->" . str()->snake($field) . " == '" . $default . "'",
             ];
         }
 
@@ -338,27 +338,27 @@ class GeneratorUtils implements GeneratorUtilsInterface
                 /**
                  * Generated code:
                  *
-                 *  if ($row->photo == null) {
+                 *  if ($row->photo) {
                  *      return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
                  */
-                'index_code' => "if (\$row->" . str()->snake($field) . " == null) {
+                'index_code' => "if (!\$row->" . str()->snake($field) . ") {
                     return '" . config('generator.image.default')  . "';
                 }",
                 /**
                  * Generated code:
                  *
-                 *  $book->photo == null
+                 *  $book->photo
                  */
-                'form_code' => "$" . self::singularCamelCase($model) . "->" . str()->snake($field) . " == null",
+                'form_code' => "!$" . self::singularCamelCase($model) . "->" . str()->snake($field) . "",
             ];
         }
 
         return [
             'image' => 'https://via.placeholder.com/350?text=No+Image+Avaiable',
-            'index_code' => "if (\$row->" . str()->snake($field) . " == null) {
+            'index_code' => "if (!\$row->" . str()->snake($field) . ") {
                 return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
             }",
-            'form_code' => "$" . self::singularCamelCase($model) . "->" . str()->snake($field) . " == null",
+            'form_code' => "!$" . self::singularCamelCase($model) . "->" . str()->snake($field),
         ];
     }
 
@@ -408,6 +408,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         return '';
     }
 
+    /**
+     * Check if generate api or blade view.
+     */
     public static function isGenerateApi(): bool
     {
         return request()->filled('generate_variant') && request()->get('generate_variant') == 'api';
@@ -440,7 +443,6 @@ class GeneratorUtils implements GeneratorUtilsInterface
         }
 
         return $str;
-
     }
 
     /**
@@ -453,6 +455,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         return str($composer)->after('"'.$name.'": "')->before('"');
     }
 
+    /**
+     * Set disk code for controller.
+     */
     public static function setDiskCodeForController(string $name): string
     {
         switch(config('generator.image.disk')){
@@ -468,6 +473,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         }
     }
 
+    /**
+     * Set disk code for cast an image.
+     */
     public static function setDiskCodeForCastImage(string $model, string $field): string
     {
         switch(config('generator.image.disk')){

@@ -190,20 +190,8 @@ class ControllerGenerator
                      */
                     $passwordFieldStore .= "\t\t\$validated['" . str()->snake($request['fields'][$i]) . "'] = bcrypt(\$request->" . str()->snake($request['fields'][$i]) . ");\n";
 
-                    /**
-                     * will generate something like:
-                     *
-                     * switch (is_null($request->password)) {
-                     *   case true:
-                     *      unset($validated['password']);
-                     *       break;
-                     *   default:
-                     *       $validated['password'] = bcrypt($request->password);
-                     *       break;
-                     *   }
-                     */
                     $passwordFieldUpdate .= "
-        if (is_null(\$request->" . str()->snake($request['fields'][$i]) . ")) {
+        if (!\$request->" . str()->snake($request['fields'][$i]) . ") {
             unset(\$validated['" . str()->snake($request['fields'][$i]) . "']);
         } else {
             \$validated['" . str()->snake($request['fields'][$i]) . "'] = bcrypt(\$request->" . str()->snake($request['fields'][$i]) . ");
@@ -259,7 +247,7 @@ class ControllerGenerator
                  *     return $generator;
                  * });
                  */
-                $castImageIndex .= "$". $modelNamePluralCamelCase ."->through(function ($". $modelNameSingularCamelCase .") {";
+                $castImageIndex .= "$" . $modelNamePluralCamelCase . "->through(function ($" . $modelNameSingularCamelCase . ") {";
 
                 foreach ($request['input_types'] as $i => $input) {
                     if ($input == 'file') {
@@ -301,7 +289,7 @@ class ControllerGenerator
                             field: $request['fields'][$i],
                             path: 'show',
                             model: $modelNameSingularCamelCase,
-                        );
+                        ) . "\n";
                     }
                 }
 
@@ -312,7 +300,7 @@ class ControllerGenerator
                  *      $generator->image =  asset('/uploads/images/' . $generator->image);
                  *    }
                  */
-                $castImageIndex .= "\n\t\t\treturn $". $modelNameSingularCamelCase .";\n\t\t\t});";
+                $castImageIndex .= "\n\t\t\treturn $" . $modelNameSingularCamelCase . ";\n\t\t});\n";
 
                 /**
                  * Remove $validated = $request->validated(); because is already exist in template (.stub)
@@ -397,12 +385,6 @@ class ControllerGenerator
                 );
                 break;
             default:
-                if (GeneratorUtils::isGenerateApi()) {
-                    $getTemplate = GeneratorUtils::getStub('controllers/controller-api');
-                } else {
-                    $getTemplate = GeneratorUtils::getStub('controllers/controller');
-                }
-
                 /**
                  * default controller
                  */
@@ -455,7 +437,7 @@ class ControllerGenerator
                         $relations,
                         config('generator.image.disk', 'storage'),
                     ],
-                    $getTemplate
+                    GeneratorUtils::isGenerateApi() ? GeneratorUtils::getStub('controllers/controller-api') : GeneratorUtils::getStub('controllers/controller')
                 );
                 break;
         }
@@ -486,7 +468,7 @@ class ControllerGenerator
     /**
      * Generate an upload file code.
      */
-    protected function generateUploadImageCode(string $field, string $path, string $model, ?string $defaultValue = null): string
+    protected function generateUploadImageCode(string $field, string $path, string|null $model, ?string $defaultValue = null): string
     {
         $replaceString = [
             '{{fieldSnakeCase}}',
@@ -499,7 +481,9 @@ class ControllerGenerator
             '{{aspectRatio}}',
             '{{defaultImageCode}}',
             '{{fieldUploadPath}}',
-            '{{defaultImage}}'
+            '{{defaultImage}}',
+            '{{fieldCamelCase}}',
+            '{[modelNameSingularCamelCase}}'
         ];
 
         $default = GeneratorUtils::setDefaultImage(default: $defaultValue, field: $field, model: $model);
@@ -515,7 +499,9 @@ class ControllerGenerator
             config('generator.image.aspect_ratio') ? "\n\t\t\t\t\$constraint->aspectRatio();" : '',
             $default['index_code'],
             str($field)->snake(),
-            "$" . GeneratorUtils::singularCamelCase($field) . "->" . str($field)->snake()
+            "$" . GeneratorUtils::singularCamelCase($model) . "->" . str($field)->snake(),
+            GeneratorUtils::singularCamelCase($field),
+            GeneratorUtils::singularCamelCase($model)
         ];
 
         if ($model != null) {
@@ -537,6 +523,9 @@ class ControllerGenerator
         };
     }
 
+    /**
+     * Generate a cast image code.
+     */
     public function generateCastImageCode(string $field, string $path, string $model): string
     {
         return str_replace([

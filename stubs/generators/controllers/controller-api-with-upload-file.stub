@@ -96,6 +96,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
             ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail($id);
 
             {{deleteCode}}
+
             ${{modelNameSingularCamelCase}}->delete();
 
             return (new {{modelNameSingularPascalCase}}Resource(null))
