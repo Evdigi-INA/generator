@@ -4,24 +4,26 @@
 use {{modelPath}};
 use {{requestPath}};
 use Yajra\DataTables\Facades\DataTables;
-use Intervention\Image\Facades\Image;
-
+use App\Services\ImageService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\{JsonResponse, RedirectResponse};
 
 class {{modelNameSingularPascalCase}}Controller extends Controller
 {
-    // TODO: uncomment this code if you are using spatie permission
-    // public function __construct()
-    // {
-    //     $this->middleware('permission:{{modelNameSpaceLowercase}} view')->only('index', 'show');
-    //     $this->middleware('permission:{{modelNameSpaceLowercase}} create')->only('create', 'store');
-    //     $this->middleware('permission:{{modelNameSpaceLowercase}} edit')->only('edit', 'update');
-    //     $this->middleware('permission:{{modelNameSpaceLowercase}} delete')->only('destroy');
-    // }
+    public function __construct(public ImageService $imageService{{uploadPaths}})
+    {
+        {{assignUploadPaths}}
+        // TODO: uncomment this code if you are using spatie permission
+        // $this->middleware('permission:{{modelNameSpaceLowercase}} view')->only('index', 'show');
+        // $this->middleware('permission:{{modelNameSpaceLowercase}} create')->only('create', 'store');
+        // $this->middleware('permission:{{modelNameSpaceLowercase}} edit')->only('edit', 'update');
+        // $this->middleware('permission:{{modelNameSpaceLowercase}} delete')->only('destroy');
+    }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             ${{modelNamePluralCamelCase}} = {{query}};
@@ -39,7 +41,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Illuminate\Contracts\View\View
+    public function create(): View
     {
         return view('{{viewPath}}{{modelNamePluralKebabCase}}.create');
     }
@@ -47,7 +49,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Store{{modelNameSingularPascalCase}}Request $request): \Illuminate\Http\RedirectResponse
+    public function store(Store{{modelNameSingularPascalCase}}Request $request): RedirectResponse
     {
         $validated = $request->validated();
         {{passwordFieldStore}}{{inputMonths}}
@@ -60,7 +62,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     /**
      * Display the specified resource.
      */
-    public function show({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Contracts\View\View
+    public function show({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): View
     {
         {{loadRelation}}return view('{{viewPath}}{{modelNamePluralKebabCase}}.show', compact('{{modelNameSingularCamelCase}}'));
     }
@@ -68,7 +70,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Contracts\View\View
+    public function edit({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): View
     {
         {{loadRelation}}return view('{{viewPath}}{{modelNamePluralKebabCase}}.edit', compact('{{modelNameSingularCamelCase}}'));
     }
@@ -76,7 +78,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Update{{modelNameSingularPascalCase}}Request $request, {{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Http\RedirectResponse
+    public function update(Update{{modelNameSingularPascalCase}}Request $request, {{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): RedirectResponse
     {
         $validated = $request->validated();
         {{passwordFieldUpdate}}{{inputMonths}}
@@ -89,12 +91,13 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Http\RedirectResponse
+    public function destroy({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): RedirectResponse
     {
         try {
-        {{deleteCode}}
+            {{assignImageDelete}}
             ${{modelNameSingularCamelCase}}->delete();
 
+            {{deleteImageCodes}}
             return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was deleted successfully.'));
         } catch (\Throwable $th) {
             return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameSingularCamelCase}} can't be deleted because it's related to another table."));

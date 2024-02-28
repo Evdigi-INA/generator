@@ -1,2 +1,0 @@
-${{fieldCamelCase}} = ${{modelNameSingularCamelCase}}->{{fieldSnakeCase}};
-            $this->imageService->delete($this->{{fieldUploadPath}}Path . ${{fieldCamelCase}});

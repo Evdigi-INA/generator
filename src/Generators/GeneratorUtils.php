@@ -460,17 +460,11 @@ class GeneratorUtils implements GeneratorUtilsInterface
      */
     public static function setDiskCodeForController(string $name): string
     {
-        switch(config('generator.image.disk')){
-            case 's3':
-                return "/$name";
-                break;
-            case 'public':
-                return "public_path('uploads/$name/')";
-                break;
-            default:
-                return "storage_path('app/public/uploads/$name/')";
-            break;
-        }
+        return match (config('generator.image.disk')) {
+            's3' => "/$name",
+            'public' => "public_path('uploads/$name/')",
+            default => "storage_path('app/public/uploads/$name/')",
+        };
     }
 
     /**
@@ -478,15 +472,10 @@ class GeneratorUtils implements GeneratorUtilsInterface
      */
     public static function setDiskCodeForCastImage(string $model, string $field): string
     {
-        switch(config('generator.image.disk')){
-            case 's3':
-                break;
-            case 'public':
-                return "asset('/uploads/". self::pluralKebabCase($field) ."/' . $". self::singularCamelCase($model) ."->". str($field)->snake() .")";
-                break;
-            default:
-                return "asset('storage/uploads/". self::pluralKebabCase($field) ."/' . $". self::singularCamelCase($model) ."->". str($field)->snake() .");";
-            break;
-        }
+        return match (config('generator.image.disk')) {
+            's3' => "Storage::disk('s3')->url('/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
+            'public' => "asset('/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
+            default => "asset('storage/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ");",
+        };
     }
 }

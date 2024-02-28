@@ -1,2 +1,0 @@
-        ${{fieldCamelCase}} = ${{modelNameSingularCamelCase}}->{{fieldSnakeCase}};
-        $this->imageService->upload($this->{{fieldUploadPath}}Path . ${{fieldCamelCase}});
