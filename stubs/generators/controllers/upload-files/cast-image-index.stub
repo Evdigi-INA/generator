@@ -1,6 +1,6 @@
 if (!${{modelNameSingularCamelCase}}->{{field}}) {
-            ${{modelNameSingularCamelCase}}->{{field}} = '{{defaultImage}}';
-        } else {
-            ${{modelNameSingularCamelCase}}->{{field}} =  {{castImage}};
-        }
+             ${{modelNameSingularCamelCase}}->{{field}} = '{{defaultImage}}';
+         } else {
+             ${{modelNameSingularCamelCase}}->{{field}} =  {{castImage}};
+         }
 

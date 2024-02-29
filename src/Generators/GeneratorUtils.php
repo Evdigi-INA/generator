@@ -321,9 +321,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
                  *  if (!$row->photo || $row->photo == $defaultImage = 'https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg') {
                  *      return $defaultImage;
                  */
-                'index_code' => "if (!\$row->" . str()->snake($field) . " || \$row->" . str()->snake($field) . " == \$defaultImage = '" . $default . "') {
-                    return \$defaultImage;
-                }",
+                'index_code' => "if (!\$row->" . str()->snake($field) . " || \$row->" . str()->snake($field) . " == \$defaultImage = '" . $default . "') return \$defaultImage;",
                 /**
                  * Generated code:
                  * !$book->cover || $book->cover == 'https://via.placeholder.com/350?text=No+Image+Avaiable'"
@@ -341,23 +339,19 @@ class GeneratorUtils implements GeneratorUtilsInterface
                  *  if ($row->photo) {
                  *      return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
                  */
-                'index_code' => "if (!\$row->" . str()->snake($field) . ") {
-                    return '" . config('generator.image.default')  . "';
-                }",
+                'index_code' => "if (!\$row->" . str()->snake($field) . ") return '" . config('generator.image.default')  . "';",
                 /**
                  * Generated code:
                  *
                  *  $book->photo
                  */
-                'form_code' => "!$" . self::singularCamelCase($model) . "->" . str()->snake($field) . "",
+                'form_code' => "!$" . self::singularCamelCase($model) . "->" . str()->snake($field),
             ];
         }
 
         return [
             'image' => 'https://via.placeholder.com/350?text=No+Image+Avaiable',
-            'index_code' => "if (!\$row->" . str()->snake($field) . ") {
-                return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
-            }",
+            'index_code' => "if (!\$row->" . str()->snake($field) . ") return 'https://via.placeholder.com/350?text=No+Image+Avaiable';",
             'form_code' => "!$" . self::singularCamelCase($model) . "->" . str()->snake($field),
         ];
     }
@@ -461,9 +455,14 @@ class GeneratorUtils implements GeneratorUtilsInterface
     public static function setDiskCodeForController(string $name): string
     {
         return match (config('generator.image.disk')) {
-            's3' => "/$name",
-            'public' => "public_path('uploads/$name/')",
-            default => "storage_path('app/public/uploads/$name/')",
+            // '/images/';
+            's3' => "'/". self::pluralKebabCase($name) ."/'",
+
+            // 'public_path('uploads/images/');
+            'public' => "public_path('uploads/". self::pluralKebabCase($name) ."/')",
+
+            // 'storage_path('app/public/uploads/images/');
+            default => "storage_path('app/public/uploads/". self::pluralKebabCase($name) ."/')",
         };
     }
 
@@ -473,9 +472,14 @@ class GeneratorUtils implements GeneratorUtilsInterface
     public static function setDiskCodeForCastImage(string $model, string $field): string
     {
         return match (config('generator.image.disk')) {
-            's3' => "Storage::disk('s3')->url('/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
+            // \Illuminate\Support\Facades\Storage::disk('s3')->url('images/' . $generator->image);
+            's3' => "\Illuminate\Support\Facades\Storage::disk('s3')->url(\$this->". self::singularCamelCase($field) ."Path . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
+
+            //asset('/uploads/photos/' . $generator->image);
             'public' => "asset('/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
-            default => "asset('storage/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ");",
+
+            //asset('storage/uploads/images/' . $generator->image)
+            default => "asset('storage/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
         };
     }
 }

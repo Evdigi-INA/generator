@@ -256,14 +256,14 @@ class ControllerGenerator
 
                 foreach ($request['input_types'] as $i => $input) {
                     if ($input == 'file') {
-                        $uploadPaths .= ", public string $" . str($request['fields'][$i])->snake($request['fields'][$i]) . "Path = ''";
-                        $assignUploadPaths .= "\$this->" . GeneratorUtils::pluralSnakeCase($request['fields'][$i]) . "Path = " . GeneratorUtils::setDiskCodeForController($request['fields'][$i]) . ";\n\t\t";
+                        $uploadPaths .= ", public string $" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path = ''";
+                        $assignUploadPaths .= "\$this->" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path = " . GeneratorUtils::setDiskCodeForController($request['fields'][$i]) . ";\n\t\t";
 
                         //  Generated code: $image = $generator->image;
                         $assignImageDelete .= "$". str($request['fields'][$i])->snake() ." = $". GeneratorUtils::singularCamelCase($model) ."->". str($request['fields'][$i])->snake() .";\n\t\t\t";
 
                         //  Generated code: $this->imageService->delete($this->imagePath . $image);
-                        $deleteImageCodes .= "\$this->imageService->delete(\$this->". GeneratorUtils::singularCamelCase($request['fields'][$i]) ."Path . $". str($request['fields'][$i])->snake() .");\n\t\t\t";
+                        $deleteImageCodes .= "\$this->imageService->delete(image: \$this->". GeneratorUtils::singularCamelCase($request['fields'][$i]) ."Path . $". str($request['fields'][$i])->snake() . (config('generator.image.disk') == 's3' ? ", disk: 's3'" : '') .");\n\t\t\t";
 
                         $indexCode .= $this->generateUploadImageCode(
                             field: $request['fields'][$i],
@@ -480,6 +480,7 @@ class ControllerGenerator
             '{{defaultImage}}',
             '{{fieldCamelCase}}',
             '{[modelNameSingularCamelCase}}',
+            '{{disk}}'
         ];
 
         $default = GeneratorUtils::setDefaultImage(default: $defaultValue, field: $field, model: $model);
@@ -498,6 +499,7 @@ class ControllerGenerator
             "$" . GeneratorUtils::singularCamelCase($model) . "->" . str($field)->snake(),
             GeneratorUtils::singularCamelCase($field),
             GeneratorUtils::singularCamelCase($model),
+            config('generator.image.disk') == 's3' ? ", disk: 's3'" : ''
         ];
 
         if ($model != null) {

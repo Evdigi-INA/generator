@@ -99,7 +99,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
 
             {{deleteImageCodes}}
             return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was deleted successfully.'));
-        } catch (\Throwable $th) {
+        } catch (\Exception $e) {
             return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameSingularCamelCase}} can't be deleted because it's related to another table."));
         }
     }

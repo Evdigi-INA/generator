@@ -1,6 +1,6 @@
 <?php
 
-namespace EvdigiIna\Generator\Generators\Interfaces;
+namespace App\Generators\Interfaces;
 
 interface GeneratorUtilsInterface
 {

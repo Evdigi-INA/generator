@@ -91,7 +91,12 @@ class GeneratorServiceProvider extends ServiceProvider
             __DIR__ . '/../../stubs/generators/publish/utils' => app_path('Generators')
         ], 'generator-utils');
 
-        // Illuminate\Foundation\Console\AboutCommand::add('Generator', fn () => ['Version' => '0.2.0']);
+         \Illuminate\Foundation\Console\AboutCommand::add('Generator', fn () => [
+             'Version' => '0.3.0',
+             'Source' => 'https://github.com/evdigiina/generator',
+             'Docs' => 'https://evdigi-ina.github.io/generator-docs',
+             'About' =>  'Package for building basic CRUD, especially for your master(main) data.'
+         ]);
 
         if ($this->app->runningInConsole()) $this->commands([PublishAllFiles::class]);
 

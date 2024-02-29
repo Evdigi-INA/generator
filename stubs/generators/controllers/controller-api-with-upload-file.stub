@@ -118,9 +118,10 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     }
 
      /**
-     * Casting all images
-     */
-     public function castImages(${{modelNameSingularCamelCase}}): void
+      * Casting all images
+      * TODO: casting image in model (soon)
+      */
+     public function castImages({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): void
      {
          {{castImageFunction}}
      }
