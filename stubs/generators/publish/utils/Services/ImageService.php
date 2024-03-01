@@ -3,10 +3,10 @@
 namespace App\Generators\Services;
 
 use App\Generators\GeneratorUtils;
-use App\Generators\Interfaces\ImageInterface;
+use App\Generators\Interfaces\ImageServiceInterface;
 use Illuminate\Support\Facades\Storage;
 
-class ImageService implements ImageInterface
+class ImageService implements ImageServiceInterface
 {
     /**
      * @throws \Exception

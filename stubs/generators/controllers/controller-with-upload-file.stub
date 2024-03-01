@@ -3,9 +3,9 @@
 {{namespace}}
 use {{modelPath}};
 use {{requestPath}};
-use Yajra\DataTables\Facades\DataTables;
-use App\Services\ImageService;
 use Illuminate\Contracts\View\View;
+use Yajra\DataTables\Facades\DataTables;
+use App\Generators\Services\ImageService;
 use Illuminate\Http\{JsonResponse, RedirectResponse};
 
 class {{modelNameSingularPascalCase}}Controller extends Controller

@@ -318,10 +318,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
                 /**
                  * Generated code:
                  *
-                 *  if (!$row->photo || $row->photo == $defaultImage = 'https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg') {
-                 *      return $defaultImage;
+                 *  if (!$generator->image || $generator->image == $defaultImage = 'https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg') return $defaultImage;
                  */
-                'index_code' => "if (!\$row->" . str()->snake($field) . " || \$row->" . str()->snake($field) . " == \$defaultImage = '" . $default . "') return \$defaultImage;",
+                'index_code' => "if (!$". self::singularCamelCase($model) ."->" . str()->snake($field) . " || $". self::singularCamelCase($model) ."->" . str()->snake($field) . " == \$defaultImage = '" . $default . "') return \$defaultImage;",
                 /**
                  * Generated code:
                  * !$book->cover || $book->cover == 'https://via.placeholder.com/350?text=No+Image+Avaiable'"
@@ -336,14 +335,13 @@ class GeneratorUtils implements GeneratorUtilsInterface
                 /**
                  * Generated code:
                  *
-                 *  if ($row->photo) {
-                 *      return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
+                 *  if (!$generator->image == null) return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
                  */
-                'index_code' => "if (!\$row->" . str()->snake($field) . ") return '" . config('generator.image.default')  . "';",
+                'index_code' => "if (!\$". self::singularCamelCase($model) ."->" . str()->snake($field) . ") return '" . config('generator.image.default')  . "';",
                 /**
                  * Generated code:
                  *
-                 *  $book->photo
+                 *  !$book->photo
                  */
                 'form_code' => "!$" . self::singularCamelCase($model) . "->" . str()->snake($field),
             ];
@@ -351,7 +349,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
 
         return [
             'image' => 'https://via.placeholder.com/350?text=No+Image+Avaiable',
-            'index_code' => "if (!\$row->" . str()->snake($field) . ") return 'https://via.placeholder.com/350?text=No+Image+Avaiable';",
+            'index_code' => "if (!\$". self::singularCamelCase($model) ."->" . str()->snake($field) . ") return 'https://via.placeholder.com/350?text=No+Image+Avaiable';",
             'form_code' => "!$" . self::singularCamelCase($model) . "->" . str()->snake($field),
         ];
     }
@@ -429,7 +427,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
         $str = self::getComposerPackage($name);
 
         if(str_contains($str, '{')){
-            $message = 'The package '.$name.' is not installed.';
+            $message = 'The package ' . $name . ' is not installed.';
 
             if($strict)  throw new \Exception($message);
 
@@ -446,7 +444,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
     {
         $composer = file_get_contents(base_path('composer.json'));
 
-        return str($composer)->after('"'.$name.'": "')->before('"');
+        return str($composer)->after('"' . $name . '": "')->before('"');
     }
 
     /**

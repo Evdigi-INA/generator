@@ -254,6 +254,8 @@ class ControllerGenerator
                  */
                 $castImageIndex .= "\n\t\t$" . $modelNamePluralCamelCase . "->through(function ($" . $modelNameSingularCamelCase . ") {\n\t\t\t\$this->castImages($". $modelNameSingularCamelCase .");\n\t\t\treturn $" . $modelNameSingularCamelCase . ";\n\t\t});\n";
 
+                $castImageDatatable = "";
+
                 foreach ($request['input_types'] as $i => $input) {
                     if ($input == 'file') {
                         $uploadPaths .= ", public string $" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path = ''";
@@ -264,6 +266,8 @@ class ControllerGenerator
 
                         //  Generated code: $this->imageService->delete($this->imagePath . $image);
                         $deleteImageCodes .= "\$this->imageService->delete(image: \$this->". GeneratorUtils::singularCamelCase($request['fields'][$i]) ."Path . $". str($request['fields'][$i])->snake() . (config('generator.image.disk') == 's3' ? ", disk: 's3'" : '') .");\n\t\t\t";
+
+                        $castImageDatatable .= GeneratorUtils::setDiskCodeForCastImage($model, $request['fields'][$i]);
 
                         $indexCode .= $this->generateUploadImageCode(
                             field: $request['fields'][$i],
@@ -342,7 +346,8 @@ class ControllerGenerator
                         '{{deleteImageCodes}}',
                         '{{castImageFunction}}',
                         '{{castImageIndex}}',
-                        '{{castImageShow}}'
+                        '{{castImageShow}}',
+                        '{{castImageDatatable}}'
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -359,12 +364,16 @@ class ControllerGenerator
                         $query,
                         $namespace,
                         $requestPath,
+
+                        // App\Models\Product
                         $path != '' ? "App\Models\\$path\\$modelNameSingularPascalCase" : "App\Models\\$modelNameSingularPascalCase",
                         $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
                         $passwordFieldStore,
                         $passwordFieldUpdate,
                         $updateDataAction,
                         $inputMonths,
+
+                        // App\Http\Resources\ProductResource
                         $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
                         $modelNameCleanSingular,
                         $modelNameCleanPlural,
@@ -375,7 +384,10 @@ class ControllerGenerator
                         $deleteImageCodes,
                         $castImageFunc,
                         $castImageIndex,
-                        "\n\t\t\$this->castImages($" . $modelNameSingularCamelCase . ");\n"
+
+                        // $this->castImages($product);
+                        "\n\t\t\$this->castImages($" . $modelNameSingularCamelCase . ");\n",
+                        $castImageDatatable
                     ],
                     GeneratorUtils::isGenerateApi() ? GeneratorUtils::getStub('controllers/controller-api-with-upload-file') : GeneratorUtils::getStub('controllers/controller-with-upload-file')
                 );
@@ -480,7 +492,7 @@ class ControllerGenerator
             '{{defaultImage}}',
             '{{fieldCamelCase}}',
             '{[modelNameSingularCamelCase}}',
-            '{{disk}}'
+            '{{disk}}',
         ];
 
         $default = GeneratorUtils::setDefaultImage(default: $defaultValue, field: $field, model: $model);

@@ -318,10 +318,10 @@ class GeneratorUtils implements GeneratorUtilsInterface
                 /**
                  * Generated code:
                  *
-                 *  if ($row->photo == null || $row->photo == $defaultImage = 'https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg') {
+                 *  if ($generator->image == null || $generator->image == $defaultImage = 'https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg') {
                  *      return $defaultImage;
                  */
-                'index_code' => "if (\$row->" . str()->snake($field) . " == null || \$row->" . str()->snake($field) . " == \$defaultImage = '" . $default . "') {
+                'index_code' => "if (\$". self::singularCamelCase($model) ."->" . str()->snake($field) . " == null || \$". self::singularCamelCase($model) .">" . str()->snake($field) . " == \$defaultImage = '" . $default . "') {
                     return \$defaultImage;
                 }",
                 /**
@@ -338,10 +338,10 @@ class GeneratorUtils implements GeneratorUtilsInterface
                 /**
                  * Generated code:
                  *
-                 *  if ($row->photo == null) {
+                 *  if ($generator->image == null) {
                  *      return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
                  */
-                'index_code' => "if (\$row->" . str()->snake($field) . " == null) {
+                'index_code' => "if (\$". self::singularCamelCase($model) ."->" . str()->snake($field) . " == null) {
                     return '" . config('generator.image.default')  . "';
                 }",
                 /**
@@ -355,7 +355,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
 
         return [
             'image' => 'https://via.placeholder.com/350?text=No+Image+Avaiable',
-            'index_code' => "if (\$row->" . str()->snake($field) . " == null) {
+            'index_code' => "if (\$". self::singularCamelCase($model) ."->" . str()->snake($field) . " == null) {
                 return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
             }",
             'form_code' => "$" . self::singularCamelCase($model) . "->" . str()->snake($field) . " == null",
@@ -408,6 +408,9 @@ class GeneratorUtils implements GeneratorUtilsInterface
         return '';
     }
 
+    /**
+     * Check if generate api or blade view.
+     */
     public static function isGenerateApi(): bool
     {
         return request()->filled('generate_variant') && request()->get('generate_variant') == 'api';
@@ -440,7 +443,6 @@ class GeneratorUtils implements GeneratorUtilsInterface
         }
 
         return $str;
-
     }
 
     /**
@@ -451,5 +453,39 @@ class GeneratorUtils implements GeneratorUtilsInterface
         $composer = file_get_contents(base_path('composer.json'));
 
         return str($composer)->after('"'.$name.'": "')->before('"');
+    }
+
+    /**
+     * Set disk code for controller.
+     */
+    public static function setDiskCodeForController(string $name): string
+    {
+        return match (config('generator.image.disk')) {
+            // '/images/';
+            's3' => "'/". self::pluralKebabCase($name) ."/'",
+
+            // 'public_path('uploads/images/');
+            'public' => "public_path('uploads/". self::pluralKebabCase($name) ."/')",
+
+            // 'storage_path('app/public/uploads/images/');
+            default => "storage_path('app/public/uploads/". self::pluralKebabCase($name) ."/')",
+        };
+    }
+
+    /**
+     * Set disk code for cast an image.
+     */
+    public static function setDiskCodeForCastImage(string $model, string $field): string
+    {
+        return match (config('generator.image.disk')) {
+            // \Illuminate\Support\Facades\Storage::disk('s3')->url('images/' . $generator->image);
+            's3' => "\Illuminate\Support\Facades\Storage::disk('s3')->url(\$this->". self::singularCamelCase($field) ."Path . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
+
+            //asset('/uploads/photos/' . $generator->image);
+            'public' => "asset('/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
+
+            //asset('storage/uploads/images/' . $generator->image)
+            default => "asset('storage/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
+        };
     }
 }
