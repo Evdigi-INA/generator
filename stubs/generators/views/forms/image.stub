@@ -5,7 +5,7 @@
                     @if ({{defaultImageCodeForm}})
                         <img src="{{defaultImage}}" alt="{{fieldUcWords}}" class="rounded mb-2 mt-2" alt="{{fieldUcWords}}" width="200" height="150" style="object-fit: cover">
                     @else
-                        <img src="{{ asset('{{uploadPathPublic}}/{{fieldPluralSnakeCase}}/' . ${{modelCamelCase}}->{{fieldSnakeCase}}) }}" alt="{{fieldUcWords}}" class="rounded mb-2 mt-2" width="200" height="150" style="object-fit: cover">
+                        <img src="{{ {{setDiskForCastImage}} }}" alt="{{fieldUcWords}}" class="rounded mb-2 mt-2" width="200" height="150" style="object-fit: cover">
                     @endif
                 </div>
 

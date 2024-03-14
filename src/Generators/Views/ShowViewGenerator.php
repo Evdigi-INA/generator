@@ -23,9 +23,7 @@ class ShowViewGenerator
 
         foreach ($request['fields'] as $i => $field) {
             if ($request['input_types'][$i] != 'password') {
-                if ($i >= 1) {
-                    $trs .= "\t\t\t\t\t\t\t\t\t";
-                }
+                if ($i >= 1) $trs .= "\t\t\t\t\t\t\t\t\t";
 
                 $fieldUcWords = GeneratorUtils::cleanUcWords($field);
                 $fieldSnakeCase = str($field)->snake();
@@ -45,7 +43,7 @@ class ShowViewGenerator
                                             @if (" . $default['form_code'] . ")
                                             <img src=\"" . $default['image'] . "\" alt=\"$fieldUcWords\"  class=\"rounded\" width=\"200\" height=\"150\" style=\"object-fit: cover\">
                                             @else
-                                                <img src=\"{{ asset('$uploadPath" . str($field)->plural()->snake() . "/' . $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . ") }}\" alt=\"$fieldUcWords\" class=\"rounded\" width=\"200\" height=\"150\" style=\"object-fit: cover\">
+                                                <img src=\"{{ ". GeneratorUtils::setDiskCodeForCastImage($model, $field) ." }}\" alt=\"$fieldUcWords\" class=\"rounded\" width=\"200\" height=\"150\" style=\"object-fit: cover\">
                                             @endif
                                         </td>
                                     </tr>";
@@ -70,9 +68,7 @@ class ShowViewGenerator
                     case 'date':
                         $dateFormat = config('generator.format.date') ? config('generator.format.date') : 'd/m/Y';
 
-                        if ($request['input_types'][$i] == 'month') {
-                            $dateFormat = config('generator.format.month') ? config('generator.format.month') : 'm/Y';
-                        }
+                        if ($request['input_types'][$i] == 'month') $dateFormat = config('generator.format.month') ? config('generator.format.month') : 'm/Y';
 
                         $trs .= "<tr>
                                             <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
@@ -103,9 +99,7 @@ class ShowViewGenerator
                         break;
                 }
 
-                if ($i + 1 != $totalFields) {
-                    $trs .= "\n";
-                }
+                if ($i + 1 != $totalFields) $trs .= "\n";
             }
         }
 

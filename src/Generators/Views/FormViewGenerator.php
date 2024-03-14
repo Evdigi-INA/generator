@@ -197,7 +197,7 @@ class FormViewGenerator
                         }
                         break;
                     case 'year':
-                        $firstYear = is_int(config('generator.format.first_year')) ? config('generator.format.first_year') : 1900;
+                        $firstYear = is_int(config('generator.format.first_year')) ? config('generator.format.first_year') : 1970;
 
                         /**
                          * Will generate something like:
@@ -344,11 +344,11 @@ class FormViewGenerator
                                 $formatValue = "{{ isset($$modelNameSingularCamelCase) && $" . $modelNameSingularCamelCase . "->$fieldSnakeCase ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . "->format('Y-m-d\TH:i') : old('$fieldSnakeCase') }}";
 
                                 $template .= $this->setInputTypeTemplate(
+                                    field: $field,
                                     request: [
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    field: $field,
                                     formatValue: $formatValue
                                 );
                                 break;
@@ -361,11 +361,11 @@ class FormViewGenerator
                                 $formatValue = "{{ isset($$modelNameSingularCamelCase) && $" . $modelNameSingularCamelCase . "->$fieldSnakeCase ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . "->format('Y-m-d') : old('$fieldSnakeCase') }}";
 
                                 $template .= $this->setInputTypeTemplate(
+                                    field: $field,
                                     request: [
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    field: $field,
                                     formatValue: $formatValue
                                 );
                                 break;
@@ -378,11 +378,11 @@ class FormViewGenerator
                                 $formatValue = "{{ isset($$modelNameSingularCamelCase) && $" . $modelNameSingularCamelCase . "->$fieldSnakeCase ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . "->format('H:i') : old('$fieldSnakeCase') }}";
 
                                 $template .= $this->setInputTypeTemplate(
+                                    field: $field,
                                     request: [
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    field: $field,
                                     formatValue: $formatValue
                                 );
                                 break;
@@ -395,11 +395,11 @@ class FormViewGenerator
                                 $formatValue = "{{ isset($$modelNameSingularCamelCase) && $" . $modelNameSingularCamelCase . "->$fieldSnakeCase ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . "->format('Y-\WW') : old('$fieldSnakeCase') }}";
 
                                 $template .= $this->setInputTypeTemplate(
+                                    field: $field,
                                     request: [
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    field: $field,
                                     formatValue: $formatValue
                                 );
                                 break;
@@ -412,11 +412,11 @@ class FormViewGenerator
                                 $formatValue = "{{ isset($$modelNameSingularCamelCase) && $" . $modelNameSingularCamelCase . "->$fieldSnakeCase ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . "->format('Y-m') : old('$fieldSnakeCase') }}";
 
                                 $template .= $this->setInputTypeTemplate(
+                                    field: $field,
                                     request: [
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    field: $field,
                                     formatValue: $formatValue
                                 );
                                 break;
@@ -429,7 +429,6 @@ class FormViewGenerator
                                         '{{modelName}}',
                                         '{{nullable}}',
                                         '{{fieldSnakeCase}}'
-
                                     ],
                                     [
                                         GeneratorUtils::kebabCase($field),
@@ -460,6 +459,7 @@ class FormViewGenerator
                                         '{{fieldKebabCase}}',
                                         '{{defaultImage}}',
                                         '{{defaultImageCodeForm}}',
+                                        '{{setDiskForCastImage}}'
                                     ],
                                     [
                                         $modelNameSingularCamelCase,
@@ -471,7 +471,12 @@ class FormViewGenerator
                                         config('generator.image.disk') == 'storage' ? "storage/uploads" : "uploads",
                                         str()->kebab($field),
                                         $default['image'],
-                                        $default['form_code']
+                                        $default['form_code'],
+                                        /*
+                                         * when disk is s3 it will generate something like: \Illuminate\Support\Facades\Storage::disk('s3')->url($this->photoPath . $cat->photo)
+                                         * $this->photoPath, not available in view then change to 'photos/'
+                                         */
+                                        str_replace("\$this->".  GeneratorUtils::singularCamelCase($field) ."Path", "'". GeneratorUtils::pluralKebabCase($field) ."/'", GeneratorUtils::setDiskCodeForCastImage($model, $field) )
                                     ],
                                     GeneratorUtils::getStub('views/forms/image')
                                 );
@@ -521,11 +526,11 @@ class FormViewGenerator
                                 break;
                             default:
                                 $template .= $this->setInputTypeTemplate(
+                                    field: $field,
                                     request: [
                                         'input_types' => $request['input_types'][$i],
                                         'requireds' => $request['requireds'][$i]
                                     ],
-                                    field: $field,
                                     formatValue: $formatValue
                                 );
                                 break;

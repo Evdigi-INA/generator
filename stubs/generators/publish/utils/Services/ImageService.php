@@ -17,7 +17,7 @@ class ImageService implements ImageServiceInterface
            if(!$isCustomUpload){
                $file = request()->file($name);
 
-               if (str_contains(GeneratorUtils::checkPackageVersion('intervention/image-laravel'), '2')) {
+               if (str_contains(GeneratorUtils::checkPackageVersion('intervention/image'), '2')) {
                    $filename = $file->hashName();
                } else {
                    // set image to webp
