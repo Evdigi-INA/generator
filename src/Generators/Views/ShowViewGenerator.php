@@ -35,7 +35,12 @@ class ShowViewGenerator
                         model: $model
                     );
 
-                    $uploadPath =  config('generator.image.disk') == 'storage' ? "storage/uploads/" : "uploads/";
+                    $castImage = str_replace(
+                        "\$this->" . GeneratorUtils::singularCamelCase($field) . "Path",
+                        "'" . GeneratorUtils::pluralKebabCase($field) . "/'",
+                        GeneratorUtils::setDiskCodeForCastImage($model, $field)
+                    );
+
 
                     $trs .= "<tr>
                                         <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
@@ -43,7 +48,7 @@ class ShowViewGenerator
                                             @if (" . $default['form_code'] . ")
                                             <img src=\"" . $default['image'] . "\" alt=\"$fieldUcWords\"  class=\"rounded\" width=\"200\" height=\"150\" style=\"object-fit: cover\">
                                             @else
-                                                <img src=\"{{ ". GeneratorUtils::setDiskCodeForCastImage($model, $field) ." }}\" alt=\"$fieldUcWords\" class=\"rounded\" width=\"200\" height=\"150\" style=\"object-fit: cover\">
+                                                <img src=\"{{ " . $castImage . " }}\" alt=\"$fieldUcWords\" class=\"rounded\" width=\"200\" height=\"150\" style=\"object-fit: cover\">
                                             @endif
                                         </td>
                                     </tr>";
