@@ -28,11 +28,10 @@
     "require": {
         "php": "^8.2",
         "intervention/image-laravel": "^1.1",
-        "yajra/laravel-datatables-oracle": "^10.0"
+        "yajra/laravel-datatables-oracle": "^11.0"
     },
     "require-dev": {
-        "nunomaduro/collision": "^6.3",
-        "orchestra/testbench": "^7.14"
+        "orchestra/testbench": "9.0"
     },
     "config": {
         "optimize-autoloader": true,
@@ -44,12 +43,10 @@
         "laravel": {
             "providers": [
                 "EvdigiIna\\Generator\\Providers\\GeneratorServiceProvider",
-                "Yajra\\DataTables\\DataTablesServiceProvider",
-                "Intervention\\Image\\ImageServiceProvider"
+                "Yajra\\DataTables\\DataTablesServiceProvider"
             ],
             "aliases": {
-                "DataTables": "Yajra\\DataTables\\Facades\\DataTables",
-                "Image": "Intervention\\Image\\Facades\\Image"
+                "DataTables": "Yajra\\DataTables\\Facades\\DataTables"
             }
         }
     }

@@ -2,8 +2,6 @@
 
 namespace EvdigiIna\Generator\Generators;
 
-use Spatie\Permission\Models\Permission;
-
 class MenuGenerator
 {
     /**
@@ -140,9 +138,17 @@ class MenuGenerator
      */
     protected function generateFile(string $jsonToArrayString): void
     {
-        $configStringCode = str(file_get_contents(config_path('generator.php')))->before("'sidebars' => ");
+        $stringConfig = str(file_get_contents(config_path('generator.php')));
 
-        $template = $configStringCode . "'sidebars' => " . $jsonToArrayString . "\n];";
+        if(str_contains($stringConfig, "'sidebars' => ")){
+            $search = "'sidebars' => ";
+            $stringConfigCode = $stringConfig->before($search);
+        }else{
+            $search = '"sidebars" => ';
+            $stringConfigCode = $stringConfig->before($search);
+        }
+
+        $template = $stringConfigCode . $search . $jsonToArrayString . "\n];";
 
         file_put_contents(base_path('config/generator.php'), $template);
     }
