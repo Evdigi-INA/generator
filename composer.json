@@ -28,11 +28,10 @@
     "require": {
         "php": "^8.2",
         "intervention/image-laravel": "^1.1",
-        "yajra/laravel-datatables-oracle": "^11.0"
-    },
-    "require-dev": {
+        "yajra/laravel-datatables-oracle": "^11.0",
         "orchestra/testbench": "^9.0"
     },
+    "require-dev": {},
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true
