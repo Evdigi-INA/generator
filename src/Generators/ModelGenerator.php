@@ -17,7 +17,7 @@ class ModelGenerator
         $casts = "[";
         $relations = "";
         $totalFields = count($request['fields']);
-        $dateTimeFormat = config('generator.format.datetime') ? config('generator.format.datetime') : 'Y-m-d H:i:s';
+        $dateTimeFormat = config('generator.format.datetime') ?? 'Y-m-d H:i:s';
         $protectedHidden = "";
 
         if (in_array('password', $request['input_types'])) {
@@ -39,14 +39,12 @@ class ModelGenerator
                 default => "'" . str()->snake($field) . "']",
             };
 
-            if ($request['input_types'][$i] == 'password') {
-                $protectedHidden .= "'" . str()->snake($field) . "', ";
-            }
+            if ($request['input_types'][$i] == 'password') $protectedHidden .= "'" . str()->snake($field) . "', ";
 
             switch ($request['column_types'][$i]) {
                 case 'date':
                     if ($request['input_types'][$i] != 'month') {
-                        $dateFormat = config('generator.format.date') ? config('generator.format.date') : 'd/m/Y';
+                        $dateFormat = config('generator.format.date') ?? 'd/m/Y';
                         $casts .= "'" . str()->snake($field) . "' => 'date:$dateFormat', ";
                     }
                     break;
@@ -75,9 +73,7 @@ class ModelGenerator
 
                     $foreign_id = isset($request['foreign_ids'][$i]) ? ", '" . $request['foreign_ids'][$i] . "'" : '';
 
-                    if ($i > 0) {
-                        $relations .= "\t";
-                    }
+                    if ($i > 0) $relations .= "\t";
 
                     /**
                      * will generate something like:
@@ -116,13 +112,9 @@ class ModelGenerator
             }
 
             // integer/bigInteger/tinyInteger/
-            if (str_contains($request['column_types'][$i], 'integer')) {
-                $casts .= "'" . str()->snake($field) . "' => 'integer', ";
-            }
+            if (str_contains($request['column_types'][$i], 'integer')) $casts .= "'" . str()->snake($field) . "' => 'integer', ";
 
-            if (in_array($request['column_types'][$i], ['string', 'text', 'char']) && $request['input_types'][$i] != 'week') {
-                $casts .= "'" . str()->snake($field) . "' => 'string', ";
-            }
+            if (in_array($request['column_types'][$i], ['string', 'text', 'char']) && $request['input_types'][$i] != 'week') $casts .= "'" . str()->snake($field) . "' => 'string', ";
         }
 
         if ($protectedHidden != "") {
@@ -131,9 +123,9 @@ class ModelGenerator
             $protectedHidden = substr($protectedHidden, 0, -2) . "];";
         }
 
-        // $casts .= <<<PHP
-        // 'created_at' => 'datetime:$dateTimeFormat', 'updated_at' => 'datetime:$dateTimeFormat']
-        // PHP;
+        $casts .= <<<PHP
+        'created_at' => 'datetime:$dateTimeFormat', 'updated_at' => 'datetime:$dateTimeFormat']
+        PHP;
 
         $casts .= "]";
 

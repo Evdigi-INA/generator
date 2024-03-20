@@ -13,7 +13,7 @@ return [
          * 2. storage
          * 3. S3
          */
-        "disk" => "s3",
+        "disk" => "storage",
 
         /**
          * Will be used if image is nullable and default value is null.
@@ -69,7 +69,7 @@ return [
         "datetime" => "Y-m-d H:i:s",
 
         /**
-         * Limit string on index view for any column type text or longtext.
+         * Limit string on index view for any column type text or long text.
          */
         "limit_text" => 100,
     ],

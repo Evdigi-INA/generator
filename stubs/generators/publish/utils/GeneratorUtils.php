@@ -1,9 +1,10 @@
 <?php
 
-namespace EvdigiIna\Generator\Generators;
+namespace App\Generators;
 
-use EvdigiIna\Generator\Generators\Interfaces\GeneratorUtilsInterface;
+use App\Generators\Interfaces\GeneratorUtilsInterface;
 use Illuminate\Support\Facades\Schema;
+
 
 class GeneratorUtils implements GeneratorUtilsInterface
 {
