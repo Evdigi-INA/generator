@@ -100,6 +100,11 @@ interface GeneratorUtilsInterface
     public static function cleanPluralLowerCase(string $string): string;
 
     /**
+     * Check if the given string ends with 'ia' or 'ium'.
+     */
+    public static function checkStringEndWith(string $string): bool;
+
+    /**
      * Get 1 column after id on the table.
      */
     public static function getColumnAfterId(string $table): string;

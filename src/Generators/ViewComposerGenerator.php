@@ -38,9 +38,7 @@ class ViewComposerGenerator
                     $fieldsSelect = "'id'";
                 }
 
-                if ($i > 1) {
-                    $template .= "\t\t";
-                }
+                if ($i > 1) $template .= "\t\t";
 
                 $template .= str_replace(
                     [

@@ -50,9 +50,7 @@ class IndexViewGenerator
                      */
 
                     $imgStyle = '';
-                    if(isset($request['is_simple_generator'])){
-                        $imgStyle = 'class="rounded" width="50" height="40" style="object-fit: cover"';
-                    }
+                    if(isset($request['is_simple_generator'])) $imgStyle = 'class="rounded" width="50" height="40" style="object-fit: cover"';
 
                     $tdColumns .=  "{
                     data: '" . str()->snake($field) . "',

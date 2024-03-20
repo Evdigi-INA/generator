@@ -114,14 +114,14 @@ class SetSidebarType extends Command
 
                 file_put_contents(resource_path('views/layouts/sidebar.blade.php'), $template);
 
-                $this->info('Success change sidebar view to fully blade code..');
+                $this->info('You have successfully switched to full blade code in the sidebar view.');
                 break;
             case 'dynamic':
                 $this->checkGeneratorVariant();
 
                 file_put_contents(resource_path('views/layouts/sidebar.blade.php'), GeneratorUtils::getStub('sidebar-dynamic'));
 
-                $this->info('The sidebar used a dynamic list from config.');
+                $this->info('A dynamic list from the config(config/generator) was used in the sidebar.');
                 break;
             default:
                 $this->error("The type must be 'static' or 'dynamic'.");
@@ -135,7 +135,7 @@ class SetSidebarType extends Command
     public function checkGeneratorVariant(): void
     {
         if (empty(config('generator.sidebars'))) {
-            $this->error("This command is only accessible in the full version, it appears that you are using the simple version.");
+            $this->error("It looks that you are using the simple version, this command is only available in the full version. Please refer to the section on available commands at https://evdigi-ina.github.io/generator-docs/features/");
             die;
         }
 

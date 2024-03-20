@@ -19,9 +19,7 @@ class RouteGenerator
 
         $middleware = "->middleware('auth')";
 
-        if (isset($request['is_simple_generator']) || GeneratorUtils::isGenerateApi()) {
-            $middleware = "";
-        }
+        if (isset($request['is_simple_generator']) || GeneratorUtils::isGenerateApi()) $middleware = "";
 
         if (GeneratorUtils::isGenerateApi()) {
             $routeFacade = "Route::apiResource('";

@@ -16,9 +16,7 @@ class FactoryGenerator
             $fields .= "// '" . $field ."' => ";
             $fields .= $request['requireds'][$i] == 'yes' ? "\$this->faker->" : "null";
 
-            if($i + 1 != $totalField) {
-                $fields .= ",\r\n\t\t\t";
-            }
+            if($i + 1 != $totalField) $fields .= ",\r\n\t\t\t";
         }
 
         $modelPath = $path ? $path . "\\" : "";

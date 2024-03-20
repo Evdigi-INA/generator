@@ -18,9 +18,7 @@ class SeederGenerator
             $fields .= "'" . $field ."' => ";
             $fields .= $request['requireds'][$i] == 'yes' ? "''" : "null";
 
-            if($i + 1 != $totalField) {
-                $fields .= ",\r\n\t\t\t";
-            }
+            if($i + 1 != $totalField) $fields .= ",\r\n\t\t\t";
         }
 
         $modelPath = $path ? $path . "\\" : "";
