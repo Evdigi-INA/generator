@@ -1,5 +1,7 @@
 providers:
   - Workbench\App\Providers\WorkbenchServiceProvider
+  - EvdigiIna\Generator\Providers\GeneratorServiceProvider
+  - App\Providers\FortifyServiceProvider
 
 migrations:
   - workbench/database/migrations

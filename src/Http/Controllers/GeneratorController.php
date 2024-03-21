@@ -2,15 +2,20 @@
 
 namespace EvdigiIna\Generator\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use EvdigiIna\Generator\Enums\GeneratorType;
 use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use EvdigiIna\Generator\Http\Requests\StoreGeneratorRequest;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
 
-class GeneratorController extends Controller
+class GeneratorController extends BaseController
 {
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
     public function __construct(protected GeneratorService $generatorService)
     {
         //
