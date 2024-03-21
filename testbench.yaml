@@ -15,9 +15,9 @@ workbench:
   discovers:
     web: true
     api: false
-    commands: false
-    components: false
-    views: false
+    commands: true
+    components: true
+    views: true
   build: []
   assets: []
   sync: []

@@ -19,37 +19,19 @@
                     </p>
                 </div>
 
-                <div class="col-12 col-md-4 order-md-2 order-first">
-                    <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="/">{{ __('Dashboard') }}</a>
-                            </li>
-                            <li class="breadcrumb-item active" aria-current="page">
-                                {{ __('Generators') }}
-                            </li>
-                        </ol>
-                    </nav>
-                </div>
+                <x-breadcrumb>
+                    <li class="breadcrumb-item">
+                        <a href="/">{{ __('Dashboard') }}</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{ __('Generators') }}
+                    </li>
+                </x-breadcrumb>
             </div>
         </div>
 
         <section class="section">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    <h4 class="alert-heading">{{ __('Success') }}</h4>
-                    <p>{{ session('success') }}</p>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    <h4 class="alert-heading">{{ __('Error') }}</h4>
-                    <p>{{ session('error') }}</p>
-                </div>
-            @endif
+            <x-alert />
 
             <div class="row">
                 <div class="col-md-12">

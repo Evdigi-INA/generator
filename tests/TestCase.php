@@ -64,24 +64,24 @@ class TestCase extends \Orchestra\Testbench\TestCase
      */
     protected function defineEnvironment($app)
     {
-        $app['config']->set('view.paths', [
-            __DIR__ . '/views',
-            resource_path('views'),
-        ]);
+        // $app['config']->set('view.paths', [
+        //     __DIR__ . '/views',
+        //     resource_path('views'),
+        // ]);
 
-        $app['config']->set('app.key', 'base64:Hupx3yAySikrM2/edkZQNQHslgDWYfiBfCuSThJ5SK8=');
+        // $app['config']->set('app.key', 'base64:Hupx3yAySikrM2/edkZQNQHslgDWYfiBfCuSThJ5SK8=');
 
-        $app['config']->set('database.default', 'testbench');
-        $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
-            'database' => ':memory:',
-            'prefix'   => '',
-        ]);
+        // $app['config']->set('database.default', 'testbench');
+        // $app['config']->set('database.connections.testbench', [
+        //     'driver'   => 'sqlite',
+        //     'database' => ':memory:',
+        //     'prefix'   => '',
+        // ]);
 
-        $app['config']->set('filesystems.disks.unit-downloads', [
-            'driver' => 'local',
-            'root' => __DIR__ . '/fixtures',
-        ]);
+        // $app['config']->set('filesystems.disks.unit-downloads', [
+        //     'driver' => 'local',
+        //     'root' => __DIR__ . '/fixtures',
+        // ]);
     }
 
     #[Test]

@@ -22,6 +22,7 @@ class GeneratorServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/../Routes/generator.php');
         $this->loadViewsFrom(__DIR__ . '/../Resources/views/generators', 'generator');
+        $this->mergeConfigFrom(__DIR__ . '/../../stubs/generators/publish/config/full-version/generator.php', 'generator');
 
         // views
         $this->publishes([

@@ -50,52 +50,58 @@
                     </a>
                 </li>
 
-                @foreach (config('generator.sidebars') as $sidebar)
-                    @if (isset($sidebar['permissions']))
-                        @canany($sidebar['permissions'])
-                            <li class="sidebar-title">{{ $sidebar['header'] }}</li>
+                @if(config('generator.sidebars'))
+                    @foreach (config('generator.sidebars') as $sidebar)
+                        @if (isset($sidebar['permissions']))
+                            @canany($sidebar['permissions'])
+                                <li class="sidebar-title">{{ $sidebar['header'] }}</li>
 
-                            @foreach ($sidebar['menus'] as $menu)
-                                @php
-                                    $permissions = empty($menu['permission']) ? $menu['permissions'] : [$menu['permission']];
-                                @endphp
+                                @foreach ($sidebar['menus'] as $menu)
+                                    @php
+                                        $permissions = empty($menu['permission'])
+                                            ? $menu['permissions']
+                                            : [$menu['permission']];
+                                    @endphp
 
-                                @canany($permissions)
-                                    @if (empty($menu['submenus']))
-                                        @can($menu['permission'])
-                                            <li class="sidebar-item{{ is_active_menu($menu['route']) }}">
-                                                <a href="{{ route(str($menu['route'])->remove('/')->plural() . '.index') }}" class="sidebar-link">
+                                    @canany($permissions)
+                                        @if (empty($menu['submenus']))
+                                            @can($menu['permission'])
+                                                <li class="sidebar-item{{ is_active_menu($menu['route']) }}">
+                                                    <a href="{{ route(str($menu['route'])->remove('/')->plural() . '.index') }}"
+                                                        class="sidebar-link">
+                                                        {!! $menu['icon'] !!}
+                                                        <span>{{ __($menu['title']) }}</span>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        @else
+                                            <li class="sidebar-item has-sub{{ is_active_menu($menu['permissions']) }}">
+                                                <a href="#" class="sidebar-link">
                                                     {!! $menu['icon'] !!}
                                                     <span>{{ __($menu['title']) }}</span>
                                                 </a>
+                                                <ul class="submenu">
+                                                    @canany($menu['permissions'])
+                                                        @foreach ($menu['submenus'] as $submenu)
+                                                            @can($submenu['permission'])
+                                                                <li class="submenu-item{{ is_active_menu($submenu['route']) }}">
+                                                                    <a
+                                                                        href="{{ route(str($submenu['route'])->remove('/')->plural() . '.index') }}">
+                                                                        {{ __($submenu['title']) }}
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        @endforeach
+                                                    @endcanany
+                                                </ul>
                                             </li>
-                                        @endcan
-                                    @else
-                                        <li class="sidebar-item has-sub{{  is_active_menu($menu['permissions']) }}">
-                                            <a href="#" class="sidebar-link">
-                                                {!! $menu['icon'] !!}
-                                                <span>{{ __($menu['title']) }}</span>
-                                            </a>
-                                            <ul class="submenu">
-                                                @canany($menu['permissions'])
-                                                    @foreach ($menu['submenus'] as $submenu)
-                                                        @can($submenu['permission'])
-                                                            <li class="submenu-item{{  is_active_menu($submenu['route']) }}">
-                                                                <a href="{{ route(str($submenu['route'])->remove('/')->plural() . '.index') }}">
-                                                                    {{ __($submenu['title']) }}
-                                                                </a>
-                                                            </li>
-                                                        @endcan
-                                                    @endforeach
-                                                @endcanany
-                                            </ul>
-                                        </li>
-                                    @endif
-                                @endcanany
-                            @endforeach
-                        @endcanany
-                    @endif
-                @endforeach
+                                        @endif
+                                    @endcanany
+                                @endforeach
+                            @endcanany
+                        @endif
+                    @endforeach
+                @endif
 
                 @if (env('APP_ENV') === 'local')
                     <li class="sidebar-title">{{ __('Generators') }}</li>
@@ -122,26 +128,28 @@
                     </li>
                 @endif
 
-                <li class="sidebar-title">Account</li>
+                @auth
+                    <li class="sidebar-title">Account</li>
 
-                <li class="sidebar-item{{ request()->is('profile') ? ' active' : '' }}">
-                    <a class="sidebar-link" href="{{ route('profile') }}">
-                        <i class="bi bi-person-badge-fill"></i>
-                        <span> {{ __('Profile') }}</span>
-                    </a>
-                </li>
+                    <li class="sidebar-item{{ request()->is('profile') ? ' active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('profile') }}">
+                            <i class="bi bi-person-badge-fill"></i>
+                            <span> {{ __('Profile') }}</span>
+                        </a>
+                    </li>
 
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{ route('logout') }}"
-                        onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                        <i class="bi bi-door-open-fill"></i>
-                        <span> {{ __('Logout') }}</span>
-                    </a>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="{{ route('logout') }}"
+                            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                            <i class="bi bi-door-open-fill"></i>
+                            <span> {{ __('Logout') }}</span>
+                        </a>
 
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
-                </li>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    </li>
+                @endauth
             </ul>
         </div>
         <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
