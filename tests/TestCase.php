@@ -2,8 +2,6 @@
 
 namespace Tests;
 
-use EvdigiIna\Generator\Http\Controllers\GeneratorController;
-use Illuminate\Contracts\Config\Repository;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -44,7 +42,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         return [
             \EvdigiIna\Generator\Providers\GeneratorServiceProvider::class,
-            // \App\Providers\FortifyServiceProvider::class,
         ];
     }
 
