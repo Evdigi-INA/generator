@@ -33,7 +33,10 @@
     },
     "require-dev": {
         "orchestra/testbench": "^6.23|^7.0|^8.0|^9.0",
-        "phpunit/phpunit": "^9.4|^10.1"
+        "phpunit/phpunit": "^9.4|^10.1",
+        "illuminate/container": "^9.0|^10.0|^11.0",
+        "illuminate/contracts": "^9.0|^10.0|^11.0",
+        "illuminate/database": "^9.0|^10.0|^11.0"
     },
     "config": {
         "optimize-autoloader": true,

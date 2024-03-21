@@ -128,7 +128,7 @@ class PublishAllFiles extends Command
      * */
     public function totalRunningCommand(string $type = 'full_version_publish_count'): array
     {
-        $dir = __DIR__ . '/../../generator-cache.json';
+        $dir = __DIR__ . '/../../generator-cache';
 
         if (!file_exists($dir)) {
             file_put_contents(
