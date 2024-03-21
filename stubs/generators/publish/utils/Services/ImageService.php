@@ -27,7 +27,7 @@ class ImageService implements ImageServiceInterface
                 // s3 or local
                 switch (config('generator.image.disk', $disk)) {
                     case 's3':
-                        if (str_contains(GeneratorUtils::checkPackageVersion('intervention/image-laravel'), '2')) {
+                        if (class_exists(\Intervention\Image\Facades\Image::class)) {
                             // for intervention v2
                             $image = \Intervention\Image\Facades\Image::make($file)->resize($width, $height, config('generator.image.crop') ? function ($constraint) {
                                 $constraint->aspectRatio();
@@ -54,7 +54,7 @@ class ImageService implements ImageServiceInterface
                         if (!file_exists($path)) mkdir($path, 0777, true);
 
                         // for intervention v2
-                        if (str_contains(GeneratorUtils::checkPackageVersion('intervention/image-laravel'), '2')) {
+                        if (class_exists(\Intervention\Image\Facades\Image::class)) {
                             \Intervention\Image\Facades\Image::make($file->getRealPath())->resize($width, $height, config('generator.image.crop') ? function ($constraint) {
                                 $constraint->aspectRatio();
                                 $constraint->upsize();

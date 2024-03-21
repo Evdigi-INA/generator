@@ -8,9 +8,15 @@ use PHPUnit\Framework\Attributes\Test;
 class GeneratorUtilsTest extends TestCase
 {
     #[Test]
-    public function it_has_get_template_method(): void
+    public function it_has_get_stub_method(): void
     {
         $this->assertTrue(method_exists(GeneratorUtils::class, 'getStub'));
+    }
+
+    #[Test]
+    public function it_has_get_published_files_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'getPublishedFiles'));
     }
 
     #[Test]
@@ -26,10 +32,17 @@ class GeneratorUtilsTest extends TestCase
     }
 
     #[Test]
+    public function it_has_pascal_case_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'pascalCase'));
+    }
+
+    #[Test]
     public function it_has_plural_pascal_case_method(): void
     {
         $this->assertTrue(method_exists(GeneratorUtils::class, 'pluralPascalCase'));
     }
+
     #[Test]
     public function it_has_plural_snake_case_method(): void
     {
@@ -49,9 +62,9 @@ class GeneratorUtilsTest extends TestCase
     }
 
     #[Test]
-    public function it_has_kebab_case_method(): void
+    public function it_has_singular_camel_case_method(): void
     {
-        $this->assertTrue(method_exists(GeneratorUtils::class, 'kebabCase'));
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'singularCamelCase'));
     }
 
     #[Test]
@@ -61,21 +74,33 @@ class GeneratorUtilsTest extends TestCase
     }
 
     #[Test]
+    public function it_has_kebab_case_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'kebabCase'));
+    }
+
+    #[Test]
     public function it_has_singular_kebab_case_method(): void
     {
         $this->assertTrue(method_exists(GeneratorUtils::class, 'singularKebabCase'));
     }
 
     #[Test]
-    public function it_has_singular_camel_case_method(): void
+    public function it_has_clean_singular_lower_case_method(): void
     {
-        $this->assertTrue(method_exists(GeneratorUtils::class, 'singularCamelCase'));
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'cleanSingularLowerCase'));
     }
 
     #[Test]
     public function it_has_clean_lower_case_method(): void
     {
         $this->assertTrue(method_exists(GeneratorUtils::class, 'cleanLowerCase'));
+    }
+
+    #[Test]
+    public function it_has_clean_plural_uc_words_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'cleanPluralUcWords'));
     }
 
     #[Test]
@@ -97,6 +122,12 @@ class GeneratorUtilsTest extends TestCase
     }
 
     #[Test]
+    public function it_has_check_string_end_with_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'checkStringEndWith'));
+    }
+
+    #[Test]
     public function it_has_get_column_after_id_method(): void
     {
         $this->assertTrue(method_exists(GeneratorUtils::class, 'getColumnAfterId'));
@@ -106,12 +137,6 @@ class GeneratorUtilsTest extends TestCase
     public function it_has_select_column_after_id_and_id_itself_method(): void
     {
         $this->assertTrue(method_exists(GeneratorUtils::class, 'selectColumnAfterIdAndIdItself'));
-    }
-
-    #[Test]
-    public function it_has_clean_singular_sower_case_method(): void
-    {
-        $this->assertTrue(method_exists(GeneratorUtils::class, 'cleanSingularLowerCase'));
     }
 
     #[Test]
@@ -142,5 +167,47 @@ class GeneratorUtilsTest extends TestCase
     public function it_has_convert_array_sidebar_to_string_method(): void
     {
         $this->assertTrue(method_exists(GeneratorUtils::class, 'convertArraySidebarToString'));
+    }
+
+    #[Test]
+    public function it_has_is_active_menu_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'isActiveMenu'));
+    }
+
+    #[Test]
+    public function it_has_is_generate_api_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'isGenerateApi'));
+    }
+
+    #[Test]
+    public function it_has_check_package_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'checkPackage'));
+    }
+
+    #[Test]
+    public function it_has_check_package_version_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'checkPackageVersion'));
+    }
+
+    #[Test]
+    public function it_has_get_composer_package_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'getComposerPackage'));
+    }
+
+    #[Test]
+    public function it_has_set_disk_code_for_controller_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'setDiskCodeForController'));
+    }
+
+    #[Test]
+    public function it_has_set_disk_code_for_cast_image_method(): void
+    {
+        $this->assertTrue(method_exists(GeneratorUtils::class, 'setDiskCodeForCastImage'));
     }
 }

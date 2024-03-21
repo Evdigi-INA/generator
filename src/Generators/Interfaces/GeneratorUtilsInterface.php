@@ -162,4 +162,14 @@ interface GeneratorUtilsInterface
      * Check package in composer.json
      */
     public static function getComposerPackage(string $name): string;
+
+    /**
+     * Set disk code for controller.
+     */
+    public static function setDiskCodeForController(string $name): string;
+
+    /**
+     * Set disk code for cast an image.
+     */
+    public static function setDiskCodeForCastImage(string $model, string $field): string;
 }
