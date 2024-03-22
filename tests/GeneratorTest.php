@@ -17,13 +17,13 @@ class GeneratorTest extends TestCase
         $this->afterApplicationCreated(function () {
             file_put_contents(__DIR__ . '/../generator-cache', '{"simple_version_publish_count":0,"full_version_publish_count":1}');
 
-            Artisan::call('migrate:fresh --seed');
+            // Artisan::call('migrate:fresh --seed');
         });
 
         $this->beforeApplicationDestroyed(function () {
             file_put_contents(__DIR__ . '/../generator-cache', '{"simple_version_publish_count":0,"full_version_publish_count":1}');
 
-            Artisan::call('migrate:fresh --seed');
+            // Artisan::call('migrate:fresh --seed');
         });
     }
 
