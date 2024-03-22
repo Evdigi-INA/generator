@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\Attributes\WithMigration;
 use PHPUnit\Framework\Attributes\Test;
+use function Orchestra\Testbench\workbench_path;
 
 #[WithMigration]
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -21,10 +22,12 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         $this->afterApplicationCreated(function () {
             Artisan::call('view:clear');
+            Artisan::call('migrate:fresh --seed');
         });
 
         $this->beforeApplicationDestroyed(function () {
             Artisan::call('view:clear');
+            Artisan::call('migrate:fresh --seed');
         });
 
         parent::setUp();
@@ -41,6 +44,16 @@ class TestCase extends \Orchestra\Testbench\TestCase
         return [
             \EvdigiIna\Generator\Providers\GeneratorServiceProvider::class,
         ];
+    }
+
+    /**
+     * Define database migrations.
+     *
+     * @return void
+     */
+    protected function defineDatabaseMigrations()
+    {
+        $this->loadMigrationsFrom(workbench_path('database/migrations'));
     }
 
     /**
@@ -85,6 +98,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
     #[Test]
     public function it_has_generator_utils_test_class()
     {
+        $this->withoutExceptionHandling();
+
         $this->assertTrue(class_exists(GeneratorUtilsTest::class));
     }
 }
