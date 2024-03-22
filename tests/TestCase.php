@@ -19,8 +19,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
      */
     protected function setUp(): void
     {
-        // Code before application created.
-
         $this->afterApplicationCreated(function () {
             Artisan::call('view:clear');
         });
