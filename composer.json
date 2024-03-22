@@ -32,12 +32,7 @@
         "yajra/laravel-datatables-oracle": "^10.0|^11.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^7.0|^8.0|^9.0",
-        "phpunit/phpunit": "^9.4|^10.1",
-        "illuminate/auth": "^10.0|^11.0",
-        "illuminate/container": "^10.0|^11.0",
-        "illuminate/contracts": "^10.0|^11.0",
-        "illuminate/database": "^10.0|^11.0"
+        "orchestra/testbench": "^9.0"
     },
     "config": {
         "optimize-autoloader": true,
