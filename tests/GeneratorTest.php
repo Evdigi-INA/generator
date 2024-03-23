@@ -2,8 +2,8 @@
 
 namespace Tests;
 
+use EvdigiIna\Generator\Generators\GeneratorUtils;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
-use Illuminate\Support\Facades\Artisan;
 use PHPUnit\Framework\Attributes\Test;
 
 class GeneratorTest extends TestCase
@@ -16,14 +16,10 @@ class GeneratorTest extends TestCase
 
         $this->afterApplicationCreated(function () {
             file_put_contents(__DIR__ . '/../generator-cache', '{"simple_version_publish_count":0,"full_version_publish_count":1}');
-
-            // Artisan::call('migrate:fresh --seed');
         });
 
         $this->beforeApplicationDestroyed(function () {
             file_put_contents(__DIR__ . '/../generator-cache', '{"simple_version_publish_count":0,"full_version_publish_count":1}');
-
-            // Artisan::call('migrate:fresh --seed');
         });
     }
 
@@ -45,86 +41,14 @@ class GeneratorTest extends TestCase
         $this->get('/api-generators/create')->assertStatus(200)->assertSee('API Generators');
     }
 
-    // #[Test]
-    public function it_can_create_new_module_using_a_simple_generator_version(): void
+    #[Test]
+    public function it_can_create_new_module(): void
     {
         $this->withoutExceptionHandling();
 
         $modelName = 'Generator' . $this->generateRandomString();
 
-        $this->post('/simple-generators', json_decode('{
-            "requireds": [
-                "yes",
-                "no"
-            ],
-            "_token": "mFXgQ36wdxA3tbL0zz74ikc9cUe3z2IWe4YN30zv",
-            "_method": "POST",
-            "model":  "'. $modelName . '",
-            "generate_type": "all",
-            "generate_variant": "default",
-            "generate_seeder": "on",
-            "generate_factory": "on",
-            "fields": [
-                "name",
-                "logo"
-            ],
-            "column_types": [
-                "string",
-                "string"
-            ],
-            "select_options": [
-                null,
-                null
-            ],
-            "constrains": [
-                null,
-                null
-            ],
-            "foreign_ids": [
-                null,
-                null
-            ],
-            "on_update_foreign": [
-                null,
-                null
-            ],
-            "on_delete_foreign": [
-                null,
-                null
-            ],
-            "min_lengths": [
-                null,
-                null
-            ],
-            "max_lengths": [
-                null,
-                null
-            ],
-            "input_types": [
-                "text",
-                "file"
-            ],
-            "file_types": [
-                null,
-                "image"
-            ],
-            "files_sizes": [
-                null,
-                "1024"
-            ],
-            "mimes": [
-                null,
-                null
-            ],
-            "steps": [
-                null,
-                null
-            ],
-            "default_values": [
-                null,
-                null
-            ]
-        }', true))->assertSuccessful();
+        $this->post('/simple-generators', json_decode('{"requireds":["yes","yes","yes","yes","yes","yes","yes","no","no","no","yes","yes","no","no","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes"],"_token":"LIV8Mj4vCRSIGWhbQFVcZax6jwnsZMS7JAWGhdTe","_method":"POST","model":"'. $modelName .'","generate_type":"all","generate_variant":"api","generate_seeder":"on","generate_factory":"on","fields":["q","w","e","r","t","y","u","i","o","p","a","s","d","f","g","h","j","k","l","z","x","c","v","b","n"],"column_types":["string","string","string","string","string","string","string","string","string","string","integer","integer","integer","integer","boolean","boolean","boolean","date","date","time","year","year","dateTime","enum","foreignId"],"select_options":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"PHP|Laravel",null],"constrains":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"User"],"foreign_ids":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"on_update_foreign":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"0"],"on_delete_foreign":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,"0"],"min_lengths":[null,null,null,null,null,null,null,null,null,null,null,"1",null,null,null,null,null,null,null,null,null,null,null,null,null],"max_lengths":[null,null,null,null,null,null,null,null,null,null,null,"100",null,null,null,null,null,null,null,null,null,null,null,null,null],"input_types":["text","textarea","email","tel","password","url","search","file","hidden","no-input","number","range","hidden","no-input","select","radio","datalist","date","month","time","select","datalist","datetime-local","select","select"],"file_types":[null,null,null,null,null,null,null,"image",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"files_sizes":[null,null,null,null,null,null,null,"1024",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"mimes":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"steps":[null,null,null,null,null,null,null,null,null,null,null,"1",null,null,null,null,null,null,null,null,null,null,null,null,null],"default_values":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}', true))->assertSuccessful();
     }
 
     function generateRandomString($length = 5): string
@@ -132,7 +56,9 @@ class GeneratorTest extends TestCase
         $characters = 'abcdefghijklmnopqrstuvwxyz';
         $charactersLength = strlen($characters);
         $randomString = '';
+
         for ($i = 0; $i < $length; $i++) $randomString .= $characters[random_int(0, $charactersLength - 1)];
+
         return $randomString;
     }
 }

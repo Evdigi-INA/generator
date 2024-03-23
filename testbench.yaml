@@ -1,5 +1,6 @@
 providers:
   - Workbench\App\Providers\WorkbenchServiceProvider
+  - Workbench\App\Providers\ViewComposerServiceProvider
   - EvdigiIna\Generator\Providers\GeneratorServiceProvider
 
 migrations:

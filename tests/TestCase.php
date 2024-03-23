@@ -40,18 +40,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         return [
             \EvdigiIna\Generator\Providers\GeneratorServiceProvider::class,
+            \Yajra\DataTables\DataTablesServiceProvider::class,
+            \Workbench\App\Providers\ViewComposerServiceProvider::class,
         ];
-    }
-
-    /**
-     * Define routes setup.
-     *
-     * @param  \Illuminate\Routing\Router  $router
-     * @return void
-     */
-    protected function defineRoutes($router)
-    {
-        // $router->get('/generators/create', [GeneratorController::class, 'create']);
     }
 
     /**
