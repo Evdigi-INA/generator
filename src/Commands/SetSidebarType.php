@@ -22,16 +22,6 @@ class SetSidebarType extends Command
     protected $description = 'Set a sidebar menu to fully blade code(static) or use a list from config(dynamic)';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      */
     public function handle(): void
@@ -51,20 +41,18 @@ class SetSidebarType extends Command
 
                 $sidebarCode .= "])\n\t";
 
-                foreach (config('generator.sidebars') as $i => $sidebar) :
+                foreach (config('generator.sidebars') as $sidebar) :
                     if (isset($sidebar['permissions'])) {
                         $sidebarCode .= "
                             <li class=\"sidebar-title\">{{ __('" . $sidebar['header'] . "') }}</li>
                             @canany([";
 
+                        $sidebarCode .= "])\n\t";
+
                         foreach ($sidebar['menus'] as $menu) {
                             $permissions = empty($menu['permission']) ? $menu['permissions'] : [$menu['permission']];
                             $sidebarCode .= GeneratorUtils::convertArraySidebarToString($permissions);
-                        }
 
-                        $sidebarCode .= "])\n\t";
-
-                        foreach ($sidebar['menus'] as $key => $menu) {
                             if ($menu['submenus'] == []) {
                                 $sidebarCode .= "
                                 @can('" . $menu['permission'] . "')

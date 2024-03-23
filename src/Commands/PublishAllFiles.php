@@ -24,16 +24,6 @@ class PublishAllFiles extends Command
     protected $description = 'Publish the required file for the generator.';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      */
     public function handle(): void
@@ -78,10 +68,8 @@ class PublishAllFiles extends Command
                         switch ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['full_version_publish_count'] . ' times.')) {
                             case true:
                                 $this->runPublishAll();
-                                return;
                                 break;
                             default:
-                                return;
                                 break;
                         }
                     }
@@ -92,7 +80,6 @@ class PublishAllFiles extends Command
                 }
                 break;
             case 'simple':
-
                 $totalRunningCommand = $this->totalRunningCommand('simple_version_publish_count');
 
                 if ($totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1) {

@@ -32,11 +32,16 @@
         "yajra/laravel-datatables-oracle": "^10.0|^11.0"
     },
     "require-dev": {
+        "larastan/larastan": "^2.0",
+        "nunomaduro/phpinsights": "^2.11",
         "orchestra/testbench": "^9.0"
     },
     "config": {
         "optimize-autoloader": true,
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

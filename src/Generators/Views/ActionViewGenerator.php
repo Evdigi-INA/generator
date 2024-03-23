@@ -39,6 +39,6 @@ class ActionViewGenerator
             GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase/include"));
 
             file_put_contents(resource_path("/views/$modelNamePluralKebabCase/include/action.blade.php"), $template);
-        };
+        }
     }
 }

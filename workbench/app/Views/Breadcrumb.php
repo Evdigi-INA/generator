@@ -6,11 +6,10 @@ use Illuminate\View\Component;
 
 class Breadcrumb extends Component
 {
-    public $breadcrumbs;
 
-    public function __construct($breadcrumbs)
+    public function __construct(public $breadcrumbs)
     {
-        $this->breadcrumbs = $breadcrumbs;
+        //
     }
 
     public function render()

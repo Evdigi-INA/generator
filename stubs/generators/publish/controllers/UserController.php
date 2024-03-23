@@ -129,8 +129,9 @@ class UserController extends Controller
                 $constraint->upsize();
             })->save(public_path($this->avatarPath) . $filename);
 
-            if ($user->avatar != null && file_exists($oldAvatar = public_path($this->avatarPath .
-                $user->avatar))) {
+            $oldAvatar = public_path($this->avatarPath . $user->avatar);
+
+            if ($user->avatar != null && file_exists($oldAvatar)) {
                 unlink($oldAvatar);
             }
 
