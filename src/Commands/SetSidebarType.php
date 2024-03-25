@@ -47,12 +47,14 @@ class SetSidebarType extends Command
                             <li class=\"sidebar-title\">{{ __('" . $sidebar['header'] . "') }}</li>
                             @canany([";
 
-                        $sidebarCode .= "])\n\t";
-
                         foreach ($sidebar['menus'] as $menu) {
                             $permissions = empty($menu['permission']) ? $menu['permissions'] : [$menu['permission']];
                             $sidebarCode .= GeneratorUtils::convertArraySidebarToString($permissions);
+                        }
 
+                        $sidebarCode .= "])\n\t";
+
+                        foreach ($sidebar['menus'] as $menu) {
                             if ($menu['submenus'] == []) {
                                 $sidebarCode .= "
                                 @can('" . $menu['permission'] . "')
@@ -124,14 +126,14 @@ class SetSidebarType extends Command
     {
         if (empty(config('generator.sidebars'))) {
             $this->error("It looks that you are using the simple version, this command is only available in the full version. Please refer to the section on available commands at https://evdigi-ina.github.io/generator-docs/features/");
-            die;
+            return;
         }
 
         $sidebar = file_exists(resource_path('views/layouts/sidebar.blade.php'));
 
         if (!$sidebar) {
             $this->error("We cant find the sidebar view, in views/layouts/sidebar.blade.php.");
-            die;
+            return;
         }
     }
 }
