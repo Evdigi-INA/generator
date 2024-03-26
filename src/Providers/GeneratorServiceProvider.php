@@ -4,6 +4,7 @@ namespace EvdigiIna\Generator\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use EvdigiIna\Generator\Commands\{SetSidebarType, PublishAllFiles};
+use Generator;
 
 class GeneratorServiceProvider extends ServiceProvider
 {
@@ -20,8 +21,8 @@ class GeneratorServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/generator.php');
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views/generators', 'generator');
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/generator.php');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'generator');
         $this->mergeConfigFrom(__DIR__ . '/../../stubs/generators/publish/config/full-version/generator.php', 'generator');
 
         // views
@@ -101,6 +102,9 @@ class GeneratorServiceProvider extends ServiceProvider
             ]);
         }
 
+        $this->app->bind('generator', function($app) {
+            return new Generator();
+        });
 
         if ($this->app->runningInConsole()) $this->commands([PublishAllFiles::class]);
 

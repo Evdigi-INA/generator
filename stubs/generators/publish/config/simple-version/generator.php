@@ -23,7 +23,7 @@ return [
         /**
          * Crop the uploaded image using intervention image.
          */
-        "crop" => false,
+        "crop" => true,
 
         /**
          * When set to true the uploaded image aspect ratio will still original.
@@ -51,12 +51,12 @@ return [
          * - d F Y
          * - Y m d
          */
-        "date" => "d/m/Y",
+        "date" => "Y-m-d",
 
         /**
          * If any input type month will cast and display used this format.
          */
-        "month" => "m/Y",
+        "month" => "Y/m",
 
         /**
          * If any input type time will cast and display used this format.
@@ -72,85 +72,5 @@ return [
          * Limit string on index view for any column type text or long text.
          */
         "limit_text" => 100,
-    ],
-
-    /**
-     * It will be used for generator to manage and showing menus on sidebar views.
-     *
-     * Example:
-     * [
-     *   'header' => 'Main',
-     *
-     *   // All permissions in menus[] and submenus[]
-     *   'permissions' => ['test view'],
-     *
-     *   menus' => [
-     *       [
-     *          'title' => 'Main Data',
-     *          'icon' => '<i class="bi bi-collection-fill"></i>',
-     *          'route' => null,
-     *
-     *          // permission always null when isset submenus
-     *          'permission' => null,
-     *
-     *          // All permissions on submenus[] and will empty[] when submenus equals to []
-     *          'permissions' => ['test view'],
-     *
-     *          'submenus' => [
-     *                 [
-     *                     'title' => 'Tests',
-     *                     'route' => '/tests',
-     *                     'permission' => 'test view'
-     *                  ]
-     *               ],
-     *           ],
-     *       ],
-     *  ],
-     *
-     * This code below always changes when you use a generator, and maybe you must format the code.
-     */
-    "sidebars" => [
-        [
-            "header" => "Main",
-            "permissions" => ["test view"],
-            "menus" => [
-                [
-                    "title" => "Main Data",
-                    "icon" => '<i class="bi bi-collection-fill"></i>',
-                    "route" => null,
-                    "permission" => null,
-                    "permissions" => ["test view"],
-                    "submenus" => [
-                        [
-                            "title" => "Tests",
-                            "route" => "/tests",
-                            "permission" => "test view",
-                        ],
-                    ],
-                ],
-            ],
-        ],
-        [
-            "header" => "Users",
-            "permissions" => ["user view", "role & permission view"],
-            "menus" => [
-                [
-                    "title" => "Users",
-                    "icon" => '<i class="bi bi-people-fill"></i>',
-                    "route" => "/users",
-                    "permission" => "user view",
-                    "permissions" => [],
-                    "submenus" => [],
-                ],
-                [
-                    "title" => "Roles & permissions",
-                    "icon" => '<i class="bi bi-person-check-fill"></i>',
-                    "route" => "/roles",
-                    "permission" => "role & permission view",
-                    "permissions" => [],
-                    "submenus" => [],
-                ],
-            ],
-        ],
     ],
 ];

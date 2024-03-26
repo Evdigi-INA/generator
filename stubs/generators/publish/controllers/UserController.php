@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Generators\Services\ImageService;
 use App\Http\Requests\Users\{StoreUserRequest, UpdateUserRequest};
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
@@ -9,19 +10,13 @@ use Image;
 
 class UserController extends Controller
 {
-    /**
-     * Path for user avatar file.
-     *
-     * @var string
-     */
-    protected $avatarPath = '/uploads/images/avatars/';
-
-    public function __construct()
+    public function __construct(public ImageService $imageService, public string $avatarPath = '/uploads/images/avatars/')
     {
-        $this->middleware('permission:user view')->only('index', 'show');
-        $this->middleware('permission:user create')->only('create', 'store');
-        $this->middleware('permission:user edit')->only('edit', 'update');
-        $this->middleware('permission:user delete')->only('destroy');
+        // TODO: uncomment this code if you are using spatie permission
+        // $this->middleware('permission:user view')->only('index', 'show');
+        // $this->middleware('permission:user create')->only('create', 'store');
+        // $this->middleware('permission:user edit')->only('edit', 'update');
+        // $this->middleware('permission:user delete')->only('destroy');
     }
 
     /**
@@ -64,21 +59,7 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        if ($request->file('avatar') && $request->file('avatar')->isValid()) {
-
-            $filename = $request->file('avatar')->hashName();
-
-            if (!file_exists($folder = public_path($this->avatarPath))) {
-                mkdir($folder, 0777, true);
-            }
-
-            Image::make($request->file('avatar')->getRealPath())->resize(500, 500, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->save($this->avatarPath . $filename);
-
-            $validated['avatar'] = $filename;
-        }
+        $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, disk: 's3');
 
         $validated['password'] = bcrypt($request->password);
 
@@ -116,29 +97,7 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        if ($request->file('avatar') && $request->file('avatar')->isValid()) {
-
-            $filename = $request->file('avatar')->hashName();
-
-            if (!file_exists($folder = public_path($this->avatarPath))) {
-                mkdir($folder, 0777, true);
-            }
-
-            Image::make($request->file('avatar')->getRealPath())->resize(500, 500, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->save(public_path($this->avatarPath) . $filename);
-
-            $oldAvatar = public_path($this->avatarPath . $user->avatar);
-
-            if ($user->avatar != null && file_exists($oldAvatar)) {
-                unlink($oldAvatar);
-            }
-
-            $validated['avatar'] = $filename;
-        } else {
-            $validated['avatar'] = $user->avatar;
-        }
+        $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user->avatar, disk: 's3');
 
         switch (is_null($request->password)) {
             case true:

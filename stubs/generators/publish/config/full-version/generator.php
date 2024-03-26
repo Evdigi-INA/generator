@@ -23,7 +23,7 @@ return [
         /**
          * Crop the uploaded image using intervention image.
          */
-        "crop" => false,
+        "crop" => true,
 
         /**
          * When set to true the uploaded image aspect ratio will still original.
@@ -51,12 +51,12 @@ return [
          * - d F Y
          * - Y m d
          */
-        "date" => "d/m/Y",
+        "date" => "Y-m-d",
 
         /**
          * If any input type month will cast and display used this format.
          */
-        "month" => "m/Y",
+        "month" => "Y/m",
 
         /**
          * If any input type time will cast and display used this format.
