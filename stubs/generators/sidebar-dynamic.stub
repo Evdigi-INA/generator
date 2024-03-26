@@ -43,12 +43,14 @@
         </div>
         <div class="sidebar-menu">
             <ul class="menu">
-                <li class="sidebar-item{{ request()->is('/') || request()->is('dashboard') ? ' active' : '' }}">
-                    <a class="sidebar-link" href="/">
-                        <i class="bi bi-speedometer"></i>
-                        <span> {{ __('Dashboard') }}</span>
-                    </a>
-                </li>
+                @auth
+                    <li class="sidebar-item{{ request()->is('/') || request()->is('dashboard') ? ' active' : '' }}">
+                        <a class="sidebar-link" href="/">
+                            <i class="bi bi-speedometer"></i>
+                            <span> {{ __('Dashboard') }}</span>
+                        </a>
+                    </li>
+                @endauth
 
                 @foreach (config('generator.sidebars') as $sidebar)
                     @if (isset($sidebar['permissions']))
@@ -57,21 +59,24 @@
 
                             @foreach ($sidebar['menus'] as $menu)
                                 @php
-                                    $permissions = empty($menu['permission']) ? $menu['permissions'] : [$menu['permission']];
+                                    $permissions = empty($menu['permission'])
+                                        ? $menu['permissions']
+                                        : [$menu['permission']];
                                 @endphp
 
                                 @canany($permissions)
                                     @if (empty($menu['submenus']))
                                         @can($menu['permission'])
                                             <li class="sidebar-item{{ is_active_menu($menu['route']) }}">
-                                                <a href="{{ route(str($menu['route'])->remove('/')->plural() . '.index') }}" class="sidebar-link">
+                                                <a href="{{ route(str($menu['route'])->remove('/')->plural() . '.index') }}"
+                                                    class="sidebar-link">
                                                     {!! $menu['icon'] !!}
                                                     <span>{{ __($menu['title']) }}</span>
                                                 </a>
                                             </li>
                                         @endcan
                                     @else
-                                        <li class="sidebar-item has-sub{{  is_active_menu($menu['permissions']) }}">
+                                        <li class="sidebar-item has-sub{{ is_active_menu($menu['permissions']) }}">
                                             <a href="#" class="sidebar-link">
                                                 {!! $menu['icon'] !!}
                                                 <span>{{ __($menu['title']) }}</span>
@@ -80,8 +85,9 @@
                                                 @canany($menu['permissions'])
                                                     @foreach ($menu['submenus'] as $submenu)
                                                         @can($submenu['permission'])
-                                                            <li class="submenu-item{{  is_active_menu($submenu['route']) }}">
-                                                                <a href="{{ route(str($submenu['route'])->remove('/')->plural() . '.index') }}">
+                                                            <li class="submenu-item{{ is_active_menu($submenu['route']) }}">
+                                                                <a
+                                                                    href="{{ route(str($submenu['route'])->remove('/')->plural() . '.index') }}">
                                                                     {{ __($submenu['title']) }}
                                                                 </a>
                                                             </li>
@@ -102,32 +108,48 @@
 
                     <li class="sidebar-item{{ request()->is('generators/create') ? ' active' : '' }}">
                         <a class="sidebar-link" href="{{ route('generators.create') }}">
-                            <i class="bi bi-grid-fill"></i>
+                            <i class="bi bi-fire"></i>
                             <span> {{ __('CRUD Generator') }}</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item{{ request()->is('api-generators/create') ? ' active' : '' }}">
+                        <a class="sidebar-link" href="/api-generators/create">
+                            <i class="bi bi-rocket"></i>
+                            <span> {{ __('API CRUD Generator') }}</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item{{ request()->is('simple-generators/create') ? ' active' : '' }}">
+                        <a class="sidebar-link" href="/simple-generators/create">
+                            <i class="bi bi-droplet"></i>
+                            <span> {{ __('Simple CRUD Generator') }}</span>
                         </a>
                     </li>
                 @endif
 
-                <li class="sidebar-title">Account</li>
+                @auth
+                    <li class="sidebar-title">Account</li>
 
-                <li class="sidebar-item{{ request()->is('profile') ? ' active' : '' }}">
-                    <a class="sidebar-link" href="{{ route('profile') }}">
-                        <i class="bi bi-person-badge-fill"></i>
-                        <span> {{ __('Profile') }}</span>
-                    </a>
-                </li>
+                    <li class="sidebar-item{{ request()->is('profile') ? ' active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('profile') }}">
+                            <i class="bi bi-person-badge-fill"></i>
+                            <span> {{ __('Profile') }}</span>
+                        </a>
+                    </li>
 
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{ route('logout') }}"
-                        onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                        <i class="bi bi-door-open-fill"></i>
-                        <span> {{ __('Logout') }}</span>
-                    </a>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="{{ route('logout') }}"
+                            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                            <i class="bi bi-door-open-fill"></i>
+                            <span> {{ __('Logout') }}</span>
+                        </a>
 
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
-                </li>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    </li>
+                @endauth
             </ul>
         </div>
         <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>

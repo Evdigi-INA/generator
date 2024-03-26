@@ -76,9 +76,9 @@
                     <th>{{ __('Column Type') }}</th>
                     <th width="310">{{ __('Length') }}</th>
                     <th>
-                        {{ __('Input Type') }}
+                        <small>{{ __('Expected') }}</small>
                         <br>
-                        <small>{{ __('Used for validation request') }}</small>
+                        {{ __('Input Type') }}
                     </th>
                     <th>{{ __('Required') }}</th>
                     <th>{{ __('Action') }}</th>
