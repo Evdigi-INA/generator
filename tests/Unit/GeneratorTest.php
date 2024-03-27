@@ -26,6 +26,7 @@ class GeneratorTest extends TestCase
     #[Test]
     public function it_can_render_generator_create_page(): void
     {
+        $this->withoutExceptionHandling();
         $this->get('/generators/create')->assertStatus(200)->assertSee('Generators');
     }
 
