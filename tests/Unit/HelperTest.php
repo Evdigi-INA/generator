@@ -1,8 +1,9 @@
 <?php
 
-namespace Tests;
+namespace Tests\Unit;
 
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class HelperTest extends TestCase
 {

@@ -8,6 +8,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\Attributes\WithMigration;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Unit\CommandTest;
+use Tests\Unit\GeneratorTest;
+use Tests\Unit\GeneratorUtilsTest;
+use Tests\Unit\HelperTest;
 
 #[WithMigration]
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -77,5 +81,23 @@ class TestCase extends \Orchestra\Testbench\TestCase
     public function it_has_generator_utils_test_class()
     {
         $this->assertTrue(class_exists(GeneratorUtilsTest::class));
+    }
+
+    #[Test]
+    public function it_has_generator_command_test_class()
+    {
+        $this->assertTrue(class_exists(CommandTest::class));
+    }
+
+    #[Test]
+    public function it_has_generator_test_class()
+    {
+        $this->assertTrue(class_exists(GeneratorTest::class));
+    }
+
+    #[Test]
+    public function it_has_generator_helper_test_class()
+    {
+        $this->assertTrue(class_exists(HelperTest::class));
     }
 }

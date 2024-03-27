@@ -1,9 +1,10 @@
 <?php
 
-namespace Tests;
+namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class GeneratorTest extends TestCase
 {
