@@ -124,7 +124,7 @@ class ModelGenerator
         }
 
         $casts .= <<<PHP
-        'created_at' => 'datetime:$dateTimeFormat', 'updated_at' => 'datetime:$dateTimeFormat']
+        'created_at' => 'datetime:$dateTimeFormat', 'updated_at' => 'datetime:$dateTimeFormat'
         PHP;
 
         $casts .= "]";

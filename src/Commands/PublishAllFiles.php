@@ -97,6 +97,7 @@ class PublishAllFiles extends Command
                 $this->info('Installing the simple version...');
 
                 Artisan::call('vendor:publish --tag=generator-config-simple');
+                Artisan::call('vendor:publish --tag=generator-model-simple');
                 Artisan::call('vendor:publish --tag=generator-view-provider');
                 Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');
                 Artisan::call('vendor:publish --tag=datatables');
@@ -115,7 +116,7 @@ class PublishAllFiles extends Command
      * */
     public function totalRunningCommand(string $type = 'full_version_publish_count'): array
     {
-        $dir = __DIR__ . '/../../generator-cache';
+        $dir = __DIR__ . '/../../generator.cache';
 
         if (!file_exists($dir)) {
             file_put_contents(
@@ -191,7 +192,7 @@ class PublishAllFiles extends Command
         Artisan::call('vendor:publish --tag=generator-provider --force');
         Artisan::call('vendor:publish --tag=generator-migration --force');
         Artisan::call('vendor:publish --tag=generator-seeder --force');
-        Artisan::call('vendor:publish --tag=generator-model --force');
+        Artisan::call('vendor:publish --tag=generator-model-full --force');
         Artisan::call('vendor:publish --tag=generator-assets --force');
         Artisan::call('vendor:publish --tag=generator-utils --force');
         Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');

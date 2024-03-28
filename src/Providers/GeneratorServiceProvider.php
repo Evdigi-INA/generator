@@ -81,8 +81,13 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // Model
         $this->publishes([
-            __DIR__ . '/../../stubs/generators/publish/models/User.php' => app_path('Models/User.php')
-        ], 'generator-model');
+            __DIR__ . '/../../stubs/generators/publish/models/full-version/User.php' => app_path('Models/User.php')
+        ], 'generator-model-full');
+
+        // Model
+        $this->publishes([
+            __DIR__ . '/../../stubs/generators/publish/models/simple-version/User.php' => app_path('Models/User.php')
+        ], 'generator-model-simple');
 
         // asset/mazer template
         $this->publishes([
@@ -98,11 +103,11 @@ class GeneratorServiceProvider extends ServiceProvider
                 'Version' => '0.3.0',
                 'Source' => 'https://github.com/evdigiina/generator',
                 'Docs' => 'https://evdigi-ina.github.io/generator-docs',
-                'About' =>  'Package for building basic CRUD, especially for your main data.'
+                'About' =>  'Package for building basic CRUD, specially for your main data.'
             ]);
         }
 
-        $this->app->bind('generator', function($app) {
+        $this->app->bind('generator', function () {
             return new Generator();
         });
 

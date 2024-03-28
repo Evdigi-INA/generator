@@ -65,29 +65,26 @@ class PermissionGenerator
         $permissions = [
             [
                 'name' => "$model view",
-                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+                'guard_name' => 'web'
             ],
             [
                 'name' => "$model create",
-                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+                'guard_name' => 'web'
             ],
             [
                 'name' => "$model edit",
-                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+                'guard_name' => 'web'
             ],
             [
                 'name' => "$model delete",
-                'guard_name' => GeneratorUtils::isGenerateApi() ? 'api' : 'web'
+                'guard_name' => 'web'
             ]
         ];
 
-        foreach ($permissions as $permission) Permission::firstOrCreate($permission);
+        foreach ($permissions as $p) {
+            $permission = Permission::firstOrCreate($p);
 
-        $role->givePermissionTo([
-            "$model view",
-            "$model create",
-            "$model edit",
-            "$model delete"
-        ]);
+            $role->givePermissionTo($permission);
+        }
     }
 }

@@ -5,9 +5,6 @@ namespace Database\Factories;
 use {{modelPath}};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Customer>
- */
 class {{modelNameSingularPascalCase}}Factory extends Factory
 {
     protected $model = {{modelNameSingularPascalCase}}::class;

@@ -12,6 +12,7 @@ class FactoryGenerator
 
         $fields = "";
         $totalField = count($request['fields']);
+
         foreach ($request['fields'] as $i => $field) {
             $fields .= "// '" . $field ."' => ";
             $fields .= $request['requireds'][$i] == 'yes' ? "\$this->faker->" : "null";
