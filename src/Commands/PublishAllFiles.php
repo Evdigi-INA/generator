@@ -189,16 +189,16 @@ class PublishAllFiles extends Command
         Artisan::call('vendor:publish --tag=generator-controller --force');
         Artisan::call('vendor:publish --tag=generator-request --force');
         Artisan::call('vendor:publish --tag=generator-action --force');
-        Artisan::call('vendor:publish --tag=generator-kernel --force');
+        // Artisan::call('vendor:publish --tag=generator-kernel --force');
         Artisan::call('vendor:publish --tag=generator-provider --force');
         Artisan::call('vendor:publish --tag=generator-migration --force');
         Artisan::call('vendor:publish --tag=generator-seeder --force');
         Artisan::call('vendor:publish --tag=generator-model-full --force');
         Artisan::call('vendor:publish --tag=generator-assets --force');
         Artisan::call('vendor:publish --tag=generator-utils --force');
-        Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');
         Artisan::call('vendor:publish --tag=datatables --force');
         Artisan::call('vendor:publish --tag=bootstrap-app-full --force');
+        Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');
 
         $template = GeneratorUtils::getStub('route');
 

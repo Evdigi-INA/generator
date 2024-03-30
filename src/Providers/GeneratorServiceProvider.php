@@ -56,9 +56,9 @@ class GeneratorServiceProvider extends ServiceProvider
         ], 'generator-action');
 
         // Kernel
-        $this->publishes([
-            __DIR__ . '/../../stubs/generators/publish/Kernel.php' => app_path('Http/Kernel.php')
-        ], 'generator-kernel');
+        // $this->publishes([
+        //     __DIR__ . '/../../stubs/generators/publish/Kernel.php' => app_path('Http/Kernel.php')
+        // ], 'generator-kernel');
 
         // Providers
         $this->publishes([
@@ -100,11 +100,11 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // bootstrap app (laravel 11)
         $this->publishes([
-            __DIR__ . '/../../stubs/generators/bootstrap/full-version/app.php' => base_path('bootstrap/app.php')
+            __DIR__ . '/../../stubs/generators/publish/bootstrap/full-version/app.php' => base_path('bootstrap/app.php')
         ], 'bootstrap-app-full');
 
         $this->publishes([
-            __DIR__ . '/../../stubs/generators/bootstrap/simple-version/app.php' => base_path('bootstrap/app.php')
+            __DIR__ . '/../../stubs/generators/publish/bootstrap/simple-version/app.php' => base_path('bootstrap/app.php')
         ], 'bootstrap-app-simple');
 
         if (class_exists(\Illuminate\Foundation\Console\AboutCommand::class)) {
