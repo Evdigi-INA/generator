@@ -4,7 +4,7 @@ namespace EvdigiIna\Generator\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use EvdigiIna\Generator\Commands\{SetSidebarType, PublishAllFiles};
-use Generator;
+use EvdigiIna\Generator\Generator;
 
 class GeneratorServiceProvider extends ServiceProvider
 {
@@ -98,6 +98,15 @@ class GeneratorServiceProvider extends ServiceProvider
             __DIR__ . '/../../stubs/generators/publish/utils' => app_path('Generators')
         ], 'generator-utils');
 
+        // bootstrap app (laravel 11)
+        $this->publishes([
+            __DIR__ . '/../../stubs/generators/bootstrap/full-version/app.php' => base_path('bootstrap/app.php')
+        ], 'bootstrap-app-full');
+
+        $this->publishes([
+            __DIR__ . '/../../stubs/generators/bootstrap/simple-version/app.php' => base_path('bootstrap/app.php')
+        ], 'bootstrap-app-simple');
+
         if (class_exists(\Illuminate\Foundation\Console\AboutCommand::class)) {
             \Illuminate\Foundation\Console\AboutCommand::add('Generator', fn () => [
                 'Version' => '0.3.0',
@@ -107,9 +116,7 @@ class GeneratorServiceProvider extends ServiceProvider
             ]);
         }
 
-        $this->app->bind('generator', function () {
-            return new Generator();
-        });
+        $this->app->bind('generator', fn() => new Generator);
 
         if ($this->app->runningInConsole()) $this->commands([PublishAllFiles::class]);
 

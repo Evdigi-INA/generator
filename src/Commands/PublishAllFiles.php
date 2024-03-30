@@ -102,6 +102,7 @@ class PublishAllFiles extends Command
                 Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');
                 Artisan::call('vendor:publish --tag=datatables');
                 Artisan::call('vendor:publish --tag=generator-utils');
+                Artisan::call('vendor:publish --tag=bootstrap-app-simple');
 
                 $this->info('Installed successfully.');
                 break;
@@ -197,6 +198,7 @@ class PublishAllFiles extends Command
         Artisan::call('vendor:publish --tag=generator-utils --force');
         Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');
         Artisan::call('vendor:publish --tag=datatables --force');
+        Artisan::call('vendor:publish --tag=bootstrap-app-full --force');
 
         $template = GeneratorUtils::getStub('route');
 

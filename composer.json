@@ -52,8 +52,7 @@
                 "Yajra\\DataTables\\DataTablesServiceProvider"
             ],
             "aliases": {
-                "DataTables": "Yajra\\DataTables\\Facades\\DataTables",
-                "Generator": "EvdigiIna\\Generator\\Facades\\Generator"
+                "DataTables": "Yajra\\DataTables\\Facades\\DataTables"
             }
         }
     },

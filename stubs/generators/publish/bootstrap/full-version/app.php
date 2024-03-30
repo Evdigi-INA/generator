@@ -3,7 +3,7 @@
 use App\Providers\{FortifyServiceProvider, ViewComposerServiceProvider};
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\{Exceptions,Middleware};
-use Spatie\Permission\Middleware{RoleMiddleware, PermissionMiddleware,RoleOrPermissionMiddleware};
+use Spatie\Permission\Middleware\{RoleMiddleware, PermissionMiddleware,RoleOrPermissionMiddleware};
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
