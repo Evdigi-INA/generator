@@ -6,13 +6,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles;
+    // https://laravel.com/docs/11.x/sanctum#api-token-authentication
+    // use \Laravel\Sanctum\HasApiTokens;
+
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -42,8 +44,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime:d/m/Y H:i',
-        'created_at' => 'datetime:d/m/Y H:i',
-        'updated_at' => 'datetime:d/m/Y H:i',
+        'email_verified_at' => 'datetime:Y-m-d H:i',
+        'created_at' => 'datetime:Y-m-d H:i',
+        'updated_at' => 'datetime:Y-m-d H:i',
     ];
 }

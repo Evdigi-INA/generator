@@ -15,11 +15,11 @@ class GeneratorTest extends TestCase
         parent::setUp();
 
         $this->afterApplicationCreated(function () {
-            file_put_contents(__DIR__ . '/../generator.cache', '{"simple_version_publish_count":0,"full_version_publish_count":1}');
+            file_put_contents(__DIR__ . '/../generator.cache', '{"simple_version_publish_count":0,"full_version_publish_count":2}');
         });
 
         $this->beforeApplicationDestroyed(function () {
-            file_put_contents(__DIR__ . '/../generator.cache', '{"simple_version_publish_count":0,"full_version_publish_count":1}');
+            file_put_contents(__DIR__ . '/../generator.cache', '{"simple_version_publish_count":0,"full_version_publish_count":2}');
         });
     }
 
@@ -27,7 +27,7 @@ class GeneratorTest extends TestCase
     public function it_can_render_generator_create_page(): void
     {
         $this->withoutExceptionHandling();
-        $this->get('/generators/create')->assertStatus(200)->assertSee('Generators');
+        $this->get('/generators/create?for_test=1')->assertStatus(200)->assertSee('Generators');
     }
 
     #[Test]

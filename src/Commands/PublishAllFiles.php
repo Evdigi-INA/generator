@@ -64,14 +64,14 @@ class PublishAllFiles extends Command
                 }
 
                 if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
+
                     if ($totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1) {
-                        switch ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['full_version_publish_count'] . ' times.')) {
-                            case true:
-                                $this->runPublishAll();
-                                break;
-                            default:
-                                break;
+
+                        if ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['full_version_publish_count'] . ' for times.')) {
+                            $this->runPublishAll();
+                            return;
                         }
+
                     }
 
                     $this->runPublishAll();
@@ -205,4 +205,3 @@ class PublishAllFiles extends Command
         $this->info('Installed successfully.');
     }
 }
-

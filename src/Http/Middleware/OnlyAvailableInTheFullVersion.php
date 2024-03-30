@@ -13,7 +13,7 @@ class OnlyAvailableInTheFullVersion
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        if($request->has('for_test')) {
+        if($request->has('for_test') || $request->filled('for_test')) {
             return $next($request);
         }
 

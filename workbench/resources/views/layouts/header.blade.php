@@ -56,17 +56,18 @@
                                     <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                         <div class="user-menu d-flex">
                                             <div class="user-name text-end me-3">
-                                                <h6 class="mb-0 text-gray-600">{{ auth()->user()->name }}</h6>
-                                                <p class="mb-0 text-sm text-gray-600">{{ auth()->user()->roles[0]->name }}
+                                                <h6 class="mb-0 text-gray-600">{{ auth()?->user()?->name }}</h6>
+                                                <p class="mb-0 text-sm text-gray-600">
+                                                    {{ isset(auth()?->user()?->roles) ? implode(auth()?->user()?->roles?->map(fn ($role) => $role->name)->toArray()) : '-' }}
                                                 </p>
                                             </div>
                                             <div class="user-img d-flex align-items-center">
                                                 <div class="avatar avatar-md">
-                                                    @if (auth()->user()->avatar == null)
-                                                        <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(auth()->user()->email))) }}&s=500"
+                                                    @if (auth()?->user()?->avatar == null)
+                                                        <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(auth()?->user()?->email))) }}&s=500"
                                                             alt="Avatar">
                                                     @else
-                                                        <img src="{{ asset('storage/uploads/avatars/' . auth()->user()->avatar) }}"
+                                                        <img src="{{ asset('storage/uploads/avatars/' . auth()?->user()?->avatar) }}"
                                                             alt="Avatar">
                                                     @endif
                                                 </div>
@@ -74,9 +75,9 @@
                                         </div>
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton"
-                                        style="min-width: 11rem">
+                                        style="min-width: 11rem;">
                                         <li>
-                                            <h6 class="dropdown-header">{{ __('Hello') }}, {{ auth()->user()->name }}!
+                                            <h6 class="dropdown-header">{{ __('Hello') }}, {{ auth()?->user()?->name }}!
                                             </h6>
                                         </li>
                                         <li>
