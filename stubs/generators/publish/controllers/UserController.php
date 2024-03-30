@@ -6,17 +6,26 @@ use App\Generators\Services\ImageService;
 use App\Http\Requests\Users\{StoreUserRequest, UpdateUserRequest};
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
-use Image;
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
     public function __construct(public ImageService $imageService, public string $avatarPath = '/uploads/images/avatars/')
     {
-        // TODO: uncomment this code if you are using spatie permission
-        // $this->middleware('permission:user view')->only('index', 'show');
-        // $this->middleware('permission:user create')->only('create', 'store');
-        // $this->middleware('permission:user edit')->only('edit', 'update');
-        // $this->middleware('permission:user delete')->only('destroy');
+        //
+    }
+
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:user view', only: ['index', 'show']),
+            new Middleware('permission:user create', only: ['create', 'store']),
+            new Middleware('permission:user create', only: ['create', 'store']),
+            new Middleware('permission:user delete', only: ['destroy']),
+        ];
     }
 
     /**

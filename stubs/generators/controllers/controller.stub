@@ -4,17 +4,24 @@
 use {{modelPath}};
 use {{requestPath}};
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 
-class {{modelNameSingularPascalCase}}Controller extends Controller
+class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
 {
-    // TODO: uncomment this code if you are using spatie permission
-    // public function __construct()
-    // {
-    //     $this->middleware('permission:{{modelNameSpaceLowercase}} view')->only('index', 'show');
-    //     $this->middleware('permission:{{modelNameSpaceLowercase}} create')->only('create', 'store');
-    //     $this->middleware('permission:{{modelNameSpaceLowercase}} edit')->only('edit', 'update');
-    //     $this->middleware('permission:{{modelNameSpaceLowercase}} delete')->only('destroy');
-    // }
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            'auth',
+            // TODO: uncomment this code if you are using spatie permission
+            // new Middleware('permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
+            // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
+            // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
+            // new Middleware('permission:{{modelNameSpaceLowercase}} delete', only: ['destroy']),
+        ];
+    }
 
     /**
      * Display a listing of the resource.

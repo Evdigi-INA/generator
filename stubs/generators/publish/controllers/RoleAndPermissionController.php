@@ -5,15 +5,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Roles\{StoreRoleRequest, UpdateRoleRequest};
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 
-class RoleAndPermissionController extends Controller
+class RoleAndPermissionController extends Controller implements HasMiddleware
 {
-    public function __construct()
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
     {
-        $this->middleware('permission:role & permission view')->only('index', 'show');
-        $this->middleware('permission:role & permission create')->only('create', 'store');
-        $this->middleware('permission:role & permission edit')->only('edit', 'update');
-        $this->middleware('permission:role & permission delete')->only('delete');
+        return [
+            new Middleware('permission:role & permission view', only: ['index', 'show']),
+            new Middleware('permission:role & permission create', only: ['create', 'store']),
+            new Middleware('permission:role & permission create', only: ['create', 'store']),
+            new Middleware('permission:role & permission delete', only: ['destroy']),
+        ];
     }
 
     /**
