@@ -193,7 +193,7 @@ class PublishAllFiles extends Command
         Artisan::call('vendor:publish --tag=generator-provider --force');
         Artisan::call('vendor:publish --tag=generator-migration --force');
         Artisan::call('vendor:publish --tag=generator-seeder --force');
-        Artisan::call('vendor:publish --tag=generator-model-full --force');
+        Artisan::call('vendor:publish --tag=generator-model --force');
         Artisan::call('vendor:publish --tag=generator-assets --force');
         Artisan::call('vendor:publish --tag=generator-utils --force');
         Artisan::call('vendor:publish --tag=datatables --force');

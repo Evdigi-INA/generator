@@ -35,6 +35,10 @@ class GeneratorService implements GeneratorServiceInterface
      */
     public function generate(array $request): void
     {
+        if (GeneratorUtils::isGenerateApi() && !$this->apiRouteAlreadyExists()) {
+            abort(Response::HTTP_FORBIDDEN, 'You have not yet installed the API, to use this feature, you must be running the artisan command: "php artisan api:install", and then you can use the API.');
+        }
+
         if (empty($request['is_simple_generator'])) (new PermissionGenerator)->generate($request);
 
         (new ModelGenerator)->generate($request);
@@ -98,6 +102,18 @@ class GeneratorService implements GeneratorServiceInterface
 
         /** if the sidebar is static, then must be regenerated to update new menus */
         if (!str($sidebar)->contains("\$permissions = empty(\$menu['permission'])")) Artisan::call('generator:sidebar dynamic');
+    }
+
+    /**
+     * Check if API route already exists. (laravel 11)
+     */
+    public function apiRouteAlreadyExists(): bool
+    {
+        $bootstrapApp = file_get_contents(base_path("/bootstrap/app.php"));
+
+        $checkApiRoute = (bool) str_contains($bootstrapApp, "api") || str_contains($bootstrapApp, "api.php") || str_contains($bootstrapApp, "api:");
+
+        return $checkApiRoute || file_exists(base_path("/routes/api.php")) || class_exists(\Laravel\Sanctum\HasApiTokens::class);
     }
 
     /**

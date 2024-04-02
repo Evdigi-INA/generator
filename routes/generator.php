@@ -2,6 +2,7 @@
 
 use EvdigiIna\Generator\Http\Controllers\GeneratorController;
 use EvdigiIna\Generator\Http\Controllers\SimpleGeneratorController;
+use EvdigiIna\Generator\Http\Middleware\AlreadyInstallApi;
 use EvdigiIna\Generator\Http\Middleware\OnlyAvailableInTheFullVersion;
 use EvdigiIna\Generator\Http\Middleware\TheGeneratorOnlyWorksInTheLocalEnv;
 use Illuminate\Support\Facades\Route;
@@ -13,8 +14,11 @@ Route::middleware(['web', TheGeneratorOnlyWorksInTheLocalEnv::class])->group(fun
     Route::resource('simple-generators', SimpleGeneratorController::class)
         ->only('create', 'store');
 
-    Route::get('/api-generators/create', [GeneratorController::class, 'apiCreate']);
-    Route::post('/api-generators', [GeneratorController::class, 'store']);
+    Route::get('/api-generators/create', [GeneratorController::class, 'apiCreate'])
+        ->middleware(AlreadyInstallApi::class);
+
+    Route::post('/api-generators', [GeneratorController::class, 'store'])
+        ->middleware(AlreadyInstallApi::class);
 
     Route::resource('generators', GeneratorController::class)
         ->only('create', 'store')

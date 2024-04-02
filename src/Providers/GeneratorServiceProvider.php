@@ -81,13 +81,8 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // Model
         $this->publishes([
-            __DIR__ . '/../../stubs/generators/publish/models/full-version/User.php' => app_path('Models/User.php')
-        ], 'generator-model-full');
-
-        // Model
-        $this->publishes([
-            __DIR__ . '/../../stubs/generators/publish/models/simple-version/User.php' => app_path('Models/User.php')
-        ], 'generator-model-simple');
+            __DIR__ . '/../../stubs/generators/publish/models/User.php' => app_path('Models/User.php')
+        ], 'generator-model');
 
         // asset/mazer template
         $this->publishes([
