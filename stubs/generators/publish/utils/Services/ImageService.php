@@ -2,8 +2,8 @@
 
 namespace App\Generators\Services;
 
-use App\Generators\GeneratorUtils;
 use App\Generators\Interfaces\ImageServiceInterface;
+use EvdigiIna\Generator\Facades\Generator;
 use Illuminate\Support\Facades\Storage;
 
 class ImageService implements ImageServiceInterface
@@ -17,7 +17,7 @@ class ImageService implements ImageServiceInterface
             if (!$isCustomUpload) {
                 $file = request()->file($name);
 
-                if (str_contains(GeneratorUtils::checkPackageVersion('intervention/image'), '2')) {
+                if (str_contains(Generator::checkPackageVersion('intervention/image'), '2')) {
                     $filename = $file->hashName();
                 } else {
                     // set image to webp
