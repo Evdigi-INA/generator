@@ -3,7 +3,7 @@
 namespace EvdigiIna\Generator\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use EvdigiIna\Generator\Commands\{SetSidebarType, PublishAllFiles};
+use EvdigiIna\Generator\Commands\{SetSidebarType, PublishAllFiles, PublishApi};
 use EvdigiIna\Generator\Generator;
 
 class GeneratorServiceProvider extends ServiceProvider
@@ -47,18 +47,27 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // Requests
         $this->publishes([
-            __DIR__ . '/../../stubs/generators/publish/requests' => app_path('Http/Requests')
-        ], 'generator-request');
+            __DIR__ . '/../../stubs/generators/publish/requests/Roles' => app_path('Http/Requests/Roles')
+        ], 'generator-request-role');
+
+        $this->publishes([
+            __DIR__ . '/../../stubs/generators/publish/requests/Users' => app_path('Http/Requests/Users')
+        ], 'generator-request-user');
+
+        $this->publishes([
+            __DIR__ . '/../../stubs/generators/publish/requests/Auth' => app_path('Http/Requests/Auth')
+        ], 'generator-request-api');
+
+        // Api Auth Controller
+        $this->publishes([
+            __DIR__ . '/../../stubs/generators/publish/AuthController.php' => app_path('Http/Controllers/Api/AuthController.php')
+        ], 'generator-controller-api');
 
         // Actions fortify
         $this->publishes([
             __DIR__ . '/../../stubs/generators/publish/fortify' => app_path('Actions/Fortify')
         ], 'generator-action');
 
-        // Kernel
-        // $this->publishes([
-        //     __DIR__ . '/../../stubs/generators/publish/Kernel.php' => app_path('Http/Kernel.php')
-        // ], 'generator-kernel');
 
         // Providers
         $this->publishes([
@@ -111,10 +120,10 @@ class GeneratorServiceProvider extends ServiceProvider
             ]);
         }
 
-        $this->app->bind('generator', fn() => new Generator);
+        $this->app->bind('generator', fn () => new Generator);
 
         if ($this->app->runningInConsole()) $this->commands([PublishAllFiles::class]);
 
-        $this->commands([SetSidebarType::class]);
+        $this->commands([SetSidebarType::class, PublishApi::class]);
     }
 }

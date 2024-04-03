@@ -71,7 +71,6 @@ class PublishAllFiles extends Command
                             $this->runPublishAll();
                             return;
                         }
-
                     }
 
                     $this->runPublishAll();
@@ -187,7 +186,8 @@ class PublishAllFiles extends Command
         Artisan::call('vendor:publish --tag=generator-view --force');
         Artisan::call('vendor:publish --tag=generator-config --force');
         Artisan::call('vendor:publish --tag=generator-controller --force');
-        Artisan::call('vendor:publish --tag=generator-request --force');
+        Artisan::call('vendor:publish --tag=generator-request-user --force');
+        Artisan::call('vendor:publish --tag=generator-request-role --force');
         Artisan::call('vendor:publish --tag=generator-action --force');
         // Artisan::call('vendor:publish --tag=generator-kernel --force');
         Artisan::call('vendor:publish --tag=generator-provider --force');
