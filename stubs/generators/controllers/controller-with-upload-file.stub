@@ -22,7 +22,8 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     public static function middleware(): array
     {
         return [
-            'auth',
+            // 'auth',
+
             // TODO: uncomment this code if you are using spatie permission
             // new Middleware('permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
             // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
