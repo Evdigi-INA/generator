@@ -13,7 +13,7 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.0/datatables.min.css" />
   </head>
-  <body class="bg-secondary">
+  <body class="bg-dark" data-bs-theme="dark">
     <div class="container my-5">
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">

@@ -347,7 +347,8 @@ class ControllerGenerator
                         '{{castImageFunction}}',
                         '{{castImageIndex}}',
                         '{{castImageShow}}',
-                        '{{castImageDatatable}}'
+                        '{{castImageDatatable}}',
+                        "'auth',",
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -387,7 +388,8 @@ class ControllerGenerator
 
                         // $this->castImages($product);
                         "\n\t\t\$this->castImages($" . $modelNameSingularCamelCase . ");\n",
-                        $castImageDatatable
+                        $castImageDatatable,
+                        GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
                     ],
                     GeneratorUtils::isGenerateApi() ? GeneratorUtils::getStub('controllers/controller-api-with-upload-file') : GeneratorUtils::getStub('controllers/controller-with-upload-file')
                 );
@@ -420,6 +422,7 @@ class ControllerGenerator
                         '{{modelNameCleanPlural}}',
                         '{{relations}}',
                         '{{publicOrStorage}}',
+                        "'auth',",
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -444,6 +447,7 @@ class ControllerGenerator
                         $modelNameCleanPlural,
                         $relations,
                         config('generator.image.disk', 'storage'),
+                        GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
                     ],
                     GeneratorUtils::isGenerateApi() ? GeneratorUtils::getStub('controllers/controller-api') : GeneratorUtils::getStub('controllers/controller')
                 );

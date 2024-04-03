@@ -3,7 +3,6 @@
 namespace App\Generators\Services;
 
 use App\Generators\Interfaces\ImageServiceInterface;
-use EvdigiIna\Generator\Facades\Generator;
 use Illuminate\Support\Facades\Storage;
 
 class ImageService implements ImageServiceInterface
@@ -17,7 +16,7 @@ class ImageService implements ImageServiceInterface
             if (!$isCustomUpload) {
                 $file = request()->file($name);
 
-                if (str_contains(Generator::checkPackageVersion('intervention/image'), '2')) {
+                if (class_exists(\Intervention\Image\Facades\Image::class)) {
                     $filename = $file->hashName();
                 } else {
                     // set image to webp
@@ -35,6 +34,7 @@ class ImageService implements ImageServiceInterface
                             } : null)->encode($file->extension());
                         } else {
                             // for intervention v3
+
                             $imageInstance = \Intervention\Image\Laravel\Facades\Image::read($file);
 
                             if (config('generator.image.crop')) {
