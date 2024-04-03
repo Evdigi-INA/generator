@@ -510,11 +510,11 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Something went wrong!'
+                    text: $.parseJSON(xhr?.responseText)?.message ?? 'Something went wrong!'
                 })
 
                 validationUl.html('')
-                $.each(xhr.responseJSON.errors, function(key, value) {
+                $.each(xhr?.responseJSON?.errors, function(key, value) {
                     if (Array.isArray(value)) {
                         value.forEach((v, i) => {
                             validationUl.append(`<li class="m-0 p-0">${v}</li>`)
@@ -523,7 +523,10 @@
                         validationUl.append(`<li class="m-0 p-0">${value}</li>`)
                     }
                 })
-                $('#validation-errors').show()
+
+                if(xhr?.responseJSON?.errors){
+                    $('#validation-errors').show()
+                }
 
                 btnBack.prop('disabled', false)
                 btnSave.prop('disabled', false)

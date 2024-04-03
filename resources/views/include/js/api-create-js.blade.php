@@ -510,7 +510,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: jQuery?.parseJSON(xhr?.responseText)?.message ?? 'Something went wrong!'
+                    text: $.parseJSON(xhr?.responseText)?.message ?? 'Something went wrong!'
                 })
 
                 validationUl.html('')
