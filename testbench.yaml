@@ -1,6 +1,6 @@
 providers:
   - Workbench\App\Providers\WorkbenchServiceProvider
-  - Workbench\App\Providers\ViewComposerServiceProvider
+  # - Workbench\App\Providers\ViewComposerServiceProvider
   - EvdigiIna\Generator\Providers\GeneratorServiceProvider
 
 migrations:
@@ -12,10 +12,10 @@ seeders:
 workbench:
   start: '/'
   install: true
-  health: false
+  health: true
   discovers:
     web: true
-    api: false
+    api: true
     commands: true
     components: true
     views: true
