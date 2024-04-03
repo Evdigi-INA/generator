@@ -5,13 +5,12 @@ namespace Tests;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\Attributes\WithMigration;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\Unit\CommandTest;
-use Tests\Unit\GeneratorTest;
-use Tests\Unit\GeneratorUtilsTest;
-use Tests\Unit\HelperTest;
+use Tests\CommandTest;
+use Tests\GeneratorTest;
+use Tests\GeneratorUtilsTest;
+use Tests\HelperTest;
 
 #[WithMigration]
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -24,11 +23,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function setUp(): void
     {
         $this->afterApplicationCreated(function () {
-            Artisan::call('view:clear');
+            // Artisan::call('view:clear');
         });
 
         $this->beforeApplicationDestroyed(function () {
-            Artisan::call('view:clear');
+            // Artisan::call('view:clear');
         });
 
         parent::setUp();
@@ -45,7 +44,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
         return [
             \EvdigiIna\Generator\Providers\GeneratorServiceProvider::class,
             \Yajra\DataTables\DataTablesServiceProvider::class,
-            \Workbench\App\Providers\ViewComposerServiceProvider::class,
         ];
     }
 

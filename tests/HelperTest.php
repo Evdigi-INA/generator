@@ -1,9 +1,8 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
 class HelperTest extends TestCase
 {
@@ -17,6 +16,6 @@ class HelperTest extends TestCase
     public function it_helper_file_exists(): void
     {
 
-        $this->assertTrue(file_exists(__DIR__ . '/../../src/helper.php'));
+        $this->assertTrue(file_exists(__DIR__ . '/../src/helper.php'));
     }
 }

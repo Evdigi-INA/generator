@@ -1,10 +1,9 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests;
 
 use EvdigiIna\Generator\Generators\GeneratorUtils;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
 class GeneratorUtilsTest extends TestCase
 {

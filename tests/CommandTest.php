@@ -1,9 +1,8 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests;
 
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
 
 class CommandTest extends TestCase
 {
