@@ -2,6 +2,8 @@
 
 namespace EvdigiIna\Generator\Generators;
 
+use EvdigiIna\Generator\Enums\GeneratorVariant;
+
 class RequestGenerator
 {
     /**
@@ -268,18 +270,21 @@ class RequestGenerator
         /**
          * Create a request class file.
          */
-        switch ($path) {
-            case '':
-                GeneratorUtils::checkFolder(app_path("/Http/Requests/$modelNamePluralPascalCase"));
-                file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
-                file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
-                break;
-            default:
-                $fullPath = app_path("/Http/Requests/$path/$modelNamePluralPascalCase");
-                GeneratorUtils::checkFolder($fullPath);
-                file_put_contents("$fullPath/Store{$modelSingularPascalCase}Request.php", $storeRequestTemplate);
+        if ($path) {
+            $fullPath = app_path("/Http/Requests/$path/$modelNamePluralPascalCase");
+            GeneratorUtils::checkFolder($fullPath);
+            file_put_contents("$fullPath/Store{$modelSingularPascalCase}Request.php", $storeRequestTemplate);
+
+            if (GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value) {
                 file_put_contents("$fullPath/Update{$modelSingularPascalCase}Request.php", $updateRequestTemplate);
-                break;
+            }
+        } else {
+            GeneratorUtils::checkFolder(app_path("/Http/Requests/$modelNamePluralPascalCase"));
+            file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
+
+            if (GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value) {
+                file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
+            }
         }
     }
 }

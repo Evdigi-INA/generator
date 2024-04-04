@@ -3,6 +3,7 @@
 namespace EvdigiIna\Generator\Http\Controllers;
 
 use EvdigiIna\Generator\Enums\GeneratorType;
+use EvdigiIna\Generator\Enums\GeneratorVariant;
 use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Http\Requests\StoreSimpleGeneratorRequest;
@@ -30,6 +31,7 @@ class SimpleGeneratorController extends Controller
     {
         $validated = $request->validated();
         $validated['is_simple_generator'] = true;
+        $validated['generate_variant'] = GeneratorVariant::DEFAULT->value;
 
         /**
          * will added in next realease

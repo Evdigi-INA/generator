@@ -2,6 +2,7 @@
 
 namespace EvdigiIna\Generator\Generators;
 
+use EvdigiIna\Generator\Enums\GeneratorVariant;
 use Illuminate\Support\Facades\File;
 
 class RouteGenerator
@@ -43,7 +44,13 @@ class RouteGenerator
             }
         }
 
-        $controllerClass .=  $modelNameSingularPascalCase . "Controller::class)$middleware;";
+        $controllerClass .=  $modelNameSingularPascalCase . "Controller::class)$middleware";
+
+        if(GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
+            $controllerClass .= "->only(['index', 'store']);";
+        }else{
+            $controllerClass .= ";";
+        }
 
         File::append(base_path(GeneratorUtils::isGenerateApi() ? 'routes/api.php' : 'routes/web.php'), $controllerClass);
     }

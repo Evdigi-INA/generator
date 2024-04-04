@@ -2,6 +2,7 @@
 
 namespace EvdigiIna\Generator\Generators;
 
+use EvdigiIna\Generator\Enums\GeneratorVariant;
 use EvdigiIna\Generator\Generators\Interfaces\GeneratorUtilsInterface;
 use Illuminate\Support\Facades\Schema;
 
@@ -308,7 +309,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
         /**
          * check string ended with 'ia' or 'ium'
          */
-        if (str_ends_with($actualModelName, 'ia') || str_ends_with($actualModelName, 'ium')) return self::pascalCase($actualModelName);
+        if (self::checkStringEndWith($actualModelName)) return self::pascalCase($actualModelName);
 
         if ($style == 'pascal case') return self::singularPascalCase($actualModelName);
 
@@ -486,6 +487,40 @@ class GeneratorUtils implements GeneratorUtilsInterface
 
                 //asset('storage/uploads/images/' . $generator->image)
             default => "asset('storage/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
+        };
+    }
+
+    /**
+     * Check the type of generator and return the appropriate string value.
+     */
+    public static function checkGeneratorVariant(): string
+    {
+        if (self::isGenerateApi()) return GeneratorVariant::API->value;
+
+        if (request()->filled('generate_variant') && request()->get('generate_variant') == GeneratorVariant::SINGLE_FORM->value || request()->get('generate_variant') == 'single') {
+            return GeneratorVariant::SINGLE_FORM->value;
+        }
+
+        return GeneratorVariant::DEFAULT->value;
+    }
+
+    /**
+     * Get the controller stub based on the generator variant.
+     */
+    public static function getControllerStubByGeneratorVariant(bool $withUploadFile = false): string
+    {
+        if ($withUploadFile) {
+            return match (self::checkGeneratorVariant()) {
+                GeneratorVariant::SINGLE_FORM->value => 'controllers/single-form-controller-with-upload-file',
+                GeneratorVariant::API->value => 'controllers/controller-api-with-upload-file',
+                default => 'controllers/controller-with-upload-file',
+            };
+        }
+
+        return match (self::checkGeneratorVariant()) {
+            GeneratorVariant::SINGLE_FORM->value => 'controllers/single-form-controller',
+            GeneratorVariant::API->value => 'controllers/controller-api',
+            default => 'controllers/controller',
         };
     }
 }

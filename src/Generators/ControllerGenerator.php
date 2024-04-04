@@ -2,6 +2,8 @@
 
 namespace EvdigiIna\Generator\Generators;
 
+use EvdigiIna\Generator\Enums\GeneratorVariant;
+
 class ControllerGenerator
 {
     /**
@@ -34,7 +36,11 @@ class ControllerGenerator
                  *
                  * use App\Http\Requests\{StoreProductRequest, UpdateProductRequest};
                  */
-                $requestPath = "App\Http\Requests\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
+                if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
+                    $requestPath = "App\Http\Requests\\$modelNamePluralPascalCase\Store" . $modelNameSingularPascalCase . "Request";
+                } else {
+                    $requestPath = "App\Http\Requests\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
+                }
                 break;
             default:
                 /**
@@ -53,7 +59,12 @@ class ControllerGenerator
                  *
                  * use App\Http\Requests\Inventory\{StoreProductRequest, UpdateProductRequest};
                  */
-                $requestPath = "App\Http\Requests\\$path\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
+                if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
+                    $requestPath = "App\Http\Requests\\$path\\$modelNamePluralPascalCase\Store" . $modelNameSingularPascalCase . "Request";
+                } else {
+                    $requestPath = "App\Http\Requests\\$path\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
+                }
+
                 break;
         }
 
@@ -136,11 +147,11 @@ class ControllerGenerator
                          * Will generate something like:
                          *
                          * ->addColumn('category', function($row){
-                         *     return $row->category ? $row->category->name : '-';
+                         *     return $row?->category?->name ?? '';
                          * })
                          */
                         $addColumns .= "->addColumn('$constrainSnakeCase', function (\$row) {
-                    return \$row->" . $constrainSnakeCase . " ? \$row->" . $constrainSnakeCase . "->$columnAfterId : '';
+                    return \$row?->" . $constrainSnakeCase . "?->$columnAfterId ?? '';
                 })";
                     }
                 }
@@ -252,9 +263,9 @@ class ControllerGenerator
                  *    return $generator;
                  * })
                  */
-                $castImageIndex .= "\n\t\t$" . $modelNamePluralCamelCase . "->through(function ($" . $modelNameSingularCamelCase . ") {\n\t\t\t\$this->castImages($". $modelNameSingularCamelCase .");\n\t\t\treturn $" . $modelNameSingularCamelCase . ";\n\t\t});\n";
+                $castImageIndex .= "\n\t\t$" . $modelNamePluralCamelCase . "->through(function ($" . $modelNameSingularCamelCase . ") {\n\t\t\t\$this->castImages($" . $modelNameSingularCamelCase . ");\n\t\t\treturn $" . $modelNameSingularCamelCase . ";\n\t\t});\n";
 
-                $castImageDatatable = "";
+                $castImageDataTable = "";
 
                 foreach ($request['input_types'] as $i => $input) {
                     if ($input == 'file') {
@@ -262,12 +273,12 @@ class ControllerGenerator
                         $assignUploadPaths .= "\$this->" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path = " . GeneratorUtils::setDiskCodeForController($request['fields'][$i]) . ";\n\t\t";
 
                         //  Generated code: $image = $generator->image;
-                        $assignImageDelete .= "$". str($request['fields'][$i])->snake() ." = $". GeneratorUtils::singularCamelCase($model) ."->". str($request['fields'][$i])->snake() .";\n\t\t\t";
+                        $assignImageDelete .= "$" . str($request['fields'][$i])->snake() . " = $" . GeneratorUtils::singularCamelCase($model) . "->" . str($request['fields'][$i])->snake() . ";\n\t\t\t";
 
                         //  Generated code: $this->imageService->delete($this->imagePath . $image);
-                        $deleteImageCodes .= "\$this->imageService->delete(image: \$this->". GeneratorUtils::singularCamelCase($request['fields'][$i]) ."Path . $". str($request['fields'][$i])->snake() . (config('generator.image.disk') == 's3' ? ", disk: 's3'" : '') .");\n\t\t\t";
+                        $deleteImageCodes .= "\$this->imageService->delete(image: \$this->" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path . $" . str($request['fields'][$i])->snake() . (config('generator.image.disk') == 's3' ? ", disk: 's3'" : '') . ");\n\t\t\t";
 
-                        $castImageDatatable .= GeneratorUtils::setDiskCodeForCastImage($model, $request['fields'][$i]);
+                        $castImageDataTable .= GeneratorUtils::setDiskCodeForCastImage($model, $request['fields'][$i]);
 
                         $indexCode .= $this->generateUploadImageCode(
                             field: $request['fields'][$i],
@@ -347,7 +358,7 @@ class ControllerGenerator
                         '{{castImageFunction}}',
                         '{{castImageIndex}}',
                         '{{castImageShow}}',
-                        '{{castImageDatatable}}',
+                        '{{castImageDataTable}}',
                         "'auth',",
                     ],
                     [
@@ -385,13 +396,12 @@ class ControllerGenerator
                         $deleteImageCodes,
                         $castImageFunc,
                         $castImageIndex,
-
                         // $this->castImages($product);
                         "\n\t\t\$this->castImages($" . $modelNameSingularCamelCase . ");\n",
-                        $castImageDatatable,
+                        $castImageDataTable,
                         GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
                     ],
-                    GeneratorUtils::isGenerateApi() ? GeneratorUtils::getStub('controllers/controller-api-with-upload-file') : GeneratorUtils::getStub('controllers/controller-with-upload-file')
+                    GeneratorUtils::getStub(GeneratorUtils::getControllerStubByGeneratorVariant(true))
                 );
                 break;
             default:
@@ -449,7 +459,7 @@ class ControllerGenerator
                         config('generator.image.disk', 'storage'),
                         GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
                     ],
-                    GeneratorUtils::isGenerateApi() ? GeneratorUtils::getStub('controllers/controller-api') : GeneratorUtils::getStub('controllers/controller')
+                    GeneratorUtils::getStub(GeneratorUtils::getControllerStubByGeneratorVariant())
                 );
                 break;
         }

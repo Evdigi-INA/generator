@@ -16,7 +16,7 @@
     {{-- end of model name --}}
 
     {{-- generate type --}}
-    <div class="col-md-5">
+    <div class="col-md-3">
         <p class="mb-2">{{ __('Generate Type') }}</p>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="generate_type" id="generate-type-1"
@@ -36,10 +36,33 @@
     </div>
     {{-- end of generate type --}}
 
-    <input type="hidden" name="generate_variant" id="generate-type-2" value="default">
+    {{-- generate variant --}}
+    <div class="col-md-3">
+        <p class="mb-2">{{ __('Generate Variant') }}</p>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="generate_variant" id="generate-variant-1"
+                value="{{ \EvdigiIna\Generator\Enums\GeneratorVariant::DEFAULT->value }}" checked>
+            <label class="form-check-label" for="generate-variant-1">
+                {{ __('Default (full CRUD)') }}
+            </label>
+        </div>
 
-    <div class="col-md-4">
-        <p class="mb-2">{{ __('Add-ons') }}</p>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="generate_variant" id="generate-varaint-2"
+                value="{{ \EvdigiIna\Generator\Enums\GeneratorVariant::SINGLE_FORM->value }}">
+            <label class="form-check-label" for="generate-varaint-2">
+                {{ __('Single Form (only create & update)') }}
+            </label>
+        </div>
+    </div>
+    {{-- end of generate variant --}}
+
+    {{-- <input type="hidden" name="generate_variant" id="generate-variant" value="default"> --}}
+
+    <div class="col-md-3">
+        <p class="mb-2">{{ __('Add-ons') }}
+            <small style="font-size: 8px;">Beta</small>
+        </p>
 
         <div class="form-check">
             <div class="checkbox">

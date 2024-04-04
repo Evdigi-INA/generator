@@ -2,6 +2,7 @@
 
 namespace EvdigiIna\Generator\Generators\Services;
 
+use EvdigiIna\Generator\Enums\GeneratorVariant;
 use EvdigiIna\Generator\Generators\Interfaces\GeneratorServiceInterface;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,13 +48,18 @@ class GeneratorService implements GeneratorServiceInterface
         (new RequestGenerator)->generate($request);
 
         // blade template
-        if (empty($request['generate_variant']) || $request['generate_variant'] != 'api') {
-            (new IndexViewGenerator)->generate($request);
+        if (isset($request['generate_variant']) || $request['generate_variant'] != 'api') {
+            // for single form
             (new CreateViewGenerator)->generate($request);
-            (new ShowViewGenerator)->generate($request);
-            (new EditViewGenerator)->generate($request);
-            (new ActionViewGenerator)->generate($request);
             (new FormViewGenerator)->generate($request);
+
+            // for full CRUD
+            if ($request['generate_variant'] == GeneratorVariant::DEFAULT->value || $request['generate_variant'] == null) {
+                (new IndexViewGenerator)->generate($request);
+                (new ShowViewGenerator)->generate($request);
+                (new EditViewGenerator)->generate($request);
+                (new ActionViewGenerator)->generate($request);
+            }
 
             if (empty($request['is_simple_generator'])) (new MenuGenerator)->generate($request);
 
