@@ -555,7 +555,7 @@ class ControllerGenerator
             config('generator.image.aspect_ratio') ? "\n\t\t\t\t\$constraint->aspectRatio();" : '',
             $default['index_code'],
             str($field)->snake(),
-            "$" . GeneratorUtils::singularCamelCase($model) . "->" . str($field)->snake(),
+            "$" . GeneratorUtils::singularCamelCase($model) . "?->" . str($field)->snake(),
             GeneratorUtils::singularCamelCase($field),
             GeneratorUtils::singularCamelCase($model),
             config('generator.image.disk') == 's3' ? ", disk: 's3'" : ''

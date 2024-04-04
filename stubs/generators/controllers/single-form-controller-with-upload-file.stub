@@ -1,0 +1,53 @@
+<?php
+
+{{namespace}}
+use {{modelPath}};
+use {{requestPath}};
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use App\Generators\Services\ImageService;
+
+class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
+{
+    public function __construct(public ImageService $imageService{{uploadPaths}})
+    {
+        {{assignUploadPaths}}
+    }
+
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            // 'auth',
+
+            // TODO: uncomment this code if you are using spatie permission
+            // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['index', 'store']),
+        ];
+    }
+
+    /**
+     * Show the form for creating or updating a resource.
+     */
+    public function index(): \Illuminate\Contracts\View\View
+    {
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}first();
+
+        return view('{{viewPath}}{{modelNamePluralKebabCase}}.create', compact('{{modelNameSingularCamelCase}}'));
+    }
+
+    /**
+     * Store or update resource in storage.
+     */
+    public function store(Store{{modelNameSingularPascalCase}}Request $request): \Illuminate\Http\RedirectResponse
+    {
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::first();
+
+        $validated = $request->validated();
+        {{passwordFieldUpdate}}{{inputMonths}}
+{{updateCode}}
+        {{updateDataAction}}
+
+        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was created successfully.'));
+    }
+}
