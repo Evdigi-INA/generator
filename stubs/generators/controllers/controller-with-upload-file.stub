@@ -68,7 +68,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
 {{storeCode}}
         {{modelNameSingularPascalCase}}::create($validated);
 
-        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was created successfully.'));
+        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was created successfully.'));
     }
 
     /**
@@ -97,7 +97,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
 {{updateCode}}
         {{updateDataAction}}
 
-        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was updated successfully.'));
+        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was updated successfully.'));
     }
 
     /**
@@ -110,9 +110,9 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             ${{modelNameSingularCamelCase}}->delete();
 
             {{deleteImageCodes}}
-            return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was deleted successfully.'));
+            return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was deleted successfully.'));
         } catch (\Exception $e) {
-            return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameSingularCamelCase}} can't be deleted because it's related to another table."));
+            return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameCleanSingular}} can't be deleted because it's related to another table."));
         }
     }
 }

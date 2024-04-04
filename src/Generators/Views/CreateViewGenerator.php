@@ -2,6 +2,7 @@
 
 namespace EvdigiIna\Generator\Generators\Views;
 
+use EvdigiIna\Generator\Enums\GeneratorVariant;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
 
 class CreateViewGenerator
@@ -36,14 +37,26 @@ class CreateViewGenerator
             empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/create') : GeneratorUtils::getStub('views/simple/create')
         );
 
+        // add alert to create page in single form crud
+        /*
+         * will generate something like:
+         *  <section class="section">
+         *      <x-alert></x-alert>
+         */
+        if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
+            $template = str_replace('<section class="section">', "<section class=\"section\">\n\t\t\t<x-alert></x-alert>\n", $template);
+        }
 
-        if (!$path) {
-            GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase"));
-            file_put_contents(resource_path("/views/$modelNamePluralKebabCase/create.blade.php"), $template);
-        } else {
+        if ($path) {
             $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase");
+
             GeneratorUtils::checkFolder($fullPath);
+
             file_put_contents($fullPath . "/create.blade.php", $template);
+        } else {
+            GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase"));
+
+            file_put_contents(resource_path("/views/$modelNamePluralKebabCase/create.blade.php"), $template);
         }
     }
 }

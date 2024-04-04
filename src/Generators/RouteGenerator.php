@@ -18,39 +18,20 @@ class RouteGenerator
         $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
         $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase($model);
 
-        $middleware = "->middleware('auth')";
+        $middleware = GeneratorUtils::isGenerateApi() || isset($request['is_simple_generator']) || GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value
+            ? ""
+            : "->middleware('auth')";
 
-        if (isset($request['is_simple_generator']) || GeneratorUtils::isGenerateApi()) $middleware = "";
+        $routeFacade = GeneratorUtils::isGenerateApi() ? "Route::apiResource('" : "Route::resource('";
 
-        if (GeneratorUtils::isGenerateApi()) {
-            $routeFacade = "Route::apiResource('";
-        } else {
-            $routeFacade = "Route::resource('";
-        }
+        $controllerClass = match ($path) {
+            true => "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\" . str_replace('/', '\\', $path) . "\\",
+            default => "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\",
+        };
 
-        if ($path != '') {
-            if (GeneratorUtils::isGenerateApi()) {
-                $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\Api\\";
-            } else {
-                $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\";
-            }
+        $controllerClass .= $modelNameSingularPascalCase . "Controller::class)" . $middleware;
 
-            $controllerClass .= str_replace('/', '\\', $path) . "\\";
-        } else {
-            if (GeneratorUtils::isGenerateApi()) {
-                $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\Api\\";
-            } else {
-                $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\";
-            }
-        }
-
-        $controllerClass .=  $modelNameSingularPascalCase . "Controller::class)$middleware";
-
-        if(GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
-            $controllerClass .= "->only(['index', 'store']);";
-        }else{
-            $controllerClass .= ";";
-        }
+        $controllerClass .= GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value ? "->only(['index', 'store']);" : ";";
 
         File::append(base_path(GeneratorUtils::isGenerateApi() ? 'routes/api.php' : 'routes/web.php'), $controllerClass);
     }

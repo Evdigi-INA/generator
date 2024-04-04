@@ -40,6 +40,6 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
         {{passwordFieldStore}}{{inputMonths}}
         {{updateDataAction}}
 
-        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was created successfully.'));
+        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was created successfully.'));
     }
 }

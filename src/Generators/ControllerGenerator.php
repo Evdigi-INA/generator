@@ -36,11 +36,11 @@ class ControllerGenerator
                  *
                  * use App\Http\Requests\{StoreProductRequest, UpdateProductRequest};
                  */
-                if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
-                    $requestPath = "App\Http\Requests\\$modelNamePluralPascalCase\Store" . $modelNameSingularPascalCase . "Request";
-                } else {
-                    $requestPath = "App\Http\Requests\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
-                }
+                $requestPath = match (GeneratorUtils::checkGeneratorVariant()) {
+                    GeneratorVariant::SINGLE_FORM->value => "App\Http\Requests\\$modelNamePluralPascalCase\Store" . $modelNameSingularPascalCase . "Request",
+                    default => "App\Http\Requests\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}"
+                };
+
                 break;
             default:
                 /**
@@ -59,11 +59,10 @@ class ControllerGenerator
                  *
                  * use App\Http\Requests\Inventory\{StoreProductRequest, UpdateProductRequest};
                  */
-                if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
-                    $requestPath = "App\Http\Requests\\$path\\$modelNamePluralPascalCase\Store" . $modelNameSingularPascalCase . "Request";
-                } else {
-                    $requestPath = "App\Http\Requests\\$path\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}";
-                }
+                $requestPath = match (GeneratorUtils::checkGeneratorVariant()) {
+                    GeneratorVariant::SINGLE_FORM->value => "App\Http\Requests\\$path\\$modelNamePluralPascalCase\Store" . $modelNameSingularPascalCase . "Request",
+                    default => "App\Http\Requests\\$path\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}"
+                };
 
                 break;
         }
@@ -85,10 +84,10 @@ class ControllerGenerator
              *  })
              */
             foreach ($request['column_types'] as $i => $type) {
-                if ($type == 'text' || $type == 'longText') {
-                    $addColumns .= "->addColumn('" . str($request['fields'][$i])->snake() . "', function(\$row){
-                    return str(\$row->" . str($request['fields'][$i])->snake() . ")->limit($limitText);
-                })\n\t\t\t\t";
+                if (in_array($type, ['text', 'longText'])) {
+                    $addColumns .= "->addColumn('" . str($request['fields'][$i])->snake() . "', function(\$row) use ($limitText) {
+                        return str(\$row->" . str($request['fields'][$i])->snake() . ")->limit($limitText);
+                    })\n\t\t\t\t";
                 }
             }
         }
@@ -225,7 +224,7 @@ class ControllerGenerator
             }
 
             foreach ($request['input_types'] as $i => $input) {
-                if ($input === 'month') {
+                if ($input == 'month') {
                     /**
                      * will generate something like:
                      *
@@ -322,6 +321,23 @@ class ControllerGenerator
                 $inputMonths = str_replace('$validated = $request->validated();', '', $inputMonths);
                 $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$validated);";
 
+                if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
+                    /**
+                     *  if($product) {
+                     *      $product->update($validated);
+                     *  } else {
+                     *      Product::create($validated);
+                     *  }
+                     */
+                    $singleFormUpdateDataAction = "if ($" . $modelNameSingularCamelCase . ") {
+                " . $updateDataAction . "
+            } else {
+                " . $modelNameSingularPascalCase . "::create(\$validated);
+            }";
+
+                    $updateDataAction = $singleFormUpdateDataAction;
+                }
+
                 /**
                  * controller with upload file code
                  */
@@ -405,6 +421,23 @@ class ControllerGenerator
                 );
                 break;
             default:
+                if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
+                    /**
+                     *  if($product) {
+                     *      $product->update($validated);
+                     *  } else {
+                     *      Product::create($validated);
+                     *  }
+                     */
+                    $singleFormUpdateDataAction = "if ($" . $modelNameSingularCamelCase . ") {
+            " . $updateDataAction . "
+        } else {
+            " . $modelNameSingularPascalCase . "::create(" . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");
+        }";
+
+                    $updateDataAction = $singleFormUpdateDataAction;
+                }
+
                 /**
                  * default controller
                  */
@@ -464,26 +497,26 @@ class ControllerGenerator
                 break;
         }
 
+        if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
+            $template = str_replace('created successfully', 'updated successfully', $template);
+        }
+
         /**
          * Create a controller file.
          */
         if (!$path) {
-            if (GeneratorUtils::isGenerateApi()) {
-                GeneratorUtils::checkFolder(app_path("/Http/Controllers/Api"));
-                file_put_contents(app_path("/Http/Controllers/Api/{$modelNameSingularPascalCase}Controller.php"), $template);
-            } else {
-                file_put_contents(app_path("/Http/Controllers/{$modelNameSingularPascalCase}Controller.php"), $template);
-            }
-        } else {
-            if (GeneratorUtils::isGenerateApi()) {
-                $fullPath = app_path("/Http/Controllers/Api/$path/");
-            } else {
-                $fullPath = app_path("/Http/Controllers/$path/");
-            }
+            match (GeneratorUtils::isGenerateApi()) {
+                true => GeneratorUtils::checkFolder(app_path("/Http/Controllers/Api")),
+                false => GeneratorUtils::checkFolder(app_path("/Http/Controllers")),
+            };
 
+            $controllerPath = GeneratorUtils::isGenerateApi() ? "/Api/{$modelNameSingularPascalCase}Controller.php" : "/{$modelNameSingularPascalCase}Controller.php";
+            file_put_contents(app_path("/Http/Controllers" . $controllerPath), $template);
+        } else {
+            $fullPath = GeneratorUtils::isGenerateApi() ? app_path("/Http/Controllers/Api/$path/") : app_path("/Http/Controllers/$path/");
             GeneratorUtils::checkFolder($fullPath);
 
-            file_put_contents("$fullPath" . $modelNameSingularPascalCase . "Controller.php", $template);
+            file_put_contents("$fullPath{$modelNameSingularPascalCase}Controller.php", $template);
         }
     }
 
@@ -528,7 +561,7 @@ class ControllerGenerator
             config('generator.image.disk') == 's3' ? ", disk: 's3'" : ''
         ];
 
-        if ($model != null) {
+        if ($model) {
             $replaceString[] = '{{modelNameSingularCamelCase}}';
             $replaceWith[] = $model;
         }
