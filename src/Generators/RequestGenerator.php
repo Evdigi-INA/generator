@@ -48,13 +48,15 @@ class RequestGenerator
                     $validations .= "|url";
                     break;
                 case 'email':
-                    $uniqueValidation = 'unique:' . GeneratorUtils::pluralSnakeCase($model) . ',' . GeneratorUtils::singularSnakeCase($field);
+                    if(GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value){
+                        $uniqueValidation = 'unique:' . GeneratorUtils::pluralSnakeCase($model) . ',' . GeneratorUtils::singularSnakeCase($field);
 
-                    /**
-                     * result:
-                     * 'name' => 'required|email',
-                     */
-                    $validations .= "|email|" . $uniqueValidation;
+                        /**
+                         * result:
+                         * 'name' => 'required|email',
+                         */
+                        $validations .= "|email|" . $uniqueValidation;
+                    }
                     break;
                 case 'date':
                     /**
@@ -77,8 +79,7 @@ class RequestGenerator
 
             if ($request['input_types'][$i] == 'file' && $request['file_types'][$i] == 'image') {
 
-                $maxSize = 1024;
-                if (config('generator.image.size_max')) $maxSize = config('generator.image.size_max');
+                $maxSize = config('generator.image.size_max') ?? 1024;
 
                 if ($request['files_sizes'][$i]) $maxSize = $request['files_sizes'][$i];
 
