@@ -95,13 +95,13 @@ class PublishAllFiles extends Command
 
                 $this->info('Installing the simple version...');
 
-                Artisan::call('vendor:publish --tag=generator-config-simple');
-                Artisan::call('vendor:publish --tag=generator-model-simple');
-                Artisan::call('vendor:publish --tag=generator-view-provider');
-                Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');
-                Artisan::call('vendor:publish --tag=datatables');
-                Artisan::call('vendor:publish --tag=generator-utils');
-                Artisan::call('vendor:publish --tag=bootstrap-app-simple');
+                Artisan::call('vendor:publish --tag=generator-config-simple --force');
+                Artisan::call('vendor:publish --tag=generator-model-simple --force');
+                Artisan::call('vendor:publish --tag=generator-view-provider --force');
+                Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider" --force');
+                Artisan::call('vendor:publish --tag=datatables --force');
+                Artisan::call('vendor:publish --tag=generator-utils --force');
+                Artisan::call('vendor:publish --tag=bootstrap-app-simple --force');
 
                 $this->info('Installed successfully.');
                 break;

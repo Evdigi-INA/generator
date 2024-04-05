@@ -68,7 +68,6 @@ class GeneratorServiceProvider extends ServiceProvider
             __DIR__ . '/../../stubs/generators/publish/fortify' => app_path('Actions/Fortify')
         ], 'generator-action');
 
-
         // Providers
         $this->publishes([
             __DIR__ . '/../../stubs/generators/publish/providers/full-version' => app_path('Providers')
