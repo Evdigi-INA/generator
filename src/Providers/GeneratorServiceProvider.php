@@ -75,7 +75,7 @@ class GeneratorServiceProvider extends ServiceProvider
         ], 'generator-provider');
 
         $this->publishes([
-            __DIR__ . '/../../stubs/generators/publish/simple-version' => app_path('Providers')
+            __DIR__ . '/../../stubs/generators/publish/providers/simple-version/' => app_path('Providers')
         ], 'generator-view-provider');
 
         // Migrations
