@@ -375,7 +375,7 @@ class ControllerGenerator
                         '{{castImageIndex}}',
                         '{{castImageShow}}',
                         '{{castImageDataTable}}',
-                        "'auth',",
+                        "'{{middlewareName}}',",
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -465,7 +465,7 @@ class ControllerGenerator
                         '{{modelNameCleanPlural}}',
                         '{{relations}}',
                         '{{publicOrStorage}}',
-                        "'auth',",
+                        "'{{middlewareName}}',",
                     ],
                     [
                         $modelNameSingularPascalCase,
