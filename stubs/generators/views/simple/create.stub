@@ -11,6 +11,7 @@
   </head>
   <body class="bg-dark" data-bs-theme="dark">
     <div class="container my-5">
+        {{alertForSingleForm}}
         <div class="row">
             <div class="col-md-12">
                 <div class="card">

@@ -39,7 +39,9 @@
     {{-- end of generate type --}}
 
     <div class="col-md-4">
-        <p class="mb-2">{{ __('Add-ons') }}</p>
+        <p class="mb-2">{{ __('Add-ons') }}
+            <small style="font-size: 8px;">Beta</small>
+        </p>
 
         <div class="form-check">
             <div class="checkbox">

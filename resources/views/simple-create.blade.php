@@ -57,22 +57,22 @@
 
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="generate_type"
-                                            id="generate-type-2"
+                                            id="generate-variant-1"
                                             value="{{ \EvdigiIna\Generator\Enums\GeneratorType::ONLY_MODEL_AND_MIGRATION->value }}">
-                                        <label class="form-check-label" for="generate-type-2">
+                                        <label class="form-check-label" for="generate-variant-1">
                                             {{ __('Only Model & Migration') }}
                                         </label>
                                     </div>
                                 </div>
                                 {{-- end of generate type --}}
 
-                                {{-- generate type --}}
+                                {{-- generate variant --}}
                                 <div class="col-md-3">
                                     <p class="mb-2">{{ __('Variant') }}</p>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="generate_variant"
-                                            id="generate-type-2" value="default" checked>
-                                        <label class="form-check-label" for="generate-type-2">
+                                            id="generate-variant-2" value="default" checked>
+                                        <label class="form-check-label" for="generate-variant-2">
                                             {{ __('Default (blade)') }}
                                         </label>
                                     </div>
@@ -82,14 +82,24 @@
                                             id="generate-type-1" value="api">
                                         <label class="form-check-label" for="generate-type-1">
                                             {{ __('API') }}
+                                            <small style="font-size: 8px;">Beta</small>
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="generate_variant" id="generate-varaint-3"
+                                            value="{{ \EvdigiIna\Generator\Enums\GeneratorVariant::SINGLE_FORM->value }}">
+                                        <label class="form-check-label" for="generate-varaint-3">
+                                            {{ __('Single Form (only create or update)') }}
                                         </label>
                                     </div>
                                 </div>
-                                {{-- end of generate type --}}
+                                {{-- end of generate variant --}}
 
                                 <div class="col-md-3">
-                                    <p class="mb-2">{{ __('Add-ons') }}</p>
-
+                                    <p class="mb-2">{{ __('Add-ons') }}
+                                        <small style="font-size: 8px;">Beta</small>
+                                    </p>
                                     <div class="form-check">
                                         <div class="checkbox">
                                             <input type="checkbox" class="form-check-input" id="generate-seeder"

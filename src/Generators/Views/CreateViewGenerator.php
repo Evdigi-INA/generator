@@ -26,6 +26,7 @@ class CreateViewGenerator
                 '{{modelNamePluralKebabCase}}',
                 '{{enctype}}',
                 '{{viewPath}}',
+                '{{alertForSingleForm}}'
             ],
             [
                 $modelNamePluralUcWords,
@@ -33,19 +34,10 @@ class CreateViewGenerator
                 $modelNamePluralKebabCase,
                 in_array('file', $request['input_types']) ? ' enctype="multipart/form-data"' : '',
                 $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
+                GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value ? '<x-alert></x-alert>' : ''
             ],
-            empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/create') : GeneratorUtils::getStub('views/simple/create')
+            GeneratorUtils::getStub(empty($request['is_simple_generator']) ? 'views/create' : 'views/simple/create')
         );
-
-        // add alert to create page in single form crud
-        /*
-         * will generate something like:
-         *  <section class="section">
-         *      <x-alert></x-alert>
-         */
-        if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
-            $template = str_replace('<section class="section">', "<section class=\"section\">\n\t\t\t<x-alert></x-alert>\n", $template);
-        }
 
         if ($path) {
             $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase");
@@ -57,6 +49,26 @@ class CreateViewGenerator
             GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase"));
 
             file_put_contents(resource_path("/views/$modelNamePluralKebabCase/create.blade.php"), $template);
+        }
+    }
+
+    public function setCreateViewStub(): string
+    {
+        // if(GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value && isset($request['is_simple_generator'])){
+        //     return 'views/simple/create';
+        // }
+
+        // return empty($request['is_simple_generator']) ? 'views/create' : 'views/simple/create';
+
+        switch(GeneratorUtils::checkGeneratorVariant()){
+            case GeneratorVariant::SINGLE_FORM->value:
+                if(empty($request['is_simple_generator'])){
+                    return 'views/create';
+                }
+
+                return 'views/simple/create';
+            default:
+                return 'views/create';
         }
     }
 }

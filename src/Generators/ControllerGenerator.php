@@ -85,7 +85,7 @@ class ControllerGenerator
              */
             foreach ($request['column_types'] as $i => $type) {
                 if (in_array($type, ['text', 'longText'])) {
-                    $addColumns .= "->addColumn('" . str($request['fields'][$i])->snake() . "', function(\$row) use ($limitText) {
+                    $addColumns .= "->addColumn('" . str($request['fields'][$i])->snake() . "', function(\$row) {
                         return str(\$row->" . str($request['fields'][$i])->snake() . ")->limit($limitText);
                     })\n\t\t\t\t";
                 }

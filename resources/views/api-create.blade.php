@@ -13,7 +13,10 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-8 order-md-1 order-last">
-                    <h3>{{ __('API Generators') }}</h3>
+                    <h3>
+                        {{ __('API Generators') }}
+                        <small style="font-size: 8px;">Beta</small>
+                    </h3>
                     <p class="text-subtitle text-muted">
                         {{ __('Create a new CRUD Module (API).') }}
                     </p>

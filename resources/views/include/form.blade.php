@@ -51,13 +51,11 @@
             <input class="form-check-input" type="radio" name="generate_variant" id="generate-varaint-2"
                 value="{{ \EvdigiIna\Generator\Enums\GeneratorVariant::SINGLE_FORM->value }}">
             <label class="form-check-label" for="generate-varaint-2">
-                {{ __('Single Form (only create & update)') }}
+                {{ __('Single Form (only create or update)') }}
             </label>
         </div>
     </div>
     {{-- end of generate variant --}}
-
-    {{-- <input type="hidden" name="generate_variant" id="generate-variant" value="default"> --}}
 
     <div class="col-md-3">
         <p class="mb-2">{{ __('Add-ons') }}
