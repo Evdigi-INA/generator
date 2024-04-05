@@ -24,10 +24,29 @@ class RouteGenerator
 
         $routeFacade = GeneratorUtils::isGenerateApi() ? "Route::apiResource('" : "Route::resource('";
 
-        $controllerClass = match ($path) {
-            true => "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\" . str_replace('/', '\\', $path) . "\\",
-            default => "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\",
-        };
+        switch ($path) {
+            case true:
+                switch (GeneratorUtils::isGenerateApi()) {
+                    case true:
+                        $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\Api\\";
+                        break;
+                    default:
+                        $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\";
+                        break;
+                }
+                $controllerClass .= str_replace('/', '\\', $path) . "\\";
+                break;
+            default:
+                switch (GeneratorUtils::isGenerateApi()) {
+                    case true:
+                        $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\Api\\";
+                        break;
+                    default:
+                        $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\";
+                        break;
+                }
+                break;
+        }
 
         $controllerClass .= $modelNameSingularPascalCase . "Controller::class)" . $middleware;
 

@@ -438,6 +438,16 @@ class ControllerGenerator
                     $updateDataAction = $singleFormUpdateDataAction;
                 }
 
+                if (!GeneratorUtils::isGenerateApi()) {
+                    // remove unused variable
+                    // $user = User::create($request->validated());
+                    $insertDataAction = str_replace(
+                        "$$modelNameSingularCamelCase = " . $modelNameSingularPascalCase  . "::create(\$request->validated());",
+                        $modelNameSingularPascalCase  . "::create(\$request->validated());",
+                        $insertDataAction
+                    );
+                }
+
                 /**
                  * default controller
                  */

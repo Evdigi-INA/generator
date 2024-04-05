@@ -48,7 +48,7 @@ class RequestGenerator
                     $validations .= "|url";
                     break;
                 case 'email':
-                    if(GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value){
+                    if (GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value) {
                         $uniqueValidation = 'unique:' . GeneratorUtils::pluralSnakeCase($model) . ',' . GeneratorUtils::singularSnakeCase($field);
 
                         /**
@@ -230,12 +230,16 @@ class RequestGenerator
             /**
              * Will generate something like:
              *
-             * unique:users,email,' . $this->user->id
+             * unique:users,email,' . request()->segment(2)
              */
-            $updateValidations = str_replace($uniqueValidation, $uniqueValidation . ",' . \$this->" . GeneratorUtils::singularCamelCase($model) . "->id", $validations);
+            $updateValidations = str_replace(
+                $uniqueValidation,
+                $uniqueValidation . ",' . request()->segment(" . (GeneratorUtils::isGenerateApi() ? 3 : 2) . ")",
+                $validations
+            );
 
-            // change ->id', to ->id,
-            $updateValidations = str_replace("->id'", "->id", $updateValidations);
+            // change "segment(2)'," to "segment(2),"
+            $updateValidations = str_replace(")',", "),", $updateValidations);
         }
 
         if (in_array('password', $request['input_types'])) {
