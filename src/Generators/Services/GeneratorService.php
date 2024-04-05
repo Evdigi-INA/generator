@@ -54,7 +54,7 @@ class GeneratorService implements GeneratorServiceInterface
             (new FormViewGenerator)->generate($request);
 
             // for full CRUD
-            if ($request['generate_variant'] == GeneratorVariant::DEFAULT->value || $request['generate_variant'] == null) {
+            if ($request['generate_variant'] == GeneratorVariant::DEFAULT->value) {
                 (new IndexViewGenerator)->generate($request);
                 (new ShowViewGenerator)->generate($request);
                 (new EditViewGenerator)->generate($request);
