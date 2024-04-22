@@ -59,7 +59,7 @@ class SetSidebarType extends Command
                                 $sidebarCode .= "
                                 @can('" . $menu['permission'] . "')
                                     <li class=\"sidebar-item{{ is_active_menu('" . $menu['route'] . "') }}\">
-                                    <a href=\"{{ route('" . str($menu['route'])->remove('/')->plural() . '.index' . "') }}\" class=\"sidebar-link\">
+                                    <a href=\"{{ route('" . str($menu['route'])->remove('/')->singular()->plural() . '.index' . "') }}\" class=\"sidebar-link\">
                                             " . $menu['icon'] . "
                                             <span>{{ __('" . $menu['title'] . "') }}</span>
                                         </a>
@@ -77,8 +77,8 @@ class SetSidebarType extends Command
                                 foreach ($menu['submenus'] as $submenu) {
                                     $sidebarCode .= "
                                     @can('" . $submenu['permission'] . "')
-                                        <li class=\"submenu-item\">
-                                        <a href=\"{{ route('" . str($submenu['route'])->remove('/')->plural() . '.index' . "') }}\">{{ __('" . $submenu['title'] . "') }}</a>
+                                        <li class=\"submenu-item{{ is_active_menu('" . $submenu['route'] . "') }}\">
+                                        <a href=\"{{ route('" . str($submenu['route'])->remove('/')->singular()->plural() . '.index' . "') }}\">{{ __('" . $submenu['title'] . "') }}</a>
                                         </li>
                                     @endcan\n";
                                 }

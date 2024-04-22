@@ -16,7 +16,7 @@ class AlreadyInstallApi
     public function handle(Request $request, Closure $next): mixed
     {
         if(GeneratorUtils::isGenerateApi() && !(new GeneratorService)->apiRouteAlreadyExists()){
-            abort(Response::HTTP_FORBIDDEN, 'You have not yet installed the API, to use this feature, you must be running the artisan command: "php artisan install:api", and then you can use the API.');
+            abort(Response::HTTP_FORBIDDEN, 'You have not yet installed the API, to use this feature, you must be running the artisan command: "php artisan install:api".');
         }
 
         return $next($request);

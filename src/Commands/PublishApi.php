@@ -30,7 +30,7 @@ class PublishApi extends Command
     public function handle(): void
     {
         if(!(new GeneratorService)->apiRouteAlreadyExists()){
-            $this->error("'You have not yet installed the API, to use this feature, you must be running the artisan command: \"php artisan install:api\", and then you can use the API.'");
+            $this->error("'You have not yet installed the API, to use this feature, you must be running the artisan command: \"php artisan install:api\"'");
 
             return;
         }
