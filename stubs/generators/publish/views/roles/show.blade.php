@@ -50,11 +50,11 @@
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">{{ __('Created at') }}</td>
-                                        <td>{{ $role->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $role->created_at->format('Y-m-d H:i:s') }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">{{ __('Updated at') }}</td>
-                                        <td>{{ $role->updated_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $role->updated_at->format('Y-m-d H:i:s') }}</td>
                                     </tr>
                                 </table>
                             </div>

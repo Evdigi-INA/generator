@@ -36,7 +36,7 @@ class EditViewGenerator
                 in_array('file', $request['input_types']) ? ' enctype="multipart/form-data"' : '',
                 $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
             ],
-            empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/edit') : GeneratorUtils::getTemplate('views/simple/edit'),
+            empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/edit') : GeneratorUtils::getStub('views/simple/edit'),
         );
 
         if (!$path) {

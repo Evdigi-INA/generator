@@ -3,3 +3,7 @@
 composer.lock
 .phpunit.result.cache
 generator-cache.json
+generator.cache
+.idea
+.phpunit.cache
+.phpunit.result.cache

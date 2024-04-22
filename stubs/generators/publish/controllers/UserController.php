@@ -2,26 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Generators\Services\ImageService;
 use App\Http\Requests\Users\{StoreUserRequest, UpdateUserRequest};
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
-use Image;
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
-    /**
-     * Path for user avatar file.
-     *
-     * @var string
-     */
-    protected $avatarPath = '/uploads/images/avatars/';
-
-    public function __construct()
+    public function __construct(public ImageService $imageService, public string $avatarPath = '/uploads/images/avatars/')
     {
-        $this->middleware('permission:user view')->only('index', 'show');
-        $this->middleware('permission:user create')->only('create', 'store');
-        $this->middleware('permission:user edit')->only('edit', 'update');
-        $this->middleware('permission:user delete')->only('destroy');
+        //
+    }
+
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:user view', only: ['index', 'show']),
+            new Middleware('permission:user create', only: ['create', 'store']),
+            new Middleware('permission:user create', only: ['create', 'store']),
+            new Middleware('permission:user delete', only: ['destroy']),
+        ];
     }
 
     /**
@@ -62,27 +66,13 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): \Illuminate\Http\RedirectResponse
     {
-        $attr = $request->validated();
+        $validated = $request->validated();
 
-        if ($request->file('avatar') && $request->file('avatar')->isValid()) {
+        $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, disk: 's3');
 
-            $filename = $request->file('avatar')->hashName();
+        $validated['password'] = bcrypt($request->password);
 
-            if (!file_exists($folder = public_path($this->avatarPath))) {
-                mkdir($folder, 0777, true);
-            }
-
-            Image::make($request->file('avatar')->getRealPath())->resize(500, 500, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->save($this->avatarPath . $filename);
-
-            $attr['avatar'] = $filename;
-        }
-
-        $attr['password'] = bcrypt($request->password);
-
-        $user = User::create($attr);
+        $user = User::create($validated);
 
         $user->assignRole($request->role);
 
@@ -114,41 +104,20 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user): \Illuminate\Http\RedirectResponse
     {
-        $attr = $request->validated();
+        $validated = $request->validated();
 
-        if ($request->file('avatar') && $request->file('avatar')->isValid()) {
-
-            $filename = $request->file('avatar')->hashName();
-
-            if (!file_exists($folder = public_path($this->avatarPath))) {
-                mkdir($folder, 0777, true);
-            }
-
-            Image::make($request->file('avatar')->getRealPath())->resize(500, 500, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->save(public_path($this->avatarPath) . $filename);
-
-            if ($user->avatar != null && file_exists($oldAvatar = public_path($this->avatarPath .
-                $user->avatar))) {
-                unlink($oldAvatar);
-            }
-
-            $attr['avatar'] = $filename;
-        } else {
-            $attr['avatar'] = $user->avatar;
-        }
+        $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user->avatar, disk: 's3');
 
         switch (is_null($request->password)) {
             case true:
-                unset($attr['password']);
+                unset($validated['password']);
                 break;
             default:
-                $attr['password'] = bcrypt($request->password);
+                $validated['password'] = bcrypt($request->password);
                 break;
         }
 
-        $user->update($attr);
+        $user->update($validated);
 
         $user->syncRoles($request->role);
 

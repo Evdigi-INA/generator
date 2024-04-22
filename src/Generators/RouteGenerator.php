@@ -2,6 +2,7 @@
 
 namespace EvdigiIna\Generator\Generators;
 
+use EvdigiIna\Generator\Enums\GeneratorVariant;
 use Illuminate\Support\Facades\File;
 
 class RouteGenerator
@@ -17,18 +18,40 @@ class RouteGenerator
         $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
         $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase($model);
 
-        $middleware = "->middleware('auth')";
+        $middleware = GeneratorUtils::isGenerateApi() || isset($request['is_simple_generator']) || GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value
+            ? ""
+            : "->middleware('auth')";
 
-        if(isset($request['is_simple_generator'])){
-            $middleware = "";
+        $routeFacade = GeneratorUtils::isGenerateApi() ? "Route::apiResource('" : "Route::resource('";
+
+        switch ($path) {
+            case true:
+                switch (GeneratorUtils::isGenerateApi()) {
+                    case true:
+                        $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\Api\\";
+                        break;
+                    default:
+                        $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\";
+                        break;
+                }
+                $controllerClass .= str_replace('/', '\\', $path) . "\\";
+                break;
+            default:
+                switch (GeneratorUtils::isGenerateApi()) {
+                    case true:
+                        $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\Api\\";
+                        break;
+                    default:
+                        $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\";
+                        break;
+                }
+                break;
         }
 
-        if ($path != '') {
-            $controllerClass = "\n" . "Route::resource('" . $modelNamePluralKebabCase . "', App\Http\Controllers\\" . str_replace('/', '\\', $path) . "\\" . $modelNameSingularPascalCase . "Controller::class)$middleware;";
-        } else {
-            $controllerClass = "\n" . "Route::resource('" . $modelNamePluralKebabCase . "', App\Http\Controllers\\" . $modelNameSingularPascalCase . "Controller::class)$middleware;";
-        }
+        $controllerClass .= $modelNameSingularPascalCase . "Controller::class)" . $middleware;
 
-        File::append(base_path('routes/web.php'), $controllerClass);
+        $controllerClass .= GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value ? "->only(['index', 'store']);" : ";";
+
+        File::append(base_path(GeneratorUtils::isGenerateApi() ? 'routes/api.php' : 'routes/web.php'), $controllerClass);
     }
 }

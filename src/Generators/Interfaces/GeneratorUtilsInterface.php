@@ -7,7 +7,7 @@ interface GeneratorUtilsInterface
     /**
      * Get template/stub file.
      */
-    public static function getTemplate(string $path): string;
+    public static function getStub(string $path): string;
 
     /**
      * Get published files.
@@ -100,6 +100,11 @@ interface GeneratorUtilsInterface
     public static function cleanPluralLowerCase(string $string): string;
 
     /**
+     * Check if the given string ends with 'ia' or 'ium'.
+     */
+    public static function checkStringEndWith(string $string): bool;
+
+    /**
      * Get 1 column after id on the table.
      */
     public static function getColumnAfterId(string $table): string;
@@ -137,4 +142,34 @@ interface GeneratorUtilsInterface
      * Check if menu is active.
      */
     public static function isActiveMenu(string|array $route): string;
+
+    /**
+     * Check if generate blade(default) or api.
+     */
+    public static function isGenerateApi(): bool;
+
+    /**
+     * Check if package exist in composer.
+     */
+    public static function checkPackage(string $name): bool;
+
+    /**
+     * Check if package exist in composer and return version.
+     */
+    public static function checkPackageVersion(string $name): string;
+
+    /**
+     * Check package in composer.json
+     */
+    public static function getComposerPackage(string $name): string;
+
+    /**
+     * Set disk code for controller.
+     */
+    public static function setDiskCodeForController(string $name): string;
+
+    /**
+     * Set disk code for cast an image.
+     */
+    public static function setDiskCodeForCastImage(string $model, string $field): string;
 }

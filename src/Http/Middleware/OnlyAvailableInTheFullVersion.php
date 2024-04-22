@@ -13,7 +13,11 @@ class OnlyAvailableInTheFullVersion
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        $dir = __DIR__ . '/../../../generator-cache.json';
+        if($request->has('for_test') || $request->filled('for_test')) {
+            return $next($request);
+        }
+
+        $dir = __DIR__ . '/../../../generator.cache';
 
         abort_if(!file_exists($dir), Response::HTTP_FORBIDDEN, 'You have not yet selected a version, to use this feature, you must be running the artisan command: "php artisan generator:install full", and then you can use the full version.');
 

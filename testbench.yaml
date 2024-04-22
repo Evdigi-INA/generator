@@ -1,0 +1,24 @@
+providers:
+  - Workbench\App\Providers\WorkbenchServiceProvider
+  # - Workbench\App\Providers\ViewComposerServiceProvider
+  - EvdigiIna\Generator\Providers\GeneratorServiceProvider
+
+migrations:
+  - workbench/database/migrations
+
+seeders:
+  - Workbench\Database\Seeders\DatabaseSeeder
+
+workbench:
+  start: '/'
+  install: true
+  health: true
+  discovers:
+    web: true
+    api: true
+    commands: true
+    components: true
+    views: true
+  build: []
+  assets: []
+  sync: []

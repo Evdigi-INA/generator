@@ -2,15 +2,20 @@
 
 namespace EvdigiIna\Generator\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use EvdigiIna\Generator\Enums\GeneratorType;
 use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use EvdigiIna\Generator\Http\Requests\StoreGeneratorRequest;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
 
-class GeneratorController extends Controller
+class GeneratorController extends BaseController
 {
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
     public function __construct(protected GeneratorService $generatorService)
     {
         //
@@ -25,20 +30,12 @@ class GeneratorController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.(bootstrap only)
-     */
-    public function simpleCreate(): \Illuminate\Contracts\View\View
-    {
-        return view('generator::simple-create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreGeneratorRequest $request): \Illuminate\Http\JsonResponse
     {
         if ($request->generate_type == GeneratorType::ALL->value) {
-            $this->generatorService->generateAll($request->validated());
+            $this->generatorService->generate($request->validated());
         } else {
             $this->generatorService->onlyGenerateModelAndMigration($request->validated());
         }
@@ -47,7 +44,7 @@ class GeneratorController extends Controller
 
         return response()->json([
             'message' => 'success',
-            'route' => GeneratorUtils::pluralKebabCase($model)
+            'route' => GeneratorUtils::isGenerateApi() ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model)
         ], Response::HTTP_CREATED);
     }
 
@@ -59,5 +56,10 @@ class GeneratorController extends Controller
         $sidebar = $this->generatorService->getSidebarMenusByIndex($index);
 
         return response()->json($sidebar['menus'], Response::HTTP_OK);
+    }
+
+    public function apiCreate(): \Illuminate\Contracts\View\View
+    {
+        return view('generator::api-create');
     }
 }

@@ -60,16 +60,16 @@
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">{{ __('Email verified at') }}</td>
-                                        <td>{{ $user->email_verified_at ? $user->email_verified_at->format('d/m/Y H:i') : '-' }}
+                                        <td>{{ $user->email_verified_at ? $user->email_verified_at->format('Y-m-d H:i:s') : '-' }}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">{{ __('Created at') }}</td>
-                                        <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $user->created_at->format('Y-m-d H:i:s') }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">{{ __('Updated at') }}</td>
-                                        <td>{{ $user->updated_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $user->updated_at->format('Y-m-d H:i:s') }}</td>
                                     </tr>
                                 </table>
                             </div>

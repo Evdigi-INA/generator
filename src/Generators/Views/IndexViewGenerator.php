@@ -50,9 +50,7 @@ class IndexViewGenerator
                      */
 
                     $imgStyle = '';
-                    if(isset($request['is_simple_generator'])){
-                        $imgStyle = 'class="rounded" width="50" height="40" style="object-fit: cover"';
-                    }
+                    if(isset($request['is_simple_generator'])) $imgStyle = 'class="rounded" width="50" height="40" style="object-fit: cover"';
 
                     $tdColumns .=  "{
                     data: '" . str()->snake($field) . "',
@@ -121,7 +119,7 @@ class IndexViewGenerator
                 $thColumns,
                 $tdColumns,
             ],
-            empty($request['is_simple_generator']) ? GeneratorUtils::getTemplate('views/index') : GeneratorUtils::getTemplate('views/simple/index')
+            empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/index') : GeneratorUtils::getStub('views/simple/index')
         );
 
         switch ($path) {

@@ -24,11 +24,14 @@ class {{modelName}} extends Model
     protected $fillable = {{fields}};
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var string[]
+     * @return array<string, string>
      */
-    protected $casts = {{casts}};
+    protected function casts(): array
+    {
+        return {{casts}};
+    }
     {{protectedHidden}}
 {{relations}}
 }

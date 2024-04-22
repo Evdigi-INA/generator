@@ -1,0 +1,34 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use {{modelPath}};
+
+class {{modelNameSingularPascalCase}}Seeder extends Seeder
+{
+    use WithoutModelEvents;
+
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        // ${{modelNamePluralCamelCase}} = [
+        //      [
+        //          //
+        //      ]
+        // ];
+
+        // foreach (${{modelNamePluralCamelCase}} as ${{modelNameSingularCamelCase}}) {
+        //     {{modelNameSingularPascalCase}}::create(${{modelNameSingularCamelCase}});
+        // }
+
+        // {{modelNameSingularPascalCase}}::factory()->count(10)->create();
+
+        {{modelNameSingularPascalCase}}::create([
+            {{fields}}
+        ]);
+    }
+}
