@@ -329,11 +329,7 @@ class ControllerGenerator
                      *      Product::create($validated);
                      *  }
                      */
-                    $singleFormUpdateDataAction = "if ($" . $modelNameSingularCamelCase . ") {
-                " . $updateDataAction . "
-            } else {
-                " . $modelNameSingularPascalCase . "::create(\$validated);
-            }";
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" .$modelNameSingularCamelCase ."?->id], " . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");";
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }
@@ -428,12 +424,11 @@ class ControllerGenerator
                      *  } else {
                      *      Product::create($validated);
                      *  }
+                     *
+                     * Product::updateOrCreate(['id' => $product?->id], $validated);
+                     *
                      */
-                    $singleFormUpdateDataAction = "if ($" . $modelNameSingularCamelCase . ") {
-            " . $updateDataAction . "
-        } else {
-            " . $modelNameSingularPascalCase . "::create(" . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");
-        }";
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" .$modelNameSingularCamelCase ."?->id], " . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");";
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }

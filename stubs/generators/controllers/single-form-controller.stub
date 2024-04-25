@@ -25,7 +25,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function index(): \Illuminate\Contracts\View\View
     {
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}first();
+        ${{modelNameSingularCamelCase}} = {{query}}->first();
 
         return view('{{viewPath}}{{modelNamePluralKebabCase}}.create', compact('{{modelNameSingularCamelCase}}'));
     }
@@ -35,7 +35,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function store(Store{{modelNameSingularPascalCase}}Request $request): \Illuminate\Http\RedirectResponse
     {
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::first();
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::query()->first();
 
         {{passwordFieldStore}}{{inputMonths}}
         {{updateDataAction}}
