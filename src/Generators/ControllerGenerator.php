@@ -264,7 +264,7 @@ class ControllerGenerator
                  */
                 $castImageIndex .= "\n\t\t$" . $modelNamePluralCamelCase . "->through(function ($" . $modelNameSingularCamelCase . ") {\n\t\t\t\$this->castImages($" . $modelNameSingularCamelCase . ");\n\t\t\treturn $" . $modelNameSingularCamelCase . ";\n\t\t});\n";
 
-                $castImageDataTable = "";
+                // $castImageDataTable = "";
 
                 foreach ($request['input_types'] as $i => $input) {
                     if ($input == 'file') {
@@ -277,7 +277,7 @@ class ControllerGenerator
                         //  Generated code: $this->imageService->delete($this->imagePath . $image);
                         $deleteImageCodes .= "\$this->imageService->delete(image: \$this->" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path . $" . str($request['fields'][$i])->snake() . (config('generator.image.disk') == 's3' ? ", disk: 's3'" : '') . ");\n\t\t\t";
 
-                        $castImageDataTable .= GeneratorUtils::setDiskCodeForCastImage($model, $request['fields'][$i]);
+                        // $castImageDataTable .= GeneratorUtils::setDiskCodeForCastImage($model, $request['fields'][$i]);
 
                         $indexCode .= $this->generateUploadImageCode(
                             field: $request['fields'][$i],
@@ -370,7 +370,7 @@ class ControllerGenerator
                         '{{castImageFunction}}',
                         '{{castImageIndex}}',
                         '{{castImageShow}}',
-                        '{{castImageDataTable}}',
+                        // '{{castImageDataTable}}',
                         "'{{middlewareName}}',",
                     ],
                     [
@@ -410,7 +410,7 @@ class ControllerGenerator
                         $castImageIndex,
                         // $this->castImages($product);
                         "\n\t\t\$this->castImages($" . $modelNameSingularCamelCase . ");\n",
-                        $castImageDataTable,
+                        // $castImageDataTable,
                         GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
                     ],
                     GeneratorUtils::getStub(GeneratorUtils::getControllerStubByGeneratorVariant(true))
@@ -516,6 +516,7 @@ class ControllerGenerator
             };
 
             $controllerPath = GeneratorUtils::isGenerateApi() ? "/Api/{$modelNameSingularPascalCase}Controller.php" : "/{$modelNameSingularPascalCase}Controller.php";
+
             file_put_contents(app_path("/Http/Controllers" . $controllerPath), $template);
         } else {
             $fullPath = GeneratorUtils::isGenerateApi() ? app_path("/Http/Controllers/Api/$path/") : app_path("/Http/Controllers/$path/");
@@ -545,6 +546,7 @@ class ControllerGenerator
             '{{fieldCamelCase}}',
             '{[modelNameSingularCamelCase}}',
             '{{disk}}',
+            '{{castImageDataTable}}',
         ];
 
         $default = GeneratorUtils::setDefaultImage(default: $defaultValue, field: $field, model: $model);
@@ -563,7 +565,8 @@ class ControllerGenerator
             "$" . GeneratorUtils::singularCamelCase($model) . "?->" . str($field)->snake(),
             GeneratorUtils::singularCamelCase($field),
             GeneratorUtils::singularCamelCase($model),
-            config('generator.image.disk') == 's3' ? ", disk: 's3'" : ''
+            config('generator.image.disk') == 's3' ? ", disk: 's3'" : '',
+            GeneratorUtils::setDiskCodeForCastImage($model, $field)
         ];
 
         if ($model) {
@@ -571,18 +574,11 @@ class ControllerGenerator
             $replaceWith[] = $model;
         }
 
-        return match (config('generator.image.crop')) {
-            true => str_replace(
-                $replaceString,
-                $replaceWith,
-                GeneratorUtils::getStub("controllers/upload-files/with-crop/$path")
-            ),
-            default => str_replace(
-                $replaceString,
-                $replaceWith,
-                GeneratorUtils::getStub("controllers/upload-files/$path")
-            ),
-        };
+        return str_replace(
+            $replaceString,
+            $replaceWith,
+            GeneratorUtils::getStub("controllers/upload-files/$path")
+        );
     }
 
     /**

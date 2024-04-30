@@ -485,7 +485,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
             //asset('/uploads/photos/' . $generator->image);
             'public' => "asset('/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
 
-                //asset('storage/uploads/images/' . $generator->image)
+            //asset('storage/uploads/images/' . $generator->image)
             default => "asset('storage/uploads/" . self::pluralKebabCase($field) . "/' . $" . self::singularCamelCase($model) . "->" . str($field)->snake() . ")",
         };
     }
