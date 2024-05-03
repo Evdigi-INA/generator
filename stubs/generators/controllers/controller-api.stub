@@ -32,11 +32,12 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function index(): {{modelNameSingularPascalCase}}Collection|{{modelNameSingularPascalCase}}Resource
     {
-        return (new {{modelNameSingularPascalCase}}Collection({{modelNameSingularPascalCase}}::{{relations}}latest()->paginate()))->additional([
-            'message' => 'The {{modelNameCleanPlural}} was received successfully.',
-            'success' => true,
-            'code' => Response::HTTP_OK
-        ]);
+        return (new {{modelNameSingularPascalCase}}Collection({{modelNameSingularPascalCase}}::{{relations}}latest()->paginate(request()->query('per_page', 10))))
+            ->additional([
+                'message' => 'The {{modelNameCleanPlural}} was received successfully.',
+                'success' => true,
+                'code' => Response::HTTP_OK
+            ]);
     }
 
     /**
@@ -62,11 +63,12 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function show(string $id): {{modelNameSingularPascalCase}}Resource
     {
-        return (new {{modelNameSingularPascalCase}}Resource({{modelNameSingularPascalCase}}::{{relations}}findOrFail($id)))->additional([
-            'message' => 'The {{modelNameCleanSingular}} was received successfully.',
-            'success' => true,
-            'code' => Response::HTTP_OK
-        ]);
+        return (new {{modelNameSingularPascalCase}}Resource({{modelNameSingularPascalCase}}::{{relations}}findOrFail($id)))
+            ->additional([
+                'message' => 'The {{modelNameCleanSingular}} was received successfully.',
+                'success' => true,
+                'code' => Response::HTTP_OK
+            ]);
     }
 
     /**
@@ -74,15 +76,16 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function update(Update{{modelNameSingularPascalCase}}Request $request, string $id): {{modelNameSingularPascalCase}}Resource
     {
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail($id);
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail($id);
         {{passwordFieldUpdate}}{{inputMonths}}
         {{updateDataAction}}
 
-        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))->additional([
-            'message' => 'The {{modelNameCleanSingular}} was updated successfully.',
-            'success' => true,
-            'code' => Response::HTTP_OK
-        ]);
+        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))
+            ->additional([
+                'message' => 'The {{modelNameCleanSingular}} was updated successfully.',
+                'success' => true,
+                'code' => Response::HTTP_OK
+            ]);
     }
 
     /**

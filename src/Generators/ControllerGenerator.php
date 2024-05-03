@@ -107,17 +107,20 @@ class ControllerGenerator
                         $constrainSnakeCase = GeneratorUtils::singularSnakeCase($constrainName);
                         $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself($constrainName);
 
+                        $relations .= "'$constrainSnakeCase:$selectedColumns', ";
+
                         if ($countForeignId + 1 < $i) {
-                            $relations .= "'$constrainSnakeCase:$selectedColumns', ";
+                            // $relations .= "'$constrainSnakeCase:$selectedColumns', ";
                             $query .= "'$constrainSnakeCase:$selectedColumns', ";
                         } else {
-                            $relations .= "'$constrainSnakeCase:$selectedColumns'";
+                            // $relations .= "'$constrainSnakeCase:$selectedColumns'";
                             $query .= "'$constrainSnakeCase:$selectedColumns'";
                         }
                     }
                 }
 
                 $relations .= "])->";
+                $relations = str_replace("', ])->", "'])->", $relations);
             } else {
                 $relations .= "$" . $modelNameSingularCamelCase . "->load(";
 

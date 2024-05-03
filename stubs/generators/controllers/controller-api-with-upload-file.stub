@@ -38,13 +38,14 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function index(): {{modelNameSingularPascalCase}}Collection|{{modelNameSingularPascalCase}}Resource
     {
-        ${{modelNamePluralCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}latest()->paginate();
+        ${{modelNamePluralCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}latest()->paginate(request()->query('per_page', 10));
         {{castImageIndex}}
-        return (new {{modelNameSingularPascalCase}}Collection(${{modelNamePluralCamelCase}}))->additional([
-            'message' => 'The {{modelNameCleanPlural}} was received successfully.',
-            'success' => true,
-            'code' => Response::HTTP_OK
-        ]);
+        return (new {{modelNameSingularPascalCase}}Collection(${{modelNamePluralCamelCase}}))
+            ->additional([
+                'message' => 'The {{modelNameCleanPlural}} was received successfully.',
+                'success' => true,
+                'code' => Response::HTTP_OK
+            ]);
     }
 
     /**
@@ -74,11 +75,12 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     {
         ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail($id);
         {{castImageShow}}
-        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))->additional([
-            'message' => 'The {{modelNameCleanSingular}} was received successfully.',
-            'success' => true,
-            'code' => Response::HTTP_OK
-        ]);
+        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))
+            ->additional([
+                'message' => 'The {{modelNameCleanSingular}} was received successfully.',
+                'success' => true,
+                'code' => Response::HTTP_OK
+            ]);
     }
 
     /**
@@ -86,17 +88,18 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function update(Update{{modelNameSingularPascalCase}}Request $request, string $id): {{modelNameSingularPascalCase}}Resource
     {
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail($id);
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail($id);
         $validated = $request->validated();
         {{passwordFieldUpdate}}{{inputMonths}}
 {{updateCode}}
         {{updateDataAction}}
 
-        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))->additional([
-            'message' => 'The {{modelNameCleanSingular}} was updated successfully.',
-            'success' => true,
-            'code' => Response::HTTP_OK
-        ]);
+        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))
+            ->additional([
+                'message' => 'The {{modelNameCleanSingular}} was updated successfully.',
+                'success' => true,
+                'code' => Response::HTTP_OK
+            ]);
     }
 
     /**
@@ -105,7 +108,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     public function destroy(string $id): {{modelNameSingularPascalCase}}Resource|JsonResponse
     {
         try {
-            ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail($id);
+            ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail($id);
 
             {{assignImageDelete}}
             ${{modelNameSingularCamelCase}}->delete();
@@ -129,12 +132,12 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
         }
     }
 
-     /**
+    /**
       * Casting all images
       * TODO: casting image in model (soon)
       */
-     public function castImages({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): void
-     {
-         {{castImageFunction}}
-     }
+    public function castImages({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): void
+    {
+        {{castImageFunction}}
+    }
 }
