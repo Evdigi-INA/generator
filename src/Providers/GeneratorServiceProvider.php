@@ -3,7 +3,7 @@
 namespace EvdigiIna\Generator\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use EvdigiIna\Generator\Commands\{SetSidebarType, PublishAllFiles, PublishApi};
+use EvdigiIna\Generator\Commands\{SetSidebarType, PublishAllFiles, PublishUtilsCommand, PublishApiCommand};
 use EvdigiIna\Generator\Generator;
 
 class GeneratorServiceProvider extends ServiceProvider
@@ -121,8 +121,10 @@ class GeneratorServiceProvider extends ServiceProvider
 
         $this->app->bind('generator', fn () => new Generator);
 
-        if ($this->app->runningInConsole()) $this->commands([PublishAllFiles::class]);
+        if ($this->app->runningInConsole()) {
+            $this->commands([PublishAllFiles::class]);
+        }
 
-        $this->commands([SetSidebarType::class, PublishApi::class]);
+        $this->commands([SetSidebarType::class, PublishApiCommand::class, PublishUtilsCommand::class]);
     }
 }
