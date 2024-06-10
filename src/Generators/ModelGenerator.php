@@ -97,7 +97,7 @@ class ModelGenerator
                      *     return $this->belongsTo(\App\Models\Product::class);
                      * }
                      */
-                    $relations .= "\n\tpublic function " . str()->snake($constrainName) . "()\n\t{\n\t\treturn \$this->belongsTo(" . $constrainPath . "::class" . $foreign_id . ");\n\t}";
+                    $relations .= "\n\tpublic function " . str()->snake($constrainName) . "(): \Illuminate\Database\Eloquent\Relations\BelongsTo\n\t{\n\t\treturn \$this->belongsTo(" . $constrainPath . "::class" . $foreign_id . ");\n\n\t}";
                     break;
             }
 

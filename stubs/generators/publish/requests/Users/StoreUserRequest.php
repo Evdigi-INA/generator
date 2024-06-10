@@ -28,12 +28,12 @@ class StoreUserRequest extends FormRequest
             'password' =>  [
                 'required',
                 'confirmed',
-                Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
-                    ->uncompromised()
+                // Password::min(8)
+                //     ->letters()
+                //     ->mixedCase()
+                //     ->numbers()
+                //     ->symbols()
+                //     ->uncompromised()
             ]
         ];
     }

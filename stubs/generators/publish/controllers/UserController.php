@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Generators\Services\ImageService;
-use App\Http\Requests\Users\{StoreUserRequest, UpdateUserRequest};
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
+use App\Generators\Services\ImageService;
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use App\Http\Requests\Users\{StoreUserRequest, UpdateUserRequest};
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller implements HasMiddleware
 {
@@ -23,7 +25,7 @@ class UserController extends Controller implements HasMiddleware
         return [
             new Middleware('permission:user view', only: ['index', 'show']),
             new Middleware('permission:user create', only: ['create', 'store']),
-            new Middleware('permission:user create', only: ['create', 'store']),
+            new Middleware('permission:user edit', only: ['edit', 'update']),
             new Middleware('permission:user delete', only: ['destroy']),
         ];
     }
@@ -66,17 +68,21 @@ class UserController extends Controller implements HasMiddleware
      */
     public function store(StoreUserRequest $request): \Illuminate\Http\RedirectResponse
     {
-        $validated = $request->validated();
+        return DB::transaction(function () use ($request) {
+            $validated = $request->validated();
 
-        $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, disk: 's3');
+            $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath);
 
-        $validated['password'] = bcrypt($request->password);
+            $validated['password'] = bcrypt($request->password);
 
-        $user = User::create($validated);
+            $user = User::create($validated);
 
-        $user->assignRole($request->role);
+            $role = Role::select('id', 'name')->find($request->role);
 
-        return to_route('users.index')->with('success', __('The user was created successfully.'));
+            $user->assignRole($role->name);
+
+            return to_route('users.index')->with('success', __('The user was created successfully.'));
+        });
     }
 
     /**
@@ -104,24 +110,28 @@ class UserController extends Controller implements HasMiddleware
      */
     public function update(UpdateUserRequest $request, User $user): \Illuminate\Http\RedirectResponse
     {
-        $validated = $request->validated();
+        return DB::transaction(function () use ($request, $user) {
+            $validated = $request->validated();
 
-        $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user->avatar, disk: 's3');
+            $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user->avatar);
 
-        switch (is_null($request->password)) {
-            case true:
-                unset($validated['password']);
-                break;
-            default:
-                $validated['password'] = bcrypt($request->password);
-                break;
-        }
+            switch (is_null($request->password)) {
+                case true:
+                    unset($validated['password']);
+                    break;
+                default:
+                    $validated['password'] = bcrypt($request->password);
+                    break;
+            }
 
-        $user->update($validated);
+            $user->update($validated);
 
-        $user->syncRoles($request->role);
+            $role = Role::select('id', 'name')->find($request->role);
 
-        return to_route('users.index')->with('success', __('The user was updated successfully.'));
+            $user->syncRoles($role->name);
+
+            return to_route('users.index')->with('success', __('The user was updated successfully.'));
+        });
     }
 
     /**

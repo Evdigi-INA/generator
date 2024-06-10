@@ -17,7 +17,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
         return [
             new Middleware('permission:role & permission view', only: ['index', 'show']),
             new Middleware('permission:role & permission create', only: ['create', 'store']),
-            new Middleware('permission:role & permission create', only: ['create', 'store']),
+            new Middleware('permission:role & permission edit', only: ['edit', 'store']),
             new Middleware('permission:role & permission delete', only: ['destroy']),
         ];
     }
@@ -36,7 +36,8 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
                 ->addIndexColumn()
                 ->addColumn('created_at', function ($row) {
                     return $row->created_at->format('Y-m-d H:i:s');
-                })->addColumn('updated_at', function ($row) {
+                })
+                ->addColumn('updated_at', function ($row) {
                     return $row->updated_at->format('Y-m-d H:i:s');
                 })
                 ->addColumn('action', 'roles.include.action')
