@@ -94,6 +94,7 @@ class PublishAllFiles extends Command
                 }
 
                 $this->info('Installing the simple version...');
+                $this->info('Please allow for some time, this process may take several times.');
 
                 Artisan::call('vendor:publish --tag=generator-config-simple --force');
                 Artisan::call('vendor:publish --tag=generator-model-simple --force');
@@ -182,6 +183,7 @@ class PublishAllFiles extends Command
     public function runPublishAll(): void
     {
         $this->info('Installing...');
+        $this->info('Please allow for some time, this process may take several times.');
 
         Artisan::call('vendor:publish --tag=generator-view --force');
         Artisan::call('vendor:publish --tag=generator-config --force');

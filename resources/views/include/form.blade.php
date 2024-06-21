@@ -196,7 +196,7 @@
                 <div class="form-group" id="input-menu">
                     <label for="select-menu">{{ __('Menu') }}</label>
                     <select name="menu" id="select-menu" class="form-select" required disabled>
-                        <option value="" disabled selected>-- {{ __('Select header first') }} --</option>
+                        <option value="" disabled selected>-- {{ __('Choose the header first') }} --</option>
                     </select>
                     <small id="helper-text-menu"></small>
                 </div>
