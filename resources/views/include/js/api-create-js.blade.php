@@ -489,7 +489,7 @@
             processData: false,
             contentType: false,
             success: function(response) {
-                console.log(response)
+                // console.log(response)
 
                 $('#validation-errors').hide()
 

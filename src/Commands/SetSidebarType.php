@@ -33,15 +33,15 @@ class SetSidebarType extends Command
                 $sidebarCode = "";
                 $sidebarCode .= "@canany([";
 
-                foreach (config('generator.sidebars') as $sidebar) :
+                foreach (config('generator.sidebars') as $sidebar) {
                     if (isset($sidebar['permissions'])) {
                         $sidebarCode .= GeneratorUtils::convertArraySidebarToString($sidebar['permissions']);
                     }
-                endforeach;
+                }
 
                 $sidebarCode .= "])\n\t";
 
-                foreach (config('generator.sidebars') as $sidebar) :
+                foreach (config('generator.sidebars') as $sidebar) {
                     if (isset($sidebar['permissions'])) {
                         $sidebarCode .= "
                             <li class=\"sidebar-title\">{{ __('" . $sidebar['header'] . "') }}</li>
@@ -55,6 +55,8 @@ class SetSidebarType extends Command
                         $sidebarCode .= "])\n\t";
 
                         foreach ($sidebar['menus'] as $menu) {
+                            $subPermissions = empty($menu['permission']) ? $menu['permissions'] : [$menu['permission']];
+
                             if ($menu['submenus'] == []) {
                                 $sidebarCode .= "
                                 @can('" . $menu['permission'] . "')
@@ -66,13 +68,13 @@ class SetSidebarType extends Command
                                     </li>
                                 @endcan\n";
                             } else {
-                                $sidebarCode .= "<li class=\"sidebar-item has-sub{{  is_active_menu([" . GeneratorUtils::convertArraySidebarToString($permissions) . "]) }}\">
+                                $sidebarCode .= "\n@canany([" . GeneratorUtils::convertArraySidebarToString($subPermissions) . "])<li class=\"sidebar-item has-sub{{  is_active_menu([" . GeneratorUtils::convertArraySidebarToString($subPermissions) . "]) }}\">
                                 <a href=\"#\" class=\"sidebar-link\">
                                     " . $menu['icon'] . "
                                     <span>{{ __('" . $menu['title'] . "') }}</span>
                                 </a>
                                 <ul class=\"submenu\">
-                                @canany([" . GeneratorUtils::convertArraySidebarToString($permissions) . "])";
+                                @canany([" . GeneratorUtils::convertArraySidebarToString($subPermissions) . "])";
 
                                 foreach ($menu['submenus'] as $submenu) {
                                     $sidebarCode .= "
@@ -83,12 +85,12 @@ class SetSidebarType extends Command
                                     @endcan\n";
                                 }
 
-                                $sidebarCode .= "\n\t@endcanany\n</ul>\n\t</li>\n";
+                                $sidebarCode .= "\n\t@endcanany\n</ul>\n\t</li>\n@endcanany\n";
                             }
                         }
                         $sidebarCode .= "@endcanany\n";
                     }
-                endforeach;
+                }
 
                 $sidebarCode .= "\n\t@endcanany";
 
@@ -111,7 +113,7 @@ class SetSidebarType extends Command
 
                 file_put_contents(resource_path('views/layouts/sidebar.blade.php'), GeneratorUtils::getStub('sidebar-dynamic'));
 
-                $this->info('A dynamic list from the config(config/generator) was used in the sidebar.');
+                $this->info('A dynamic list from the config(config.generator) was used in the sidebar.');
                 break;
             default:
                 $this->error("The type must be 'static' or 'dynamic'.");

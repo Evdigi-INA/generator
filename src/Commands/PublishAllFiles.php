@@ -94,15 +94,37 @@ class PublishAllFiles extends Command
                 }
 
                 $this->info('Installing the simple version...');
-                $this->info('Please allow for some time, this process may take several times.');
+                $this->info('Please wait a bit, this process may take several minutes.');
+
+                // $this->info('Loading');
 
                 Artisan::call('vendor:publish --tag=generator-config-simple --force');
+
+                // $this->info('Loading.');
+
                 Artisan::call('vendor:publish --tag=generator-model-simple --force');
+
+                // $this->info('Loading..');
+
                 Artisan::call('vendor:publish --tag=generator-view-provider --force');
+
+                // $this->info('Loading...');
+
                 Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider" --force');
+
+                // $this->info('Loading....');
+
                 Artisan::call('vendor:publish --tag=datatables --force');
+
+                // $this->info('Loading.....');
+
                 Artisan::call('vendor:publish --tag=generator-utils --force');
+
+                // $this->info('Loading......');
+
                 Artisan::call('vendor:publish --tag=bootstrap-app-simple --force');
+
+                // $this->info('Loading......');
 
                 $this->info('Installed successfully.');
                 break;
@@ -183,28 +205,76 @@ class PublishAllFiles extends Command
     public function runPublishAll(): void
     {
         $this->info('Installing...');
-        $this->info('Please allow for some time, this process may take several times.');
+        $this->info('Please wait a bit, this process may take several minutes.');
+
+        // $this->info('Loading.');
 
         Artisan::call('vendor:publish --tag=generator-view --force');
+
+        // $this->info('Loading..');
+
         Artisan::call('vendor:publish --tag=generator-config --force');
+
+        // $this->info('Loading...');
+
         Artisan::call('vendor:publish --tag=generator-controller --force');
+
+        // $this->info('Loading....');
+
         Artisan::call('vendor:publish --tag=generator-request-user --force');
+
+        // $this->info('Loading.....');
+
         Artisan::call('vendor:publish --tag=generator-request-role --force');
+
+        // $this->info('Loading......');
+
         Artisan::call('vendor:publish --tag=generator-action --force');
+
+        // $this->info('Loading.......');
+
         // Artisan::call('vendor:publish --tag=generator-kernel --force');
         Artisan::call('vendor:publish --tag=generator-provider --force');
+
+        // $this->info('Loading........');
+
         Artisan::call('vendor:publish --tag=generator-migration --force');
+
+        // $this->info('Loading.........');
+
         Artisan::call('vendor:publish --tag=generator-seeder --force');
+
+        // $this->info('Loading..........');
+
         Artisan::call('vendor:publish --tag=generator-model --force');
+
+        // $this->info('Loading...........');
+
         Artisan::call('vendor:publish --tag=generator-assets --force');
+
+        // $this->info('Loading............');
+
         Artisan::call('vendor:publish --tag=generator-utils --force');
+
+        // $this->info('Loading.............');
+
         Artisan::call('vendor:publish --tag=datatables --force');
+
+        // $this->info('Loading..............');
+
         Artisan::call('vendor:publish --tag=bootstrap-app-full --force');
+
+        // $this->info('Loading...............');
+
         Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');
+
+        // $this->info('Loading................');
 
         $template = GeneratorUtils::getStub('route');
 
         File::append(base_path('routes/web.php'), $template);
+
+        // $this->info('Loading.................');
 
         $this->info('Installed successfully.');
     }

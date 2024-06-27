@@ -21,7 +21,7 @@
             maxLength.val('')
         }
 
-        console.log("column type: ", columType)
+        // console.log("column type: ", columType)
     }
 
     function removeAllInputHidden(index) {

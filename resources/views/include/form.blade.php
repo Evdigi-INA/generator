@@ -170,10 +170,10 @@
     </div>
     {{-- end of table fields --}}
 
-    <h6 class="mt-3">{{ __('Sidebar Menus') }}</h6>
+    <h6 class="mt-3 section-menu">{{ __('Sidebar Menus') }}</h6>
 
     {{-- sidebar menu --}}
-    <div class="col-md-6">
+    <div class="col-md-6 section-menu">
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
@@ -190,7 +190,7 @@
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-6 section-menu">
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group" id="input-menu">
@@ -205,5 +205,5 @@
     </div>
     {{-- end of sidebar menu --}}
 
-    <div id="col-new-menu" style="display: none;"></div>
+    <div id="col-new-menu" class="section-menu" style="display: none;"></div>
 </div>

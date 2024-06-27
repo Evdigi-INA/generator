@@ -441,6 +441,24 @@
         generateNo()
     })
 
+    $(document).on('click', '#generate-type-2', function () {
+        $('#select-header').removeAttr('required')
+        $('#new-header').removeAttr('required')
+        $('#input-new-menu').removeAttr('required')
+        $('#new-menu').removeAttr('required')
+        $('#new-icon').removeAttr('required')
+        $('.section-menu').hide()
+    })
+
+    $(document).on('click', '#generate-type-1', function () {
+        $('#select-header').attr('required')
+        $('#new-header').attr('required')
+        $('#input-new-menu').attr('required')
+        $('#new-menu').attr('required')
+        $('#new-icon').attr('required')
+        $('.section-menu').show()
+    })
+
     $('#form-generator').submit(function(e) {
         e.preventDefault()
 
@@ -489,14 +507,14 @@
             processData: false,
             contentType: false,
             success: function(response) {
-                console.log(response)
+                // console.log(response)
 
                 $('#validation-errors').hide()
 
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
-                    text: 'The module was generated successfully!'
+                    text: 'The new module was generated successfully!'
                 }).then(function() {
                     window.location = `/${response.route}`
                 })
@@ -609,7 +627,7 @@
                 type: 'GET',
                 url: `/generators/get-sidebar-menus/${indexHeader}`,
                 success: function(res) {
-                    console.log(res)
+                    // console.log(res)
 
                     let options = `
                         <option value="" disabled selected>-- {{ __('Select menu') }} --</option>
@@ -617,8 +635,7 @@
                     `
 
                     res.forEach((value, index) => {
-                        options +=
-                            `<option value='{"sidebar": ${indexHeader}, "menus": ${index}}'>${value.title}</option>`
+                        options += `<option value='{"sidebar": ${indexHeader}, "menus": ${index}}'>${value.title}</option>`
                     })
 
                     selectMenu.html(options)
@@ -681,9 +698,7 @@
             colNewMenu.html('')
 
             if ($('#model').val()) {
-                $('#helper-text-menu').html(`
-                Will generate a new submenu <b>${capitalizeFirstLetter(setModelName($('#model').val()))}</b> in <b>${$('#select-menu option:selected').text()}</b> menu.
-            `)
+                $('#helper-text-menu').html(`Will generate a new submenu <b>${capitalizeFirstLetter(setModelName($('#model').val()))}</b> in <b>${$('#select-menu option:selected').text()}</b> menu.`)
             }
         }
     })

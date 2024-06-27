@@ -45,10 +45,11 @@ class MenuGenerator
         ];
 
         $newMenu = $this->setNewMenu(
-            title: GeneratorUtils::cleanPluralUcWords($model),
+            title: GeneratorUtils::cleanPluralUcWords($request['new_menu'] ?? $model),
             icon: $request['new_icon'],
             route: '/' . GeneratorUtils::pluralKebabCase($model),
-            submenu: isset($request['new_submenu']) ? $request['new_submenu'] : null
+            submenu: isset($request['new_submenu']) ? $request['new_submenu'] : null,
+            model: $model
         );
 
         // push new menu to new config sidebar.menu
@@ -72,10 +73,11 @@ class MenuGenerator
 
         // push new menu
         $configSidebar[$request['header']]['menus'][] = $this->setNewMenu(
-            title: GeneratorUtils::cleanPluralUcWords($model),
+            title: GeneratorUtils::cleanPluralUcWords($request['new_menu'] ?? $model),
             icon: $request['new_icon'],
             route: '/' . GeneratorUtils::pluralKebabCase($model),
-            submenu: $request['new_submenu'] ?? null
+            submenu: $request['new_submenu'] ?? null,
+            model: $model
         );
 
         $stringCode = $this->convertJsonToArrayString($configSidebar);
@@ -104,14 +106,14 @@ class MenuGenerator
         if ($configSidebar[$indexSidebar]['menus'][$indexMenu]['submenus'] == []) {
             $configSidebar[$indexSidebar]['menus'][$indexMenu]['submenus'][] = [
                 'title' => $configSidebar[$indexSidebar]['menus'][$indexMenu]['title'],
-                'route' => $configSidebar[$indexSidebar]['menus'][$indexMenu]['route'],
-                'permission' => $configSidebar[$indexSidebar]['menus'][$indexMenu]['permission'],
+                'route' => '/' . GeneratorUtils::pluralKebabCase($model),
+                'permission' => [GeneratorUtils::cleanSingularLowerCase($model) . ' view'],
             ];
 
             /**
              * Push to permissions on menus
              */
-            $configSidebar[$indexSidebar]['menus'][$indexMenu]['permissions'][] = $configSidebar[$indexSidebar]['menus'][$indexMenu]['permission'] . "', '" . $newPermission;
+            $configSidebar[$indexSidebar]['menus'][$indexMenu]['permissions'][] = [GeneratorUtils::cleanSingularLowerCase($model) . ' view'] . "', '" . $newPermission;
 
             $configSidebar[$indexSidebar]['menus'][$indexMenu]['route'] = null;
             $configSidebar[$indexSidebar]['menus'][$indexMenu]['permission'] = null;
@@ -140,10 +142,10 @@ class MenuGenerator
     {
         $stringConfig = str(file_get_contents(config_path('generator.php')));
 
-        if(str_contains($stringConfig, "'sidebars' => ")){
+        if (str_contains($stringConfig, "'sidebars' => ")) {
             $search = "'sidebars' => ";
             $stringConfigCode = $stringConfig->before($search);
-        }else{
+        } else {
             $search = '"sidebars" => ';
             $stringConfigCode = $stringConfig->before($search);
         }
@@ -156,7 +158,7 @@ class MenuGenerator
     /**
      * Set new menu and check if request submenu exist or not, if exist push submenu to menu.
      */
-    protected function setNewMenu(string $title, string $icon, string $route, string|null $submenu = null): array
+    protected function setNewMenu(string $title, string $icon, string $route, string|null $submenu = null, string $model): array
     {
         if (isset($submenu)) {
             $newMenu = [
@@ -164,12 +166,12 @@ class MenuGenerator
                 'icon' => $icon,
                 'route' => null,
                 'permission' => null,
-                'permissions' => [GeneratorUtils::cleanSingularLowerCase($submenu) . ' view'],
+                'permissions' => [GeneratorUtils::cleanSingularLowerCase($model) . ' view'],
                 'submenus' => [
                     [
-                        'title' =>  GeneratorUtils::cleanPluralUcWords($submenu),
-                        'route' => '/' . str(GeneratorUtils::pluralKebabCase($submenu))->remove('/'),
-                        'permission' => GeneratorUtils::cleanSingularLowerCase($submenu) . ' view',
+                        'title' => GeneratorUtils::cleanPluralUcWords($submenu),
+                        'route' => '/' . str(GeneratorUtils::pluralKebabCase($model))->remove('/'),
+                        'permission' => GeneratorUtils::cleanSingularLowerCase($model) . ' view',
                     ]
                 ]
             ];
@@ -180,7 +182,7 @@ class MenuGenerator
                 'route' => '/' . str(GeneratorUtils::pluralKebabCase($route))->remove('/'),
                 'permission' => GeneratorUtils::cleanSingularLowerCase($title) . ' view',
                 'permissions' => [],
-                'submenus' =>  []
+                'submenus' => []
             ];
         }
 

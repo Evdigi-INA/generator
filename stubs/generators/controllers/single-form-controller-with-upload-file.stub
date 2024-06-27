@@ -5,6 +5,8 @@ use {{modelPath}};
 use {{requestPath}};
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 use App\Generators\Services\ImageService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
 {
@@ -29,7 +31,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     /**
      * Show the form for creating or updating a resource.
      */
-    public function index(): \Illuminate\Contracts\View\View
+    public function index(): View
     {
         ${{modelNameSingularCamelCase}} = {{query}}->first();
 
@@ -39,7 +41,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     /**
      * Store or update resource in storage.
      */
-    public function store(Store{{modelNameSingularPascalCase}}Request $request): \Illuminate\Http\RedirectResponse
+    public function store(Store{{modelNameSingularPascalCase}}Request $request): RedirectResponse
     {
         ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::query()->first();
 

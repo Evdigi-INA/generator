@@ -3,7 +3,9 @@
 {{namespace}}
 use {{modelPath}};
 use {{requestPath}};
+use Illuminate\Contracts\View\View;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Http\{JsonResponse, RedirectResponse};
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 
 class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
@@ -27,7 +29,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     /**
      * Display a listing of the resource.
      */
-    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             ${{modelNamePluralCamelCase}} = {{query}};
@@ -43,7 +45,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Illuminate\Contracts\View\View
+    public function create(): View
     {
         return view('{{viewPath}}{{modelNamePluralKebabCase}}.create');
     }
@@ -51,7 +53,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Store{{modelNameSingularPascalCase}}Request $request): \Illuminate\Http\RedirectResponse
+    public function store(Store{{modelNameSingularPascalCase}}Request $request): RedirectResponse
     {
         {{passwordFieldStore}}{{inputMonths}}
         {{insertDataAction}}
@@ -62,7 +64,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     /**
      * Display the specified resource.
      */
-    public function show({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Contracts\View\View
+    public function show({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): View
     {
         {{loadRelation}}return view('{{viewPath}}{{modelNamePluralKebabCase}}.show', compact('{{modelNameSingularCamelCase}}'));
     }
@@ -70,7 +72,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Contracts\View\View
+    public function edit({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): View
     {
         {{loadRelation}}return view('{{viewPath}}{{modelNamePluralKebabCase}}.edit', compact('{{modelNameSingularCamelCase}}'));
     }
@@ -78,7 +80,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     /**
      * Update the specified resource in storage.
      */
-    public function update(Update{{modelNameSingularPascalCase}}Request $request, {{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Http\RedirectResponse
+    public function update(Update{{modelNameSingularPascalCase}}Request $request, {{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): RedirectResponse
     {
         {{passwordFieldUpdate}}{{inputMonths}}
         {{updateDataAction}}
@@ -89,7 +91,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Http\RedirectResponse
+    public function destroy({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): RedirectResponse
     {
         try {
             ${{modelNameSingularCamelCase}}->delete();
