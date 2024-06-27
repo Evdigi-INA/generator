@@ -36,6 +36,16 @@
         <section class="section">
             <x-alert />
 
+            {{-- <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <h6 class="alert-heading">{{ __('Info') }}</h6>
+                <p>
+                    <a href="https://zzzul.github.io/generator-docs-next/usage#creating-api-crud" target="_blank">
+                        {{ __('Please consider to read about new Laravel 11 API') }}
+                    </a>
+                </p>
+            </div> --}}
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
