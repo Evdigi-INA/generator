@@ -3,9 +3,9 @@
             <div class="row">
                 <div class="col-md-5 text-center">
                     @if ({{defaultImageCodeForm}})
-                        <img src="{{defaultImage}}" alt="{{fieldUcWords}}" class="rounded mb-2 mt-2" alt="{{fieldUcWords}}" width="200" height="150" style="object-fit: cover">
+                        <img src="{{defaultImage}}" alt="{{fieldUcWords}}" class="rounded mb-2 mt-2 img-fluid" alt="{{fieldUcWords}}">
                     @else
-                        <img src="{{ {{setDiskForCastImage}} }}" alt="{{fieldUcWords}}" class="rounded mb-2 mt-2" width="200" height="150" style="object-fit: cover">
+                        <img src="{{ {{setDiskForCastImage}} }}" alt="{{fieldUcWords}}" class="rounded mb-2 mt-2 img-fluid">
                     @endif
                 </div>
 

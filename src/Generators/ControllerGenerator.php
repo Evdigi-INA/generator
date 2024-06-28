@@ -275,10 +275,10 @@ class ControllerGenerator
                         $assignUploadPaths .= "\$this->" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path = " . GeneratorUtils::setDiskCodeForController($request['fields'][$i]) . ";\n\t\t";
 
                         //  Generated code: $image = $generator->image;
-                        $assignImageDelete .= "$" . str($request['fields'][$i])->snake() . " = $" . GeneratorUtils::singularCamelCase($model) . "->" . str($request['fields'][$i])->snake() . ";\n\t\t\t";
+                        $assignImageDelete .= "$" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . " = $" . GeneratorUtils::singularCamelCase($model) . "->" . str($request['fields'][$i])->snake() . ";\n\t\t\t";
 
                         //  Generated code: $this->imageService->delete($this->imagePath . $image);
-                        $deleteImageCodes .= "\$this->imageService->delete(image: \$this->" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path . $" . str($request['fields'][$i])->snake() . (config('generator.image.disk') == 's3' ? ", disk: 's3'" : '') . ");\n\t\t\t";
+                        $deleteImageCodes .= "\$this->imageService->delete(image: \$this->" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path . $" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . (config('generator.image.disk') == 's3' ? ", disk: 's3'" : '') . ");\n\t\t\t";
 
                         // $castImageDataTable .= GeneratorUtils::setDiskCodeForCastImage($model, $request['fields'][$i]);
 
@@ -564,7 +564,7 @@ class ControllerGenerator
             is_int(config('generator.image.height')) ? config('generator.image.height') : 500,
             config('generator.image.aspect_ratio') ? "\n\t\t\t\t\$constraint->aspectRatio();" : '',
             $default['index_code'],
-            str($field)->snake(),
+            GeneratorUtils::singularCamelCase($field),
             "$" . GeneratorUtils::singularCamelCase($model) . "?->" . str($field)->snake(),
             GeneratorUtils::singularCamelCase($field),
             GeneratorUtils::singularCamelCase($model),
