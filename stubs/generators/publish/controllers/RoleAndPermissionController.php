@@ -6,6 +6,9 @@ use App\Http\Requests\Roles\{StoreRoleRequest, UpdateRoleRequest};
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 
 class RoleAndPermissionController extends Controller implements HasMiddleware
 {
@@ -27,19 +30,15 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
+    public function index():  View|JsonResponse
     {
         if (request()->ajax()) {
             $users = Role::query();
 
             return DataTables::of($users)
                 ->addIndexColumn()
-                ->addColumn('created_at', function ($row) {
-                    return $row->created_at->format('Y-m-d H:i:s');
-                })
-                ->addColumn('updated_at', function ($row) {
-                    return $row->updated_at->format('Y-m-d H:i:s');
-                })
+                ->addColumn('created_at', fn($row) => $row->created_at->format('Y-m-d H:i:s'))
+                ->addColumn('updated_at',fn($row) => $row->updated_at->format('Y-m-d H:i:s'))
                 ->addColumn('action', 'roles.include.action')
                 ->toJson();
         }
@@ -50,7 +49,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Illuminate\Contracts\View\View
+    public function create(): View
     {
         return view('roles.create');
     }
@@ -58,10 +57,9 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreRoleRequest $request): \Illuminate\Http\RedirectResponse
+    public function store(StoreRoleRequest $request): RedirectResponse
     {
         $role = Role::create(['name' => $request->name]);
-
         $role->givePermissionTo($request->permissions);
 
         return to_route('roles.index')->with('success', __('The role was created successfully.'));
@@ -70,7 +68,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(int $id): \Illuminate\Contracts\View\View
+    public function show(int $id): View
     {
         $role = Role::with('permissions')->findOrFail($id);
 
@@ -80,7 +78,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $id): \Illuminate\Contracts\View\View
+    public function edit(int $id): View
     {
         $role = Role::with('permissions')->findOrFail($id);
 
@@ -90,12 +88,10 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRoleRequest $request, string $id): \Illuminate\Http\RedirectResponse
+    public function update(UpdateRoleRequest $request, string $id): RedirectResponse
     {
         $role = Role::findOrFail($id);
-
         $role->update(['name' => $request->name]);
-
         $role->syncPermissions($request->permissions);
 
         return to_route('roles.index')->with('success', __('The role was updated successfully.'));
@@ -104,7 +100,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): \Illuminate\Http\RedirectResponse
+    public function destroy(string $id): RedirectResponse
     {
         $role = Role::withCount('users')->findOrFail($id);
 

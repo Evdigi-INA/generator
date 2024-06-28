@@ -9,6 +9,9 @@ use App\Generators\Services\ImageService;
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 use App\Http\Requests\Users\{StoreUserRequest, UpdateUserRequest};
 use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 
 class UserController extends Controller implements HasMiddleware
 {
@@ -33,16 +36,14 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Display a listing of the resource.
      */
-    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             $users = User::with('roles:id,name');
 
             return Datatables::of($users)
                 ->addColumn('action', 'users.include.action')
-                ->addColumn('role', function ($row) {
-                    return $row->getRoleNames()->toArray() !== [] ? $row->getRoleNames()[0] : '-';
-                })
+                ->addColumn('role', fn($row) => $row->getRoleNames()->toArray() !== [] ? $row->getRoleNames()[0] : '-')
                 ->addColumn('avatar', function ($row) {
                     if ($row->avatar == null) {
                         return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($row->email))) . '&s=500';
@@ -58,7 +59,7 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Illuminate\Contracts\View\View
+    public function create(): View
     {
         return view('users.create');
     }
@@ -66,13 +67,11 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request): \Illuminate\Http\RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse
     {
         return DB::transaction(function () use ($request) {
             $validated = $request->validated();
-
             $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath);
-
             $validated['password'] = bcrypt($request->password);
 
             $user = User::create($validated);
@@ -88,7 +87,7 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(User $user): \Illuminate\Contracts\View\View
+    public function show(User $user): View
     {
         $user->load('roles:id,name');
 
@@ -98,7 +97,7 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user): \Illuminate\Contracts\View\View
+    public function edit(User $user): View
     {
         $user->load('roles:id,name');
 
@@ -108,20 +107,16 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $user): \Illuminate\Http\RedirectResponse
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
         return DB::transaction(function () use ($request, $user) {
             $validated = $request->validated();
-
             $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user->avatar);
 
-            switch (is_null($request->password)) {
-                case true:
-                    unset($validated['password']);
-                    break;
-                default:
-                    $validated['password'] = bcrypt($request->password);
-                    break;
+            if (is_null($request->password)) {
+                unset($validated['password']);
+            } else {
+                $validated['password'] = bcrypt($request->password);
             }
 
             $user->update($validated);
@@ -137,7 +132,7 @@ class UserController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user): \Illuminate\Http\RedirectResponse
+    public function destroy(User $user): RedirectResponse
     {
         if ($user->avatar != null && file_exists($oldAvatar = public_path($this->avatarPath . $user->avatar))) {
             unlink($oldAvatar);

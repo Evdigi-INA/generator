@@ -2,12 +2,12 @@
 
 namespace App\Actions\Fortify;
 
+use App\Generators\Services\ImageService;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
-use Image;
 
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
@@ -37,21 +37,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 
         if (isset($input['avatar']) && $input['avatar']->isValid()) {
 
-            $filename = $input['avatar']->hashName();
-
-            if (!file_exists($path = public_path($this->avatarPath))) {
-                mkdir($path, 0777, true);
-            }
-
-            Image::make($input['avatar']->getRealPath())->resize(500, 500, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->save(public_path($this->avatarPath) . $filename);
-
-            // delete old avatar from storage
-            if ($user->avatar != null && file_exists(public_path($this->avatarPath . $user->avatar))) {
-                unlink(public_path($this->avatarPath . $user->avatar));
-            }
+            $filename = (new ImageService)->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user->avatar);
 
             $user->forceFill([
                 'avatar' => $filename,
