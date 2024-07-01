@@ -14,11 +14,11 @@ class GeneratorTest extends TestCase
         parent::setUp();
 
         $this->afterApplicationCreated(function () {
-            file_put_contents(__DIR__ . '/../generator.cache', '{"simple_version_publish_count":0,"full_version_publish_count":2}');
+            file_put_contents(storage_path('generator.cache'), '{"simple_version_publish_count":0,"full_version_publish_count":2}');
         });
 
         $this->beforeApplicationDestroyed(function () {
-            file_put_contents(__DIR__ . '/../generator.cache', '{"simple_version_publish_count":0,"full_version_publish_count":2}');
+            file_put_contents(storage_path('generator.cache'), '{"simple_version_publish_count":0,"full_version_publish_count":2}');
         });
     }
 
