@@ -40,7 +40,9 @@ class GeneratorService implements GeneratorServiceInterface
             abort(Response::HTTP_FORBIDDEN, 'You have not yet installed the API, to use this feature, you must be running the artisan command: "php artisan install:api".');
         }
 
-        if (empty($request['is_simple_generator'])) (new PermissionGenerator)->generate($request);
+        if (empty($request['is_simple_generator'])) {
+            (new PermissionGenerator)->generate($request);
+        }
 
         (new ModelGenerator)->generate($request);
         (new MigrationGenerator)->generate($request);
@@ -48,33 +50,45 @@ class GeneratorService implements GeneratorServiceInterface
         (new RequestGenerator)->generate($request);
 
         // blade template
-        if (isset($request['generate_variant']) || $request['generate_variant'] != 'api') {
+        if (isset($request['generate_variant']) || $request['generate_variant'] !== 'api') {
             // for single form
             (new CreateViewGenerator)->generate($request);
             (new FormViewGenerator)->generate($request);
 
             // for full CRUD
-            if ($request['generate_variant'] == GeneratorVariant::DEFAULT->value) {
+            if ($request['generate_variant'] === GeneratorVariant::DEFAULT->value) {
                 (new IndexViewGenerator)->generate($request);
                 (new ShowViewGenerator)->generate($request);
                 (new EditViewGenerator)->generate($request);
                 (new ActionViewGenerator)->generate($request);
             }
 
-            if (empty($request['is_simple_generator']) && !GeneratorUtils::isGenerateApi()) (new MenuGenerator)->generate($request);
+            if (empty($request['is_simple_generator']) && !GeneratorUtils::isGenerateApi()) {
+                (new MenuGenerator)->generate($request);
+            }
 
-            if (in_array('foreignId', $request['column_types'])) (new ViewComposerGenerator)->generate($request);
+            if (in_array('foreignId', $request['column_types'], true)) {
+                (new ViewComposerGenerator)->generate($request);
+            }
         }
 
         (new RouteGenerator)->generate($request);
 
-        if (isset($request['generate_seeder']) && $request['generate_seeder'] != null) (new SeederGenerator)->generate($request);
+        if (isset($request['generate_seeder'])) {
+            (new SeederGenerator)->generate($request);
+        }
 
-        if (isset($request['generate_factory']) && $request['generate_factory'] != null) (new FactoryGenerator)->generate($request);
+        if (isset($request['generate_factory'])) {
+            (new FactoryGenerator)->generate($request);
+        }
 
-        if (GeneratorUtils::isGenerateApi()) (new ResourceApiGenerator)->generate($request);
+        if (GeneratorUtils::isGenerateApi()) {
+            (new ResourceApiGenerator)->generate($request);
+        }
 
-        if (empty($request['generate_variant']) && $request['generate_variant'] != 'api' || empty($request['is_simple_generator'])) $this->checkSidebarType();
+        if ((empty($request['generate_variant']) && $request['generate_variant'] !== 'api') || empty($request['is_simple_generator'])) {
+            $this->checkSidebarType();
+        }
 
         Artisan::call('migrate');
     }
@@ -107,7 +121,9 @@ class GeneratorService implements GeneratorServiceInterface
         $sidebar = file_get_contents(resource_path('views/layouts/sidebar.blade.php'));
 
         /** if the sidebar is static, then must be regenerated to update new menus */
-        if (!str($sidebar)->contains("\$permissions = empty(\$menu['permission'])")) Artisan::call('generator:sidebar dynamic');
+        if (!str($sidebar)->contains("\$permissions = empty(\$menu['permission'])")) {
+            Artisan::call('generator:sidebar dynamic');
+        }
     }
 
     /**

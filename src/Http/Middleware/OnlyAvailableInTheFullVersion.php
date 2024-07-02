@@ -10,6 +10,7 @@ class OnlyAvailableInTheFullVersion
 {
     /**
      * Handle an incoming request.
+     * @throws \JsonException
      */
     public function handle(Request $request, Closure $next): mixed
     {
@@ -24,9 +25,9 @@ class OnlyAvailableInTheFullVersion
 
         $cache = file_get_contents($dir);
 
-        $selectedVersion = collect(json_decode($cache))->toArray();
+        $selectedVersion = collect(json_decode($cache, false, 512, JSON_THROW_ON_ERROR))->toArray();
 
-        if ($selectedVersion['full_version_publish_count'] == null || $selectedVersion['full_version_publish_count'] < 1) {
+        if ($selectedVersion['full_version_publish_count'] === null || $selectedVersion['full_version_publish_count'] < 1) {
             abort(Response::HTTP_FORBIDDEN, 'You are using the simple version, to use this feature, you must be running the artisan command: "php artisan generator:install full", and then you can use the full version.');
         }
 

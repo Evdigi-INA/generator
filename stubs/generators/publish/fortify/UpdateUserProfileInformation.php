@@ -11,12 +11,17 @@ use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
 
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
-    /**
-     * Path for user avatar file.
-     *
-     * @var string
-     */
-    protected $avatarPath = '/uploads/images/avatars/';
+    public function __construct(public string $avatarPath = '')
+    {
+        // storage
+        $this->avatarPath = storage_path('app/public/uploads/avatars/');
+
+        // public
+        // $this->avatarPath = public_path('uploads/avatars/');
+
+        // s3
+        // $this->avatarPath = '/avatars/';
+    }
 
     /**
      * Validate and update the given user's profile information.
@@ -39,9 +44,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 
             $filename = (new ImageService)->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user->avatar);
 
-            $user->forceFill([
-                'avatar' => $filename,
-            ])->save();
+            $user->forceFill(['avatar' => $filename])->save();
         }
 
         if ($input['email'] !== $user->email && $user instanceof MustVerifyEmail) {

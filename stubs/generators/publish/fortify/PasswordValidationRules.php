@@ -12,16 +12,24 @@ trait PasswordValidationRules
      */
     protected function passwordRules(): array
     {
+        if(strtolower(env('APP_ENV')) === 'production') {
+            return [
+                'required',
+                'string',
+                'confirmed',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised()
+            ];
+        }
+
         return [
             'required',
             'string',
             'confirmed',
-            Password::min(8)
-                ->letters()
-                ->mixedCase()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()
         ];
     }
 }
