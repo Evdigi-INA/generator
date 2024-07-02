@@ -117,9 +117,13 @@ class GeneratorService implements GeneratorServiceInterface
     {
         $bootstrapApp = file_get_contents(base_path("/bootstrap/app.php"));
 
-        $checkApiRoute = (bool) str_contains($bootstrapApp, "api") || str_contains($bootstrapApp, "api.php") || str_contains($bootstrapApp, "api:");
+        $checkApiRoute = (bool) str_contains($bootstrapApp, "api") && str_contains($bootstrapApp, "api.php") && str_contains($bootstrapApp, "api:");
 
-        return $checkApiRoute || file_exists(base_path("/routes/api.php")) || class_exists(\Laravel\Sanctum\HasApiTokens::class);
+        $composerJson = file_get_contents(base_path("/composer.json"));
+
+        $checkLaravelSanctum = str_contains($composerJson, "sanctum");
+
+        return $checkApiRoute && file_exists(base_path("/routes/api.php")) && $checkLaravelSanctum;
     }
 
     /**
