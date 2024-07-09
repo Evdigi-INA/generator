@@ -42,6 +42,6 @@ class PublishApiCommand extends Command
 
         File::append(base_path('routes/api.php'), $template);
 
-        $this->info('Publish api files successfully.');
+        $this->info('Published api files successfully.');
     }
 }

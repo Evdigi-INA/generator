@@ -15,9 +15,10 @@ use Illuminate\Http\RedirectResponse;
 
 class UserController extends Controller implements HasMiddleware
 {
-    public function __construct(public ImageService $imageService, public string $avatarPath = '/uploads/images/avatars/')
+    public function __construct(public ImageService $imageService, public string $avatarPath = '')
     {
-        //
+        $this->avatarPath = storage_path('app/public/uploads/avatars/');
+
     }
 
     /**
@@ -44,11 +45,12 @@ class UserController extends Controller implements HasMiddleware
             return Datatables::of($users)
                 ->addColumn('action', 'users.include.action')
                 ->addColumn('role', fn($row) => $row->getRoleNames()->toArray() !== [] ? $row->getRoleNames()[0] : '-')
-                ->addColumn('avatar', function ($row) {
-                    if ($row->avatar == null) {
-                        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($row->email))) . '&s=500';
+                ->addColumn('avatar', function ($user) {
+                    if (!$user->avatar) {
+                        return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
                     }
-                    return asset($this->avatarPath . $row->avatar);
+
+                    return asset('storage/uploads/avatars/' . $user->avatar);
                 })
                 ->toJson();
         }
@@ -111,7 +113,7 @@ class UserController extends Controller implements HasMiddleware
     {
         return DB::transaction(function () use ($request, $user) {
             $validated = $request->validated();
-            $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user->avatar);
+            $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user?->avatar);
 
             if (is_null($request->password)) {
                 unset($validated['password']);
@@ -134,12 +136,16 @@ class UserController extends Controller implements HasMiddleware
      */
     public function destroy(User $user): RedirectResponse
     {
-        if ($user->avatar != null && file_exists($oldAvatar = public_path($this->avatarPath . $user->avatar))) {
-            unlink($oldAvatar);
+        try {
+            $avatar = $user->avatar;
+
+            $user->delete();
+
+            $this->imageService->delete(image: $this->avatarPath . $avatar);
+
+            return to_route('users.index')->with('success', __('The user was deleted successfully.'));
+        } catch (\Exception $e) {
+            return to_route('users.index')->with('error', __("The user can't be deleted because it's related to another table."));
         }
-
-        $user->delete();
-
-        return to_route('users.index')->with('success', __('The user was deleted successfully.'));
     }
 }

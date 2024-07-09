@@ -29,7 +29,7 @@ class AuthController extends Controller
             'message' => 'Successfully logged in',
             'token' => $token,
             'user' => $user,
-        ]);
+        ], Response::HTTP_OK);
     }
 
     public function register(RegisterRequest $request): JsonResponse
@@ -48,14 +48,14 @@ class AuthController extends Controller
             'message' => 'Successfully registered',
             'token' => $token,
             'user' => $user,
-        ]);
+        ], Response::HTTP_OK);
     }
 
     public function logout(): JsonResponse
     {
         auth()->user()->tokens()->delete();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Successfully logged out'], Response::HTTP_OK);
     }
 
     public function me(): JsonResponse

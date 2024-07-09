@@ -12,15 +12,20 @@ class ImageService implements ImageServiceInterface
      */
     public function upload(string $name, string $path, ?string $defaultImage = null, ?string $disk = null, int $width = 500, int $height = 500, ?bool $crop = null, ?bool $aspectRatio = null, ?bool $isCustomUpload = false): ?string
     {
-        $crop = $crop ?? config('generator.image.crop') ?? true;
-        $aspectRatio = $aspectRatio ?? config('generator.image.aspect_ratio') ?? true;
-        $disk = $disk ?? config('generator.image.disk') ?? 'storage';
-
         $file = request()->file($name);
 
         if ($file && $file->isValid()) {
             if (!$isCustomUpload) {
-                return $this->handleFileUpload(file: $file, path: $path, defaultImage: $defaultImage, disk: $disk, width: $width, height: $height, crop: $crop, aspectRatio: $aspectRatio);
+                return $this->handleFileUpload([
+                    'file' => $file,
+                    'path' => $path,
+                    'default_image' => $defaultImage,
+                    'disk' => $disk ?? config('generator.image.disk') ?? 'storage',
+                    'width' => $width,
+                    'height' => $height,
+                    'crop' => $crop ?? config('generator.image.crop') ?? true,
+                    'aspect_ratio' => $aspectRatio ?? config('generator.image.aspect_ratio') ?? true,
+                ]);
             } else {
                 // TODO: implement custom upload
             }
@@ -32,20 +37,20 @@ class ImageService implements ImageServiceInterface
     /**
      * Handle the file upload process.
      */
-    private function handleFileUpload(mixed $file, string $path, ?string $defaultImage, string $disk, int $width, int $height, bool $crop, bool $aspectRatio): string
+    private function handleFileUpload(array $options): string
     {
-        $filename = $this->generateFilename($file);
+        $filename = $this->generateFilename($options['file']);
 
-        $image = $this->processImage(file: $file, width: $width, height: $height, crop: $crop, aspectRatio: $aspectRatio);
+        $image = $this->processImage($options);
 
-        if ($disk === 's3') {
-            Storage::disk('s3')->put($path . '/' . $filename, (string) $image, 'public');
+        if ($options['disk'] === 's3') {
+            Storage::disk('s3')->put($options['path'] . '/' . $filename, (string) $image, 'public');
         } else {
-            $this->saveToLocal(image: $image, path: $path, filename: $filename);
+            $this->saveToLocal(image: $image, path: $options['path'], filename: $filename);
         }
 
-        if ($defaultImage) {
-            $this->delete(image: $path . $defaultImage, disk: $disk);
+        if ($options['default_image']) {
+            $this->delete(image: $options['path'] . $options['default_image'], disk: $options['disk']);
         }
 
         return $filename;
@@ -66,13 +71,13 @@ class ImageService implements ImageServiceInterface
     /**
      * Process the image using the appropriate version of the Intervention/Image library.
      */
-    private function processImage(mixed $file, int $width, int $height, bool $crop, bool $aspectRatio): mixed
+    private function processImage(array $options): mixed
     {
         if (class_exists(\Intervention\Image\Facades\Image::class)) { // v2
-            return \Intervention\Image\Facades\Image::make($file)
-                ->resize($width, $height, function ($constraint) use ($crop, $aspectRatio) {
-                    if ($crop) {
-                        if ($aspectRatio) {
+            return \Intervention\Image\Facades\Image::make($options['file'])
+                ->resize($options['width'], $options['height'], function ($constraint) use ($options) {
+                    if ($options['crop']) {
+                        if ($options['aspect_ratio']) {
                             $constraint->aspectRatio();
                         }
                         $constraint->upsize();
@@ -82,15 +87,15 @@ class ImageService implements ImageServiceInterface
         }
 
         if (class_exists(\Intervention\Image\Laravel\Facades\Image::class)) { // v3
-            $imageInstance = \Intervention\Image\Laravel\Facades\Image::read($file);
+            $imageInstance = \Intervention\Image\Laravel\Facades\Image::read($options['file']);
             $encode = new \Intervention\Image\Encoders\WebpEncoder(65);
 
-            if ($crop) {
-                if ($aspectRatio) {
-                    return $imageInstance->scaleDown(width: $width, height: $height)->encode($encode);
+            if ($options['crop']) {
+                if ($options['aspect_ratio']) {
+                    return $imageInstance->scaleDown(width: $options['width'], height: $options['height'])->encode($encode);
                 }
 
-                return $imageInstance->resizeDown(width: $width, height: $height)->encode($encode);
+                return $imageInstance->resizeDown(width: $options['width'], height: $options['height'])->encode($encode);
             }
 
             return $imageInstance->encode($encode);
@@ -108,11 +113,7 @@ class ImageService implements ImageServiceInterface
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $path));
         }
 
-        if (class_exists(\Intervention\Image\Facades\Image::class)) { // v2
-            $image->save($path . $filename);
-        } elseif (class_exists(\Intervention\Image\Laravel\Facades\Image::class)) { // v3
-            $image->save($path . $filename);
-        }
+        $image->save($path . $filename);
     }
 
     /**

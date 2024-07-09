@@ -95,7 +95,7 @@ class FormViewGenerator
                                         $fieldUcWords,
                                         $fieldSnakeCase,
                                         $options,
-                                        $request['requireds'][$i] == 'yes' ? ' required' : '',
+                                        $request['requireds'][$i] === 'yes' ? ' required' : '',
                                         "{{ isset($" . $modelNameSingularCamelCase . ") && $" . $modelNameSingularCamelCase . "?->" . $fieldSnakeCase . " ? $" . $modelNameSingularCamelCase . "?->" . $fieldSnakeCase . " : old('" . $fieldSnakeCase . "') }}"
                                     ],
                                     GeneratorUtils::getStub('views/forms/datalist')
@@ -121,7 +121,7 @@ class FormViewGenerator
                                             $value,
                                             GeneratorUtils::cleanSingularLowerCase($value),
                                             "{{ isset($" . $modelNameSingularCamelCase . ") && $" . $modelNameSingularCamelCase . "?->$field == '$value' ? 'checked' : (old('$field') == '$value' ? 'checked' : '') }}",
-                                            $request['requireds'][$i] == 'yes' ? ' required' : '',
+                                            $request['requireds'][$i] === 'yes' ? ' required' : '',
                                         ],
                                         GeneratorUtils::getStub('views/forms/radio')
                                     );
@@ -167,7 +167,7 @@ class FormViewGenerator
                                         GeneratorUtils::cleanSingularUcWords($constrainModel),
                                         GeneratorUtils::singularCamelCase($field),
                                         $options,
-                                        $request['requireds'][$i] == 'yes' ? ' required' : '',
+                                        $request['requireds'][$i] === 'yes' ? ' required' : '',
                                         "{{ isset($" . $modelNameSingularCamelCase . ") && $" . $modelNameSingularCamelCase . "?->" . $fieldSnakeCase . " ? $" . $modelNameSingularCamelCase . "?->" . $fieldSnakeCase . " : old('" . $fieldSnakeCase . "') }}"
                                     ],
                                     GeneratorUtils::getStub('views/forms/datalist')
@@ -189,7 +189,7 @@ class FormViewGenerator
                                         GeneratorUtils::cleanSingularUcWords($constrainModel),
                                         GeneratorUtils::cleanSingularLowerCase($constrainModel),
                                         $options,
-                                        $request['requireds'][$i] == 'yes' ? ' required' : '',
+                                        $request['requireds'][$i] === 'yes' ? ' required' : '',
                                         $fieldSnakeCase
                                     ],
                                     GeneratorUtils::getStub('views/forms/select')
@@ -214,58 +214,54 @@ class FormViewGenerator
                          * </select>
                          */
                         $options = "
-                        @foreach (range($firstYear, strftime(\"%Y\", time())) as \$year)
+                        @foreach (range($firstYear, hrtime(\"%Y\", time())) as \$year)
                             <option value=\"{{ \$year }}\" {{ isset($$modelNameSingularCamelCase) && $" . $modelNameSingularCamelCase . "?->$fieldSnakeCase == \$year ? 'selected' : (old('$fieldSnakeCase') == \$year ? 'selected' : '') }}>
                                 {{ \$year }}
                             </option>
                         @endforeach";
 
-                        switch ($request['input_types'][$i]) {
-                            case 'datalist':
-                                $template .= str_replace(
-                                    [
-                                        '{{fieldKebabCase}}',
-                                        '{{fieldCamelCase}}',
-                                        '{{fieldUcWords}}',
-                                        '{{fieldSnakeCase}}',
-                                        '{{options}}',
-                                        '{{nullable}}',
-                                        '{{value}}',
-                                    ],
-                                    [
-                                        GeneratorUtils::singularKebabCase($field),
-                                        GeneratorUtils::singularCamelCase($field),
-                                        $fieldUcWords,
-                                        $fieldSnakeCase,
-                                        $options,
-                                        $request['requireds'][$i] == 'yes' ? ' required' : '',
-                                        "{{ isset($" . $modelNameSingularCamelCase . ") && $" . $modelNameSingularCamelCase . "?->" . $fieldSnakeCase . " ? $" . $modelNameSingularCamelCase . "?->" . $fieldSnakeCase . " : old('" . $fieldSnakeCase . "') }}"
-                                    ],
-                                    GeneratorUtils::getStub('views/forms/datalist')
-                                );
-                                break;
-                            default:
-                                $template .= str_replace(
-                                    [
-                                        '{{fieldUcWords}}',
-                                        '{{fieldKebabCase}}',
-                                        '{{fieldSnakeCase}}',
-                                        '{{fieldSpaceLowercase}}',
-                                        '{{options}}',
-                                        '{{nullable}}'
-                                    ],
-                                    [
-                                        GeneratorUtils::cleanUcWords($field),
-                                        GeneratorUtils::kebabCase($field),
-                                        $fieldSnakeCase,
-                                        GeneratorUtils::cleanLowerCase($field),
-                                        $options,
-                                        $request['requireds'][$i] == 'yes' ? ' required' : '',
-                                    ],
-                                    GeneratorUtils::getStub('views/forms/select')
-                                );
-                                break;
-                        }
+                        $template .= match ($request['input_types'][$i]) {
+                            'datalist' => str_replace(
+                                [
+                                    '{{fieldKebabCase}}',
+                                    '{{fieldCamelCase}}',
+                                    '{{fieldUcWords}}',
+                                    '{{fieldSnakeCase}}',
+                                    '{{options}}',
+                                    '{{nullable}}',
+                                    '{{value}}',
+                                ],
+                                [
+                                    GeneratorUtils::singularKebabCase($field),
+                                    GeneratorUtils::singularCamelCase($field),
+                                    $fieldUcWords,
+                                    $fieldSnakeCase,
+                                    $options,
+                                    $request['requireds'][$i] === 'yes' ? ' required' : '',
+                                    "{{ isset($" . $modelNameSingularCamelCase . ") && $" . $modelNameSingularCamelCase . "?->" . $fieldSnakeCase . " ? $" . $modelNameSingularCamelCase . "?->" . $fieldSnakeCase . " : old('" . $fieldSnakeCase . "') }}"
+                                ],
+                                GeneratorUtils::getStub('views/forms/datalist')
+                            ),
+                            default => str_replace(
+                                [
+                                    '{{fieldUcWords}}',
+                                    '{{fieldKebabCase}}',
+                                    '{{fieldSnakeCase}}',
+                                    '{{fieldSpaceLowercase}}',
+                                    '{{options}}',
+                                    '{{nullable}}'
+                                ],
+                                [
+                                    GeneratorUtils::cleanUcWords($field),
+                                    GeneratorUtils::kebabCase($field),
+                                    $fieldSnakeCase,
+                                    GeneratorUtils::cleanLowerCase($field),
+                                    $options,
+                                    $request['requireds'][$i] == 'yes' ? ' required' : '',
+                                ],
+                                GeneratorUtils::getStub('views/forms/select')
+                            ),
+                        };
                         break;
                     case 'boolean':
                         switch ($request['input_types'][$i]) {
@@ -435,7 +431,7 @@ class FormViewGenerator
                                         GeneratorUtils::kebabCase($field),
                                         $fieldUcWords,
                                         $modelNameSingularCamelCase,
-                                        $request['requireds'][$i] == 'yes' ? ' required' : '',
+                                        $request['requireds'][$i] === 'yes' ? ' required' : '',
                                         $fieldSnakeCase
                                     ],
                                     GeneratorUtils::getStub('views/forms/textarea')
@@ -497,7 +493,7 @@ class FormViewGenerator
                                         GeneratorUtils::singularSnakeCase($field),
                                         $fieldUcWords,
                                         GeneratorUtils::singularKebabCase($field),
-                                        $request['requireds'][$i] == 'yes' ? ' required' : '',
+                                        $request['requireds'][$i] === 'yes' ? ' required' : '',
                                         $request['min_lengths'][$i],
                                         $request['max_lengths'][$i],
                                         $request['steps'][$i] ? 'step="' . $request['steps'][$i] . '"' : '',
@@ -544,16 +540,13 @@ class FormViewGenerator
         $template .= "</div>";
 
         // create a blade file
-        switch ($path) {
-            case '':
-                GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase/include"));
-                file_put_contents(resource_path("/views/$modelNamePluralKebabCase/include/form.blade.php"), $template);
-                break;
-            default:
-                $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase/include");
-                GeneratorUtils::checkFolder($fullPath);
-                file_put_contents($fullPath . "/form.blade.php", $template);
-                break;
+        if($path) {
+            $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase/include");
+            GeneratorUtils::checkFolder($fullPath);
+            file_put_contents($fullPath . "/form.blade.php", $template);
+        }else{
+            GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase/include"));
+            file_put_contents(resource_path("/views/$modelNamePluralKebabCase/include/form.blade.php"), $template);
         }
     }
 

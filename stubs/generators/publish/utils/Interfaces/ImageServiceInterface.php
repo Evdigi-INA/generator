@@ -4,7 +4,7 @@ namespace App\Generators\Interfaces;
 
 interface ImageServiceInterface
 {
-    public function upload(string $name, string $path, string|null $defaultImage = null, string $disk = 'local', int $width = 500, int $height = 500, bool $isCustomUpload = false): string|null;
+    public function upload(string $name, string $path, ?string $defaultImage = null, ?string $disk = null, int $width = 500, int $height = 500, ?bool $crop = null, ?bool $aspectRatio = null, ?bool $isCustomUpload = false): ?string;
 
-    public function delete(string|null $image, string $disk = 'local'): void;
+    public function delete(?string $image, string $disk = 'local'): void;
 }
