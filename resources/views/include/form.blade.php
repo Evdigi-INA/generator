@@ -17,7 +17,7 @@
 
     {{-- generate type --}}
     <div class="col-md-3">
-        <p class="mb-2">{{ __('Generate Type') }}</p>
+        <p class="mb-2">{{ __('Generator Type') }}</p>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="generate_type" id="generate-type-1"
                 value="{{ \EvdigiIna\Generator\Enums\GeneratorType::ALL->value }}" checked>
@@ -38,7 +38,7 @@
 
     {{-- generate variant --}}
     <div class="col-md-3">
-        <p class="mb-2">{{ __('Generate Variant') }}</p>
+        <p class="mb-2">{{ __('Generator Variant') }}</p>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="generate_variant" id="generate-variant-1"
                 value="{{ \EvdigiIna\Generator\Enums\GeneratorVariant::DEFAULT->value }}" checked>

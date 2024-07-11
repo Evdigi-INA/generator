@@ -214,7 +214,7 @@ class FormViewGenerator
                          * </select>
                          */
                         $options = "
-                        @foreach (range($firstYear, hrtime(\"%Y\", time())) as \$year)
+                        @foreach (range($firstYear, date('Y')) as \$year)
                             <option value=\"{{ \$year }}\" {{ isset($$modelNameSingularCamelCase) && $" . $modelNameSingularCamelCase . "?->$fieldSnakeCase == \$year ? 'selected' : (old('$fieldSnakeCase') == \$year ? 'selected' : '') }}>
                                 {{ \$year }}
                             </option>

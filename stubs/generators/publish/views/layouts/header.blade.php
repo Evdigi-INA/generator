@@ -63,7 +63,7 @@
                                             </div>
                                             <div class="user-img d-flex align-items-center">
                                                 <div class="avatar avatar-md">
-                                                    @if (auth()?->user()?->avatar == null)
+                                                    @if (!auth()?->user()?->avatar)
                                                         <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(auth()?->user()?->email))) }}&s=500"
                                                             alt="Avatar">
                                                     @else

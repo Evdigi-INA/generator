@@ -19,7 +19,7 @@
                                 {{ $message }}
                            </span>
                         @enderror
-                        <div id="{{fieldKebabCase}}HelpBlock" class="form-text">
+                        <div id="{{fieldKebabCase}}-help-block" class="form-text">
                             {{ __('Leave the {{fieldLowercase}} blank if you don`t want to change it.') }}
                         </div>
                     </div>

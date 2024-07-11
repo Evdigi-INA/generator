@@ -69,7 +69,7 @@
                                 <div class="row">
                                     <div class="col-md-1">
                                         <div class="avatar avatar-xl mb-3">
-                                            @if (auth()?->user()?->avatar)
+                                            @if (!auth()?->user()?->avatar)
                                                 <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(auth()?->user()?->email))) }}&s=500"
                                                     alt="Avatar">
                                             @else

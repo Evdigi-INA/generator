@@ -45,7 +45,7 @@
 
                                 {{-- generate type --}}
                                 <div class="col-md-3">
-                                    <p class="mb-2">Generate Type</p>
+                                    <p class="mb-2">{{ __('Generator Type') }}</p>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="generate_type"
                                             id="generate-type-1"
