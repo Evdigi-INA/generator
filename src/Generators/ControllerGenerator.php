@@ -122,11 +122,11 @@ class ControllerGenerator
                 $relations .= "])->";
                 $relations = str_replace("', ])->", "'])->", $relations);
             } else {
-                $relations .= "$" . $modelNameSingularCamelCase . "->load(";
+                $relations .= "$" . $modelNameSingularCamelCase . "->load([";
 
                 $countForeignId = count(array_keys($request['column_types'], 'foreignId'));
 
-                $query = "$modelNameSingularPascalCase::with(";
+                $query = "$modelNameSingularPascalCase::with([";
 
                 foreach ($request['constrains'] as $i => $constrain) {
                     if ($constrain != null) {
@@ -158,8 +158,8 @@ class ControllerGenerator
                     }
                 }
 
-                $query .= ")";
-                $relations .= ");\n\n\t\t";
+                $query .= "])";
+                $relations .= "]);\n\n\t\t";
 
                 $query = str_replace("''", "', '", $query);
                 $relations = str_replace("''", "', '", $relations);
@@ -172,7 +172,15 @@ class ControllerGenerator
          * User::create($request->validated());
          * $user->update($request->validated());
          */
-        $insertDataAction = "$$modelNameSingularCamelCase = " . $modelNameSingularPascalCase  . "::create(\$request->validated());";
+
+         if (GeneratorUtils::isGenerateApi()) {
+            // remove unused variable
+            // $user = User::create($request->validated());
+            $insertDataAction = "$$modelNameSingularCamelCase = $modelNameSingularPascalCase::create(\$request->validated());";
+        }else{
+            $insertDataAction = "$modelNameSingularPascalCase::create(\$request->validated());";
+        }
+
         $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$request->validated());";
         $requestValidatedAttr = "";
 
@@ -183,7 +191,7 @@ class ControllerGenerator
              *  User::create($validated);
              *  $user->update($validated);
              */
-            $insertDataAction = "$$modelNameSingularCamelCase = " . $modelNameSingularPascalCase  . "::create(\$validated);";
+            $insertDataAction = "$modelNameSingularPascalCase::create(\$validated);";
             $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$validated);";
             $requestValidatedAttr = "\$validated = \$request->validated();\n";
         }
@@ -434,16 +442,6 @@ class ControllerGenerator
                     $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" .$modelNameSingularCamelCase ."?->id], " . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");";
 
                     $updateDataAction = $singleFormUpdateDataAction;
-                }
-
-                if (!GeneratorUtils::isGenerateApi()) {
-                    // remove unused variable
-                    // $user = User::create($request->validated());
-                    $insertDataAction = str_replace(
-                        "$$modelNameSingularCamelCase = " . $modelNameSingularPascalCase  . "::create(\$request->validated());",
-                        $modelNameSingularPascalCase  . "::create(\$request->validated());",
-                        $insertDataAction
-                    );
                 }
 
                 /**

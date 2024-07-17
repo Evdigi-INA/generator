@@ -97,7 +97,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             ${{modelNameSingularCamelCase}}->delete();
 
             return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was deleted successfully.'));
-        } catch (\Throwable $th) {
+        } catch (\Exception $e) {
             return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameCleanSingular}} can't be deleted because it's related to another table."));
         }
     }
