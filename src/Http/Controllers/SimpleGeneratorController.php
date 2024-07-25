@@ -2,8 +2,7 @@
 
 namespace EvdigiIna\Generator\Http\Controllers;
 
-use EvdigiIna\Generator\Enums\GeneratorType;
-use EvdigiIna\Generator\Enums\GeneratorVariant;
+use EvdigiIna\Generator\Enums\{GeneratorType, GeneratorVariant};
 use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Http\Requests\StoreSimpleGeneratorRequest;
@@ -34,7 +33,7 @@ class SimpleGeneratorController extends Controller
         $validated['generate_variant'] = GeneratorVariant::DEFAULT->value;
 
         /**
-         * will added in next realease
+         * will added in next release
          * now it's not working, because it's not implemented
          * only focus to fix the bug
          */
@@ -44,17 +43,24 @@ class SimpleGeneratorController extends Controller
         //     return response()->json($checkFile, 403);
         // }
 
-        if ($request->generate_type == GeneratorType::ALL->value) {
-            $this->generatorService->generate($validated);
-        } else {
-            $this->generatorService->onlyGenerateModelAndMigration($validated);
+        switch ($request->generate_type) {
+            case GeneratorType::ALL->value:
+                $this->generatorService->generate($validated);
+                break;
+            default:
+                $this->generatorService->onlyGenerateModelAndMigration($validated);
+                break;
         }
 
-        $model = GeneratorUtils::setModelName($validated['model'], 'default');
+        $model = GeneratorUtils::setModelName($request->model, 'default');
+
+        $route = $request->generate_type == GeneratorType::ALL->value
+            ? (GeneratorUtils::isGenerateApi() ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model))
+            : request()->path() . '/create';
 
         return response()->json([
-            'message' => 'Success',
-            'route' => GeneratorUtils::isGenerateApi() ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model)
+            'message' => 'success',
+            'route' => $route
         ], Response::HTTP_CREATED);
     }
 }

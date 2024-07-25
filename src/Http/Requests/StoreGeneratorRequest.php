@@ -58,7 +58,9 @@ class StoreGeneratorRequest extends FormRequest
             'generate_variant' => ['required'],
         ];
 
-        if(GeneratorUtils::isGenerateApi()) return $validations;
+        if(GeneratorUtils::isGenerateApi() || request()->input('generate_type') == GeneratorType::ONLY_MODEL_AND_MIGRATION->value) {
+            return $validations;
+        }
 
         return [...$validations, ...$menuValidations];
     }

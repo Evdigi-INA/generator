@@ -101,6 +101,14 @@ class GeneratorService implements GeneratorServiceInterface
         (new ModelGenerator)->generate($request);
 
         (new MigrationGenerator)->generate($request);
+
+        if (isset($request['generate_seeder'])) {
+            (new SeederGenerator)->generate($request);
+        }
+
+        if (isset($request['generate_factory'])) {
+            (new FactoryGenerator)->generate($request);
+        }
     }
 
     /**

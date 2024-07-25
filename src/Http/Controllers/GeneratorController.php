@@ -18,7 +18,7 @@ class GeneratorController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function __construct(protected GeneratorService $generatorService)
+    public function __construct(public GeneratorService $generatorService)
     {
         //
     }
@@ -36,20 +36,20 @@ class GeneratorController extends BaseController
      */
     public function store(StoreGeneratorRequest $request): JsonResponse
     {
-        if ($request->generate_type == GeneratorType::ALL->value) {
-            $this->generatorService->generate($request->validated());
-        } else {
-            $this->generatorService->onlyGenerateModelAndMigration($request->validated());
+        switch ($request->generate_type) {
+            case GeneratorType::ALL->value:
+                $this->generatorService->generate($request->validated());
+                break;
+            default:
+                $this->generatorService->onlyGenerateModelAndMigration($request->validated());
+                break;
         }
 
         $model = GeneratorUtils::setModelName($request->model, 'default');
 
-        if ($request->generate_type == GeneratorType::ALL->value) {
-            // go to new route
-            $route = GeneratorUtils::isGenerateApi() ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model);
-        } else {
-            $route = request()->path() . '/create';
-        }
+        $route = $request->generate_type == GeneratorType::ALL->value
+            ? (GeneratorUtils::isGenerateApi() ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model))
+            : request()->path() . '/create';
 
         return response()->json([
             'message' => 'success',

@@ -106,7 +106,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             return (new {{modelNameSingularPascalCase}}Resource(null))
                 ->additional([
                     'message' => $e->getMessage(),
-                    'success' => false,
+                    // 'success' => false,
                     // 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR
                 ])
                 ->response()
