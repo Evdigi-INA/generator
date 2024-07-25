@@ -12,11 +12,21 @@ trait PasswordValidationRules
      */
     protected function passwordRules(): array
     {
-        if(strtolower(env('APP_ENV')) === 'production') {
-            return [
+        $validations = [];
+
+        if (str_contains(request()->url(), 'edit')) {
+            $validations[] = [
+                'nullable',
+            ];
+        } else {
+            $validations[] = [
                 'required',
-                'string',
-                'confirmed',
+                'confirmed'
+            ];
+        }
+
+        if (app()->isProduction()) {
+            $validations[] = [
                 Password::min(8)
                     ->letters()
                     ->mixedCase()
@@ -26,10 +36,6 @@ trait PasswordValidationRules
             ];
         }
 
-        return [
-            'required',
-            'string',
-            'confirmed',
-        ];
+        return $validations;
     }
 }

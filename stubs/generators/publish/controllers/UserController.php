@@ -137,13 +137,15 @@ class UserController extends Controller implements HasMiddleware
     public function destroy(User $user): RedirectResponse
     {
         try {
-            $avatar = $user->avatar;
+            return DB::transaction(function () use ($user) {
+                $avatar = $user->avatar;
 
-            $user->delete();
+                $user->delete();
 
-            $this->imageService->delete(image: "{$this->avatarPath}{$avatar}");
+                $this->imageService->delete(image: $this->avatarPath . $avatar);
 
-            return to_route('users.index')->with('success', __('The user was deleted successfully.'));
+                return to_route('users.index')->with('success', __('The user was deleted successfully.'));
+            });
         } catch (\Exception $e) {
             return to_route('users.index')->with('error', __("The user can't be deleted because it's related to another table."));
         }

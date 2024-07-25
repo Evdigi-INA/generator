@@ -119,14 +119,17 @@ class ImageService implements ImageServiceInterface
     /**
      * Delete an image from the specified disk.
      */
-    public function delete(?string $image, string $disk = 'local'): void
+    public function delete(string|null $image = null, string $disk = 'local'): void
     {
-        if ($image) {
-            if ($disk === 's3') {
+        switch ($disk) {
+            case 's3':
                 Storage::disk('s3')->delete($image);
-            } else if (file_exists($image)) {
-                unlink($image);
-            }
+                break;
+            default:
+                if ($image) {
+                    @unlink($image);
+                }
+                break;
         }
     }
 }
