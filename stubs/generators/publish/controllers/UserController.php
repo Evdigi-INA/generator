@@ -115,7 +115,7 @@ class UserController extends Controller implements HasMiddleware
             $validated = $request->validated();
             $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user?->avatar);
 
-            if (is_null($request->password)) {
+            if (!$request->password) {
                 unset($validated['password']);
             } else {
                 $validated['password'] = bcrypt($request->password);
@@ -141,7 +141,7 @@ class UserController extends Controller implements HasMiddleware
 
             $user->delete();
 
-            $this->imageService->delete(image: $this->avatarPath . $avatar);
+            $this->imageService->delete(image: "{$this->avatarPath}{$avatar}");
 
             return to_route('users.index')->with('success', __('The user was deleted successfully.'));
         } catch (\Exception $e) {

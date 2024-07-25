@@ -42,7 +42,16 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // Controllers
         $this->publishes([
-            __DIR__ . '/../../stubs/generators/publish/controllers' => app_path('Http/Controllers')
+            __DIR__ . '/../../stubs/generators/publish/controllers/ProfileController.php' => app_path('Http/Controllers/ProfileController.php')
+        ], 'generator-controller');
+
+        $this->publishes([
+            __DIR__ . '/../../stubs/generators/publish/controllers/RoleAndPermissionController.php' => app_path('Http/Controllers/RoleAndPermissionController.php')
+        ], 'generator-controller');
+
+
+        $this->publishes([
+            __DIR__ . '/../../stubs/generators/publish/controllers/UserController.php' => app_path('Http/Controllers/UserController.php')
         ], 'generator-controller');
 
         // Requests
