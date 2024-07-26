@@ -2,7 +2,6 @@
 
 namespace App\Actions\Fortify;
 
-// use Laravel\Fortify\Rules\Password;
 use Illuminate\Validation\Rules\Password;
 
 trait PasswordValidationRules
@@ -12,18 +11,7 @@ trait PasswordValidationRules
      */
     protected function passwordRules(): array
     {
-        $validations = [];
-
-        if (str_contains(request()->url(), 'edit')) {
-            $validations[] = [
-                'nullable',
-            ];
-        } else {
-            $validations[] = [
-                'required',
-                'confirmed'
-            ];
-        }
+        $validations = in_array(request()->method(), ['PUT', 'PATCH']) ? ['nullable', 'min:5'] : ['required', 'confirmed'];
 
         if (app()->isProduction()) {
             $validations[] = [
