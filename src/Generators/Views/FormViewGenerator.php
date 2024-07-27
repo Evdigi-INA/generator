@@ -510,13 +510,15 @@ class FormViewGenerator
                                         '{{fieldUcWords}}',
                                         '{{fieldSnakeCase}}',
                                         '{{fieldKebabCase}}',
-                                        '{{model}}'
+                                        '{{model}}',
+                                        '{{isNullable}}'
                                     ],
                                     [
                                         $fieldUcWords,
                                         $fieldSnakeCase,
                                         GeneratorUtils::singularKebabCase($field),
-                                        $modelNameSingularCamelCase
+                                        $modelNameSingularCamelCase,
+                                        $request['requireds'][$i] == 'yes' ? "{{ empty(" . GeneratorUtils::singularCamelCase($model) .") ? ' required' : '' }}" : ''
                                     ],
                                     GeneratorUtils::getStub('views/forms/input-password')
                                 );
