@@ -2,21 +2,26 @@
 
 namespace App\Actions\Fortify;
 
+use App\Generators\Services\ImageService;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
-use Image;
 
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
-    /**
-     * Path for user avatar file.
-     *
-     * @var string
-     */
-    protected $avatarPath = '/uploads/images/avatars/';
+    public function __construct(public string $avatarPath = '')
+    {
+        // storage
+        $this->avatarPath = storage_path('app/public/uploads/avatars/');
+
+        // public
+        // $this->avatarPath = public_path('uploads/avatars/');
+
+        // s3
+        // $this->avatarPath = '/avatars/';
+    }
 
     /**
      * Validate and update the given user's profile information.
@@ -37,25 +42,9 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 
         if (isset($input['avatar']) && $input['avatar']->isValid()) {
 
-            $filename = $input['avatar']->hashName();
+            $filename = (new ImageService)->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user->avatar);
 
-            if (!file_exists($path = public_path($this->avatarPath))) {
-                mkdir($path, 0777, true);
-            }
-
-            Image::make($input['avatar']->getRealPath())->resize(500, 500, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->save(public_path($this->avatarPath) . $filename);
-
-            // delete old avatar from storage
-            if ($user->avatar != null && file_exists(public_path($this->avatarPath . $user->avatar))) {
-                unlink(public_path($this->avatarPath . $user->avatar));
-            }
-
-            $user->forceFill([
-                'avatar' => $filename,
-            ])->save();
+            $user->forceFill(['avatar' => $filename])->save();
         }
 
         if ($input['email'] !== $user->email && $user instanceof MustVerifyEmail) {

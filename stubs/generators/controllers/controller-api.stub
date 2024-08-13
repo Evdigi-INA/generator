@@ -1,0 +1,116 @@
+<?php
+
+{{namespace}}
+
+use {{modelPath}};
+use {{requestPath}};
+use {{resourceApiPath}}\{{{modelNameSingularPascalCase}}Collection, {{modelNameSingularPascalCase}}Resource};
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+
+class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
+{
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            // '{{middlewareName}}',
+
+            // TODO: uncomment this code if you are using spatie permission
+            // new Middleware('permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
+            // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
+            // new Middleware('permission:{{modelNameSpaceLowercase}} edit', only: ['update']),
+            // new Middleware('permission:{{modelNameSpaceLowercase}} delete', only: ['destroy']),
+        ];
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(): {{modelNameSingularPascalCase}}Collection|{{modelNameSingularPascalCase}}Resource
+    {
+        return (new {{modelNameSingularPascalCase}}Collection({{modelNameSingularPascalCase}}::{{relations}}latest()->paginate(request()->query('per_page', 10))))
+            ->additional([
+                'message' => 'The {{modelNameCleanPlural}} was received successfully.',
+                // 'success' => true,
+                // 'status_code' => Response::HTTP_OK
+            ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Store{{modelNameSingularPascalCase}}Request $request): {{modelNameSingularPascalCase}}Resource|JsonResponse
+    {
+        {{passwordFieldStore}}{{inputMonths}}
+        {{insertDataAction}}
+
+        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))
+            ->additional([
+                'message' => 'The {{modelNameCleanSingular}} was created successfully.',
+                // 'success' => true,
+                // 'status_code' => Response::HTTP_CREATED
+            ])
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id): {{modelNameSingularPascalCase}}Resource
+    {
+        return (new {{modelNameSingularPascalCase}}Resource({{modelNameSingularPascalCase}}::{{relations}}findOrFail($id)))
+            ->additional([
+                'message' => 'The {{modelNameCleanSingular}} was received successfully.',
+                // 'success' => true,
+                // 'status_code' => Response::HTTP_OK
+            ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Update{{modelNameSingularPascalCase}}Request $request, string $id): {{modelNameSingularPascalCase}}Resource
+    {
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail($id);
+        {{passwordFieldUpdate}}{{inputMonths}}
+        {{updateDataAction}}
+
+        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))
+            ->additional([
+                'message' => 'The {{modelNameCleanSingular}} was updated successfully.',
+                // 'success' => true,
+                // 'status_code' => Response::HTTP_OK
+            ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id): {{modelNameSingularPascalCase}}Resource|JsonResponse
+    {
+        try {
+            {{modelNameSingularPascalCase}}::destroy($id);
+
+            return (new {{modelNameSingularPascalCase}}Resource(null))
+                ->additional([
+                    'message' => 'The {{modelNameCleanSingular}} was deleted successfully.',
+                    // 'success' => true,
+                    // 'status_code' => Response::HTTP_OK
+                ]);
+        } catch (\Exception $e) {
+            return (new {{modelNameSingularPascalCase}}Resource(null))
+                ->additional([
+                    'message' => $e->getMessage(),
+                    // 'success' => false,
+                    // 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR
+                ])
+                ->response()
+                ->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+}

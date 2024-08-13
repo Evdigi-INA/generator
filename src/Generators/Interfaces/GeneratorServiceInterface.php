@@ -7,18 +7,12 @@ interface GeneratorServiceInterface
     /**
      * Generate all CRUD modules.
      */
-    public function generateAll(array $request): void;
+    public function generate(array $request): void;
 
     /**
      * Generate only model and migration.
      */
     public function onlyGenerateModelAndMigration(array $request): void;
-
-    /**
-     * Simple generator, only generate the core module(CRUD).
-     */
-    public function simpleGenerator(array $request): void;
-
 
     /**
      * Get sidebar menus by index.

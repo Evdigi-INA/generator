@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests\Users;
 
+use App\Actions\Fortify\PasswordValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 
 class UpdateUserRequest extends FormRequest
 {
+    use PasswordValidationRules;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -22,19 +24,10 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'min:3', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email,' . $this->user->id],
+            'email' => ['required', 'email', 'unique:users,email,' . $this?->user?->id ?? request()->segment(2)],
             'avatar' => ['nullable', 'image', 'max:1024'],
             'role' => ['required', 'exists:roles,id'],
-            'password' =>  [
-                'nullable',
-                'confirmed',
-                Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
-                    ->uncompromised()
-            ]
+            'password' =>  $this->passwordRules()
         ];
     }
 }

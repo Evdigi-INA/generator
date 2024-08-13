@@ -38,9 +38,7 @@ class ViewComposerGenerator
                     $fieldsSelect = "'id'";
                 }
 
-                if ($i > 1) {
-                    $template .= "\t\t";
-                }
+                if ($i > 1) $template .= "\t\t";
 
                 $template .= str_replace(
                     [
@@ -59,7 +57,7 @@ class ViewComposerGenerator
                         $relatedModelPath,
                         $viewPath != '' ? str_replace('\\', '.', strtolower($viewPath)) . "." : '',
                     ],
-                    GeneratorUtils::getTemplate('view-composer')
+                    GeneratorUtils::getStub('view-composer')
                 );
             }
         }

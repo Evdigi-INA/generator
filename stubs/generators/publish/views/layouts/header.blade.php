@@ -44,56 +44,61 @@
                                         <li>
                                             <h6 class="dropdown-header">{{ __('Language') }}</h6>
                                         </li>
-                                        <li><a class="dropdown-item{{ config('app.locale') == 'id' ? ' active': '' }}" href="#">{{ __('Indonesia') }}</a></li>
-                                        <li><a class="dropdown-item{{ config('app.locale') == 'en' ? ' active': '' }}" href="#">{{ __('English') }}</a></li>
+                                        <li><a class="dropdown-item{{ config('app.locale') == 'id' ? ' active' : '' }}"
+                                                href="#">{{ __('Indonesia') }}</a></li>
+                                        <li><a class="dropdown-item{{ config('app.locale') == 'en' ? ' active' : '' }}"
+                                                href="#">{{ __('English') }}</a></li>
                                     </ul>
                                 </li>
                             </ul>
-                            <div class="dropdown">
-                                <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <div class="user-menu d-flex">
-                                        <div class="user-name text-end me-3">
-                                            <h6 class="mb-0 text-gray-600">{{ auth()->user()->name }}</h6>
-                                            <p class="mb-0 text-sm text-gray-600">{{ auth()->user()->roles[0]->name }}
-                                            </p>
-                                        </div>
-                                        <div class="user-img d-flex align-items-center">
-                                            <div class="avatar avatar-md">
-                                                @if (auth()->user()->avatar == null)
-                                                    <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(auth()->user()->email))) }}&s=500"
-                                                         alt="Avatar">
-                                                @else
-                                                    <img src="{{ asset('storage/uploads/avatars/' . auth()->user()->avatar) }}"
-                                                         alt="Avatar">
-                                                @endif
+                            @auth
+                                <div class="dropdown">
+                                    <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <div class="user-menu d-flex">
+                                            <div class="user-name text-end me-3">
+                                                <h6 class="mb-0 text-gray-600">{{ auth()?->user()?->name }}</h6>
+                                                <p class="mb-0 text-sm text-gray-600">
+                                                    {{ isset(auth()?->user()?->roles) ? implode(auth()?->user()?->roles?->map(fn ($role) => $role->name)->toArray()) : '-' }}
+                                                </p>
+                                            </div>
+                                            <div class="user-img d-flex align-items-center">
+                                                <div class="avatar avatar-md">
+                                                    @if (!auth()?->user()?->avatar)
+                                                        <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(auth()?->user()?->email))) }}&s=500"
+                                                            alt="Avatar">
+                                                    @else
+                                                        <img src="{{ asset('storage/uploads/avatars/' . auth()?->user()?->avatar) }}"
+                                                            alt="Avatar">
+                                                    @endif
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton"
-                                    style="min-width: 11rem">
-                                    <li>
-                                        <h6 class="dropdown-header">{{ __('Hello') }}, {{ auth()->user()->name }}!
-                                        </h6>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('profile') }}"><i
-                                                class="icon-mid bi bi-person-fill me-2"></i>{{ __('My Profile') }}</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();document.getElementById('logout-form-nav').submit();">
-                                            <i class="bi bi-door-open-fill"></i>
-                                            {{ __('Logout') }}
-                                        </a>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton"
+                                        style="min-width: 11rem;">
+                                        <li>
+                                            <h6 class="dropdown-header">{{ __('Hello') }}, {{ auth()?->user()?->name }}!
+                                            </h6>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('profile') }}"><i
+                                                    class="icon-mid bi bi-person-fill me-2"></i>{{ __('My Profile') }}</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('logout') }}"
+                                                onclick="event.preventDefault();document.getElementById('logout-form-nav').submit();">
+                                                <i class="bi bi-door-open-fill"></i>
+                                                {{ __('Logout') }}
+                                            </a>
 
-                                        <form id="logout-form-nav" action="{{ route('logout') }}" method="POST"
-                                            class="d-none">
-                                            @csrf
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
+                                            <form id="logout-form-nav" action="{{ route('logout') }}" method="POST"
+                                                class="d-none">
+                                                @csrf
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            @endauth
                         </div>
                     </div>
                 </nav>

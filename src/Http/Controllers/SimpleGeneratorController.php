@@ -2,7 +2,7 @@
 
 namespace EvdigiIna\Generator\Http\Controllers;
 
-use EvdigiIna\Generator\Enums\GeneratorType;
+use EvdigiIna\Generator\Enums\{GeneratorType, GeneratorVariant};
 use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Http\Requests\StoreSimpleGeneratorRequest;
@@ -20,7 +20,7 @@ class SimpleGeneratorController extends Controller
      */
     public function create(): \Illuminate\Contracts\View\View
     {
-        return view('generator::create');
+        return view('generator::simple-create');
     }
 
     /**
@@ -28,31 +28,39 @@ class SimpleGeneratorController extends Controller
      */
     public function store(StoreSimpleGeneratorRequest $request): \Illuminate\Http\JsonResponse
     {
-        $attrs = $request->validated();
-        $attrs['is_simple_generator'] = true;
+        $validated = $request->validated();
+        $validated['is_simple_generator'] = true;
+        $validated['generate_variant'] = GeneratorVariant::DEFAULT->value;
 
         /**
-         * will added in next realease
+         * will added in next release
          * now it's not working, because it's not implemented
          * only focus to fix the bug
          */
-        // $checkFile = $this->generatorService->checkFilesAreSame($attrs);
+        // $checkFile = $this->generatorService->checkFilesAreSame($validated);
 
         // if(count($checkFile) > 0){
         //     return response()->json($checkFile, 403);
         // }
 
-        if ($request->generate_type == GeneratorType::ALL->value) {
-            $this->generatorService->simpleGenerator($attrs);
-        } else {
-            $this->generatorService->onlyGenerateModelAndMigration($attrs);
+        switch ($request->generate_type) {
+            case GeneratorType::ALL->value:
+                $this->generatorService->generate($validated);
+                break;
+            default:
+                $this->generatorService->onlyGenerateModelAndMigration($validated);
+                break;
         }
 
-        $model = GeneratorUtils::setModelName($attrs['model'], 'default');
+        $model = GeneratorUtils::setModelName($request->model, 'default');
+
+        $route = $request->generate_type == GeneratorType::ALL->value
+            ? (GeneratorUtils::isGenerateApi() ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model))
+            : request()->path() . '/create';
 
         return response()->json([
-            'message' => 'qwerty',
-            'route' => GeneratorUtils::pluralKebabCase($model)
+            'message' => 'success',
+            'route' => $route
         ], Response::HTTP_CREATED);
     }
 }

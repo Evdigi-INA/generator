@@ -3,22 +3,33 @@
 {{namespace}}
 use {{modelPath}};
 use {{requestPath}};
+use Illuminate\Contracts\View\View;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Http\{JsonResponse, RedirectResponse};
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 
-class {{modelNameSingularPascalCase}}Controller extends Controller
+class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
 {
-    public function __construct()
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
     {
-        $this->middleware('permission:{{modelNameSpaceLowercase}} view')->only('index', 'show');
-        $this->middleware('permission:{{modelNameSpaceLowercase}} create')->only('create', 'store');
-        $this->middleware('permission:{{modelNameSpaceLowercase}} edit')->only('edit', 'update');
-        $this->middleware('permission:{{modelNameSpaceLowercase}} delete')->only('destroy');
+        return [
+            // '{{middlewareName}}',
+
+            // TODO: uncomment this code if you are using spatie permission
+            // new Middleware('permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
+            // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
+            // new Middleware('permission:{{modelNameSpaceLowercase}} edit', only: ['edit', 'update']),
+            // new Middleware('permission:{{modelNameSpaceLowercase}} delete', only: ['destroy']),
+        ];
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             ${{modelNamePluralCamelCase}} = {{query}};
@@ -34,7 +45,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Illuminate\Contracts\View\View
+    public function create(): View
     {
         return view('{{viewPath}}{{modelNamePluralKebabCase}}.create');
     }
@@ -42,18 +53,18 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Store{{modelNameSingularPascalCase}}Request $request): \Illuminate\Http\RedirectResponse
+    public function store(Store{{modelNameSingularPascalCase}}Request $request): RedirectResponse
     {
         {{passwordFieldStore}}{{inputMonths}}
         {{insertDataAction}}
 
-        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was created successfully.'));
+        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was created successfully.'));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Contracts\View\View
+    public function show({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): View
     {
         {{loadRelation}}return view('{{viewPath}}{{modelNamePluralKebabCase}}.show', compact('{{modelNameSingularCamelCase}}'));
     }
@@ -61,7 +72,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Contracts\View\View
+    public function edit({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): View
     {
         {{loadRelation}}return view('{{viewPath}}{{modelNamePluralKebabCase}}.edit', compact('{{modelNameSingularCamelCase}}'));
     }
@@ -69,25 +80,25 @@ class {{modelNameSingularPascalCase}}Controller extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Update{{modelNameSingularPascalCase}}Request $request, {{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Http\RedirectResponse
+    public function update(Update{{modelNameSingularPascalCase}}Request $request, {{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): RedirectResponse
     {
         {{passwordFieldUpdate}}{{inputMonths}}
         {{updateDataAction}}
 
-        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was updated successfully.'));
+        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was updated successfully.'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): \Illuminate\Http\RedirectResponse
+    public function destroy({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): RedirectResponse
     {
         try {
             ${{modelNameSingularCamelCase}}->delete();
 
-            return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameSingularCamelCase}} was deleted successfully.'));
-        } catch (\Throwable $th) {
-            return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameSingularCamelCase}} can't be deleted because it's related to another table."));
+            return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was deleted successfully.'));
+        } catch (\Exception $e) {
+            return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameCleanSingular}} can't be deleted because it's related to another table."));
         }
     }
 }

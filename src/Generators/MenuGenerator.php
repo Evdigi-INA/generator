@@ -2,8 +2,6 @@
 
 namespace EvdigiIna\Generator\Generators;
 
-use Spatie\Permission\Models\Permission;
-
 class MenuGenerator
 {
     /**
@@ -47,17 +45,18 @@ class MenuGenerator
         ];
 
         $newMenu = $this->setNewMenu(
-            title: GeneratorUtils::cleanPluralUcWords($model),
+            title: GeneratorUtils::cleanPluralUcWords($request['new_menu'] ?? $model),
             icon: $request['new_icon'],
             route: '/' . GeneratorUtils::pluralKebabCase($model),
-            submenu: isset($request['new_submenu']) ? $request['new_submenu'] : null
+            submenu: $request['new_submenu'] ?? null,
+            model: $model
         );
 
         // push new menu to new config sidebar.menu
-        array_push($newConfigSidebar['menus'], $newMenu);
+        $newConfigSidebar['menus'][] = $newMenu;
 
         // push new config sidebar to old config sidebar
-        array_push($configSidebar, $newConfigSidebar);
+        $configSidebar[] = $newConfigSidebar;
 
         $stringCode = $this->convertJsonToArrayString($configSidebar);
 
@@ -70,15 +69,16 @@ class MenuGenerator
     protected function generateNewMenu(array $request, string $model, array $configSidebar): void
     {
         // push to permissions on header
-        array_push($configSidebar[$request['header']]['permissions'], GeneratorUtils::cleanSingularLowerCase($model) . ' view');
+        $configSidebar[$request['header']]['permissions'][] = GeneratorUtils::cleanSingularLowerCase($model) . ' view';
 
         // push new menu
-        array_push($configSidebar[$request['header']]['menus'], $this->setNewMenu(
-            title: GeneratorUtils::cleanPluralUcWords($model),
+        $configSidebar[$request['header']]['menus'][] = $this->setNewMenu(
+            title: GeneratorUtils::cleanPluralUcWords($request['new_menu'] ?? $model),
             icon: $request['new_icon'],
             route: '/' . GeneratorUtils::pluralKebabCase($model),
-            submenu: isset($request['new_submenu']) ? $request['new_submenu'] : null
-        ));
+            submenu: $request['new_submenu'] ?? null,
+            model: $model
+        );
 
         $stringCode = $this->convertJsonToArrayString($configSidebar);
 
@@ -98,43 +98,37 @@ class MenuGenerator
         /**
          * Push to permissions on header
          */
-        array_push($configSidebar[$indexSidebar]['permissions'], $newPermission);
+        $configSidebar[$indexSidebar]['permissions'][] = $newPermission;
 
         /**
          * If submenus[] is empty, move menu at this index into the submenus[] and make route and permission to null
          */
-        if ($configSidebar[$indexSidebar]['menus'][$indexMenu]['submenus'] == []) {
-            array_push($configSidebar[$indexSidebar]['menus'][$indexMenu]['submenus'], [
-                'title' => $configSidebar[$indexSidebar]['menus'][$indexMenu]['title'],
-                'route' => $configSidebar[$indexSidebar]['menus'][$indexMenu]['route'],
-                'permission' => $configSidebar[$indexSidebar]['menus'][$indexMenu]['permission'],
-            ]);
+        switch (count($configSidebar[$indexSidebar]['menus'][$indexMenu]['submenus'])) {
+            case 0:
+                $configSidebar[$indexSidebar]['menus'][$indexMenu]['submenus'][] = [
+                    'title' => $configSidebar[$indexSidebar]['menus'][$indexMenu]['title'],
+                    'route' => '/' . GeneratorUtils::pluralKebabCase($model),
+                    'permission' => [GeneratorUtils::cleanSingularLowerCase($model) . ' view'],
+                ];
 
-            /**
-             * Push to permissions on menus
-             */
-            array_push(
-                $configSidebar[$indexSidebar]['menus'][$indexMenu]['permissions'],
-                $configSidebar[$indexSidebar]['menus'][$indexMenu]['permission'] . "', '" . $newPermission
-            );
+                $configSidebar[$indexSidebar]['menus'][$indexMenu]['permissions'][] = [GeneratorUtils::cleanSingularLowerCase($model) . ' view'] . "', '" . $newPermission;
 
-            $configSidebar[$indexSidebar]['menus'][$indexMenu]['route'] = null;
-            $configSidebar[$indexSidebar]['menus'][$indexMenu]['permission'] = null;
-        } else {
-            array_push(
-                $configSidebar[$indexSidebar]['menus'][$indexMenu]['permissions'],
-                $newPermission
-            );
+                $configSidebar[$indexSidebar]['menus'][$indexMenu]['route'] = null;
+                $configSidebar[$indexSidebar]['menus'][$indexMenu]['permission'] = null;
+                break;
+            default:
+                $configSidebar[$indexSidebar]['menus'][$indexMenu]['permissions'][] = $newPermission;
+                break;
         }
 
         /**
          * Push new submenu
          */
-        array_push($configSidebar[$indexSidebar]['menus'][$indexMenu]['submenus'], [
+        $configSidebar[$indexSidebar]['menus'][$indexMenu]['submenus'][] = [
             'title' => GeneratorUtils::cleanPluralUcWords($model),
             'route' => '/' . GeneratorUtils::pluralKebabCase($model),
             'permission' => GeneratorUtils::cleanSingularLowerCase($model) . ' view',
-        ]);
+        ];
 
         $stringCode = $this->convertJsonToArrayString($configSidebar);
 
@@ -146,9 +140,17 @@ class MenuGenerator
      */
     protected function generateFile(string $jsonToArrayString): void
     {
-        $configStringCode = str(file_get_contents(config_path('generator.php')))->before("'sidebars' => ");
+        $stringConfig = str(file_get_contents(config_path('generator.php')));
 
-        $template = $configStringCode . "'sidebars' => " . $jsonToArrayString . "\n];";
+        if (str_contains($stringConfig, "'sidebars' => ")) {
+            $search = "'sidebars' => ";
+            $stringConfigCode = $stringConfig->before($search);
+        } else {
+            $search = '"sidebars" => ';
+            $stringConfigCode = $stringConfig->before($search);
+        }
+
+        $template = "{$stringConfigCode}{$search}{$jsonToArrayString}\n];";
 
         file_put_contents(base_path('config/generator.php'), $template);
     }
@@ -156,33 +158,29 @@ class MenuGenerator
     /**
      * Set new menu and check if request submenu exist or not, if exist push submenu to menu.
      */
-    protected function setNewMenu(string $title, string $icon, string $route, string|null $submenu = null): array
+    protected function setNewMenu(string $title, string $icon, string $route, string|null $submenu = null, string $model): array
     {
-        if (isset($submenu)) {
-            $newMenu = [
-                'title' => GeneratorUtils::cleanPluralUcWords($title),
-                'icon' => $icon,
-                'route' => null,
-                'permission' => null,
-                'permissions' => [GeneratorUtils::cleanSingularLowerCase($submenu) . ' view'],
-                'submenus' => [
-                    [
-                        'title' =>  GeneratorUtils::cleanPluralUcWords($submenu),
-                        'route' => '/' . str(GeneratorUtils::pluralKebabCase($submenu))->remove('/'),
-                        'permission' => GeneratorUtils::cleanSingularLowerCase($submenu) . ' view',
-                    ]
+        $newMenu = $submenu ? [
+            'title' => GeneratorUtils::cleanPluralUcWords($title),
+            'icon' => $icon,
+            'route' => null,
+            'permission' => null,
+            'permissions' => [GeneratorUtils::cleanSingularLowerCase($model) . ' view'],
+            'submenus' => [
+                [
+                    'title' => GeneratorUtils::cleanPluralUcWords($submenu),
+                    'route' => '/' . str(GeneratorUtils::pluralKebabCase($model))->remove('/'),
+                    'permission' => GeneratorUtils::cleanSingularLowerCase($model) . ' view',
                 ]
-            ];
-        } else {
-            $newMenu = [
-                'title' => GeneratorUtils::cleanPluralUcWords($title),
-                'icon' => $icon,
-                'route' => '/' . str(GeneratorUtils::pluralKebabCase($route))->remove('/'),
-                'permission' => GeneratorUtils::cleanSingularLowerCase($title) . ' view',
-                'permissions' => [],
-                'submenus' =>  []
-            ];
-        }
+            ]
+        ] : [
+            'title' => GeneratorUtils::cleanPluralUcWords($title),
+            'icon' => $icon,
+            'route' => '/' . str(GeneratorUtils::pluralKebabCase($route))->remove('/'),
+            'permission' => GeneratorUtils::cleanSingularLowerCase($model) . ' view',
+            'permissions' => [],
+            'submenus' => []
+        ];
 
         return $newMenu;
     }

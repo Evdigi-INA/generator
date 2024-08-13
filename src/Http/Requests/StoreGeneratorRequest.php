@@ -3,6 +3,8 @@
 namespace EvdigiIna\Generator\Http\Requests;
 
 use EvdigiIna\Generator\Enums\GeneratorType;
+use EvdigiIna\Generator\Generators\GeneratorUtils;
+use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -21,30 +23,12 @@ class StoreGeneratorRequest extends FormRequest
      */
     public function rules(): array
     {
-        $columnTypes = [
-            'string',
-            'integer',
-            'text',
-            'bigInteger',
-            'boolean',
-            'char',
-            'date',
-            'time',
-            'year',
-            'dateTime',
-            'decimal',
-            'double',
-            'enum',
-            'float',
-            'foreignId',
-            'tinyInteger',
-            'mediumInteger',
-            'tinyText',
-            'mediumText',
-            'longText'
+        $menuValidations = [
+            'menu' => ['required_unless:header,new'],
+            'header' => ['required'],
         ];
 
-        return [
+        $validations = [
             // regex only for string, underscores("_") and slash("/")
             'model' => ['required', 'regex:/^[A-Za-z_\/]+$/'],
             'generate_type' => ['required', new Enum(GeneratorType::class)],
@@ -61,16 +45,23 @@ class StoreGeneratorRequest extends FormRequest
             'select_options.*' => ['nullable', 'required_if:column_types.*,enum'],
             'constrains.*' => ['nullable', 'required_if:column_types.*,foreignId'],
             'file_types.*' => ['nullable', 'required_if:input_types.*,file', 'in:image,mimes'],
-            'column_types.*' => ['required', 'in:' . implode(',', $columnTypes)],
+            'column_types.*' => ['required', 'in:' . implode(',', (new GeneratorService)->columnTypes())],
             'on_update_foreign.*' => ['nullable'],
             'on_delete_foreign.*' => ['nullable'],
-            'menu' => ['required_unless:header,new'],
-            'header' => ['required'],
-            'new_header' => ['required_if:header,new'],
-            'new_icon' => ['required_if:header,new'],
-            'new_menu' => ['required_if:header,new'],
+            'new_header' => ['nullable'],
+            'new_icon' => ['nullable'],
+            'new_menu' => ['nullable'],
+            'generate_seeder' => ['nullable'],
+            'generate_factory' => ['nullable'],
             // 'new_route' => ['required_if:header,new'],
             'new_submenu' => ['nullable'],
+            'generate_variant' => ['required'],
         ];
+
+        if(GeneratorUtils::isGenerateApi() || request()->input('generate_type') == GeneratorType::ONLY_MODEL_AND_MIGRATION->value) {
+            return $validations;
+        }
+
+        return [...$validations, ...$menuValidations];
     }
 }

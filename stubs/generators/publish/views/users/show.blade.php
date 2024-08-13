@@ -37,11 +37,10 @@
                                     <tr>
                                         <td colspan="2" class="text-center">
                                             <div class="avatar avatar-xl">
-                                                @if ($user->avatar == null)
-                                                    <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim($user->email))) }}&s=500"
-                                                        alt="Avatar">
+                                                @if (!$user->avatar)
+                                                    <img src="https://via.placeholder.com/350?text=No+Image+Avaiable" alt="Avatar" class="rounded img-fluid">
                                                 @else
-                                                    <img src="{{ asset("uploads/images/avatars/$user->avatar") }}" alt="Avatar">
+                                                    <img src="{{ asset('storage/uploads/avatars/' . $user->avatar) }}" alt="Avatar" class="rounded img-fluid">
                                                 @endif
                                             </div>
                                         </td>
@@ -60,16 +59,16 @@
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">{{ __('Email verified at') }}</td>
-                                        <td>{{ $user->email_verified_at ? $user->email_verified_at->format('d/m/Y H:i') : '-' }}
+                                        <td>{{ $user->email_verified_at ? $user->email_verified_at->format('Y-m-d H:i:s') : '-' }}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">{{ __('Created at') }}</td>
-                                        <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $user->created_at->format('Y-m-d H:i:s') }}</td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">{{ __('Updated at') }}</td>
-                                        <td>{{ $user->updated_at->format('d/m/Y H:i') }}</td>
+                                        <td>{{ $user->updated_at->format('Y-m-d H:i:s') }}</td>
                                     </tr>
                                 </table>
                             </div>

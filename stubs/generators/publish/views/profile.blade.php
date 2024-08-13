@@ -44,7 +44,7 @@
                                     <input type="email" name="email"
                                         class="form-control @error('email', 'updateProfileInformation') is-invalid @enderror"
                                         id="email" placeholder="{{ __('E-mail Address') }}"
-                                        value="{{ old('email') ?? auth()->user()->email }}" required>
+                                        value="{{ old('email') ?? auth()?->user()?->email }}" required>
 
                                     @error('email', 'updateProfileInformation')
                                         <span class="text-danger">
@@ -58,7 +58,7 @@
                                     <input type="text" name="name"
                                         class="form-control  @error('name', 'updateProfileInformation') is-invalid @enderror"
                                         id="name" placeholder="{{ __('Name') }}"
-                                        value="{{ old('name') ?? auth()->user()->name }}" required>
+                                        value="{{ old('name') ?? auth()?->user()?->name }}" required>
                                     @error('name', 'updateProfileInformation')
                                         <span class="text-danger">
                                             {{ $message }}
@@ -69,12 +69,19 @@
                                 <div class="row">
                                     <div class="col-md-1">
                                         <div class="avatar avatar-xl mb-3">
-                                            @if (auth()->user()->avatar == null)
-                                                <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(auth()->user()->email))) }}&s=500"
+                                            @if (!auth()?->user()?->avatar)
+                                                <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(auth()?->user()?->email))) }}&s=500"
                                                     alt="Avatar">
                                             @else
-                                                <img src="{{ asset('uploads/images/avatars/' . auth()->user()->avatar) }}"
+                                                {{-- storage --}}
+                                                <img src="{{ asset('storage/uploads/avatars/' . auth()?->user()?->avatar) }}"
                                                     alt="Avatar">
+
+                                                {{-- public --}}
+                                                {{-- <img src="{{ asset('/uploads/avatars/' . auth()?->user()?->avatar) }}" alt="Avatar" > --}}
+
+                                                {{-- s3 --}}
+                                                {{-- <img src="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url('avatars/' . auth()?->user()?->avatar) }}" alt="Avatar" > --}}
                                             @endif
                                         </div>
                                     </div>
@@ -170,19 +177,19 @@
                             <form method="post" action="/user/two-factor-authentication">
                                 @csrf
                                 {{-- if user activate two factor authentication --}}
-                                @if (auth()->user()->two_factor_secret)
+                                @if (auth()?->user()?->two_factor_secret)
                                     @method('delete')
 
                                     <div class="row">
                                         <div class="col-md-6">
                                             <p>{{ __('Scan the following QR Code into your authentication application.') }}
                                             </p>
-                                            {!! auth()->user()->twoFactorQrcodeSvg() !!}
+                                            {!! auth()?->user()?->twoFactorQrcodeSvg() !!}
                                         </div>
                                         <div class="col-md-6">
                                             <p>{{ __('Save these Recovery Codes in a secure location.') }}</p>
                                             <ul>
-                                                @foreach (json_decode(decrypt(auth()->user()->two_factor_recovery_codes)) as $code)
+                                                @foreach (json_decode(decrypt(auth()?->user()?->two_factor_recovery_codes)) as $code)
                                                     <li>{{ $code }}</li>
                                                 @endforeach
                                             </ul>
@@ -198,7 +205,7 @@
                             </form>
 
                             {{-- generate recovery codes --}}
-                            @if (auth()->user()->two_factor_secret)
+                            @if (auth()?->user()?->two_factor_secret)
                                 <form method="POST" action="/user/two-factor-recovery-codes">
                                     @csrf
                                     <button class="btn btn-primary mt-3 float-right" type="submit">

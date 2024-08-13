@@ -2,6 +2,8 @@
 
 namespace EvdigiIna\Generator\Generators;
 
+use EvdigiIna\Generator\Enums\GeneratorVariant;
+
 class RequestGenerator
 {
     /**
@@ -16,14 +18,10 @@ class RequestGenerator
         $totalFields = count($request['fields']);
         $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase($model);
 
-        switch ($path) {
-            case '':
-                $namespace = "namespace App\Http\Requests\\$modelNamePluralPascalCase;";
-                break;
-            default:
-                $namespace = "namespace App\Http\Requests\\$path\\$modelNamePluralPascalCase;";
-                break;
-        }
+        $namespace = match ($path) {
+            '' => "namespace App\Http\Requests\\$modelNamePluralPascalCase;",
+            default => "namespace App\Http\Requests\\$path\\$modelNamePluralPascalCase;",
+        };
 
         foreach ($request['fields'] as $i => $field) {
             /**
@@ -50,13 +48,15 @@ class RequestGenerator
                     $validations .= "|url";
                     break;
                 case 'email':
-                    $uniqueValidation = 'unique:' . GeneratorUtils::pluralSnakeCase($model) . ',' . GeneratorUtils::singularSnakeCase($field);
+                    if (GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value) {
+                        $uniqueValidation = 'unique:' . GeneratorUtils::pluralSnakeCase($model) . ',' . GeneratorUtils::singularSnakeCase($field);
 
-                    /**
-                     * result:
-                     * 'name' => 'required|email',
-                     */
-                    $validations .= "|email|" . $uniqueValidation;
+                        /**
+                         * result:
+                         * 'name' => 'required|email',
+                         */
+                        $validations .= "|email|" . $uniqueValidation;
+                    }
                     break;
                 case 'date':
                     /**
@@ -79,14 +79,9 @@ class RequestGenerator
 
             if ($request['input_types'][$i] == 'file' && $request['file_types'][$i] == 'image') {
 
-                $maxSize = 1024;
-                if (config('generator.image.size_max')) {
-                    $maxSize = config('generator.image.size_max');
-                }
+                $maxSize = config('generator.image.size_max') ?? 1024;
 
-                if ($request['files_sizes'][$i]) {
-                    $maxSize = $request['files_sizes'][$i];
-                }
+                if ($request['files_sizes'][$i]) $maxSize = $request['files_sizes'][$i];
 
                 /**
                  * result:
@@ -203,9 +198,7 @@ class RequestGenerator
                     break;
             }
 
-            if ($i + 1 != $totalFields) {
-                $validations .= "\n\t\t\t";
-            }
+            if ($i + 1 != $totalFields) $validations .= "\n\t\t\t";
         }
         // end of foreach
 
@@ -222,31 +215,31 @@ class RequestGenerator
                 $validations,
                 $namespace
             ],
-            GeneratorUtils::getTemplate('request')
+            GeneratorUtils::getStub('request')
         );
 
         /**
          * on update request if any image validation, then set 'required' to nullable
          */
-        switch (str_contains($storeRequestTemplate, "required|image")) {
-            case true:
-                $updateValidations = str_replace("required|image", "nullable|image", $validations);
-                break;
-            default:
-                $updateValidations = $validations;
-                break;
-        }
+        $updateValidations = match (str_contains($storeRequestTemplate, "required|image")) {
+            true => str_replace("required|image", "nullable|image", $validations),
+            default => $validations,
+        };
 
         if (isset($uniqueValidation)) {
             /**
              * Will generate something like:
              *
-             * unique:users,email,' . $this->user->id
+             * unique:users,email,' . request()->segment(2)
              */
-            $updateValidations = str_replace($uniqueValidation, $uniqueValidation . ",' . \$this->" . GeneratorUtils::singularCamelCase($model) . "->id", $validations);
+            $updateValidations = str_replace(
+                $uniqueValidation,
+                $uniqueValidation . ",' . request()->segment(" . (GeneratorUtils::isGenerateApi() ? 3 : 2) . ")",
+                $validations
+            );
 
-            // change ->id', to ->id,
-            $updateValidations = str_replace("->id'", "->id", $updateValidations);
+            // change "segment(2)'," to "segment(2),"
+            $updateValidations = str_replace(")',", "),", $updateValidations);
         }
 
         if (in_array('password', $request['input_types'])) {
@@ -276,24 +269,27 @@ class RequestGenerator
                 $updateValidations,
                 $namespace
             ],
-            GeneratorUtils::getTemplate('request')
+            GeneratorUtils::getStub('request')
         );
 
         /**
          * Create a request class file.
          */
-        switch ($path) {
-            case '':
-                GeneratorUtils::checkFolder(app_path("/Http/Requests/$modelNamePluralPascalCase"));
-                file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
-                file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
-                break;
-            default:
-                $fullPath = app_path("/Http/Requests/$path/$modelNamePluralPascalCase");
-                GeneratorUtils::checkFolder($fullPath);
-                file_put_contents("$fullPath/Store{$modelSingularPascalCase}Request.php", $storeRequestTemplate);
+        if ($path) {
+            $fullPath = app_path("/Http/Requests/$path/$modelNamePluralPascalCase");
+            GeneratorUtils::checkFolder($fullPath);
+            file_put_contents("$fullPath/Store{$modelSingularPascalCase}Request.php", $storeRequestTemplate);
+
+            if (GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value) {
                 file_put_contents("$fullPath/Update{$modelSingularPascalCase}Request.php", $updateRequestTemplate);
-                break;
+            }
+        } else {
+            GeneratorUtils::checkFolder(app_path("/Http/Requests/$modelNamePluralPascalCase"));
+            file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
+
+            if (GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value) {
+                file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
+            }
         }
     }
 }

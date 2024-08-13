@@ -2,16 +2,23 @@
 
 namespace EvdigiIna\Generator\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use EvdigiIna\Generator\Enums\GeneratorType;
 use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use EvdigiIna\Generator\Http\Requests\StoreGeneratorRequest;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 
-class GeneratorController extends Controller
+class GeneratorController extends BaseController
 {
-    public function __construct(protected GeneratorService $generatorService)
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function __construct(public GeneratorService $generatorService)
     {
         //
     }
@@ -19,45 +26,49 @@ class GeneratorController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Illuminate\Contracts\View\View
+    public function create(): View
     {
         return view('generator::create');
     }
 
     /**
-     * Show the form for creating a new resource.(bootstrap only)
-     */
-    public function simpleCreate(): \Illuminate\Contracts\View\View
-    {
-        return view('generator::simple-create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreGeneratorRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreGeneratorRequest $request): JsonResponse
     {
-        if ($request->generate_type == GeneratorType::ALL->value) {
-            $this->generatorService->generateAll($request->validated());
-        } else {
-            $this->generatorService->onlyGenerateModelAndMigration($request->validated());
+        switch ($request->generate_type) {
+            case GeneratorType::ALL->value:
+                $this->generatorService->generate($request->validated());
+                break;
+            default:
+                $this->generatorService->onlyGenerateModelAndMigration($request->validated());
+                break;
         }
 
         $model = GeneratorUtils::setModelName($request->model, 'default');
 
+        $route = $request->generate_type == GeneratorType::ALL->value
+            ? (GeneratorUtils::isGenerateApi() ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model))
+            : request()->path() . '/create';
+
         return response()->json([
             'message' => 'success',
-            'route' => GeneratorUtils::pluralKebabCase($model)
+            'route' => $route
         ], Response::HTTP_CREATED);
     }
 
     /**
      * Get all sidebar menus on config by index.
      */
-    public function getSidebarMenus(int $index): \Illuminate\Http\JsonResponse
+    public function getSidebarMenus(int $index): JsonResponse
     {
         $sidebar = $this->generatorService->getSidebarMenusByIndex($index);
 
         return response()->json($sidebar['menus'], Response::HTTP_OK);
+    }
+
+    public function apiCreate(): View
+    {
+        return view('generator::api-create');
     }
 }

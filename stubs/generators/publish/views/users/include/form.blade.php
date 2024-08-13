@@ -109,11 +109,10 @@
 
             <div class="col-md-1 text-center">
                 <div class="avatar avatar-xl">
-                    @if ($user->avatar == null)
-                        <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim($user->email))) }}&s=500"
-                            alt="avatar">
+                    @if (!$user->avatar)
+                        <img src="https://via.placeholder.com/350?text=No+Image+Avaiable" alt="Avatar" class="rounded mb-2 mt-2 img-fluid">
                     @else
-                        <img src="{{ asset("uploads/images/avatars/$user->avatar") }}" alt="avatar">
+                        <img src="{{ asset('storage/uploads/avatars/' . $user->avatar) }}" alt="Avatar" class="rounded mb-2 mt-2 img-fluid">
                     @endif
                 </div>
             </div>

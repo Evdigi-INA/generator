@@ -2,46 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Users\{StoreUserRequest, UpdateUserRequest};
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
-use Image;
+use App\Generators\Services\ImageService;
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use App\Http\Requests\Users\{StoreUserRequest, UpdateUserRequest};
+use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
-    /**
-     * Path for user avatar file.
-     *
-     * @var string
-     */
-    protected $avatarPath = '/uploads/images/avatars/';
-
-    public function __construct()
+    public function __construct(public ImageService $imageService, public string $avatarPath = '')
     {
-        $this->middleware('permission:user view')->only('index', 'show');
-        $this->middleware('permission:user create')->only('create', 'store');
-        $this->middleware('permission:user edit')->only('edit', 'update');
-        $this->middleware('permission:user delete')->only('destroy');
+        $this->avatarPath = storage_path('app/public/uploads/avatars/');
+
+    }
+
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:user view', only: ['index', 'show']),
+            new Middleware('permission:user create', only: ['create', 'store']),
+            new Middleware('permission:user edit', only: ['edit', 'update']),
+            new Middleware('permission:user delete', only: ['destroy']),
+        ];
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Http\JsonResponse
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             $users = User::with('roles:id,name');
 
             return Datatables::of($users)
                 ->addColumn('action', 'users.include.action')
-                ->addColumn('role', function ($row) {
-                    return $row->getRoleNames()->toArray() !== [] ? $row->getRoleNames()[0] : '-';
-                })
-                ->addColumn('avatar', function ($row) {
-                    if ($row->avatar == null) {
-                        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($row->email))) . '&s=500';
+                ->addColumn('role', fn($row) => $row->getRoleNames()->toArray() !== [] ? $row->getRoleNames()[0] : '-')
+                ->addColumn('avatar', function ($user) {
+                    if (!$user->avatar) {
+                        return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
                     }
-                    return asset($this->avatarPath . $row->avatar);
+
+                    return asset('storage/uploads/avatars/' . $user->avatar);
                 })
                 ->toJson();
         }
@@ -52,7 +61,7 @@ class UserController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Illuminate\Contracts\View\View
+    public function create(): View
     {
         return view('users.create');
     }
@@ -60,39 +69,27 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request): \Illuminate\Http\RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse
     {
-        $attr = $request->validated();
+        return DB::transaction(function () use ($request) {
+            $validated = $request->validated();
+            $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath);
+            $validated['password'] = bcrypt($request->password);
 
-        if ($request->file('avatar') && $request->file('avatar')->isValid()) {
+            $user = User::create($validated);
 
-            $filename = $request->file('avatar')->hashName();
+            $role = Role::select('id', 'name')->find($request->role);
 
-            if (!file_exists($folder = public_path($this->avatarPath))) {
-                mkdir($folder, 0777, true);
-            }
+            $user->assignRole($role->name);
 
-            Image::make($request->file('avatar')->getRealPath())->resize(500, 500, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->save($this->avatarPath . $filename);
-
-            $attr['avatar'] = $filename;
-        }
-
-        $attr['password'] = bcrypt($request->password);
-
-        $user = User::create($attr);
-
-        $user->assignRole($request->role);
-
-        return to_route('users.index')->with('success', __('The user was created successfully.'));
+            return to_route('users.index')->with('success', __('The user was created successfully.'));
+        });
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User $user): \Illuminate\Contracts\View\View
+    public function show(User $user): View
     {
         $user->load('roles:id,name');
 
@@ -102,7 +99,7 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user): \Illuminate\Contracts\View\View
+    public function edit(User $user): View
     {
         $user->load('roles:id,name');
 
@@ -112,60 +109,45 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $user): \Illuminate\Http\RedirectResponse
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        $attr = $request->validated();
+        return DB::transaction(function () use ($request, $user) {
+            $validated = $request->validated();
+            $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user?->avatar);
 
-        if ($request->file('avatar') && $request->file('avatar')->isValid()) {
-
-            $filename = $request->file('avatar')->hashName();
-
-            if (!file_exists($folder = public_path($this->avatarPath))) {
-                mkdir($folder, 0777, true);
+            if (!$request->password) {
+                unset($validated['password']);
+            } else {
+                $validated['password'] = bcrypt($request->password);
             }
 
-            Image::make($request->file('avatar')->getRealPath())->resize(500, 500, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })->save(public_path($this->avatarPath) . $filename);
+            $user->update($validated);
 
-            if ($user->avatar != null && file_exists($oldAvatar = public_path($this->avatarPath .
-                $user->avatar))) {
-                unlink($oldAvatar);
-            }
+            $role = Role::select('id', 'name')->find($request->role);
 
-            $attr['avatar'] = $filename;
-        } else {
-            $attr['avatar'] = $user->avatar;
-        }
+            $user->syncRoles($role->name);
 
-        switch (is_null($request->password)) {
-            case true:
-                unset($attr['password']);
-                break;
-            default:
-                $attr['password'] = bcrypt($request->password);
-                break;
-        }
-
-        $user->update($attr);
-
-        $user->syncRoles($request->role);
-
-        return to_route('users.index')->with('success', __('The user was updated successfully.'));
+            return to_route('users.index')->with('success', __('The user was updated successfully.'));
+        });
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user): \Illuminate\Http\RedirectResponse
+    public function destroy(User $user): RedirectResponse
     {
-        if ($user->avatar != null && file_exists($oldAvatar = public_path($this->avatarPath . $user->avatar))) {
-            unlink($oldAvatar);
+        try {
+            return DB::transaction(function () use ($user) {
+                $avatar = $user->avatar;
+
+                $user->delete();
+
+                $this->imageService->delete(image: $this->avatarPath . $avatar);
+
+                return to_route('users.index')->with('success', __('The user was deleted successfully.'));
+            });
+        } catch (\Exception $e) {
+            return to_route('users.index')->with('error', __("The user can't be deleted because it's related to another table."));
         }
-
-        $user->delete();
-
-        return to_route('users.index')->with('success', __('The user was deleted successfully.'));
     }
 }
