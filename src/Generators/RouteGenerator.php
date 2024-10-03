@@ -59,10 +59,10 @@ class RouteGenerator
 
         File::append(base_path(GeneratorUtils::isGenerateApi() ? 'routes/api.php' : 'routes/web.php'), $controllerClass);
 
-        // if(isset($request['generate_export']) && $request['generate_export'] == 'yes') {
-        $exportRoute = "\nRoute::get('/export/$modelNamePluralKebabCase', [$controllerPath, 'export'])->name('$modelNamePluralKebabCase.export');";
+        if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
+            $exportRoute = "\nRoute::get('/export/$modelNamePluralKebabCase', [$controllerPath, 'export'])->name('$modelNamePluralKebabCase.export');";
 
-        File::append(base_path(GeneratorUtils::isGenerateApi() ? 'routes/api.php' : 'routes/web.php'), $exportRoute);
-        // }
+            File::append(base_path(GeneratorUtils::isGenerateApi() ? 'routes/api.php' : 'routes/web.php'), $exportRoute);
+        }
     }
 }

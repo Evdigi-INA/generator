@@ -610,7 +610,7 @@ class ControllerGenerator
 
     public function generateExportFunction(array $request): string
     {
-        // if (isset($request['generate_export']) && $request['generate_export'] == 'yes') {
+        if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
             $stub = GeneratorUtils::getStub(path: 'controllers/export-function');
 
             $template = str_replace(search: [
@@ -623,8 +623,8 @@ class ControllerGenerator
             ], subject: $stub);
 
             return $template;
-        // }
+        }
 
-        // return '';
+        return '';
     }
 }

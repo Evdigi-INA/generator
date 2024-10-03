@@ -91,9 +91,9 @@ class GeneratorService implements GeneratorServiceInterface
             $this->checkSidebarType();
         }
 
-        // if (isset($request['generate_export']) && $request['generate_export'] == 'yes') {
+        if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
             (new ExportExcelGenerator)->generate($request);
-        // }
+        }
 
         Artisan::call('migrate');
     }

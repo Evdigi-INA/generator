@@ -2,17 +2,18 @@
 
 namespace EvdigiIna\Generator\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Log;
 use EvdigiIna\Generator\Enums\GeneratorType;
-use EvdigiIna\Generator\Generators\Services\GeneratorService;
-use EvdigiIna\Generator\Http\Requests\StoreGeneratorRequest;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use EvdigiIna\Generator\Http\Requests\StoreGeneratorRequest;
+use EvdigiIna\Generator\Generators\Services\GeneratorService;
 
 class GeneratorController extends BaseController
 {
@@ -36,6 +37,7 @@ class GeneratorController extends BaseController
      */
     public function store(StoreGeneratorRequest $request): JsonResponse
     {
+        Log::debug('log arr', $request->validated());
         switch ($request->generate_type) {
             case GeneratorType::ALL->value:
                 $this->generatorService->generate($request->validated());

@@ -140,14 +140,14 @@ class IndexViewGenerator
 
     public function generateExportButton(array $request): string
     {
-        // if (isset($request['generate_export']) && $request['generate_export'] == 'yes') {
+        if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
             return str_replace(
                 search: ['{{modelNamePluralKebabCase}}', '{{modelNameSingularClean}}'],
                 replace: [GeneratorUtils::pluralKebabCase(string: $request['model']), GeneratorUtils::cleanSingularUcWords(string: $request['model'])],
                 subject: GeneratorUtils::getStub(path: 'views/export-button')
             );
-        // }
+        }
 
-        // return '';
+        return '';
     }
 }

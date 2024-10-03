@@ -56,6 +56,7 @@ class StoreGeneratorRequest extends FormRequest
             // 'new_route' => ['required_if:header,new'],
             'new_submenu' => ['nullable'],
             'generate_variant' => ['required'],
+            'generate_export' => ['nullable'],
         ];
 
         if(GeneratorUtils::isGenerateApi() || request()->input('generate_type') == GeneratorType::ONLY_MODEL_AND_MIGRATION->value) {
