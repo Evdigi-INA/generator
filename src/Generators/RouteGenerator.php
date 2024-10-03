@@ -23,14 +23,17 @@ class RouteGenerator
             : "->middleware('auth')";
 
         $routeFacade = GeneratorUtils::isGenerateApi() ? "Route::apiResource('" : "Route::resource('";
+        $controllerPath = '';
 
         switch ($path) {
             case true:
                 switch (GeneratorUtils::isGenerateApi()) {
                     case true:
                         $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\Api\\";
+                        $controllerPath = "App\Http\Controllers\Api\\" . $path . $modelNameSingularPascalCase . "Controller::class";
                         break;
                     default:
+                        $controllerPath = "App\Http\Controllers\\" . $path . $modelNameSingularPascalCase . "Controller::class";
                         $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\";
                         break;
                 }
@@ -40,8 +43,10 @@ class RouteGenerator
                 switch (GeneratorUtils::isGenerateApi()) {
                     case true:
                         $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\Api\\";
+                        $controllerPath = "App\Http\Controllers\Api\\" . $modelNameSingularPascalCase . "Controller::class";
                         break;
                     default:
+                        $controllerPath = "App\Http\Controllers\\" . $modelNameSingularPascalCase . "Controller::class";
                         $controllerClass = "\n" . $routeFacade . $modelNamePluralKebabCase . "', App\Http\Controllers\\";
                         break;
                 }
@@ -53,5 +58,11 @@ class RouteGenerator
         $controllerClass .= GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value ? "->only(['index', 'store']);" : ";";
 
         File::append(base_path(GeneratorUtils::isGenerateApi() ? 'routes/api.php' : 'routes/web.php'), $controllerClass);
+
+        // if(isset($request['generate_export']) && $request['generate_export'] == 'yes') {
+        $exportRoute = "\nRoute::get('/export/$modelNamePluralKebabCase', [$controllerPath, 'export'])->name('$modelNamePluralKebabCase.export');";
+
+        File::append(base_path(GeneratorUtils::isGenerateApi() ? 'routes/api.php' : 'routes/web.php'), $exportRoute);
+        // }
     }
 }
