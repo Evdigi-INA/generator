@@ -33,6 +33,8 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
+                            {{exportButton}}
+
                             <form action="{{ route('{{modelNamePluralKebabCase}}.store') }}" method="POST"{{enctype}}>
                                 @csrf
                                 @method('POST')

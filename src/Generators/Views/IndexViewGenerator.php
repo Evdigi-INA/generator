@@ -143,7 +143,7 @@ class IndexViewGenerator
         if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
             return str_replace(
                 search: ['{{modelNamePluralKebabCase}}', '{{modelNameSingularClean}}'],
-                replace: [GeneratorUtils::pluralKebabCase(string: $request['model']), GeneratorUtils::cleanSingularUcWords(string: $request['model'])],
+                replace: [GeneratorUtils::pluralKebabCase(string: $request['model']), GeneratorUtils::cleanSingularLowerCase(string: $request['model'])],
                 subject: GeneratorUtils::getStub(path: 'views/export-button')
             );
         }

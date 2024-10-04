@@ -6,7 +6,7 @@ use {{requestPath}};
 use Illuminate\Contracts\View\View;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\{JsonResponse, RedirectResponse};
-use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};{{useExportNamespace}}
 
 class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
 {

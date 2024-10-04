@@ -42,7 +42,8 @@ class CreateViewGenerator
                 '{{modelNamePluralKebabCase}}',
                 '{{enctype}}',
                 '{{viewPath}}',
-                '{{alertForSingleForm}}'
+                '{{alertForSingleForm}}',
+                '{{exportButton}}',
             ],
             [
                 $modelNamePluralUcWords,
@@ -50,7 +51,8 @@ class CreateViewGenerator
                 $modelNamePluralKebabCase,
                 in_array('file', $request['input_types']) ? ' enctype="multipart/form-data"' : '',
                 $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
-                $alertCode
+                $alertCode,
+                $request['generate_variant'] == GeneratorVariant::SINGLE_FORM->value ? (new IndexViewGenerator)->generateExportButton($request) : '',
             ],
             GeneratorUtils::getStub(empty($request['is_simple_generator']) ? 'views/create' : 'views/simple/create')
         );

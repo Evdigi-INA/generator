@@ -385,6 +385,8 @@ class ControllerGenerator
                         '{{castImageShow}}',
                         // '{{castImageDataTable}}',
                         "'{{middlewareName}}',",
+                        '{{useExportNamespace}}',
+                        '{{exportFunction}}',
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -425,6 +427,8 @@ class ControllerGenerator
                         "\n\t\t\$this->castImages($" . $modelNameSingularCamelCase . ");\n",
                         // $castImageDataTable,
                         GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
+                        $this->generateUseExport($request),
+                        $this->generateExportFunction($request),
                     ],
                     GeneratorUtils::getStub(GeneratorUtils::getControllerStubByGeneratorVariant(true))
                 );
@@ -474,7 +478,8 @@ class ControllerGenerator
                         '{{relations}}',
                         '{{publicOrStorage}}',
                         "'{{middlewareName}}',",
-                        '{{exportFunction}}'
+                        '{{exportFunction}}',
+                        '{{useExportNamespace}}'
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -501,6 +506,7 @@ class ControllerGenerator
                         config('generator.image.disk', 'storage'),
                         GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
                         $this->generateExportFunction($request),
+                        $this->generateUseExport($request),
                     ],
                     GeneratorUtils::getStub(GeneratorUtils::getControllerStubByGeneratorVariant())
                 );
@@ -617,12 +623,21 @@ class ControllerGenerator
                 '{{modelPluralPascalCase}}',
                 '{{modelPluralKebabCase}}',
             ], replace: [
-                GeneratorUtils::singularPascalCase(string: $request['model']),
+                GeneratorUtils::pluralPascalCase(string: $request['model']),
                 GeneratorUtils::pluralKebabCase(string: $request['model']),
 
             ], subject: $stub);
 
             return $template;
+        }
+
+        return '';
+    }
+
+    public function generateUseExport(array $request): string
+    {
+        if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
+            return "\nuse App\Exports\\" . GeneratorUtils::pluralPascalCase(string: $request['model']) . "Export;\nuse Symfony\Component\HttpFoundation\BinaryFileResponse;";
         }
 
         return '';

@@ -25,10 +25,12 @@
 
         <div class="card">
             <div class="card-body">
-                <a href="{{ route('{{modelNamePluralKebabCase}}.create') }}" class="btn btn-primary mb-3">
+                <a href="{{ route('{{modelNamePluralKebabCase}}.create') }}" class="btn btn-primary mb-3 me-3">
                     <i class="fas fa-plus"></i>
                     {{ __('Create a new {{modelNameSingularLowerCase}}') }}
                 </a>
+
+                {{exportButton}}
 
                 <div class="table-responsive p-1">
                     <table class="table table-striped" id="data-table" width="100%">

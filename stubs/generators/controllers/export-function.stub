@@ -1,5 +1,5 @@
 
-    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function export(): BinaryFileResponse
     {
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\{{modelPluralPascalCase}}Export, '{{modelPluralKebabCase}}.xlsx');
+        return (new {{modelPluralPascalCase}}Export)->download('{{modelPluralKebabCase}}.xlsx');
     }

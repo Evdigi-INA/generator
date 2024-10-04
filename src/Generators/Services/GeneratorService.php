@@ -57,7 +57,7 @@ class GeneratorService implements GeneratorServiceInterface
             (new FormViewGenerator)->generate($request);
 
             // for full CRUD
-            if ($request['generate_variant'] === GeneratorVariant::DEFAULT->value) {
+            if ($request['generate_variant'] === GeneratorVariant::DEFAULT ->value) {
                 (new IndexViewGenerator)->generate($request);
                 (new ShowViewGenerator)->generate($request);
                 (new EditViewGenerator)->generate($request);
@@ -91,9 +91,7 @@ class GeneratorService implements GeneratorServiceInterface
             $this->checkSidebarType();
         }
 
-        if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
-            (new ExportExcelGenerator)->generate($request);
-        }
+        (new ExportExcelGenerator)->generate($request);
 
         Artisan::call('migrate');
     }

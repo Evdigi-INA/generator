@@ -37,7 +37,6 @@ class GeneratorController extends BaseController
      */
     public function store(StoreGeneratorRequest $request): JsonResponse
     {
-        Log::debug('log arr', $request->validated());
         switch ($request->generate_type) {
             case GeneratorType::ALL->value:
                 $this->generatorService->generate($request->validated());

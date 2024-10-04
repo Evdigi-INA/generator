@@ -8,7 +8,7 @@ use {{resourceApiPath}}\{{{modelNameSingularPascalCase}}Collection, {{modelNameS
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\JsonResponse;
 use App\Generators\Services\ImageService;
-use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};{{useExportNamespace}}
 
 class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
 {
@@ -141,4 +141,5 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     {
         {{castImageFunction}}
     }
+    {{exportFunction}}
 }
