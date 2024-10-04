@@ -30,7 +30,7 @@ class IndexViewGenerator
                  * <th>{{ __('Price') }}</th>
                  */
                 if ($request['column_types'][$i] != 'foreignId') {
-                    $thColumns .= "<th>{{ __('" .  GeneratorUtils::cleanUcWords($field) . "') }}</th>";
+                    $thColumns .= "<th>{{ __('" . GeneratorUtils::cleanUcWords($field) . "') }}</th>";
                 }
 
                 if ($request['input_types'][$i] == 'file') {
@@ -50,9 +50,10 @@ class IndexViewGenerator
                      */
 
                     $imgStyle = '';
-                    if(isset($request['is_simple_generator'])) $imgStyle = 'class="rounded" width="50" height="40" style="object-fit: cover"';
+                    if (isset($request['is_simple_generator']))
+                        $imgStyle = 'class="rounded" width="50" height="40" style="object-fit: cover"';
 
-                    $tdColumns .=  "{
+                    $tdColumns .= "{
                     data: '" . str()->snake($field) . "',
                     name: '" . str()->snake($field) . "',
                     orderable: false,
@@ -67,7 +68,7 @@ class IndexViewGenerator
                     // remove '/' or sub folders
                     $constrainModel = GeneratorUtils::setModelName($request['constrains'][$i], 'default');
 
-                    $thColumns .= "<th>{{ __('" .  GeneratorUtils::cleanSingularUcWords($constrainModel) . "') }}</th>";
+                    $thColumns .= "<th>{{ __('" . GeneratorUtils::cleanSingularUcWords($constrainModel) . "') }}</th>";
 
                     /**
                      * will generate something like:
@@ -76,7 +77,7 @@ class IndexViewGenerator
                      *    name: 'user.name'
                      * }
                      */
-                    $tdColumns .=  "{
+                    $tdColumns .= "{
                     data: '" . GeneratorUtils::singularSnakeCase($constrainModel) . "',
                     name: '" . GeneratorUtils::singularSnakeCase($constrainModel) . "." . GeneratorUtils::getColumnAfterId($constrainModel) . "'
                 },";
@@ -88,7 +89,7 @@ class IndexViewGenerator
                      *    name: 'price'
                      * }
                      */
-                    $tdColumns .=  "{
+                    $tdColumns .= "{
                     data: '" . str()->snake($field) . "',
                     name: '" . str()->snake($field) . "',
                 },";
@@ -110,6 +111,7 @@ class IndexViewGenerator
                 '{{modelNamePluralLowerCase}}',
                 '{{thColumns}}',
                 '{{tdColumns}}',
+                '{{exportButton}}',
             ],
             [
                 $modelNamePluralUcWords,
@@ -118,6 +120,7 @@ class IndexViewGenerator
                 $modelNamePluralLowerCase,
                 $thColumns,
                 $tdColumns,
+                $this->generateExportButton($request),
             ],
             empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/index') : GeneratorUtils::getStub('views/simple/index')
         );
@@ -133,5 +136,18 @@ class IndexViewGenerator
                 file_put_contents($fullPath . "/index.blade.php", $template);
                 break;
         }
+    }
+
+    public function generateExportButton(array $request): string
+    {
+        if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
+            return str_replace(
+                search: ['{{modelNamePluralKebabCase}}', '{{modelNameSingularClean}}'],
+                replace: [GeneratorUtils::pluralKebabCase(string: $request['model']), GeneratorUtils::cleanSingularUcWords(string: $request['model'])],
+                subject: GeneratorUtils::getStub(path: 'views/export-button')
+            );
+        }
+
+        return '';
     }
 }

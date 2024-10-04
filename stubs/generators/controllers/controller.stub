@@ -101,4 +101,5 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameCleanSingular}} can't be deleted because it's related to another table."));
         }
     }
+    {{exportFunction}}
 }

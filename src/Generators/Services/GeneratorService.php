@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Generators\{
     ControllerGenerator,
+    ExportExcelGenerator,
     FactoryGenerator,
     GeneratorUtils,
     MenuGenerator,
@@ -88,6 +89,10 @@ class GeneratorService implements GeneratorServiceInterface
 
         if ((empty($request['generate_variant']) && $request['generate_variant'] !== 'api') || empty($request['is_simple_generator'])) {
             $this->checkSidebarType();
+        }
+
+        if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
+            (new ExportExcelGenerator)->generate($request);
         }
 
         Artisan::call('migrate');

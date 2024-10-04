@@ -114,6 +114,13 @@
                                             <label for="generate-factory">{{ __('Generate Factory') }}</label>
                                         </div>
                                     </div>
+                                    <div class="form-check">
+                                        <div class="checkbox">
+                                            <input type="checkbox" class="form-check-input" id="generate-export"
+                                                name="generate_export">
+                                            <label for="generate-export">{{ __('Generate Export') }}</label>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="col-md-6 mt-3">

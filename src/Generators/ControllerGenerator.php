@@ -29,7 +29,8 @@ class ControllerGenerator
             case '':
                 $namespace = "namespace App\Http\Controllers;\n";
 
-                if (GeneratorUtils::isGenerateApi()) $namespace = "namespace App\Http\Controllers\Api;\n\nuse App\Http\Controllers\Controller;";
+                if (GeneratorUtils::isGenerateApi())
+                    $namespace = "namespace App\Http\Controllers\Api;\n\nuse App\Http\Controllers\Controller;";
 
                 /**
                  * will generate something like:
@@ -52,7 +53,8 @@ class ControllerGenerator
                  */
                 $namespace = "namespace App\Http\Controllers\\$path;\n\nuse App\Http\Controllers\Controller;";
 
-                if (GeneratorUtils::isGenerateApi()) $namespace = "namespace App\Http\Controllers\Api\\$path;\n\nuse App\Http\Controllers\Controller;";
+                if (GeneratorUtils::isGenerateApi())
+                    $namespace = "namespace App\Http\Controllers\Api\\$path;\n\nuse App\Http\Controllers\Controller;";
 
                 /**
                  * Will generate something like:
@@ -173,15 +175,15 @@ class ControllerGenerator
          * $user->update($request->validated());
          */
 
-         if (GeneratorUtils::isGenerateApi()) {
+        if (GeneratorUtils::isGenerateApi()) {
             // remove unused variable
             // $user = User::create($request->validated());
             $insertDataAction = "$$modelNameSingularCamelCase = $modelNameSingularPascalCase::create(\$request->validated());";
-        }else{
+        } else {
             $insertDataAction = "$modelNameSingularPascalCase::create(\$request->validated());";
         }
 
-        $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$request->validated());";
+        $updateDataAction = "\$" . $modelNameSingularCamelCase . "->update(\$request->validated());";
         $requestValidatedAttr = "";
 
         if (in_array('password', $request['input_types']) || in_array('month', $request['input_types'])) {
@@ -192,7 +194,7 @@ class ControllerGenerator
              *  $user->update($validated);
              */
             $insertDataAction = "$modelNameSingularPascalCase::create(\$validated);";
-            $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$validated);";
+            $updateDataAction = "\$" . $modelNameSingularCamelCase . "->update(\$validated);";
             $requestValidatedAttr = "\$validated = \$request->validated();\n";
         }
 
@@ -330,7 +332,7 @@ class ControllerGenerator
                 $passwordFieldUpdate = str_replace('$validated = $request->validated();', '', $passwordFieldUpdate);
 
                 $inputMonths = str_replace('$validated = $request->validated();', '', $inputMonths);
-                $updateDataAction = "\$"  .  $modelNameSingularCamelCase  .  "->update(\$validated);";
+                $updateDataAction = "\$" . $modelNameSingularCamelCase . "->update(\$validated);";
 
                 if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
                     /**
@@ -340,7 +342,7 @@ class ControllerGenerator
                      *      Product::create($validated);
                      *  }
                      */
-                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" .$modelNameSingularCamelCase ."?->id], " . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");";
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");";
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }
@@ -439,7 +441,7 @@ class ControllerGenerator
                      * Product::updateOrCreate(['id' => $product?->id], $validated);
                      *
                      */
-                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" .$modelNameSingularCamelCase ."?->id], " . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");";
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");";
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }
@@ -472,6 +474,7 @@ class ControllerGenerator
                         '{{relations}}',
                         '{{publicOrStorage}}',
                         "'{{middlewareName}}',",
+                        '{{exportFunction}}'
                     ],
                     [
                         $modelNameSingularPascalCase,
@@ -497,6 +500,7 @@ class ControllerGenerator
                         $relations,
                         config('generator.image.disk', 'storage'),
                         GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
+                        $this->generateExportFunction($request),
                     ],
                     GeneratorUtils::getStub(GeneratorUtils::getControllerStubByGeneratorVariant())
                 );
@@ -602,5 +606,25 @@ class ControllerGenerator
             GeneratorUtils::setDiskCodeForCastImage($model, $field),
             GeneratorUtils::pluralKebabCase($field),
         ], GeneratorUtils::getStub('/controllers/upload-files/cast-image-' . $path));
+    }
+
+    public function generateExportFunction(array $request): string
+    {
+        if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
+            $stub = GeneratorUtils::getStub(path: 'controllers/export-function');
+
+            $template = str_replace(search: [
+                '{{modelPluralPascalCase}}',
+                '{{modelPluralKebabCase}}',
+            ], replace: [
+                GeneratorUtils::singularPascalCase(string: $request['model']),
+                GeneratorUtils::pluralKebabCase(string: $request['model']),
+
+            ], subject: $stub);
+
+            return $template;
+        }
+
+        return '';
     }
 }
