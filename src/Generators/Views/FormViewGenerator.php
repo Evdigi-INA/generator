@@ -415,7 +415,7 @@ class FormViewGenerator
                                         'fieldSnakeCase' => $fieldSnakeCase,
                                         'fieldKebabCase' => GeneratorUtils::singularKebabCase($field),
                                         'model' => $modelNameSingularCamelCase,
-                                        'isNullable' => $request['requireds'][$i] === 'yes' ? "{{ empty(" . GeneratorUtils::singularCamelCase($model) . ") ? ' required' : '' }}" : ''
+                                        'isNullable' => $request['requireds'][$i] === 'yes' ? "{{ empty($" . GeneratorUtils::singularCamelCase($model) . ") ? ' required' : '' }}" : ''
                                     ],
                                     stubName: 'views/forms/input-password'
                                 );
