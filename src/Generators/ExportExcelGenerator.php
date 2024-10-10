@@ -7,9 +7,8 @@ class ExportExcelGenerator
     public function generate(array $request): void
     {
         if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
-            $stub = GeneratorUtils::getStub(path: 'export');
             $path = GeneratorUtils::getModelLocation(model: $request['model']);
-            $modelPath = $path ? $path . "\\" : "";
+            $modelPath = $path ? "$path\\" : "";
             $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase(string: $request['model']);
 
             $headings = '';
@@ -95,27 +94,15 @@ class ExportExcelGenerator
                 }
             }
 
-            $template = str_replace(
-                search: [
-                    '{{modelPath}}',
-                    '{{modelName}}',
-                    '{{headings}}',
-                    '{{map}}',
-                    '{{relations}}',
-                    '{{modelNamePlural}}',
-                    '{{dateTimeFormat}}'
-                ],
-                replace: [
-                    "App\Models\\" . $modelPath . $modelNameSingularPascalCase,
-                    $modelNameSingularPascalCase,
-                    $headings,
-                    $map,
-                    $relations,
-                    GeneratorUtils::pluralPascalCase(string: $request['model']),
-                    config(key: 'generator.format.datetime', default: 'Y-m-d H:i:s')
-                ],
-                subject: $stub
-            );
+            $template = GeneratorUtils::replaceStub(stubName: 'export', replaces: [
+                'modelPath' => "App\Models\\" . $modelPath . $modelNameSingularPascalCase,
+                'modelName' => $modelNameSingularPascalCase,
+                'headings' => $headings,
+                'map' => $map,
+                'relations' => $relations,
+                'modelNamePlural' => GeneratorUtils::pluralPascalCase(string: $request['model']),
+                'dateTimeFormat' => config(key: 'generator.format.datetime', default: 'Y-m-d H:i:s'),
+            ]);
 
             GeneratorUtils::checkFolder(path: app_path(path: 'Exports'));
 

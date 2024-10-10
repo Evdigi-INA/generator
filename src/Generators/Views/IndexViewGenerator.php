@@ -103,26 +103,17 @@ class IndexViewGenerator
             }
         }
 
-        $template = str_replace(
-            [
-                '{{modelNamePluralUcWords}}',
-                '{{modelNamePluralKebabCase}}',
-                '{{modelNameSingularLowerCase}}',
-                '{{modelNamePluralLowerCase}}',
-                '{{thColumns}}',
-                '{{tdColumns}}',
-                '{{exportButton}}',
+        $template = GeneratorUtils::replaceStub(
+            replaces: [
+                'modelNamePluralUcWords' => $modelNamePluralUcWords,
+                'modelNamePluralKebabCase' => $modelNamePluralKebabCase,
+                'modelNameSingularLowerCase' => $modelNameSingularLowercase,
+                'modelNamePluralLowerCase' => $modelNamePluralLowerCase,
+                'thColumns' => $thColumns,
+                'tdColumns' => $tdColumns,
+                'exportButton' => $this->generateExportButton(request: $request),
             ],
-            [
-                $modelNamePluralUcWords,
-                $modelNamePluralKebabCase,
-                $modelNameSingularLowercase,
-                $modelNamePluralLowerCase,
-                $thColumns,
-                $tdColumns,
-                $this->generateExportButton($request),
-            ],
-            empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/index') : GeneratorUtils::getStub('views/simple/index')
+            stubName: empty($request['is_simple_generator']) ? 'views/index' : 'views/simple/index'
         );
 
         switch ($path) {
@@ -141,10 +132,12 @@ class IndexViewGenerator
     public function generateExportButton(array $request): string
     {
         if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
-            return str_replace(
-                search: ['{{modelNamePluralKebabCase}}', '{{modelNameSingularClean}}'],
-                replace: [GeneratorUtils::pluralKebabCase(string: $request['model']), GeneratorUtils::cleanSingularLowerCase(string: $request['model'])],
-                subject: GeneratorUtils::getStub(path: 'views/export-button')
+            return GeneratorUtils::replaceStub(
+                replaces: [
+                    'modelNamePluralKebabCase' => GeneratorUtils::pluralKebabCase($request['model']),
+                    'modelNameSingularClean' => GeneratorUtils::cleanSingularLowerCase($request['model']),
+                ],
+                stubName: 'views/export-button'
             );
         }
 

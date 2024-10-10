@@ -163,8 +163,8 @@ class ControllerGenerator
                 $query .= "])";
                 $relations .= "]);\n\n\t\t";
 
-                $query = str_replace("''", "', '", $query);
-                $relations = str_replace("''", "', '", $relations);
+                $query = str_replace(search: "''", replace: "', '", subject: $query);
+                $relations = str_replace(search: "''", replace: "', '", subject: $relations);
             }
         }
 
@@ -186,7 +186,7 @@ class ControllerGenerator
         $updateDataAction = "\$" . $modelNameSingularCamelCase . "->update(\$request->validated());";
         $requestValidatedAttr = "";
 
-        if (in_array('password', $request['input_types']) || in_array('month', $request['input_types'])) {
+        if (in_array(needle: 'password', haystack: $request['input_types']) || in_array(needle: 'month', haystack: $request['input_types'])) {
             /**
              * * will generate something like:
              *
@@ -228,8 +228,8 @@ class ControllerGenerator
          * by default will get an error, cause invalid format.
          */
         $inputMonths = "";
-        if (in_array('month', $request['input_types'])) {
-            if (!in_array('password', $request['input_types'])) {
+        if (in_array(needle: 'month', haystack: $request['input_types'])) {
+            if (!in_array(needle: 'password', haystack: $request['input_types'])) {
                 /**
                  * don't concat string if any input type password, cause already concat ahead.
                  */
@@ -251,7 +251,7 @@ class ControllerGenerator
         /**
          * Generate a codes for upload file.
          */
-        switch (in_array('file', $request['input_types'])) {
+        switch (in_array(needle: 'file', haystack: $request['input_types'])) {
             case true:
                 $indexCode = "";
                 $storeCode = "";
@@ -328,10 +328,10 @@ class ControllerGenerator
                 /**
                  * Remove $validated = $request->validated(); because is already exist in template (.stub)
                  */
-                $passwordFieldStore = str_replace('$validated = $request->validated();', '', $passwordFieldStore);
-                $passwordFieldUpdate = str_replace('$validated = $request->validated();', '', $passwordFieldUpdate);
+                $passwordFieldStore = str_replace(search: '$validated = $request->validated();', replace: '', subject: $passwordFieldStore);
+                $passwordFieldUpdate = str_replace(search: '$validated = $request->validated();', replace: '', subject: $passwordFieldUpdate);
 
-                $inputMonths = str_replace('$validated = $request->validated();', '', $inputMonths);
+                $inputMonths = str_replace(search: '$validated = $request->validated();', replace: '', subject: $inputMonths);
                 $updateDataAction = "\$" . $modelNameSingularCamelCase . "->update(\$validated);";
 
                 if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
@@ -342,7 +342,7 @@ class ControllerGenerator
                      *      Product::create($validated);
                      *  }
                      */
-                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");";
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated') . ");";
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }
@@ -350,87 +350,44 @@ class ControllerGenerator
                 /**
                  * controller with upload file code
                  */
-                $template = str_replace(
-                    [
-                        '{{modelNameSingularPascalCase}}',
-                        '{{modelNameSingularCamelCase}}',
-                        '{{modelNamePluralCamelCase}}',
-                        '{{modelNamePluralKebabCase}}',
-                        '{{modelNameSpaceLowercase}}',
-                        '{{indexCode}}',
-                        '{{storeCode}}',
-                        '{{updateCode}}',
-                        '{{deleteCode}}',
-                        '{{loadRelation}}',
-                        '{{addColumns}}',
-                        '{{query}}',
-                        '{{namespace}}',
-                        '{{requestPath}}',
-                        '{{modelPath}}',
-                        '{{viewPath}}',
-                        '{{passwordFieldStore}}',
-                        '{{passwordFieldUpdate}}',
-                        '{{updateDataAction}}',
-                        '{{inputMonths}}',
-                        '{{resourceApiPath}}',
-                        '{{modelNameCleanSingular}}',
-                        '{{modelNameCleanPlural}}',
-                        '{{relations}}',
-                        '{{uploadPaths}}',
-                        '{{assignUploadPaths}}',
-                        '{{assignImageDelete}}',
-                        '{{deleteImageCodes}}',
-                        '{{castImageFunction}}',
-                        '{{castImageIndex}}',
-                        '{{castImageShow}}',
-                        // '{{castImageDataTable}}',
-                        "'{{middlewareName}}',",
-                        '{{useExportNamespace}}',
-                        '{{exportFunction}}',
+                $template = GeneratorUtils::replaceStub(
+                    replaces: [
+                        'modelNameSingularPascalCase' => $modelNameSingularPascalCase,
+                        'modelNameSingularCamelCase' => $modelNameSingularCamelCase,
+                        'modelNamePluralCamelCase' => $modelNamePluralCamelCase,
+                        'modelNamePluralKebabCase' => $modelNamePluralKebabCase,
+                        'modelNameSpaceLowercase' => $modelNameSpaceLowercase,
+                        'indexCode' => $indexCode,
+                        'storeCode' => $storeCode,
+                        'updateCode' => $updateCode,
+                        'deleteCode' => $deleteCode,
+                        'loadRelation' => $relations,
+                        'addColumns' => $addColumns,
+                        'query' => $query,
+                        'namespace' => $namespace,
+                        'requestPath' => $requestPath,
+                        'modelPath' => $path != '' ? "App\Models\\$path\\$modelNameSingularPascalCase" : "App\Models\\$modelNameSingularPascalCase",
+                        'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower($path)) . "." : '',
+                        'passwordFieldStore' => $passwordFieldStore,
+                        'passwordFieldUpdate' => $passwordFieldUpdate,
+                        'updateDataAction' => $updateDataAction,
+                        'inputMonths' => $inputMonths,
+                        'resourceApiPath' => $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
+                        'modelNameCleanSingular' => $modelNameCleanSingular,
+                        'modelNameCleanPlural' => $modelNameCleanPlural,
+                        'relations' => $relations,
+                        'uploadPaths' => $uploadPaths,
+                        'assignUploadPaths' => $assignUploadPaths,
+                        'assignImageDelete' => $assignImageDelete,
+                        'deleteImageCodes' => $deleteImageCodes,
+                        'castImageFunction' => $castImageFunc,
+                        'castImageIndex' => $castImageIndex,
+                        'castImageShow' => "\n\t\t\$this->castImages($$modelNameSingularCamelCase);\n",
+                        'middlewareName' => GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
+                        'useExportNamespace' => $this->generateUseExport($request),
+                        'exportFunction' => $this->generateExportFunction($request),
                     ],
-                    [
-                        $modelNameSingularPascalCase,
-                        $modelNameSingularCamelCase,
-                        $modelNamePluralCamelCase,
-                        $modelNamePluralKebabCase,
-                        $modelNameSpaceLowercase,
-                        $indexCode,
-                        $storeCode,
-                        $updateCode,
-                        $deleteCode,
-                        $relations,
-                        $addColumns,
-                        $query,
-                        $namespace,
-                        $requestPath,
-
-                        // App\Models\Product
-                        $path != '' ? "App\Models\\$path\\$modelNameSingularPascalCase" : "App\Models\\$modelNameSingularPascalCase",
-                        $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
-                        $passwordFieldStore,
-                        $passwordFieldUpdate,
-                        $updateDataAction,
-                        $inputMonths,
-
-                        // App\Http\Resources\ProductResource
-                        $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
-                        $modelNameCleanSingular,
-                        $modelNameCleanPlural,
-                        $relations,
-                        $uploadPaths,
-                        $assignUploadPaths,
-                        $assignImageDelete,
-                        $deleteImageCodes,
-                        $castImageFunc,
-                        $castImageIndex,
-                        // $this->castImages($product);
-                        "\n\t\t\$this->castImages($" . $modelNameSingularCamelCase . ");\n",
-                        // $castImageDataTable,
-                        GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
-                        $this->generateUseExport($request),
-                        $this->generateExportFunction($request),
-                    ],
-                    GeneratorUtils::getStub(GeneratorUtils::getControllerStubByGeneratorVariant(true))
+                    stubName: GeneratorUtils::getControllerStubByGeneratorVariant(withUploadFile: true)
                 );
                 break;
             default:
@@ -445,7 +402,7 @@ class ControllerGenerator
                      * Product::updateOrCreate(['id' => $product?->id], $validated);
                      *
                      */
-                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");";
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated') . ");";
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }
@@ -453,68 +410,38 @@ class ControllerGenerator
                 /**
                  * default controller
                  */
-                $template = str_replace(
-                    [
-                        '{{modelNameSingularPascalCase}}',
-                        '{{modelNameSingularCamelCase}}',
-                        '{{modelNamePluralCamelCase}}',
-                        '{{modelNamePluralKebabCase}}',
-                        '{{modelNameSpaceLowercase}}',
-                        '{{loadRelation}}',
-                        '{{addColumns}}',
-                        '{{query}}',
-                        '{{namespace}}',
-                        '{{requestPath}}',
-                        '{{modelPath}}',
-                        '{{viewPath}}',
-                        '{{passwordFieldStore}}',
-                        '{{passwordFieldUpdate}}',
-                        '{{insertDataAction}}',
-                        '{{updateDataAction}}',
-                        '{{inputMonths}}',
-                        '{{resourceApiPath}}',
-                        '{{modelNameCleanSingular}}',
-                        '{{modelNameCleanPlural}}',
-                        '{{relations}}',
-                        '{{publicOrStorage}}',
-                        "'{{middlewareName}}',",
-                        '{{exportFunction}}',
-                        '{{useExportNamespace}}'
-                    ],
-                    [
-                        $modelNameSingularPascalCase,
-                        $modelNameSingularCamelCase,
-                        $modelNamePluralCamelCase,
-                        $modelNamePluralKebabCase,
-                        $modelNameSpaceLowercase,
-                        $relations,
-                        $addColumns,
-                        $query,
-                        $namespace,
-                        $requestPath,
-                        $path != '' ? "App\Models\\$path\\$modelNameSingularPascalCase" : "App\Models\\$modelNameSingularPascalCase",
-                        $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
-                        $passwordFieldStore,
-                        $passwordFieldUpdate,
-                        $insertDataAction,
-                        $updateDataAction,
-                        $inputMonths,
-                        $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
-                        $modelNameCleanSingular,
-                        $modelNameCleanPlural,
-                        $relations,
-                        config('generator.image.disk', 'storage'),
-                        GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
-                        $this->generateExportFunction($request),
-                        $this->generateUseExport($request),
-                    ],
-                    GeneratorUtils::getStub(GeneratorUtils::getControllerStubByGeneratorVariant())
-                );
+                $template = GeneratorUtils::replaceStub(replaces: [
+                    'modelNameSingularPascalCase' => $modelNameSingularPascalCase,
+                    'modelNameSingularCamelCase' => $modelNameSingularCamelCase,
+                    'modelNamePluralCamelCase' => $modelNamePluralCamelCase,
+                    'modelNamePluralKebabCase' => $modelNamePluralKebabCase,
+                    'modelNameSpaceLowercase' => $modelNameSpaceLowercase,
+                    'loadRelation' => $relations,
+                    'addColumns' => $addColumns,
+                    'query' => $query,
+                    'namespace' => $namespace,
+                    'requestPath' => $requestPath,
+                    'modelPath' => $path != '' ? "App\Models\\$path\\$modelNameSingularPascalCase" : "App\Models\\$modelNameSingularPascalCase",
+                    'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower($path)) . "." : '',
+                    'passwordFieldStore' => $passwordFieldStore,
+                    'passwordFieldUpdate' => $passwordFieldUpdate,
+                    'insertDataAction' => $insertDataAction,
+                    'updateDataAction' => $updateDataAction,
+                    'inputMonths' => $inputMonths,
+                    'resourceApiPath' => $path != '' ? "App\Http\Resources\\$path\\$modelNamePluralPascalCase" : "App\Http\Resources\\$modelNamePluralPascalCase",
+                    'modelNameCleanSingular' => $modelNameCleanSingular,
+                    'modelNameCleanPlural' => $modelNameCleanPlural,
+                    'relations' => $relations,
+                    'publicOrStorage' => config(key: 'generator.image.disk', default: 'storage'),
+                    'middlewareName' => GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
+                    'exportFunction' => $this->generateExportFunction($request),
+                    'useExportNamespace' => $this->generateUseExport($request),
+                ], stubName: GeneratorUtils::getControllerStubByGeneratorVariant());
                 break;
         }
 
         if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
-            $template = str_replace('created successfully', 'updated successfully', $template);
+            $template = str_replace(search: 'created successfully', replace: 'updated successfully', subject: $template);
         }
 
         /**
@@ -528,12 +455,12 @@ class ControllerGenerator
 
             $controllerPath = GeneratorUtils::isGenerateApi() ? "/Api/{$modelNameSingularPascalCase}Controller.php" : "/{$modelNameSingularPascalCase}Controller.php";
 
-            file_put_contents(app_path("/Http/Controllers" . $controllerPath), $template);
+            file_put_contents(filename: app_path("/Http/Controllers" . $controllerPath), data: $template);
         } else {
             $fullPath = GeneratorUtils::isGenerateApi() ? app_path("/Http/Controllers/Api/$path/") : app_path("/Http/Controllers/$path/");
             GeneratorUtils::checkFolder($fullPath);
 
-            file_put_contents("$fullPath{$modelNameSingularPascalCase}Controller.php", $template);
+            file_put_contents(filename: "$fullPath{$modelNameSingularPascalCase}Controller.php", data: $template);
         }
     }
 
@@ -542,53 +469,33 @@ class ControllerGenerator
      */
     protected function generateUploadImageCode(string $field, string $path, string|null $model, ?string $defaultValue = null): string
     {
-        $replaceString = [
-            '{{fieldSnakeCase}}',
-            '{{fieldPluralSnakeCase}}',
-            '{{fieldPluralKebabCase}}',
-            '{{uploadPath}}',
-            '{{uploadPathPublic}}',
-            '{{width}}',
-            '{{height}}',
-            '{{aspectRatio}}',
-            '{{defaultImageCode}}',
-            '{{fieldUploadPath}}',
-            '{{defaultImage}}',
-            '{{fieldCamelCase}}',
-            '{[modelNameSingularCamelCase}}',
-            '{{disk}}',
-            '{{castImageDataTable}}',
-        ];
-
         $default = GeneratorUtils::setDefaultImage(default: $defaultValue, field: $field, model: $model);
 
-        $replaceWith = [
-            str()->snake($field),
-            GeneratorUtils::pluralSnakeCase($field),
-            GeneratorUtils::pluralKebabCase($field),
-            config('generator.image.disk') == 'storage' ? "storage_path('app/public/uploads" : "public_path('uploads",
-            config('generator.image.disk') == 'storage' ? "storage/uploads" : "uploads",
-            is_int(config('generator.image.width')) ? config('generator.image.width') : 500,
-            is_int(config('generator.image.height')) ? config('generator.image.height') : 500,
-            config('generator.image.aspect_ratio') ? "\n\t\t\t\t\$constraint->aspectRatio();" : '',
-            $default['index_code'],
-            GeneratorUtils::singularCamelCase($field),
-            "$" . GeneratorUtils::singularCamelCase($model) . "?->" . str($field)->snake(),
-            GeneratorUtils::singularCamelCase($field),
-            GeneratorUtils::singularCamelCase($model),
-            config('generator.image.disk') == 's3' ? ", disk: 's3'" : '',
-            GeneratorUtils::setDiskCodeForCastImage($model, $field)
+        $replaces = [
+            'fieldSnakeCase' => str()->snake($field),
+            'fieldPluralSnakeCase' => GeneratorUtils::pluralSnakeCase($field),
+            'fieldPluralKebabCase' => GeneratorUtils::pluralKebabCase($field),
+            'uploadPath' => config('generator.image.disk') == 'storage' ? "storage_path('app/public/uploads" : "public_path('uploads",
+            'uploadPathPublic' => config('generator.image.disk') == 'storage' ? "storage/uploads" : "uploads",
+            'width' => is_int(config('generator.image.width')) ? config('generator.image.width') : 500,
+            'height' => is_int(config('generator.image.height')) ? config('generator.image.height') : 500,
+            'aspectRatio' => config('generator.image.aspect_ratio') ? "\n\t\t\t\t\$constraint->aspectRatio();" : '',
+            'defaultImageCode' => $default['index_code'],
+            'fieldUploadPath' => GeneratorUtils::singularCamelCase($field),
+            'defaultImage' => "$" . GeneratorUtils::singularCamelCase($model) . "?->" . str($field)->snake(),
+            'fieldCamelCase' => GeneratorUtils::singularCamelCase($field),
+            'modelNameSingularCamelCase' => GeneratorUtils::singularCamelCase($model),
+            'disk' => config('generator.image.disk') == 's3' ? ", disk: 's3'" : '',
+            'castImageDataTable' => GeneratorUtils::setDiskCodeForCastImage(model: $model, field: $field),
         ];
 
         if ($model) {
-            $replaceString[] = '{{modelNameSingularCamelCase}}';
-            $replaceWith[] = $model;
+            $replaces['modelNameSingularCamelCase'] = $model;
         }
 
-        return str_replace(
-            $replaceString,
-            $replaceWith,
-            GeneratorUtils::getStub("controllers/upload-files/$path")
+        return GeneratorUtils::replaceStub(
+            replaces: $replaces,
+            stubName: "controllers/upload-files/$path"
         );
     }
 
@@ -597,39 +504,32 @@ class ControllerGenerator
      */
     public function generateCastImageCode(string $field, string $path, string $model): string
     {
-        return str_replace([
-            '{{modelNamePluralCamelCase}}',
-            '{{modelNameSingularCamelCase}}',
-            '{{field}}',
-            '{{defaultImage}}',
-            '{{castImage}}',
-            '{{fieldPluralKebabCase}}'
-        ], [
-            GeneratorUtils::pluralCamelCase($model),
-            GeneratorUtils::singularCamelCase($model),
-            $field,
-            config('generator.image.default', 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
-            GeneratorUtils::setDiskCodeForCastImage($model, $field),
-            GeneratorUtils::pluralKebabCase($field),
-        ], GeneratorUtils::getStub('/controllers/upload-files/cast-image-' . $path));
+        $replaces = [
+            'modelNamePluralCamelCase' => GeneratorUtils::pluralCamelCase($model),
+            'modelNameSingularCamelCase' => GeneratorUtils::singularCamelCase($model),
+            'field' => $field,
+            'defaultImage' => config('generator.image.default', 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
+            'castImage' => GeneratorUtils::setDiskCodeForCastImage($model, $field),
+            'fieldPluralKebabCase' => GeneratorUtils::pluralKebabCase($field),
+        ];
+
+        return GeneratorUtils::replaceStub(
+            replaces: $replaces,
+            stubName: "/controllers/upload-files/cast-image-$path"
+        );
     }
 
     public function generateExportFunction(array $request): string
     {
         if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
-            $stub = GeneratorUtils::getStub(path: 'controllers/export-function');
-
-            $template = str_replace(search: [
-                '{{modelPluralPascalCase}}',
-                '{{modelPluralKebabCase}}',
-            ], replace: [
-                GeneratorUtils::pluralPascalCase(string: $request['model']),
-                GeneratorUtils::pluralKebabCase(string: $request['model']),
-
-            ], subject: $stub);
+            $template = GeneratorUtils::replaceStub(replaces: [
+                'modelPluralPascalCase' => GeneratorUtils::pluralPascalCase(string: $request['model']),
+                'modelPluralKebabCase' => GeneratorUtils::pluralKebabCase(string: $request['model']),
+            ], stubName: 'controllers/export-function');
 
             return $template;
         }
+
 
         return '';
     }

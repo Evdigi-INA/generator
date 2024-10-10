@@ -11,49 +11,41 @@ class ShowViewGenerator
      */
     public function generate(array $request): void
     {
-        $model = GeneratorUtils::setModelName($request['model'], 'default');
-        $path = GeneratorUtils::getModelLocation($request['model']);
+        $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
+        $path = GeneratorUtils::getModelLocation(model: $request['model']);
 
-        $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase($model);
-        $modelNameSingularCamelCase = GeneratorUtils::singularCamelCase($model);
+        $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase(string: $model);
+        $modelNameSingularCamelCase = GeneratorUtils::singularCamelCase(string: $model);
 
-        $trs = $this->generateTableRows($request, $model, $modelNameSingularCamelCase);
+        $trs = $this->generateTableRows(request: $request, model: $model, modelName: $modelNameSingularCamelCase);
 
-        $template = str_replace(
-            [
-                '{{modelNamePluralUcWords}}',
-                '{{modelNameSingularLowerCase}}',
-                '{{modelNamePluralKebabCase}}',
-                '{{modelNameSingularCamelCase}}',
-                '{{trs}}',
-                '{{dateTimeFormat}}',
+        $template = GeneratorUtils::replaceStub(
+            replaces: [
+                'modelNamePluralUcWords' => GeneratorUtils::cleanPluralUcWords(string: $model),
+                'modelNameSingularLowerCase' => GeneratorUtils::cleanSingularLowerCase(string: $model),
+                'modelNamePluralKebabCase' => $modelNamePluralKebabCase,
+                'modelNameSingularCamelCase' => $modelNameSingularCamelCase,
+                'trs' => $trs,
+                'dateTimeFormat' => config(key: 'generator.format.datetime', default: 'Y-m-d H:i:s'),
             ],
-            [
-                GeneratorUtils::cleanPluralUcWords($model),
-                GeneratorUtils::cleanSingularLowerCase($model),
-                $modelNamePluralKebabCase,
-                $modelNameSingularCamelCase,
-                $trs,
-                config('generator.format.datetime', 'Y-m-d H:i:s'),
-            ],
-            empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/show') : GeneratorUtils::getStub('views/simple/show')
+            stubName: empty($request['is_simple_generator']) ? 'views/show' : 'views/simple/show'
         );
 
-        $this->saveTemplate($template, $path, $modelNamePluralKebabCase);
+        $this->saveTemplate(template: $template, path: $path, modelName: $modelNamePluralKebabCase);
     }
 
     /**
      * Generate table rows for the view.
      */
-    private function generateTableRows(array $request, string $model, string $modelNameSingularCamelCase): string
+    private function generateTableRows(array $request, string $model, string $modelName): string
     {
         $trs = "";
-        $totalFields = count($request['fields']);
-        $dateTimeFormat = config('generator.format.datetime', 'Y-m-d H:i:s');
+        $totalFields = count(value: $request['fields']);
+        $dateTimeFormat = config(key: 'generator.format.datetime', default: 'Y-m-d H:i:s');
 
         foreach ($request['fields'] as $i => $field) {
             if ($request['input_types'][$i] !== 'password') {
-                $trs .= $this->generateTableRow($request, $i, $field, $model, $modelNameSingularCamelCase, $dateTimeFormat);
+                $trs .= $this->generateTableRow(request: $request, i: $i, field: $field, model: $model, modelName: $modelName, dateTimeFormat: $dateTimeFormat);
                 if ($i + 1 !== $totalFields) {
                     $trs .= "\n";
                 }
@@ -66,48 +58,48 @@ class ShowViewGenerator
     /**
      * Generate a single table row.
      */
-    private function generateTableRow(array $request, int $i, string $field, string $model, string $modelNameSingularCamelCase, string $dateTimeFormat): string
+    private function generateTableRow(array $request, int $i, string $field, string $model, string $modelName, string $dateTimeFormat): string
     {
-        $fieldUcWords = GeneratorUtils::cleanUcWords($field);
-        $fieldSnakeCase = str($field)->snake();
+        $fieldUcWords = GeneratorUtils::cleanUcWords(string: $field);
+        $fieldSnakeCase = str(string: $field)->snake();
         $trs = "";
 
         if (isset($request['file_types'][$i]) && $request['file_types'][$i] === 'image') {
-            $trs .= $this->generateImageRow($request, $i, $field, $model, $fieldUcWords);
+            $trs .= $this->generateImageRow(request: $request, i: $i, field: $field, model: $model, fieldUcWords: $fieldUcWords);
         } else {
             $trs .= match ($request['column_types'][$i]) {
                 'boolean' => "<tr>
                                 <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                                <td>{{ $" . $modelNameSingularCamelCase . "->$fieldSnakeCase == 1 ? 'True' : 'False' }}</td>
+                                <td>{{ $" . $modelName . "->$fieldSnakeCase == 1 ? 'True' : 'False' }}</td>
                               </tr>",
-                'foreignId' => $this->generateForeignIdRow($request, $i, $modelNameSingularCamelCase),
-                'date' => $this->generateDateRow($request, $i, $modelNameSingularCamelCase, $fieldUcWords, $fieldSnakeCase),
+                'foreignId' => $this->generateForeignIdRow(request: $request, i: $i, modelName: $modelName),
+                'date' => $this->generateDateRow(request: $request, i: $i, modelName: $modelName, fieldUcWords: $fieldUcWords, fieldSnakeCase: $fieldSnakeCase),
                 'dateTime' => "<tr>
                                 <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                                <td>{{ isset($" . $modelNameSingularCamelCase . "->$fieldSnakeCase) ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . "?->format(\"$dateTimeFormat\") : '' }}</td>
+                                <td>{{ isset($" . $modelName . "->$fieldSnakeCase) ? $" . $modelName . "->" . $fieldSnakeCase . "?->format(\"$dateTimeFormat\") : '' }}</td>
                                </tr>",
-                'time' => $this->generateTimeRow($modelNameSingularCamelCase, $fieldUcWords, $fieldSnakeCase),
-                default => $this->generateDefaultRow($request, $i, $modelNameSingularCamelCase, $fieldUcWords, $fieldSnakeCase),
+                'time' => $this->generateTimeRow(modelName: $modelName, fieldUcWords: $fieldUcWords, fieldSnakeCase: $fieldSnakeCase),
+                default => $this->generateDefaultRow(request: $request, i: $i, modelName: $modelName, fieldUcWords: $fieldUcWords, fieldSnakeCase: $fieldSnakeCase),
             };
         }
 
         return $trs;
     }
 
-    private function generateDefaultRow(array $request, int $i, string $modelNameSingularCamelCase, string $fieldUcWords, string $fieldSnakeCase): string
+    private function generateDefaultRow(array $request, int $i, string $modelName, string $fieldUcWords, string $fieldSnakeCase): string
     {
         if ($request['input_types'][$i] == 'week') {
-            $weekFormat = config('generator.format.week', 'Y-\WW');
+            $weekFormat = config(key: 'generator.format.week', default: 'Y-\WW');
 
             return "<tr>
                     <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                    <td>{{ isset($" . $modelNameSingularCamelCase . "->$fieldSnakeCase) ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . "?->format(\"$weekFormat\") : '' }}</td>
+                    <td>{{ isset($" . $modelName . "->$fieldSnakeCase) ? $" . $modelName . "->" . $fieldSnakeCase . "?->format(\"$weekFormat\") : '' }}</td>
                 </tr>";
         }
 
         return "<tr>
                     <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                    <td>{{ $" . $modelNameSingularCamelCase . "->$fieldSnakeCase }}</td>
+                    <td>{{ $" . $modelName . "->$fieldSnakeCase }}</td>
                 </tr>";
     }
 
@@ -123,9 +115,9 @@ class ShowViewGenerator
         );
 
         $castImage = str_replace(
-            "\$this->" . GeneratorUtils::singularCamelCase($field) . "Path",
-            "'" . GeneratorUtils::pluralKebabCase($field) . "/'",
-            GeneratorUtils::setDiskCodeForCastImage($model, $field)
+            search: "\$this->" . GeneratorUtils::singularCamelCase(string: $field) . "Path",
+            replace: "'" . GeneratorUtils::pluralKebabCase(string: $field) . "/'",
+            subject: GeneratorUtils::setDiskCodeForCastImage(model: $model, field: $field)
         );
 
         return "<tr>
@@ -143,52 +135,52 @@ class ShowViewGenerator
     /**
      * Generate a row for foreign ID fields.
      */
-    private function generateForeignIdRow(array $request, int $i, string $modelNameSingularCamelCase): string
+    private function generateForeignIdRow(array $request, int $i, string $modelName): string
     {
-        $constrainModel = GeneratorUtils::setModelName($request['constrains'][$i], 'default');
+        $constrainModel = GeneratorUtils::setModelName(model: $request['constrains'][$i], style: 'default');
 
         return "<tr>
-                    <td class=\"fw-bold\">{{ __('" . GeneratorUtils::cleanSingularUcWords($constrainModel) . "') }}</td>
-                    <td>{{ $" . $modelNameSingularCamelCase . "->" . GeneratorUtils::singularSnakeCase($constrainModel) . " ? $" . $modelNameSingularCamelCase . "->" . GeneratorUtils::singularSnakeCase($constrainModel) . "->" . GeneratorUtils::getColumnAfterId($constrainModel) . " : '' }}</td>
+                    <td class=\"fw-bold\">{{ __('" . GeneratorUtils::cleanSingularUcWords(string: $constrainModel) . "') }}</td>
+                    <td>{{ $" . $modelName . "->" . GeneratorUtils::singularSnakeCase(string: $constrainModel) . " ? $" . $modelName . "->" . GeneratorUtils::singularSnakeCase(string: $constrainModel) . "->" . GeneratorUtils::getColumnAfterId($constrainModel) . " : '' }}</td>
                 </tr>";
     }
 
     /**
      * Generate a row for date fields.
      */
-    private function generateDateRow(array $request, int $i, string $modelNameSingularCamelCase, string $fieldUcWords, string $fieldSnakeCase): string
+    private function generateDateRow(array $request, int $i, string $modelName, string $fieldUcWords, string $fieldSnakeCase): string
     {
         $dateFormat = match ($request['input_types'][$i]) {
-            'month' => config('generator.format.month', 'Y/m'),
-            default => config('generator.format.date', 'd/m/Y'),
+            'month' => config(key: 'generator.format.month', default: 'Y/m'),
+            default => config(key: 'generator.format.date', default: 'd/m/Y'),
         };
 
         return "<tr>
                     <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                    <td>{{ isset($" . $modelNameSingularCamelCase . "->$fieldSnakeCase) ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . "?->format(\"$dateFormat\") : '' }}</td>
+                    <td>{{ isset($" . $modelName . "->$fieldSnakeCase) ? $" . $modelName . "->" . $fieldSnakeCase . "?->format(\"$dateFormat\") : '' }}</td>
                 </tr>";
     }
 
     /**
      * Generate a row for time fields.
      */
-    private function generateTimeRow(string $modelNameSingularCamelCase, string $fieldUcWords, string $fieldSnakeCase): string
+    private function generateTimeRow(string $modelName, string $fieldUcWords, string $fieldSnakeCase): string
     {
-        $timeFormat = config('generator.format.time', 'H:i');
+        $timeFormat = config(key: 'generator.format.time', default: 'H:i');
 
         return "<tr>
                     <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                    <td>{{ isset($" . $modelNameSingularCamelCase . "->$fieldSnakeCase) ? $" . $modelNameSingularCamelCase . "->" . $fieldSnakeCase . "?->format(\"$timeFormat\") : '' }}</td>
+                    <td>{{ isset($" . $modelName . "->$fieldSnakeCase) ? $" . $modelName . "->" . $fieldSnakeCase . "?->format(\"$timeFormat\") : '' }}</td>
                 </tr>";
     }
 
     /**
      * Save the generated template to the specified path.
      */
-    private function saveTemplate(string $template, string $path, string $modelNamePluralKebabCase): void
+    private function saveTemplate(string $template, string $path, string $modelName): void
     {
-        $viewPath = $path ? resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase") : resource_path("/views/$modelNamePluralKebabCase");
-        GeneratorUtils::checkFolder($viewPath);
-        file_put_contents("$viewPath/show.blade.php", $template);
+        $viewPath = $path ? resource_path(path: "/views/" . strtolower(string: $path) . "/$modelName") : resource_path(path: "/views/$modelName");
+        GeneratorUtils::checkFolder(path: $viewPath);
+        file_put_contents(filename: "$viewPath/show.blade.php", data: $template);
     }
 }

@@ -13,26 +13,26 @@ class ViewComposerGenerator
     {
         $template = "";
 
-        $model = GeneratorUtils::setModelName($request['model'], 'default');
-        $viewPath = GeneratorUtils::getModelLocation($request['model']);
+        $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
+        $viewPath = GeneratorUtils::getModelLocation(model: $request['model']);
 
         foreach ($request['column_types'] as $i => $dataType) {
             if ($dataType == 'foreignId') {
                 // remove '/' or sub folders
-                $constrainModel = GeneratorUtils::setModelName($request['constrains'][$i]);
+                $constrainModel = GeneratorUtils::setModelName(model: $request['constrains'][$i]);
 
-                $relatedModelPath = GeneratorUtils::getModelLocation($request['constrains'][$i]);
-                $table = GeneratorUtils::pluralSnakeCase($constrainModel);
+                $relatedModelPath = GeneratorUtils::getModelLocation(model: $request['constrains'][$i]);
+                $table = GeneratorUtils::pluralSnakeCase(string: $constrainModel);
 
                 if ($relatedModelPath != '') {
                     $relatedModelPath = "\App\Models\\$relatedModelPath\\$constrainModel";
                 } else {
-                    $relatedModelPath = "\App\Models\\" . GeneratorUtils::singularPascalCase($constrainModel);
+                    $relatedModelPath = "\App\Models\\" . GeneratorUtils::singularPascalCase(string: $constrainModel);
                 }
 
                 $allColumns = Schema::getColumnListing($table);
 
-                if (sizeof($allColumns) > 0) {
+                if (sizeof(value: $allColumns) > 0) {
                     $fieldsSelect = "'id', '$allColumns[1]'";
                 } else {
                     $fieldsSelect = "'id'";
@@ -40,31 +40,23 @@ class ViewComposerGenerator
 
                 if ($i > 1) $template .= "\t\t";
 
-                $template .= str_replace(
-                    [
-                        '{{modelNamePluralKebabCase}}',
-                        '{{constrainsPluralCamelCase}}',
-                        '{{constrainsSingularPascalCase}}',
-                        '{{fieldsSelect}}',
-                        '{{relatedModelPath}}',
-                        '{{viewPath}}',
+                $template .= GeneratorUtils::replaceStub(
+                    replaces: [
+                        'modelNamePluralKebabCase' => GeneratorUtils::pluralKebabCase(string: $model),
+                        'constrainsPluralCamelCase' => GeneratorUtils::pluralCamelCase(string: $constrainModel),
+                        'constrainsSingularPascalCase' => GeneratorUtils::singularPascalCase(string: $constrainModel),
+                        'fieldsSelect' => $fieldsSelect,
+                        'relatedModelPath' => $relatedModelPath,
+                        'viewPath' => $viewPath != '' ? str_replace(search: '\\', replace: '.', subject: strtolower(string: $viewPath)) . "." : '',
                     ],
-                    [
-                        GeneratorUtils::pluralKebabCase($model),
-                        GeneratorUtils::pluralCamelCase($constrainModel),
-                        GeneratorUtils::singularPascalCase($constrainModel),
-                        $fieldsSelect,
-                        $relatedModelPath,
-                        $viewPath != '' ? str_replace('\\', '.', strtolower($viewPath)) . "." : '',
-                    ],
-                    GeneratorUtils::getStub('view-composer')
+                    stubName: 'view-composer'
                 );
             }
         }
-        $path = app_path('Providers/ViewComposerServiceProvider.php');
+        $path = app_path(path: 'Providers/ViewComposerServiceProvider.php');
 
-        $viewProviderTemplate = substr(file_get_contents($path), 0, -6) . "\n\n\t\t" . $template . "\t}\n}";
+        $viewProviderTemplate = substr(string: file_get_contents(filename: $path), offset: 0, length: -6) . "\n\n\t\t" . $template . "\t}\n}";
 
-        file_put_contents($path, $viewProviderTemplate);
+        file_put_contents(filename: $path, data: $viewProviderTemplate);
     }
 }

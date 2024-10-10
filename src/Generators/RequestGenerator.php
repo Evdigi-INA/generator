@@ -11,12 +11,12 @@ class RequestGenerator
      */
     public function generate(array $request): void
     {
-        $model = GeneratorUtils::setModelName($request['model'], 'default');
-        $path = GeneratorUtils::getModelLocation($request['model']);
+        $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
+        $path = GeneratorUtils::getModelLocation(model: $request['model']);
 
         $validations = '';
-        $totalFields = count($request['fields']);
-        $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase($model);
+        $totalFields = count(value: $request['fields']);
+        $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase(string: $model);
 
         $namespace = match ($path) {
             '' => "namespace App\Http\Requests\\$modelNamePluralPascalCase;",
@@ -28,7 +28,7 @@ class RequestGenerator
              * result:
              * 'name' =>
              */
-            $validations .= "'" . str($field)->snake() . "' => ";
+            $validations .= "'" . str(string: $field)->snake() . "' => ";
 
             /**
              * result:
@@ -49,7 +49,7 @@ class RequestGenerator
                     break;
                 case 'email':
                     if (GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value) {
-                        $uniqueValidation = 'unique:' . GeneratorUtils::pluralSnakeCase($model) . ',' . GeneratorUtils::singularSnakeCase($field);
+                        $uniqueValidation = 'unique:' . GeneratorUtils::pluralSnakeCase(string: $model) . ',' . GeneratorUtils::singularSnakeCase(string: $field);
 
                         /**
                          * result:
@@ -72,14 +72,11 @@ class RequestGenerator
                      */
                     $validations .= "|confirmed";
                     break;
-                default:
-                    # code...
-                    break;
             }
 
             if ($request['input_types'][$i] == 'file' && $request['file_types'][$i] == 'image') {
 
-                $maxSize = config('generator.image.size_max') ?? 1024;
+                $maxSize = config(key: 'generator.image.size_max', default: 1024);
 
                 if ($request['files_sizes'][$i]) $maxSize = $request['files_sizes'][$i];
 
@@ -103,9 +100,9 @@ class RequestGenerator
                  */
                 $in = "|in:";
 
-                $options = explode('|', $request['select_options'][$i]);
+                $options = explode(separator: '|', string: $request['select_options'][$i]);
 
-                $totalOptions = count($options);
+                $totalOptions = count(value: $options);
 
                 foreach ($options as $key => $option) {
                     if ($key + 1 != $totalOptions) {
@@ -169,8 +166,8 @@ class RequestGenerator
                     break;
                 case 'foreignId':
                     // remove '/' or sub folders
-                    $constrainModel = GeneratorUtils::setModelName($request['constrains'][$i]);
-                    $constrainsPath = GeneratorUtils::getModelLocation($request['constrains'][$i]);
+                    $constrainModel = GeneratorUtils::setModelName(model: $request['constrains'][$i]);
+                    $constrainsPath = GeneratorUtils::getModelLocation(model: $request['constrains'][$i]);
 
                     switch ($constrainsPath != '') {
                         case true:
@@ -178,14 +175,14 @@ class RequestGenerator
                              * result:
                              * 'name' => 'required|max:30|exists:App\Models\Master\Product,id',
                              */
-                            $validations .= "|exists:App\Models\\" . str_replace('/', '\\', $constrainsPath) . "\\" . GeneratorUtils::singularPascalCase($constrainModel) . ",id',";
+                            $validations .= "|exists:App\Models\\" . str_replace(search: '/', replace: '\\', subject: $constrainsPath) . "\\" . GeneratorUtils::singularPascalCase(string: $constrainModel) . ",id',";
                             break;
                         default:
                             /**
                              * result:
                              * 'name' => 'required|max:30|exists:App\Models\Product,id',
                              */
-                            $validations .= "|exists:App\Models\\" . GeneratorUtils::singularPascalCase($constrainModel) . ",id',";
+                            $validations .= "|exists:App\Models\\" . GeneratorUtils::singularPascalCase(string: $constrainModel) . ",id',";
                             break;
                     }
                     break;
@@ -202,27 +199,19 @@ class RequestGenerator
         }
         // end of foreach
 
-        $modelSingularPascalCase = GeneratorUtils::singularPascalCase($model);
+        $modelSingularPascalCase = GeneratorUtils::singularPascalCase(string: $model);
 
-        $storeRequestTemplate = str_replace(
-            [
-                '{{modelNamePascalCase}}',
-                '{{fields}}',
-                '{{namespace}}',
-            ],
-            [
-                "Store$modelSingularPascalCase",
-                $validations,
-                $namespace
-            ],
-            GeneratorUtils::getStub('request')
-        );
+        $storeRequestTemplate = GeneratorUtils::replaceStub(replaces: [
+            'modelNamePascalCase' => "Store$modelSingularPascalCase",
+            'fields' => $validations,
+            'namespace' => $namespace,
+        ], stubName: 'request');
 
         /**
          * on update request if any image validation, then set 'required' to nullable
          */
-        $updateValidations = match (str_contains($storeRequestTemplate, "required|image")) {
-            true => str_replace("required|image", "nullable|image", $validations),
+        $updateValidations = match (str_contains(haystack: $storeRequestTemplate, needle: "required|image")) {
+            true => str_replace(search: "required|image", replace: "nullable|image", subject: $validations),
             default => $validations,
         };
 
@@ -233,16 +222,16 @@ class RequestGenerator
              * unique:users,email,' . request()->segment(2)
              */
             $updateValidations = str_replace(
-                $uniqueValidation,
-                $uniqueValidation . ",' . request()->segment(" . (GeneratorUtils::isGenerateApi() ? 3 : 2) . ")",
-                $validations
+                search: $uniqueValidation,
+                replace: $uniqueValidation . ",' . request()->segment(" . (GeneratorUtils::isGenerateApi() ? 3 : 2) . ")",
+                subject: $validations
             );
 
             // change "segment(2)'," to "segment(2),"
-            $updateValidations = str_replace(")',", "),", $updateValidations);
+            $updateValidations = str_replace(search: ")',", replace: "),", subject: $updateValidations);
         }
 
-        if (in_array('password', $request['input_types'])) {
+        if (in_array(needle: 'password', haystack: $request['input_types'])) {
             foreach ($request['input_types'] as $key => $input) {
                 if ($input == 'password' && $request['requireds'][$key] == 'yes') {
                     /**
@@ -250,45 +239,37 @@ class RequestGenerator
                      * 'password' => 'required' to 'password' => 'nullable' in update request validation
                      */
                     $updateValidations = str_replace(
-                        "'" . $request['fields'][$key] . "' => 'required",
-                        "'" . $request['fields'][$key] . "' => 'nullable",
-                        $updateValidations
+                        search: "'" . $request['fields'][$key] . "' => 'required",
+                        replace: "'" . $request['fields'][$key] . "' => 'nullable",
+                        subject: $updateValidations
                     );
                 }
             }
         }
 
-        $updateRequestTemplate = str_replace(
-            [
-                '{{modelNamePascalCase}}',
-                '{{fields}}',
-                '{{namespace}}',
-            ],
-            [
-                "Update$modelSingularPascalCase",
-                $updateValidations,
-                $namespace
-            ],
-            GeneratorUtils::getStub('request')
-        );
+        $updateRequestTemplate = GeneratorUtils::replaceStub(replaces: [
+            'modelNamePascalCase' => "Update$modelSingularPascalCase",
+            'fields' => $updateValidations,
+            'namespace' => $namespace,
+        ], stubName: 'request');
 
         /**
          * Create a request class file.
          */
         if ($path) {
-            $fullPath = app_path("/Http/Requests/$path/$modelNamePluralPascalCase");
-            GeneratorUtils::checkFolder($fullPath);
-            file_put_contents("$fullPath/Store{$modelSingularPascalCase}Request.php", $storeRequestTemplate);
+            $fullPath = app_path(path: "/Http/Requests/$path/$modelNamePluralPascalCase");
+            GeneratorUtils::checkFolder(path: $fullPath);
+            file_put_contents(filename: "$fullPath/Store{$modelSingularPascalCase}Request.php", data: $storeRequestTemplate);
 
             if (GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value) {
-                file_put_contents("$fullPath/Update{$modelSingularPascalCase}Request.php", $updateRequestTemplate);
+                file_put_contents(filename: "$fullPath/Update{$modelSingularPascalCase}Request.php", data: $updateRequestTemplate);
             }
         } else {
-            GeneratorUtils::checkFolder(app_path("/Http/Requests/$modelNamePluralPascalCase"));
-            file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Store{$modelSingularPascalCase}Request.php"), $storeRequestTemplate);
+            GeneratorUtils::checkFolder(path: app_path(path: "/Http/Requests/$modelNamePluralPascalCase"));
+            file_put_contents(filename: app_path(path: "/Http/Requests/$modelNamePluralPascalCase/Store{$modelSingularPascalCase}Request.php"), data: $storeRequestTemplate);
 
             if (GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value) {
-                file_put_contents(app_path("/Http/Requests/$modelNamePluralPascalCase/Update{$modelSingularPascalCase}Request.php"), $updateRequestTemplate);
+                file_put_contents(filename: app_path(path: "/Http/Requests/$modelNamePluralPascalCase/Update{$modelSingularPascalCase}Request.php"), data: $updateRequestTemplate);
             }
         }
     }
