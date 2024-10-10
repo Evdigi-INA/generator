@@ -45,6 +45,7 @@ class StoreSimpleGeneratorRequest extends FormRequest
             'generate_seeder' => ['nullable'],
             'generate_factory' => ['nullable'],
             'generate_variant' => ['required'],
+            'generate_export' => ['nullable'],
         ];
     }
 }

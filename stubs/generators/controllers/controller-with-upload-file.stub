@@ -7,7 +7,7 @@ use Illuminate\Contracts\View\View;
 use Yajra\DataTables\Facades\DataTables;
 use App\Generators\Services\ImageService;
 use Illuminate\Http\{JsonResponse, RedirectResponse};
-use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};{{useExportNamespace}}
 
 class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
 {
@@ -115,4 +115,5 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameCleanSingular}} can't be deleted because it's related to another table."));
         }
     }
+    {{exportFunction}}
 }

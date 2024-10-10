@@ -5,7 +5,7 @@ use {{modelPath}};
 use {{requestPath}};
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\RedirectResponse;{{useExportNamespace}}
 
 class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
 {
@@ -44,4 +44,5 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
 
         return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was created successfully.'));
     }
+    {{exportFunction}}
 }
