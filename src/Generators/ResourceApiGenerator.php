@@ -9,54 +9,41 @@ class ResourceApiGenerator
      */
     public function generate(array $request): void
     {
-        $model = GeneratorUtils::setModelName($request['model'], 'default');
-        $path = GeneratorUtils::getModelLocation($request['model']);
-        $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
-        $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase($model);
-        $namespace = !$path ? "namespace App\Http\Resources\\$modelNamePluralPascalCase;" : "namespace App\Http\Resources\\$path\\$modelNamePluralPascalCase;";
+        if (GeneratorUtils::isGenerateApi()) {
+            $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
+            $path = GeneratorUtils::getModelLocation(model: $request['model']);
+            $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase(string: $model);
+            $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase(string: $model);
+            $namespace = !$path ? "namespace App\Http\Resources\\$modelNamePluralPascalCase;" : "namespace App\Http\Resources\\$path\\$modelNamePluralPascalCase;";
 
-        $resourceTemplate = str_replace(
-            [
-                '{{namespace}}',
-                '{{modelNameSingularPascalCase}}',
-                '{{modelNameSingularSnakeCase}}'
-            ],
-            [
-                $namespace,
-                $modelNameSingularPascalCase,
-                GeneratorUtils::singularSnakeCase($model)
-            ],
-            GeneratorUtils::getStub('resource')
-        );
+            $resourceTemplate = GeneratorUtils::replaceStub(replaces: [
+                'namespace' => $namespace,
+                'modelNameSingularPascalCase' => $modelNameSingularPascalCase,
+                'modelNameSingularSnakeCase' => GeneratorUtils::singularSnakeCase(string: $model),
+            ], stubName: 'resource');
 
-        $collectionTemplate = str_replace(
-            [
-                '{{namespace}}',
-                '{{modelNameSingularPascalCase}}',
-                '{{modelNamePluralSnakeCase}}'
-            ],
-            [
-                $namespace,
-                $modelNameSingularPascalCase,
-                GeneratorUtils::pluralSnakeCase($model),
-            ],
-            GeneratorUtils::getStub('resource-collection')
-        );
+            $collectionTemplate = GeneratorUtils::replaceStub(replaces: [
+                'namespace' => $namespace,
+                'modelNameSingularPascalCase' => $modelNameSingularPascalCase,
+                'modelNamePluralSnakeCase' => GeneratorUtils::pluralSnakeCase(string: $model),
+            ], stubName: 'resource-collection');
 
-        GeneratorUtils::checkFolder(app_path("/Http/Resources/$modelNamePluralPascalCase"));
 
-        if (!$path) {
-            file_put_contents(app_path("/Http/Resources/$modelNamePluralPascalCase/" . $modelNameSingularPascalCase . "Resource.php"), $resourceTemplate);
+            GeneratorUtils::checkFolder(path: app_path(path: "/Http/Resources/$modelNamePluralPascalCase"));
 
-            file_put_contents(app_path("/Http/Resources/$modelNamePluralPascalCase/" . $modelNameSingularPascalCase . "Collection.php"), $collectionTemplate);
-        } else {
-            $fullPath = app_path("/Http/Resources/$path/$modelNamePluralPascalCase");
+            if (!$path) {
+                file_put_contents(filename: app_path(path: "/Http/Resources/$modelNamePluralPascalCase/" . $modelNameSingularPascalCase . "Resource.php"), data: $resourceTemplate);
 
-            GeneratorUtils::checkFolder($fullPath);
+                file_put_contents(filename: app_path(path: "/Http/Resources/$modelNamePluralPascalCase/" . $modelNameSingularPascalCase . "Collection.php"), data: $collectionTemplate);
+            } else {
+                $fullPath = app_path(path: "/Http/Resources/$path/$modelNamePluralPascalCase");
 
-            file_put_contents($fullPath . "/" . $modelNameSingularPascalCase . "Resource.php", $resourceTemplate);
+                GeneratorUtils::checkFolder(path: $fullPath);
 
-            file_put_contents($fullPath . "/" . $modelNameSingularPascalCase . "Collection.php", $collectionTemplate);
+                file_put_contents(filename: $fullPath . "/" . $modelNameSingularPascalCase . "Resource.php", data: $resourceTemplate);
+
+                file_put_contents(filename: $fullPath . "/" . $modelNameSingularPascalCase . "Collection.php", data: $collectionTemplate);
+            }
         }
     }
 }

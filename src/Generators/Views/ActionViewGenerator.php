@@ -11,34 +11,30 @@ class ActionViewGenerator
      */
     public function generate(array $request): void
     {
-        $model = GeneratorUtils::setModelName($request['model'], 'default');
-        $path = GeneratorUtils::getModelLocation($request['model']);
+        $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
+        $path = GeneratorUtils::getModelLocation(model: $request['model']);
 
-        $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase($model);
-        $modelNameSingularLowercase = GeneratorUtils::cleanSingularLowerCase($model);
+        $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase(string: $model);
+        $modelNameSingularLowercase = GeneratorUtils::cleanSingularLowerCase(string: $model);
 
-        $template = str_replace(
-            [
-                '{{modelNameSingularLowercase}}',
-                '{{modelNamePluralKebabCase}}'
+        $template = GeneratorUtils::replaceStub(
+            replaces: [
+                'modelNameSingularLowercase' => $modelNameSingularLowercase,
+                'modelNamePluralKebabCase' => $modelNamePluralKebabCase,
             ],
-            [
-                $modelNameSingularLowercase,
-                $modelNamePluralKebabCase
-            ],
-            empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/action') : GeneratorUtils::getStub('views/simple/action')
+            stubName: empty($request['is_simple_generator']) ? 'views/action' : 'views/simple/action'
         );
 
         if ($path != '') {
-            $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase/include");
+            $fullPath = resource_path(path: "/views/" . strtolower(string: $path) . "/$modelNamePluralKebabCase/include");
 
-            GeneratorUtils::checkFolder($fullPath);
+            GeneratorUtils::checkFolder(path: $fullPath);
 
-            file_put_contents($fullPath . "/action.blade.php", $template);
+            file_put_contents(filename: $fullPath . "/action.blade.php", data: $template);
         } else {
-            GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase/include"));
+            GeneratorUtils::checkFolder(path: resource_path(path: "/views/$modelNamePluralKebabCase/include"));
 
-            file_put_contents(resource_path("/views/$modelNamePluralKebabCase/include/action.blade.php"), $template);
+            file_put_contents(filename: resource_path(path: "/views/$modelNamePluralKebabCase/include/action.blade.php"), data: $template);
         }
     }
 }

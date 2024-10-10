@@ -163,8 +163,8 @@ class ControllerGenerator
                 $query .= "])";
                 $relations .= "]);\n\n\t\t";
 
-                $query = str_replace("''", "', '", $query);
-                $relations = str_replace("''", "', '", $relations);
+                $query = str_replace(search: "''", replace: "', '", subject: $query);
+                $relations = str_replace(search: "''", replace: "', '", subject: $relations);
             }
         }
 
@@ -186,7 +186,7 @@ class ControllerGenerator
         $updateDataAction = "\$" . $modelNameSingularCamelCase . "->update(\$request->validated());";
         $requestValidatedAttr = "";
 
-        if (in_array('password', $request['input_types']) || in_array('month', $request['input_types'])) {
+        if (in_array(needle: 'password', haystack: $request['input_types']) || in_array(needle: 'month', haystack: $request['input_types'])) {
             /**
              * * will generate something like:
              *
@@ -228,8 +228,8 @@ class ControllerGenerator
          * by default will get an error, cause invalid format.
          */
         $inputMonths = "";
-        if (in_array('month', $request['input_types'])) {
-            if (!in_array('password', $request['input_types'])) {
+        if (in_array(needle: 'month', haystack: $request['input_types'])) {
+            if (!in_array(needle: 'password', haystack: $request['input_types'])) {
                 /**
                  * don't concat string if any input type password, cause already concat ahead.
                  */
@@ -251,7 +251,7 @@ class ControllerGenerator
         /**
          * Generate a codes for upload file.
          */
-        switch (in_array('file', $request['input_types'])) {
+        switch (in_array(needle: 'file', haystack: $request['input_types'])) {
             case true:
                 $indexCode = "";
                 $storeCode = "";
@@ -328,10 +328,10 @@ class ControllerGenerator
                 /**
                  * Remove $validated = $request->validated(); because is already exist in template (.stub)
                  */
-                $passwordFieldStore = str_replace('$validated = $request->validated();', '', $passwordFieldStore);
-                $passwordFieldUpdate = str_replace('$validated = $request->validated();', '', $passwordFieldUpdate);
+                $passwordFieldStore = str_replace(search: '$validated = $request->validated();', replace: '', subject: $passwordFieldStore);
+                $passwordFieldUpdate = str_replace(search: '$validated = $request->validated();', replace: '', subject: $passwordFieldUpdate);
 
-                $inputMonths = str_replace('$validated = $request->validated();', '', $inputMonths);
+                $inputMonths = str_replace(search: '$validated = $request->validated();', replace: '', subject: $inputMonths);
                 $updateDataAction = "\$" . $modelNameSingularCamelCase . "->update(\$validated);";
 
                 if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
@@ -342,7 +342,7 @@ class ControllerGenerator
                      *      Product::create($validated);
                      *  }
                      */
-                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");";
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated') . ");";
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }
@@ -367,7 +367,7 @@ class ControllerGenerator
                         'namespace' => $namespace,
                         'requestPath' => $requestPath,
                         'modelPath' => $path != '' ? "App\Models\\$path\\$modelNameSingularPascalCase" : "App\Models\\$modelNameSingularPascalCase",
-                        'viewPath' => $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
+                        'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower($path)) . "." : '',
                         'passwordFieldStore' => $passwordFieldStore,
                         'passwordFieldUpdate' => $passwordFieldUpdate,
                         'updateDataAction' => $updateDataAction,
@@ -382,12 +382,12 @@ class ControllerGenerator
                         'deleteImageCodes' => $deleteImageCodes,
                         'castImageFunction' => $castImageFunc,
                         'castImageIndex' => $castImageIndex,
-                        'castImageShow' => "\n\t\t\$this->castImages($" . $modelNameSingularCamelCase . ");\n",
+                        'castImageShow' => "\n\t\t\$this->castImages($$modelNameSingularCamelCase);\n",
                         'middlewareName' => GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
                         'useExportNamespace' => $this->generateUseExport($request),
                         'exportFunction' => $this->generateExportFunction($request),
                     ],
-                    stubName: GeneratorUtils::getStub(path: GeneratorUtils::getControllerStubByGeneratorVariant(withUploadFile: true))
+                    stubName: GeneratorUtils::getControllerStubByGeneratorVariant(withUploadFile: true)
                 );
                 break;
             default:
@@ -402,7 +402,7 @@ class ControllerGenerator
                      * Product::updateOrCreate(['id' => $product?->id], $validated);
                      *
                      */
-                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains($updateDataAction, '$request->validated()') ? '$request->validated()' : '$validated') . ");";
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated') . ");";
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }
@@ -422,7 +422,7 @@ class ControllerGenerator
                     'namespace' => $namespace,
                     'requestPath' => $requestPath,
                     'modelPath' => $path != '' ? "App\Models\\$path\\$modelNameSingularPascalCase" : "App\Models\\$modelNameSingularPascalCase",
-                    'viewPath' => $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
+                    'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower($path)) . "." : '',
                     'passwordFieldStore' => $passwordFieldStore,
                     'passwordFieldUpdate' => $passwordFieldUpdate,
                     'insertDataAction' => $insertDataAction,
@@ -432,7 +432,7 @@ class ControllerGenerator
                     'modelNameCleanSingular' => $modelNameCleanSingular,
                     'modelNameCleanPlural' => $modelNameCleanPlural,
                     'relations' => $relations,
-                    'publicOrStorage' => config('generator.image.disk', 'storage'),
+                    'publicOrStorage' => config(key: 'generator.image.disk', default: 'storage'),
                     'middlewareName' => GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
                     'exportFunction' => $this->generateExportFunction($request),
                     'useExportNamespace' => $this->generateUseExport($request),
@@ -441,7 +441,7 @@ class ControllerGenerator
         }
 
         if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
-            $template = str_replace('created successfully', 'updated successfully', $template);
+            $template = str_replace(search: 'created successfully', replace: 'updated successfully', subject: $template);
         }
 
         /**
@@ -455,12 +455,12 @@ class ControllerGenerator
 
             $controllerPath = GeneratorUtils::isGenerateApi() ? "/Api/{$modelNameSingularPascalCase}Controller.php" : "/{$modelNameSingularPascalCase}Controller.php";
 
-            file_put_contents(app_path("/Http/Controllers" . $controllerPath), $template);
+            file_put_contents(filename: app_path("/Http/Controllers" . $controllerPath), data: $template);
         } else {
             $fullPath = GeneratorUtils::isGenerateApi() ? app_path("/Http/Controllers/Api/$path/") : app_path("/Http/Controllers/$path/");
             GeneratorUtils::checkFolder($fullPath);
 
-            file_put_contents("$fullPath{$modelNameSingularPascalCase}Controller.php", $template);
+            file_put_contents(filename: "$fullPath{$modelNameSingularPascalCase}Controller.php", data: $template);
         }
     }
 
@@ -486,7 +486,7 @@ class ControllerGenerator
             'fieldCamelCase' => GeneratorUtils::singularCamelCase($field),
             'modelNameSingularCamelCase' => GeneratorUtils::singularCamelCase($model),
             'disk' => config('generator.image.disk') == 's3' ? ", disk: 's3'" : '',
-            'castImageDataTable' => GeneratorUtils::setDiskCodeForCastImage($model, $field),
+            'castImageDataTable' => GeneratorUtils::setDiskCodeForCastImage(model: $model, field: $field),
         ];
 
         if ($model) {

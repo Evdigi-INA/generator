@@ -35,38 +35,30 @@ class CreateViewGenerator
             $alertCode = '';
         }
 
-        $template = str_replace(
-            [
-                '{{modelNamePluralUcWords}}',
-                '{{modelNameSingularLowerCase}}',
-                '{{modelNamePluralKebabCase}}',
-                '{{enctype}}',
-                '{{viewPath}}',
-                '{{alertForSingleForm}}',
-                '{{exportButton}}',
+        $template = GeneratorUtils::replaceStub(
+            replaces: [
+                'modelNamePluralUcWords' => $modelNamePluralUcWords,
+                'modelNameSingularLowerCase' => $modelNameSingularLowerCase,
+                'modelNamePluralKebabCase' => $modelNamePluralKebabCase,
+                'enctype' => in_array(needle: 'file', haystack: $request['input_types']) ? ' enctype="multipart/form-data"' : '',
+                'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower(string: $path)) . "." : '',
+                'alertForSingleForm' => $alertCode,
+                'exportButton' => $request['generate_variant'] == GeneratorVariant::SINGLE_FORM->value
+                    ? (new IndexViewGenerator)->generateExportButton(request: $request) : '',
             ],
-            [
-                $modelNamePluralUcWords,
-                $modelNameSingularLowerCase,
-                $modelNamePluralKebabCase,
-                in_array('file', $request['input_types']) ? ' enctype="multipart/form-data"' : '',
-                $path != '' ? str_replace('\\', '.', strtolower($path)) . "." : '',
-                $alertCode,
-                $request['generate_variant'] == GeneratorVariant::SINGLE_FORM->value ? (new IndexViewGenerator)->generateExportButton($request) : '',
-            ],
-            GeneratorUtils::getStub(empty($request['is_simple_generator']) ? 'views/create' : 'views/simple/create')
+            stubName: empty($request['is_simple_generator']) ? 'views/create' : 'views/simple/create'
         );
 
         if ($path) {
-            $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase");
+            $fullPath = resource_path(path: "/views/" . strtolower(string: $path) . "/$modelNamePluralKebabCase");
 
-            GeneratorUtils::checkFolder($fullPath);
+            GeneratorUtils::checkFolder(path: $fullPath);
 
-            file_put_contents($fullPath . "/create.blade.php", $template);
+            file_put_contents(filename: $fullPath . "/create.blade.php", data: $template);
         } else {
-            GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase"));
+            GeneratorUtils::checkFolder(path: resource_path(path: "/views/$modelNamePluralKebabCase"));
 
-            file_put_contents(resource_path("/views/$modelNamePluralKebabCase/create.blade.php"), $template);
+            file_put_contents(filename: resource_path(path: "/views/$modelNamePluralKebabCase/create.blade.php"), data: $template);
         }
     }
 }

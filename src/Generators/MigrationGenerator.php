@@ -186,6 +186,6 @@ class MigrationGenerator
 
         $migrationName = date('Y') . '_' . date('m') . '_' . date('d') . '_' . date('h') . date('i') . date('s') . '_create_' . $tableNamePluralLowercase . '_table.php';
 
-        file_put_contents(database_path("/migrations/$migrationName"), $template);
+        file_put_contents(filename: database_path("/migrations/$migrationName"), data: $template);
     }
 }

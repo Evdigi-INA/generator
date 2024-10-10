@@ -8,7 +8,7 @@ class ExportExcelGenerator
     {
         if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
             $path = GeneratorUtils::getModelLocation(model: $request['model']);
-            $modelPath = $path ? $path . "\\" : "";
+            $modelPath = $path ? "$path\\" : "";
             $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase(string: $request['model']);
 
             $headings = '';
@@ -94,7 +94,7 @@ class ExportExcelGenerator
                 }
             }
 
-            $replaces = [
+            $template = GeneratorUtils::replaceStub(stubName: 'export', replaces: [
                 'modelPath' => "App\Models\\" . $modelPath . $modelNameSingularPascalCase,
                 'modelName' => $modelNameSingularPascalCase,
                 'headings' => $headings,
@@ -102,9 +102,7 @@ class ExportExcelGenerator
                 'relations' => $relations,
                 'modelNamePlural' => GeneratorUtils::pluralPascalCase(string: $request['model']),
                 'dateTimeFormat' => config(key: 'generator.format.datetime', default: 'Y-m-d H:i:s'),
-            ];
-
-            $template = GeneratorUtils::replaceStub(replaces: $replaces, stubName: 'export');
+            ]);
 
             GeneratorUtils::checkFolder(path: app_path(path: 'Exports'));
 
