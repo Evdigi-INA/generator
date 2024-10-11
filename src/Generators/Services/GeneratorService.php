@@ -41,9 +41,7 @@ class GeneratorService implements GeneratorServiceInterface
             abort(code: Response::HTTP_FORBIDDEN, message: 'You have not yet installed the API, to use this feature, you must be running the artisan command: "php artisan install:api".');
         }
 
-        if (empty($request['is_simple_generator'])) {
-            (new PermissionGenerator)->generate($request);
-        }
+        (new PermissionGenerator)->generate($request);
 
         (new ModelGenerator)->generate($request);
         (new MigrationGenerator)->generate($request);

@@ -139,6 +139,7 @@ class MigrationGenerator
                         $setFields .= match ($request['on_update_foreign'][$i]) {
                             ActionForeign::CASCADE->value => "->cascadeOnUpdate()",
                             ActionForeign::RESTRICT->value => "->restrictOnUpdate()",
+                            default => "",
                         };
 
                         $setFields .= match ($request['on_delete_foreign'][$i]) {
