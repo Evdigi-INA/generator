@@ -12,45 +12,47 @@ class PermissionGenerator
      */
     public function generate(array $request): void
     {
-        $model = GeneratorUtils::setModelName($request['model'], 'default');
-        $modelNamePlural = GeneratorUtils::cleanPluralLowerCase($model);
-        $modelNameSingular = GeneratorUtils::cleanSingularLowerCase($model);
+        if (empty($request['is_simple_generator'])) {
+            $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
+            $modelNamePlural = GeneratorUtils::cleanPluralLowerCase(string: $model);
+            $modelNameSingular = GeneratorUtils::cleanSingularLowerCase(string: $model);
 
-        $stringPermissions = str_replace(
-            [
-                '{',
-                '}',
-                ':',
-                '"',
-                ',',
-                ']]'
-            ],
-            [
-                '[',
-                ']',
-                " => ",
-                "'",
-                ', ',
-                "]], \n\t\t"
-            ],
-            json_encode([
-                'group' => $modelNamePlural,
-                'access' => [
-                    "$modelNameSingular view",
-                    "$modelNameSingular create",
-                    "$modelNameSingular edit",
-                    "$modelNameSingular delete",
-                ]
-            ])
-        );
+            $stringPermissions = str_replace(
+                search: [
+                    '{',
+                    '}',
+                    ':',
+                    '"',
+                    ',',
+                    ']]'
+                ],
+                replace: [
+                    '[',
+                    ']',
+                    " => ",
+                    "'",
+                    ', ',
+                    "]], \n\t\t"
+                ],
+                subject: json_encode(value: [
+                    'group' => $modelNamePlural,
+                    'access' => [
+                        "$modelNameSingular view",
+                        "$modelNameSingular create",
+                        "$modelNameSingular edit",
+                        "$modelNameSingular delete",
+                    ]
+                ])
+            );
 
-        $path = config_path('permission.php');
+            $path = config_path('permission.php');
 
-        $newPermissionFile = substr(file_get_contents($path), 0, -8) . $stringPermissions . "],];";
+            $newPermissionFile = substr(string: file_get_contents(filename: $path), offset: 0, length: -8) . $stringPermissions . "],];";
 
-        file_put_contents($path, $newPermissionFile);
+            file_put_contents(filename: $path, data: $newPermissionFile);
 
-        $this->insertRoleAndPermissions($modelNameSingular);
+            $this->insertRoleAndPermissions(model: $modelNameSingular);
+        }
     }
 
     /**
@@ -60,7 +62,7 @@ class PermissionGenerator
     {
         Artisan::call('optimize:clear');
 
-        $role = Role::findByName('admin');
+        $role = Role::findByName(name: 'admin');
 
         $permissions = [
             [
@@ -84,7 +86,7 @@ class PermissionGenerator
         foreach ($permissions as $p) {
             $permission = Permission::firstOrCreate($p);
 
-            $role->givePermissionTo($permission);
+            $role->givePermissionTo(permissions: $permission);
         }
     }
 }

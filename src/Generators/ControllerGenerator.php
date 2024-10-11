@@ -450,7 +450,7 @@ class ControllerGenerator
         if (!$path) {
             match (GeneratorUtils::isGenerateApi()) {
                 true => GeneratorUtils::checkFolder(app_path("/Http/Controllers/Api")),
-                false => GeneratorUtils::checkFolder(app_path("/Http/Controllers")),
+                default => GeneratorUtils::checkFolder(app_path("/Http/Controllers")),
             };
 
             $controllerPath = GeneratorUtils::isGenerateApi() ? "/Api/{$modelNameSingularPascalCase}Controller.php" : "/{$modelNameSingularPascalCase}Controller.php";
