@@ -18,6 +18,22 @@ class StoreSimpleGeneratorRequest extends FormRequest
     }
 
     /**
+     * set the validation messages
+     */
+    public function messages(): array
+    {
+        return [
+            'model.regex' => 'The model name may only contain letters, underscores, and slashes.',
+            'generate_type.required' => 'The generate type field is required.',
+            'input_types.*.required' => 'The input types field is required.',
+            'fields.*.regex' => 'The field name may only contain letters and underscores.',
+            'requireds.*.required' => 'The requireds field is required.',
+            'column_types.*.required' => 'The column types field is required.',
+            'generate_variant.required' => 'The generate variant field is required.',
+        ];
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
