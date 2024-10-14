@@ -28,7 +28,6 @@
     ],
     "require": {
         "php": "^8.2",
-        "intervention/image-laravel": "^1.1",
         "yajra/laravel-datatables-oracle": "^10.0|^11.0"
     },
     "require-dev": {

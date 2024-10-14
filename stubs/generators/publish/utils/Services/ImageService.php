@@ -2,6 +2,7 @@
 
 namespace App\Generators\Services;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use App\Generators\Interfaces\ImageServiceInterface;
 
@@ -20,11 +21,11 @@ class ImageService implements ImageServiceInterface
                     'file' => $file,
                     'path' => $path,
                     'default_image' => $defaultImage,
-                    'disk' => $disk ?? config('generator.image.disk') ?? 'storage',
+                    'disk' => $disk ?? config(key: 'generator.image.disk', default: 'storage'),
                     'width' => $width,
                     'height' => $height,
-                    'crop' => $crop ?? config('generator.image.crop') ?? true,
-                    'aspect_ratio' => $aspectRatio ?? config('generator.image.aspect_ratio') ?? true,
+                    'crop' => $crop ?? config(key: 'generator.image.crop', default: true),
+                    'aspect_ratio' => $aspectRatio ?? config(key: 'generator.image.aspect_ratio', default: true),
                 ]);
             } else {
                 // TODO: implement custom upload
@@ -41,17 +42,68 @@ class ImageService implements ImageServiceInterface
     {
         $filename = $this->generateFilename($options['file']);
 
-        $image = $this->processImage($options);
+        if ($this->isInterventionAvailable()) {
+            $image = $this->processImage($options);
 
-        if ($options['disk'] === 's3') {
-            Storage::disk('s3')->put($options['path'] . '/' . $filename, (string) $image, 'public');
+            switch ($options['disk']) {
+                case 's3':
+                    Storage::disk('s3')->put($options['path'] . '/' . $filename, (string) $image, 'public');
+                    break;
+                default:
+                    $this->saveToLocal($image, $options['path'], $filename);
+                    break;
+            }
+
+            $this->deleteOldImage(options: $options);
         } else {
-            $this->saveToLocal(image: $image, path: $options['path'], filename: $filename);
+            $arrPath = explode(separator: '/', string: $options['path']);
+
+            switch ($options['disk']) {
+                case 's3':
+                    $path = $arrPath[1];
+                    break;
+                case 'storage':
+                    // public path
+                    if (count(value: $arrPath) == 3) {
+                        $path = $arrPath[1];
+
+                        $this->deleteOldImage(options: $options);
+
+                        return $this->moveToPublicFolder(file: $options['file'], path: $path, filename: $filename);
+                    } else {
+                        $path = $arrPath[1] . '/' . $arrPath[2] . '/' . $arrPath[3];
+                    }
+                    break;
+                default:
+                    // public path
+                    $path = $arrPath[1];
+
+                    $this->deleteOldImage(options: $options);
+
+                    return $this->moveToPublicFolder(file: $options['file'], path: $path, filename: $filename);
+            }
+
+            $this->deleteOldImage(options: $options);
+
+            $options['file']->storeAs($path, $filename, $options['disk'] != 'storage' ? $options['disk'] : 'local');
         }
 
+        return $filename;
+    }
+
+    private function deleteOldImage(array $options): void
+    {
         if ($options['default_image']) {
-            $this->delete(image: $options['path'] . $options['default_image'], disk: $options['disk']);
+            $this->delete($options['path'] . $options['default_image'], $options['disk']);
         }
+    }
+
+    /**
+     * Move the uploaded file to the public folder.
+     */
+    private function moveToPublicFolder(UploadedFile $file, string $path, string $filename): string
+    {
+        $file->move(public_path("uploads/$path"), $filename);
 
         return $filename;
     }
@@ -61,21 +113,21 @@ class ImageService implements ImageServiceInterface
      */
     private function generateFilename(mixed $file): string
     {
-        if (class_exists(\Intervention\Image\Facades\Image::class)) {  // v2
+        if (!$this->isInterventionAvailable()) {
             return $file->hashName();
         }
 
-        return str()->random(30) . '.webp'; // v3
+        return str()->random(30) . '.webp'; // Default extension to webp
     }
 
     /**
-     * Process the image using the appropriate version of the Intervention/Image library.
+     * Process the image using Intervention/Image if available.
      */
     private function processImage(array $options): mixed
     {
-        if (class_exists(\Intervention\Image\Facades\Image::class)) { // v2
+        if (class_exists(class: \Intervention\Image\Facades\Image::class)) { // v2
             return \Intervention\Image\Facades\Image::make($options['file'])
-                ->resize($options['width'], $options['height'], function ($constraint) use ($options) {
+                ->resize($options['width'], $options['height'], function ($constraint) use ($options): void {
                     if ($options['crop']) {
                         if ($options['aspect_ratio']) {
                             $constraint->aspectRatio();
@@ -86,16 +138,16 @@ class ImageService implements ImageServiceInterface
                 ->encode('webp');
         }
 
-        if (class_exists(\Intervention\Image\Laravel\Facades\Image::class)) { // v3
+        if (class_exists(class: \Intervention\Image\Laravel\Facades\Image::class)) { // v3
             $imageInstance = \Intervention\Image\Laravel\Facades\Image::read($options['file']);
             $encode = new \Intervention\Image\Encoders\WebpEncoder(65);
 
             if ($options['crop']) {
                 if ($options['aspect_ratio']) {
-                    return $imageInstance->scaleDown(width: $options['width'], height: $options['height'])->encode($encode);
+                    return $imageInstance->scaleDown($options['width'], $options['height'])->encode($encode);
                 }
 
-                return $imageInstance->resizeDown(width: $options['width'], height: $options['height'])->encode($encode);
+                return $imageInstance->resizeDown($options['width'], $options['height'])->encode($encode);
             }
 
             return $imageInstance->encode($encode);
@@ -105,21 +157,29 @@ class ImageService implements ImageServiceInterface
     }
 
     /**
+     * Check if Intervention/Image is available.
+     */
+    private function isInterventionAvailable(): bool
+    {
+        return class_exists(class: \Intervention\Image\Facades\Image::class) || class_exists(class: \Intervention\Image\Laravel\Facades\Image::class);
+    }
+
+    /**
      * Save the processed image to local storage.
      */
     private function saveToLocal(mixed $image, string $path, string $filename): void
     {
-        if (!file_exists($path) && !mkdir($path, 0777, true) && !is_dir($path)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $path));
+        if (!file_exists(filename: $path) && !mkdir(directory: $path, permissions: 0777, recursive: true) && !is_dir(filename: $path)) {
+            throw new \RuntimeException(sprintf(format: 'Directory "%s" was not created', values: $path));
         }
 
-        $image->save($path . $filename);
+        $image->save($path . '/' . $filename);
     }
 
     /**
      * Delete an image from the specified disk.
      */
-    public function delete(string|null $image = null, string $disk = 'local'): void
+    public function delete(?string $image = null, string $disk = 'local'): void
     {
         switch ($disk) {
             case 's3':
@@ -127,7 +187,7 @@ class ImageService implements ImageServiceInterface
                 break;
             default:
                 if ($image) {
-                    @unlink($image);
+                    @unlink(filename: $image);
                 }
                 break;
         }
