@@ -1,0 +1,15 @@
+ protected function {{fieldCamelCase}}Two(): Attribute
+    {
+        $path = '{{path}}';
+        $disk = '{{disk}}';
+
+        return Attribute::make(
+            get: function (?string $value) use($path, $disk): string {
+                if (!$value) {
+                    return '{{defaultImage}}';
+                }
+
+                return Storage::disk(name: (new ImageService)->setDiskName(disk: $disk))->temporaryUrl(path: "$path/$value", expiration: now()->addMinutes(value: 5));
+            }
+        );
+    }

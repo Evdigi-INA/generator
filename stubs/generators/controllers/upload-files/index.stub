@@ -1,5 +1,0 @@
-                ->addColumn('{{fieldSnakeCase}}', function (${{modelNameSingularCamelCase}}) {
-                    {{defaultImageCode}}
-
-                    return {{castImageDataTable}};
-                })

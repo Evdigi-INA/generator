@@ -1,1 +1,1 @@
-        $validated['{{fieldSnakeCase}}'] = $this->imageService->upload(name: '{{fieldSnakeCase}}', path: $this->{{fieldUploadPath}}Path{{disk}});
+        $validated['{{fieldSnakeCase}}'] = $this->imageService->upload(name: '{{fieldSnakeCase}}', path: $this->{{fieldSingularCamelCase}}Path, disk: $this->disk);
