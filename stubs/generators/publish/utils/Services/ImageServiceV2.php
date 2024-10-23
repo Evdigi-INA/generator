@@ -52,14 +52,14 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      * @param array $options {
      *     An associative array of options for handling file upload.
      *
-     *     @type string  $name            The name of the file input field.
-     *     @type string  $path            The path where the image should be stored.
-     *     @type string|null $defaultImage  The default image to return if no file is uploaded..
-     *     @type string|null $disk         The storage disk to use (e.g., 'public', 's3'). Defaults to 'storage.public'.
-     *     @type int     $width           The width to resize the image to. Defaults to 500..
-     *     @type int     $height          The height to resize the image to. Defaults to 500..
-     *     @type bool|null $crop           Whether to crop the image. Defaults to config setting..
-     *     @type bool|null $isCustomUpload Whether to handle custom upload logic. Defaults to false..
+     *     @type string $name The name of the file input field.
+     *     @type string $path The path where the image should be stored.
+     *     @type string|null $defaultImage The default image to return if no file is uploaded.
+     *     @type string|null $disk The storage disk to use (e.g., 'public', 's3', 'storage.local', 'storage.public'). Defaults to 'storage.public'.
+     *     @type int $width The width to resize the image to. Defaults to 300.
+     *     @type int $height The height to resize the image to. Defaults to 300.
+     *     @type bool|null $crop Whether to crop the image. Defaults to config setting.
+     *     @type bool|null $isCustomUpload Whether to handle custom upload logic. Defaults to false.
      *     @type UploadedFile $file The uploaded file object.
      * }
      *
@@ -93,7 +93,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
         switch ($options['disk']) {
             case 'public':
                 // upload to public_path()
-                $this->moveToPublicFolder(file: $options['file'], path: $options['path'], filename: $filename, image: $image);
+                $this->moveToPublicFolder(file: $options['file'], path: $options['path'], filename: $filename);
                 break;
             default:
                 Storage::disk($setDiskName)->put($fullPath, $image);
@@ -105,6 +105,9 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
         return $filename;
     }
 
+    /**
+     * Maps a given disk name to a standardized name to be used when interacting with Storage.
+     */
     public function setDiskName(string $disk): string
     {
         return match ($disk) {
@@ -116,6 +119,9 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
         };
     }
 
+    /**
+     * Deletes an old image from the specified disk if a default image is provided in the options.
+     */
     private function deleteOldImage(array $options): bool
     {
         if ($options['default_image']) {
@@ -128,7 +134,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
     /**
      * Move the uploaded file to the public folder.
      */
-    private function moveToPublicFolder(UploadedFile $file, string $path, string $filename, $image = null): bool
+    private function moveToPublicFolder(UploadedFile $file, string $path, string $filename): bool
     {
         $file->move(directory: public_path($path), name: $filename);
 
@@ -199,6 +205,9 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
         };
     }
 
+    /**
+     * Gets the actual image name by removing any '/' or '?' in the image name.
+     */
     protected function getActualImageName(?string $name = null): ?string
     {
         if(!$name) {
