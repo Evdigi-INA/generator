@@ -37,46 +37,46 @@ class GeneratorService implements GeneratorServiceInterface
      */
     public function generate(array $request): void
     {
-        // if (GeneratorUtils::isGenerateApi() && !$this->apiRouteAlreadyExists()) {
-        //     abort(code: Response::HTTP_FORBIDDEN, message: 'You have not yet installed the API, to use this feature, you must be running the artisan command: "php artisan install:api".');
-        // }
+        if (GeneratorUtils::isGenerateApi() && !$this->apiRouteAlreadyExists()) {
+            abort(code: Response::HTTP_FORBIDDEN, message: 'You have not yet installed the API, to use this feature, you must be running the artisan command: "php artisan install:api".');
+        }
 
-        // (new PermissionGenerator)->generate($request);
+        (new PermissionGenerator)->generate($request);
         (new ModelGenerator)->generate($request);
-        // (new MigrationGenerator)->generate($request);
-        // (new ControllerGenerator)->generate($request);
-        // (new RequestGenerator)->generate($request);
+        (new MigrationGenerator)->generate($request);
+        (new ControllerGenerator)->generate($request);
+        (new RequestGenerator)->generate($request);
 
-        // // blade template
-        // if (isset($request['generate_variant']) || $request['generate_variant'] !== 'api') {
-        //     // for single form
-        //     (new CreateViewGenerator)->generate($request);
-        //     (new FormViewGenerator)->generate($request);
+        // blade template
+        if (isset($request['generate_variant']) || $request['generate_variant'] !== 'api') {
+            // for single form
+            (new CreateViewGenerator)->generate($request);
+            (new FormViewGenerator)->generate($request);
 
-        //     // for full CRUD
-        //     if ($request['generate_variant'] === GeneratorVariant::DEFAULT ->value) {
-        //         (new IndexViewGenerator)->generate($request);
-        //         (new ShowViewGenerator)->generate($request);
-        //         (new EditViewGenerator)->generate($request);
-        //         (new ActionViewGenerator)->generate($request);
-        //     }
+            // for full CRUD
+            if ($request['generate_variant'] === GeneratorVariant::DEFAULT ->value) {
+                (new IndexViewGenerator)->generate($request);
+                (new ShowViewGenerator)->generate($request);
+                (new EditViewGenerator)->generate($request);
+                (new ActionViewGenerator)->generate($request);
+            }
 
-        //     (new MenuGenerator)->generate($request);
-        //     (new ViewComposerGenerator)->generate($request);
-        // }
+            (new MenuGenerator)->generate($request);
+            (new ViewComposerGenerator)->generate($request);
+        }
 
-        // (new RouteGenerator)->generate($request);
-        // (new SeederGenerator)->generate($request);
-        // (new FactoryGenerator)->generate($request);
-        // (new ResourceApiGenerator)->generate($request);
+        (new RouteGenerator)->generate($request);
+        (new SeederGenerator)->generate($request);
+        (new FactoryGenerator)->generate($request);
+        (new ResourceApiGenerator)->generate($request);
 
-        // if ((empty($request['generate_variant']) && $request['generate_variant'] !== 'api') || empty($request['is_simple_generator'])) {
-        //     $this->checkSidebarType();
-        // }
+        if ((empty($request['generate_variant']) && $request['generate_variant'] !== 'api') || empty($request['is_simple_generator'])) {
+            $this->checkSidebarType();
+        }
 
-        // (new ExportExcelGenerator)->generate($request);
+        (new ExportExcelGenerator)->generate($request);
 
-        // Artisan::call('migrate');
+        Artisan::call('migrate');
     }
 
     /**

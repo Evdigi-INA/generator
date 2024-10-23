@@ -152,10 +152,10 @@ class ModelGenerator
 
         $casts .= "]";
 
-        $constructFunc = GeneratorUtils::replaceStub(replaces: [
-            'uploadPaths' => $uploadPaths,
-            'disk' => config(key: 'generator.image.disk', default: 'storage.local'),
-        ], stubName: 'models/construct-function');
+        // $constructFunc = GeneratorUtils::replaceStub(replaces: [
+        //     'uploadPaths' => $uploadPaths,
+        //     'disk' => config(key: 'generator.image.disk', default: 'storage.local'),
+        // ], stubName: 'models/construct-function');
 
         $template = GeneratorUtils::replaceStub(replaces: [
             'modelName' => $modelNameSingularPascalCase,
