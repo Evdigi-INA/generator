@@ -4,7 +4,7 @@
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+{{importCastImage}}
 class {{modelName}} extends Model
 {
     use HasFactory;
@@ -34,4 +34,5 @@ class {{modelName}} extends Model
     }
     {{protectedHidden}}
 {{relations}}
+    {{castImages}}
 }

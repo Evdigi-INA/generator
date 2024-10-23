@@ -1,0 +1,217 @@
+<?php
+
+namespace App\Generators\Services;
+
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use App\Generators\Interfaces\ImageServiceInterfaceV2;
+use Intervention\Image\Interfaces\EncodedImageInterface;
+
+class ImageServiceV2 implements ImageServiceInterfaceV2
+{
+    /**
+     * Upload an image to disk and return the image path.
+     */
+    public function upload(
+        string $name,
+        string $path,
+        ?string $defaultImage = null,
+        ?string $disk = null,
+        ?int $width = null,
+        ?int $height = null,
+        ?bool $crop = null,
+        ?bool $aspectRatio = null,
+        ?bool $isCustomUpload = null
+    ): ?string {
+        $file = request()->file(key: $name);
+
+        if (!$file || !$file->isValid()) {
+            return $this->getActualImageName(name: $defaultImage);
+        }
+
+        if ($isCustomUpload) {
+            // Implement custom upload logic if needed
+            return $this->getActualImageName(name: $defaultImage);
+        }
+
+        return $this->handleFileUpload(options: [
+            'file' => $file,
+            'path' => "/$path/",
+            'default_image' => $defaultImage,
+            'disk' => $disk ?? config(key: 'generator.image.disk', default: 'storage.public'),
+            'width' => $width ?? config(key: 'generator.image.width', default: 300),
+            'height' => $height ?? config(key: 'generator.image.height', default: 300),
+            'crop' => $crop ?? config(key: 'generator.image.crop', default: true),
+            'aspect_ratio' => $aspectRatio ?? config(key: 'generator.image.aspect_ratio', default: true),
+        ]);
+    }
+
+    /**
+     * Handles the file upload process with optional image manipulation using Intervention/Image.
+     *
+     * @param array $options {
+     *     An associative array of options for handling file upload.
+     *
+     *     @type string  $name            The name of the file input field.
+     *     @type string  $path            The path where the image should be stored.
+     *     @type string|null $defaultImage  The default image to return if no file is uploaded..
+     *     @type string|null $disk         The storage disk to use (e.g., 'public', 's3'). Defaults to 'storage.public'.
+     *     @type int     $width           The width to resize the image to. Defaults to 500..
+     *     @type int     $height          The height to resize the image to. Defaults to 500..
+     *     @type bool|null $crop           Whether to crop the image. Defaults to config setting..
+     *     @type bool|null $isCustomUpload Whether to handle custom upload logic. Defaults to false..
+     *     @type UploadedFile $file The uploaded file object.
+     * }
+     *
+     * @return string The filename of the uploaded or processed image.
+     */
+    private function handleFileUpload(array $options): string
+    {
+        $filename = $this->generateFilename(file: $options['file']);
+        $setDiskName = $this->setDiskName(disk: $options['disk']);
+        $fullPath = $options['path'] . '/' . $filename;
+
+        if (!$this->isInterventionAvailable()) {
+            // upload to public_path()
+            if (!in_array(needle: $options['disk'], haystack: ['s3', 'storage.local', 'storage', 'storage.public'])) {
+                $this->moveToPublicFolder(file: $options['file'], path: $options['path'], filename: $filename);
+
+                $this->deleteOldImage(options: $options);
+
+                return $filename;
+            }
+
+            Storage::disk($setDiskName)->put($fullPath, $options['file']);
+
+            $this->deleteOldImage(options: $options);
+
+            return $filename;
+        }
+
+        $image = $this->processWithInterventionImage(options: $options);
+
+        switch ($options['disk']) {
+            case 'public':
+                // upload to public_path()
+                $this->moveToPublicFolder(file: $options['file'], path: $options['path'], filename: $filename, image: $image);
+                break;
+            default:
+                Storage::disk($setDiskName)->put($fullPath, $image);
+                break;
+        }
+
+        $this->deleteOldImage(options: $options);
+
+        return $filename;
+    }
+
+    public function setDiskName(string $disk): string
+    {
+        return match ($disk) {
+            's3' => 's3',
+            'storage.public' => 'public',
+            'storage' => 'public',
+            'storage.local' => 'local',
+            default => $disk,
+        };
+    }
+
+    private function deleteOldImage(array $options): bool
+    {
+        if ($options['default_image']) {
+            return $this->delete(path: $options['path'], image: $options['default_image'], disk: $options['disk']);
+        }
+
+        return false;
+    }
+
+    /**
+     * Move the uploaded file to the public folder.
+     */
+    private function moveToPublicFolder(UploadedFile $file, string $path, string $filename, $image = null): bool
+    {
+        $file->move(directory: public_path($path), name: $filename);
+
+        if (file_exists(filename: public_path("$path$filename"))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Generate a filename for the uploaded image.
+     */
+    private function generateFilename(UploadedFile $file): string
+    {
+        return $this->isInterventionAvailable()
+            ? str()->random(30) . '.webp'
+            : $file->hashName();
+    }
+
+    /**
+     * Process the image using Intervention/Image if available.
+     */
+    private function processWithInterventionImage(array $options): EncodedImageInterface
+    {
+        $image = \Intervention\Image\Laravel\Facades\Image::read($options['file']);
+        $encode = new \Intervention\Image\Encoders\WebpEncoder(65);
+
+        if ($options['crop']) {
+            // constraint to maintain aspect ratio
+            if ($options['aspect_ratio']) {
+                return $image->scaleDown($options['width'], $options['height'])->encode($encode);
+            }
+
+            return $image->resizeDown($options['width'], $options['height'])->encode($encode);
+        }
+
+        return $image->encode($encode);
+    }
+
+
+    /**
+     * Check if Intervention/Image is available.
+     */
+    private function isInterventionAvailable(): bool
+    {
+        return class_exists(class: \Intervention\Image\Laravel\Facades\Image::class);
+    }
+
+    /**
+     * Delete an image from the specified disk.
+     */
+    public function delete(string $path, ?string $image, string $disk = 'local'): bool
+    {
+        if (!$image) {
+            return false;
+        }
+
+        $imageName = $this->getActualImageName(name: $image);
+        $fullPath = "$path/$imageName";
+
+        return match ($disk) {
+            'public' => @unlink(filename: $fullPath),
+            'storage.public' => Storage::disk(name: 'public')->delete(paths: $fullPath),
+            'storage' => Storage::disk(name: 'public')->delete(paths: $fullPath),
+            'storage.local' => Storage::disk(name: 'local')->delete(paths: $fullPath),
+            default => Storage::disk(name: 's3')->delete(paths: $fullPath),
+        };
+    }
+
+    protected function getActualImageName(?string $name = null): ?string
+    {
+        if(!$name) {
+            return null;
+        }
+
+        $arrImg = explode(separator: '/', string: $name);
+        $image = $arrImg[count(value: $arrImg) - 1];
+
+        if (str_contains(needle: '?expires', haystack: $image)) {
+            $image = str(string: $image)->before(search: '?expires')->toString();
+        }
+
+        return $image;
+    }
+}

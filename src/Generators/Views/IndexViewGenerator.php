@@ -41,17 +41,18 @@ class IndexViewGenerator
                      *    name: 'photo',
                      *    orderable: false,
                      *    searchable: false,
-                     *    render: function(data, type, full, meta) {
+                     *    render: function(data) {
                      *        return `<div class="avatar">
-                     *            <img src="${data}" alt="Photo">
+                     *            <img src="${data}" alt="Photo"/>
                      *        </div>`;
                      *    }
                      * },
                      */
 
                     $imgStyle = '';
-                    if (isset($request['is_simple_generator']))
+                    if (isset($request['is_simple_generator'])) {
                         $imgStyle = 'class="rounded" width="50" height="40" style="object-fit: cover"';
+                    }
 
                     $tdColumns .= "{
                     data: '" . str()->snake($field) . "',
@@ -124,7 +125,7 @@ class IndexViewGenerator
             default:
                 $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase");
                 GeneratorUtils::checkFolder($fullPath);
-                file_put_contents($fullPath . "/index.blade.php", $template);
+                file_put_contents("$fullPath/index.blade.php", $template);
                 break;
         }
     }

@@ -4,15 +4,15 @@
 use {{modelPath}};
 use {{requestPath}};
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
-use App\Generators\Services\ImageService;
+use App\Generators\Services\ImageServiceV2;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;{{useExportNamespace}}
 
 class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
 {
-    public function __construct(public ImageService $imageService{{uploadPaths}})
+    public function __construct(public ImageServiceV2 $imageServiceV2, {{uploadPaths}}public string $disk = '{{disk}}')
     {
-        {{assignUploadPaths}}
+        //
     }
 
     /**
@@ -23,7 +23,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
         return [
             // '{{middlewareName}}',
 
-            // TODO: uncomment this code if you are using spatie permission
+            // TODO: uncomment this code below if you are using spatie permission
             // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['index', 'store']),
         ];
     }

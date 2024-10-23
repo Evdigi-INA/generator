@@ -13,10 +13,10 @@ protected function {{fieldCamelCase}}(): Attribute
                 {{returnPublicPath}} return asset("$path/$value");
 
                 // storage.public and s3
-                {{returnStoragePublicS3}} return Storage::disk(name: (new ImageServiceV2)->setDiskName(disk: $disk))->url(path: "$path/$value");
+                {{returnStoragePublicS3}} return Storage::disk(name: (new ImageService)->setDiskName(disk: $disk))->url(path: "$path/$value");
 
                 // storage.local
-                {{returnStorageLocal}} return Storage::disk(name: (new ImageServiceV2)->setDiskName(disk: $disk))->temporaryUrl(path: "$path/$value", expiration: now()->addMinutes(value: 5));
+                {{returnStorageLocal}} return Storage::disk(name: (new ImageService)->setDiskName(disk: $disk))->temporaryUrl(path: "$path/$value", expiration: now()->addMinutes(value: 5));
             }
         );
     }
