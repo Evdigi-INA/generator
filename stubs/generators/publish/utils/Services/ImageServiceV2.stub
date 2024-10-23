@@ -208,6 +208,10 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
         $arrImg = explode(separator: '/', string: $name);
         $image = $arrImg[count(value: $arrImg) - 1];
 
+        if (!str_contains(needle: '.webp', haystack: $image)) {
+            return null;
+        }
+
         if (str_contains(needle: '?expires', haystack: $image)) {
             $image = str(string: $image)->before(search: '?expires')->toString();
         }

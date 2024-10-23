@@ -484,7 +484,7 @@ class ControllerGenerator
             // 'aspectRatio' => config('generator.image.aspect_ratio') ? "\n\t\t\t\t\$constraint->aspectRatio();" : '',
             // 'defaultImageCode' => $default['index_code'],
             'fieldSingularCamelCase' => GeneratorUtils::singularCamelCase($field),
-            'defaultImage' => "$" . GeneratorUtils::singularCamelCase($model) . "->" . str($field)->snake(),
+            'defaultImage' => "$" . GeneratorUtils::singularCamelCase($model) . "?->" . str($field)->snake(),
             'fieldCamelCase' => GeneratorUtils::singularCamelCase($field),
             // 'modelNameSingularCamelCase' => GeneratorUtils::singularCamelCase($model),
             'disk' => config('generator.image.disk'),

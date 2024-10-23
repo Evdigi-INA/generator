@@ -1,4 +1,5 @@
-/**
+
+    /**
      * Download an Excel file containing all records.
      */
     public function export(): BinaryFileResponse
