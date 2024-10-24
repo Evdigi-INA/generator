@@ -1,23 +1,34 @@
-protected function {{fieldCamelCase}}(): Attribute
+/**
+     * Accessor for the '{{fieldSnakeCase}}' attribute.
+     */
+    protected function {{fieldCamelCase}}(): Attribute
     {
-        $path = '{{path}}';
-        $disk = '{{disk}}';
-
         return Attribute::make(
-            get: function (?string $value) use($path, $disk): string {
-                if (!$value) {
-                    return '{{defaultImage}}';
-                }
-
-                // public_path
-                {{returnPublicPath}} return asset("$path/$value");
-
-                // storage.public and s3
-                {{returnStoragePublicS3}} return Storage::disk(name: (new ImageServiceV2)->setDiskName(disk: $disk))->url(path: "$path/$value");
-
-                // storage.local
-                {{returnStorageLocal}} return Storage::disk(name: (new ImageServiceV2)->setDiskName(disk: $disk))->temporaryUrl(path: "$path/$value", expiration: now()->addMinutes(value: 5));
-            }
+            get: fn(?string $value): string => $this->get{{fieldCamelCase}}Url($value)
         );
     }
 
+    /**
+     * Returns the URL of an '{{fieldSnakeCase}}'.
+     *
+     * If the image does not exist, it returns a placeholder image.
+     * If the image exists, it returns a temporary URL to the image on the local disk,
+     * or a publicly accessible URL to the image on the S3 or public disk.
+     * If the disk is neither local, S3, nor public, it returns a publicly accessible URL to the image on the local disk.
+     */
+    private function get{{fieldPascalCase}}Url(?string $value): string
+    {
+        $path = '{{path}}';
+        $imageService = new ImageServiceV2();
+        $disk = $imageService->setDiskName('{{disk}}');
+
+        if (!$value) {
+            return $imageService->getPlaceholderImage();
+        }
+
+        return match (true) {
+            $imageService->isPrivateS3(disk: $disk) || $disk === 'local' => $imageService->getTemporaryUrl(disk: $disk, path: $path, value: $value),
+            in_array(needle: $disk, haystack: ['s3', 'public']) => $imageService->getPublicUrl(disk: $disk, path: $path, value: $value),
+            default => $imageService->getLocalAssetUrl(path: $path, value: $value),
+        };
+    }
