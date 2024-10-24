@@ -37,39 +37,39 @@ class ModelGenerator
 
         foreach ($request['fields'] as $i => $field) {
             $fields .= match ($i + 1 != $totalFields) {
-                true => "'" . str()->snake($field)->toString() . "', ",
-                default => "'" . str()->snake($field)->toString() . "']",
+                true => "'" . str()->snake($field) . "', ",
+                default => "'" . str()->snake($field) . "']",
             };
 
             if ($request['input_types'][$i] == 'password') {
-                $protectedHidden .= "'" . str()->snake($field)->toString() . "', ";
+                $protectedHidden .= "'" . str()->snake($field) . "', ";
             }
 
             switch ($request['column_types'][$i]) {
                 case 'date':
                     if ($request['input_types'][$i] != 'month') {
                         $dateFormat = config('generator.format.date') ?? 'd/m/Y';
-                        $casts .= "'" . str()->snake($field)->toString() . "' => 'date:$dateFormat', ";
+                        $casts .= "'" . str()->snake($field) . "' => 'date:$dateFormat', ";
                     }
                     break;
                 case 'time':
                     $timeFormat = config('generator.format.time') ? config('generator.format.time') : 'H:i';
-                    $casts .= "'" . str()->snake($field)->toString() . "' => 'datetime:$timeFormat', ";
+                    $casts .= "'" . str()->snake($field) . "' => 'datetime:$timeFormat', ";
                     break;
                 case 'year':
-                    $casts .= "'" . str()->snake($field)->toString() . "' => 'integer', ";
+                    $casts .= "'" . str()->snake($field) . "' => 'integer', ";
                     break;
                 case 'dateTime':
-                    $casts .= "'" . str()->snake($field)->toString() . "' => 'datetime:$dateTimeFormat', ";
+                    $casts .= "'" . str()->snake($field) . "' => 'datetime:$dateTimeFormat', ";
                     break;
                 case 'float':
-                    $casts .= "'" . str()->snake($field)->toString() . "' => 'float', ";
+                    $casts .= "'" . str()->snake($field) . "' => 'float', ";
                     break;
                 case 'boolean':
-                    $casts .= "'" . str()->snake($field)->toString() . "' => 'boolean', ";
+                    $casts .= "'" . str()->snake($field) . "' => 'boolean', ";
                     break;
                 case 'double':
-                    $casts .= "'" . str()->snake($field)->toString() . "' => 'double', ";
+                    $casts .= "'" . str()->snake($field) . "' => 'double', ";
                     break;
                 case 'foreignId':
                     $constrainPath = GeneratorUtils::getModelLocation($request['constrains'][$i]);
@@ -108,10 +108,10 @@ class ModelGenerator
             switch ($request['input_types'][$i]) {
                 case 'month':
                     $castFormat = config('generator.format.month') ? config('generator.format.month') : 'm/Y';
-                    $casts .= "'" . str()->snake($field)->toString() . "' => 'date:$castFormat', ";
+                    $casts .= "'" . str()->snake($field) . "' => 'date:$castFormat', ";
                     break;
                 case 'week':
-                    $casts .= "'" . str()->snake($field)->toString() . "' => 'date:Y-\WW', ";
+                    $casts .= "'" . str()->snake($field) . "' => 'date:Y-\WW', ";
                     break;
                 case 'file':
                     // $uploadPaths .= "public string $" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path = '" . GeneratorUtils::pluralKebabCase($request['fields'][$i]) . "', ";
@@ -119,14 +119,14 @@ class ModelGenerator
                     // $setReturnComment = $this->setReturnComment(config(key: 'generator.image.disk', default: 'storage.public'));
 
                     $castImages .= GeneratorUtils::replaceStub(replaces: [
-                        'fieldCamelCase' => str($field)->camel()->toString(),
+                        'fieldCamelCase' => str($field)->camel(),
                         'path' => GeneratorUtils::pluralKebabCase($field),
                         'disk' => config(key: 'generator.image.disk', default: 'storage.local'),
                         'defaultImage' => config(key: 'generator.image.default', default: 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
                         // 'returnPublicPath' => $setReturnComment['public_path'],
                         // 'returnStoragePublicS3' => $setReturnComment['storage_public_s3'],
                         // 'returnStorageLocal' => $setReturnComment['storage_local'],
-                        'fieldSnakeCase' => str($field)->snake()->toString(),
+                        'fieldSnakeCase' => str()->snake($field),
                         'fieldPascalCase' => GeneratorUtils::pascalCase($field)
                     ], stubName: 'model-cast') . "\n\t";
                     break;
@@ -134,11 +134,11 @@ class ModelGenerator
 
             // integer/bigInteger/tinyInteger/
             if (str_contains(haystack: $request['column_types'][$i], needle: 'integer')) {
-                $casts .= "'" . str()->snake($field)->toString() . "' => 'integer', ";
+                $casts .= "'" . str()->snake($field) . "' => 'integer', ";
             }
 
             if (in_array(needle: $request['column_types'][$i], haystack: ['string', 'text', 'char']) && $request['input_types'][$i] != 'week' && $request['input_types'][$i] != 'file') {
-                $casts .= "'" . str()->snake($field)->toString() . "' => 'string', ";
+                $casts .= "'" . str()->snake($field) . "' => 'string', ";
             }
         }
 
