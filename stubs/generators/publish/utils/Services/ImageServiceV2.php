@@ -90,8 +90,12 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      * images. The default placeholder image is a 300x300 image with text
      * "No Image Available" from placehold.co.
      */
-    public function getPlaceholderImage(): string
+    public function getPlaceholderImage(?string $image = null): string
     {
+        if ($image) {
+            return $image;
+        }
+
         return config(key: 'generator.image.default', default: 'https://placehold.co/300?text=No+Image+Available');
     }
 
@@ -108,9 +112,9 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      *
      * The URL is valid for 5 minutes.
      */
-    public function getTemporaryUrl(string $disk, string $path, string $value): string
+    public function getTemporaryUrl(string $disk, string $image): string
     {
-        return Storage::disk(name: $disk)->temporaryUrl(path: "$path/$value", expiration: now()->addMinutes(value: 5));
+        return Storage::disk(name: $disk)->temporaryUrl(path: $image, expiration: now()->addMinutes(value: 5));
     }
 
     /**
@@ -118,9 +122,9 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      *
      * This is the URL that will be used in the `<img>` tag to display the image.
      */
-    public function getPublicUrl(string $disk, string $path, string $value): string
+    public function getStoragePublicUrl(string $disk, string $image): string
     {
-        return Storage::disk(name: $disk)->url(path: "$path/$value");
+        return Storage::disk(name: $disk)->url(path: $image);
     }
 
     /**
@@ -129,9 +133,9 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      * This is the URL that will be used in the `<img>` tag to display the image.
      * The URL is generated using the Laravel `asset` helper.
      */
-    public function getLocalAssetUrl(string $path, string $value): string
+    public function getAssetUrl(string $image): string
     {
-        return asset(path: "$path/$value");
+        return asset(path: $image);
     }
 
     /**
@@ -156,7 +160,11 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      */
     private function handleWithoutIntervention(ImageUploadOption $options, string $filename, string $disk): string
     {
-        Storage::disk(name: $this->setDiskName($disk))->putFileAs(path: $options->path, file: $options->file, name: $filename);
+        if(in_array(needle: $disk, haystack: ['s3', 'public', 'local'])){
+            Storage::disk(name: $this->setDiskName($disk))->putFileAs(path: $options->path, file: $options->file, name: $filename);
+        }else{
+            $options->file->move(directory: public_path(path: $options->path), name: $filename);
+        }
 
         $this->deleteOldImage($options);
 
@@ -170,7 +178,15 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
     {
         $image = $this->processWithInterventionImage($options);
 
-        Storage::disk($this->setDiskName($disk))->put(path: "$options->path/$filename", contents: (string) $image);
+        if(in_array(needle: $disk, haystack: ['s3', 'public', 'local'])){
+            Storage::disk(name: $this->setDiskName($disk))->put(path: "$options->path/$filename", contents: (string) $image);
+        }else{
+            if (!file_exists(filename: public_path($options->path))) {
+                mkdir(directory: public_path($options->path), permissions: 0755, recursive: true);
+            }
+
+            $image->save(public_path(path: "$options->path/$filename"));
+        }
 
         $this->deleteOldImage($options);
 

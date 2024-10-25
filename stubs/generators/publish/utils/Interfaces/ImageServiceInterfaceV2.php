@@ -39,7 +39,7 @@ interface ImageServiceInterfaceV2
      * images. The default placeholder image is a 300x300 image with text
      * "No Image Available" from placehold.co.
      */
-    public function getPlaceholderImage(): string;
+    public function getPlaceholderImage(?string $image = null): string;
 
     /**
      * Determines if the specified disk is a private S3 disk.
@@ -51,14 +51,14 @@ interface ImageServiceInterfaceV2
      *
      * The URL is valid for 5 minutes.
      */
-    public function getTemporaryUrl(string $disk, string $path, string $value): string;
+    public function getTemporaryUrl(string $disk, string $image): string;
 
     /**
      * Returns a publicly accessible URL to a file on the specified disk.
      *
      * This is the URL that will be used in the `<img>` tag to display the image.
      */
-    public function getPublicUrl(string $disk, string $path, string $value): string;
+    public function getStoragePublicUrl(string $disk, string $image): string;
 
     /**
      * Returns a publicly accessible URL to a local file.
@@ -66,5 +66,5 @@ interface ImageServiceInterfaceV2
      * This is the URL that will be used in the `<img>` tag to display the image.
      * The URL is generated using the Laravel `asset` helper.
      */
-    public function getLocalAssetUrl(string $path, string $value): string;
+    public function getAssetUrl(string $image): string;
 }
