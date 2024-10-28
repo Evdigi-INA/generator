@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
-use App\Generators\Services\ImageService;
+use App\Generators\Services\ImageServiceV2;
 use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
 use App\Http\Requests\Users\{StoreUserRequest, UpdateUserRequest};
 use Illuminate\Support\Facades\DB;
@@ -15,10 +15,9 @@ use Illuminate\Http\RedirectResponse;
 
 class UserController extends Controller implements HasMiddleware
 {
-    public function __construct(public ImageService $imageService, public string $avatarPath = '')
+    public function __construct(public ImageServiceV2 $imageServiceV2, public string $avatarPath = 'avatars', public string $disk = 'storage.public')
     {
-        $this->avatarPath = storage_path('app/public/uploads/avatars/');
-
+        //
     }
 
     /**
@@ -45,13 +44,6 @@ class UserController extends Controller implements HasMiddleware
             return Datatables::of($users)
                 ->addColumn('action', 'users.include.action')
                 ->addColumn('role', fn($row) => $row->getRoleNames()->toArray() !== [] ? $row->getRoleNames()[0] : '-')
-                ->addColumn('avatar', function ($user) {
-                    if (!$user->avatar) {
-                        return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
-                    }
-
-                    return asset('storage/uploads/avatars/' . $user->avatar);
-                })
                 ->toJson();
         }
 
@@ -73,7 +65,7 @@ class UserController extends Controller implements HasMiddleware
     {
         return DB::transaction(function () use ($request) {
             $validated = $request->validated();
-            $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath);
+            $validated['avatar'] = $this->imageServiceV2->upload(name: 'avatar', path: $this->avatarPath);
             $validated['password'] = bcrypt($request->password);
 
             $user = User::create($validated);
@@ -113,7 +105,7 @@ class UserController extends Controller implements HasMiddleware
     {
         return DB::transaction(function () use ($request, $user) {
             $validated = $request->validated();
-            $validated['avatar'] = $this->imageService->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user?->avatar);
+            $validated['avatar'] = $this->imageServiceV2->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user?->avatar);
 
             if (!$request->password) {
                 unset($validated['password']);
@@ -142,7 +134,7 @@ class UserController extends Controller implements HasMiddleware
 
                 $user->delete();
 
-                $this->imageService->delete(image: $this->avatarPath . $avatar);
+                $this->imageServiceV2->delete(path: $this->avatarPath, image: $avatar, disk: $this->disk);
 
                 return to_route('users.index')->with('success', __('The user was deleted successfully.'));
             });

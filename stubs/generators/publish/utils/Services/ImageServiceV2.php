@@ -133,7 +133,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      * This is the URL that will be used in the `<img>` tag to display the image.
      * The URL is generated using the Laravel `asset` helper.
      */
-    public function getAssetUrl(string $image): string
+    public function getPublicAssetUrl(string $image): string
     {
         return asset(path: $image);
     }

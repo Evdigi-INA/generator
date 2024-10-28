@@ -168,7 +168,7 @@ class ModelGenerator
             'protectedHidden' => $protectedHidden,
             'pluralSnakeCase' => GeneratorUtils::pluralSnakeCase($model),
             'castImages' => $castImages,
-            'importCastImage' => "use Illuminate\Support\Facades\Storage;\nuse Illuminate\Database\Eloquent\Casts\Attribute;\nuse App\Generators\Services\ImageServiceV2;\n",
+            'importCastImage' => "use Illuminate\Database\Eloquent\Casts\Attribute;\nuse App\Generators\Services\ImageServiceV2;\n",
             // 'constructFunc' => $constructFunc
         ], stubName: 'model');
 

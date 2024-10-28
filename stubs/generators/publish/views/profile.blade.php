@@ -67,31 +67,16 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-1">
+                                    <div class="col-md-2">
                                         <div class="avatar avatar-xl mb-3">
-                                            @if (!auth()?->user()?->avatar)
-                                                <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(trim(auth()?->user()?->email))) }}&s=500"
-                                                    alt="Avatar">
-                                            @else
-                                                {{-- storage --}}
-                                                <img src="{{ asset('storage/uploads/avatars/' . auth()?->user()?->avatar) }}"
-                                                    alt="Avatar">
-
-                                                {{-- public --}}
-                                                {{-- <img src="{{ asset('/uploads/avatars/' . auth()?->user()?->avatar) }}" alt="Avatar" > --}}
-
-                                                {{-- s3 --}}
-                                                {{-- <img src="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url('avatars/' . auth()?->user()?->avatar) }}" alt="Avatar" > --}}
-                                            @endif
+                                            <img src="{{ auth()?->user()?->avatar }}" alt="Avatar">
                                         </div>
                                     </div>
 
-                                    <div class="col-md-11">
+                                    <div class="col-md-10">
                                         <div class="form-group">
                                             <label for="avatar">{{ __('Avatar') }}</label>
-                                            <input type="file" name="avatar"
-                                                class="form-control @error('avatar', 'updateProfileInformation') is-invalid @enderror"
-                                                id="avatar">
+                                            <input type="file" name="avatar" class="form-control @error('avatar', 'updateProfileInformation') is-invalid @enderror" id="avatar">
 
                                             @error('avatar', 'updateProfileInformation')
                                                 <span class="text-danger">

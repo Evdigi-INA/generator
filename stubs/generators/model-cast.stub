@@ -4,7 +4,7 @@
     protected function {{fieldCamelCase}}(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value): string => $this->get{{fieldCamelCase}}Url(value: $value)
+            get: fn(?string $value): string => $this->get{{fieldPascalCase}}Url(value: $value)
         );
     }
 
@@ -29,6 +29,6 @@
         return match (true) {
             $imageService->isPrivateS3(disk: $disk) || $disk === 'local' => $imageService->getTemporaryUrl(disk: $disk, image: "$path/$value"),
             in_array(needle: $disk, haystack: ['s3', 'public']) => $imageService->getStoragePublicUrl(disk: $disk, image: "$path/$value"),
-            default => $imageService->getAssetUrl(image: "$path/$value"),
+            default => $imageService->getPublicAssetUrl(image: "$path/$value"),
         };
     }
