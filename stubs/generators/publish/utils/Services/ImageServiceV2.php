@@ -139,6 +139,24 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
     }
 
     /**
+     * Returns a publicly accessible URL to the specified image.
+     */
+    public function getImageCastUrl(?string $image, string $path, ?string $disk = 'storage.public'): string
+    {
+        if (!$image) {
+            return $this->getPlaceholderImage();
+        }
+
+        $setDiskName = $this->setDiskName($disk);
+
+        return match (true) {
+            $this->isPrivateS3(disk: $setDiskName) || $setDiskName === 'local' => $this->getTemporaryUrl(disk: $setDiskName, image: "$path/$image"),
+            in_array(needle: $setDiskName, haystack: ['s3', 'public']) => $this->getStoragePublicUrl(disk: $setDiskName, image: "$path/$image"),
+            default => $this->getPublicAssetUrl(image: "$path/$image"),
+        };
+    }
+
+    /**
      * Handles the file upload process with optional image manipulation.
      */
     private function handleFileUpload(ImageUploadOption $options): string
@@ -160,9 +178,9 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      */
     private function handleWithoutIntervention(ImageUploadOption $options, string $filename, string $disk): string
     {
-        if(in_array(needle: $disk, haystack: ['s3', 'public', 'local'])){
+        if (in_array(needle: $disk, haystack: ['s3', 'public', 'local'])) {
             Storage::disk(name: $this->setDiskName($disk))->putFileAs(path: $options->path, file: $options->file, name: $filename);
-        }else{
+        } else {
             $options->file->move(directory: public_path(path: $options->path), name: $filename);
         }
 
@@ -178,9 +196,9 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
     {
         $image = $this->processWithInterventionImage($options);
 
-        if(in_array(needle: $disk, haystack: ['s3', 'public', 'local'])){
+        if (in_array(needle: $disk, haystack: ['s3', 'public', 'local'])) {
             Storage::disk(name: $this->setDiskName($disk))->put(path: "$options->path/$filename", contents: (string) $image);
-        }else{
+        } else {
             if (!file_exists(filename: public_path($options->path))) {
                 mkdir(directory: public_path($options->path), permissions: 0755, recursive: true);
             }
@@ -230,8 +248,8 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
 
         return $options->crop
             ? ($options->aspectRatio
-            ? $image->scaleDown($options->width, $options->height)->encode($encode)
-            : $image->resizeDown($options->width, $options->height)->encode($encode))
+                ? $image->scaleDown($options->width, $options->height)->encode($encode)
+                : $image->resizeDown($options->width, $options->height)->encode($encode))
             : $image->encode($encode);
     }
 

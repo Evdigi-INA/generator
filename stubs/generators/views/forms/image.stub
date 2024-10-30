@@ -1,7 +1,7 @@
             <div class="col-md-6">
                 <div class="row g-0">
                     <div class="col-md-5 text-center">
-                        <img src="{{ ${{modelCamelCase}}?->{{fieldSnakeCase}} ?? '{{defaultImage}}' }}" alt="{{fieldUcWords}}" class="rounded img-fluid" style="object-fit: cover; width: 100%; height: 100px;" />
+                        <img src="{{ ${{modelCamelCase}}?->{{fieldSnakeCase}} ?? '{{defaultImage}}' }}" alt="{{fieldUcWords}}" class="rounded img-fluid mt-1" style="object-fit: cover; width: 100%; height: 100px;" />
                     </div>
                     <div class="col-md-7">
                         <div class="form-group ms-3">

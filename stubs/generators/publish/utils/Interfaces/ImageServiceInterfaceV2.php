@@ -67,4 +67,9 @@ interface ImageServiceInterfaceV2
      * The URL is generated using the Laravel `asset` helper.
      */
     public function getPublicAssetUrl(string $image): string;
+
+    /**
+     * Returns a publicly accessible URL to the specified image.
+     */
+    public function getImageCastUrl(?string $image, string $path, ?string $disk = 'storage.public'): string;
 }

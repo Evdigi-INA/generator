@@ -3,32 +3,11 @@
      */
     protected function {{fieldCamelCase}}(): Attribute
     {
-        return Attribute::make(
-            get: fn(?string $value): string => $this->get{{fieldPascalCase}}Url(value: $value)
-        );
-    }
-
-    /**
-     * Returns the URL of an '{{fieldSnakeCase}}'.
-     *
-     * If the image does not exist, it returns a placeholder image.
-     * If the image exists, it returns a temporary URL to the image on the local disk,
-     * or a publicly accessible URL to the image on the S3 or public disk.
-     * If the disk is neither local, S3, nor public, it returns a publicly accessible URL to the image on the local disk.
-     */
-    private function get{{fieldPascalCase}}Url(?string $value): string
-    {
         $path = '{{path}}';
         $imageService = new ImageServiceV2();
         $disk = $imageService->setDiskName('{{disk}}');
 
-        if (!$value) {
-            return $imageService->getPlaceholderImage();
-        }
-
-        return match (true) {
-            $imageService->isPrivateS3(disk: $disk) || $disk === 'local' => $imageService->getTemporaryUrl(disk: $disk, image: "$path/$value"),
-            in_array(needle: $disk, haystack: ['s3', 'public']) => $imageService->getStoragePublicUrl(disk: $disk, image: "$path/$value"),
-            default => $imageService->getPublicAssetUrl(image: "$path/$value"),
-        };
+        return Attribute::make(
+            get: fn(?string $value): string => $imageService->getImageCastUrl(image: $value, path: $path, disk: $disk)
+        );
     }
