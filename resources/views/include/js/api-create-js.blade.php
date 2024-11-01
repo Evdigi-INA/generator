@@ -213,7 +213,7 @@
                 <option value="text">Text</option>
                 <option value="textarea">Textarea</option>
                 <option value="email">Email</option>
-                <option value="tel">Telepon</option>
+                <option value="tel">Telephone</option>
                 <option value="password">Password</option>
                 <option value="url">Url</option>
                 <option value="search">Search</option>
@@ -261,7 +261,7 @@
                 <option value="" disabled selected>-- Select input type --</option>
                 <option value="text">Text</option>
                 <option value="email">Email</option>
-                <option value="tel">Telepon</option>
+                <option value="tel">Telephone</option>
                 <option value="url">Url</option>
                 <option value="week">Week</option>
                 <option value="color">Color</option>
