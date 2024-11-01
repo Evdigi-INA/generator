@@ -213,7 +213,7 @@
                 <option value="text">Text</option>
                 <option value="textarea">Textarea</option>
                 <option value="email">Email</option>
-                <option value="tel">Telepon</option>
+                <option value="tel">Telephone</option>
                 <option value="password">Password</option>
                 <option value="url">Url</option>
                 <option value="search">Search</option>
@@ -261,7 +261,7 @@
                 <option value="" disabled selected>-- Select input type --</option>
                 <option value="text">Text</option>
                 <option value="email">Email</option>
-                <option value="tel">Telepon</option>
+                <option value="tel">Telephone</option>
                 <option value="url">Url</option>
                 <option value="week">Week</option>
                 <option value="color">Color</option>
@@ -386,12 +386,12 @@
             switchRequired.prop('checked', false)
             switchRequired.prop('disabled', true)
             addInputTypeHidden(index)
-        }else if(
+        } else if (
             $(this).val() == 'time' ||
             $(this).val() == 'week' ||
             $(this).val() == 'color' ||
             $(this).val() == 'datetime-local'
-        ){
+        ) {
             minLength.prop('readonly', true)
             maxLength.prop('readonly', true)
             minLength.val('')
@@ -441,7 +441,7 @@
         generateNo()
     })
 
-    $(document).on('click', '#generate-type-2', function () {
+    $(document).on('click', '#generate-type-2', function() {
         $('#select-header').removeAttr('required')
         $('#new-header').removeAttr('required')
         $('#input-new-menu').removeAttr('required')
@@ -450,7 +450,7 @@
         $('.section-menu').hide()
     })
 
-    $(document).on('click', '#generate-type-1', function () {
+    $(document).on('click', '#generate-type-1', function() {
         $('#select-header').attr('required')
         $('#new-header').attr('required')
         $('#input-new-menu').attr('required')
@@ -542,7 +542,7 @@
                     }
                 })
 
-                if(xhr?.responseJSON?.errors){
+                if (xhr?.responseJSON?.errors) {
                     $('#validation-errors').show()
                 }
 
@@ -635,7 +635,8 @@
                     `
 
                     res.forEach((value, index) => {
-                        options += `<option value='{"sidebar": ${indexHeader}, "menus": ${index}}'>${value.title}</option>`
+                        options +=
+                            `<option value='{"sidebar": ${indexHeader}, "menus": ${index}}'>${value.title}</option>`
                     })
 
                     selectMenu.html(options)
@@ -698,7 +699,9 @@
             colNewMenu.html('')
 
             if ($('#model').val()) {
-                $('#helper-text-menu').html(`Will generate a new submenu <b>${capitalizeFirstLetter(setModelName($('#model').val()))}</b> in <b>${$('#select-menu option:selected').text()}</b> menu.`)
+                $('#helper-text-menu').html(
+                    `Will generate a new submenu <b>${capitalizeFirstLetter(setModelName($('#model').val()))}</b> in <b>${$('#select-menu option:selected').text()}</b> menu.`
+                    )
             }
         }
     })
