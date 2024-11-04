@@ -2,6 +2,8 @@
     let selectMenu = $('#select-menu')
     let colNewMenu = $('#col-new-menu')
     let uri = '{{ request()->segment(1) }}'
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
     $('#btn-add').click(function() {
         let table = $('#tbl-field tbody')
