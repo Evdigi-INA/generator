@@ -69,16 +69,13 @@ class ShowViewGenerator
             $row .= $this->generateImageRow(field: $field, model: $model, fieldUcWords: $fieldUcWords);
         } else {
             $row .= match ($request['column_types'][$i]) {
-                'boolean' => "<tr>
-                                <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                                <td>{{ $" . $modelName . "->$fieldSnakeCase == 1 ? 'True' : 'False' }}</td>
-                              </tr>",
                 'foreignId' => $this->generateForeignIdRow(request: $request, i: $i, modelName: $modelName),
                 'date' => $this->generateDateRow(request: $request, i: $i, modelName: $modelName, fieldUcWords: $fieldUcWords, fieldSnakeCase: $fieldSnakeCase),
                 'dateTime' => "<tr>
                                 <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
                                 <td>{{ isset($" . $modelName . "->$fieldSnakeCase) ? $" . $modelName . "->" . $fieldSnakeCase . "?->format(\"$dateTimeFormat\") : '' }}</td>
                                </tr>",
+                'boolean' => $this->generateBooleanRow(field: $field, model: $model),
                 'time' => $this->generateTimeRow(modelName: $modelName, fieldUcWords: $fieldUcWords, fieldSnakeCase: $fieldSnakeCase),
                 default => $this->generateDefaultRow(request: $request, i: $i, modelName: $modelName, fieldUcWords: $fieldUcWords, fieldSnakeCase: $fieldSnakeCase),
             };
@@ -98,6 +95,10 @@ class ShowViewGenerator
                 </tr>";
         }
 
+        if ($request['input_types'][$i] == 'color') {
+            return $this->generateColorRow(field: $fieldUcWords, model: $modelName);
+        }
+
         return "<tr>
                     <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
                     <td>{{ $" . $modelName . "->$fieldSnakeCase }}</td>
@@ -109,14 +110,38 @@ class ShowViewGenerator
      */
     private function generateImageRow(string $field, string $model, string $fieldUcWords): string
     {
-       return GeneratorUtils::replaceStub(
-         replaces: [
-            'fieldUcWords' => $fieldUcWords,
-            'fieldSnakeCase' => str($field)->snake()->toString(),
-            'modelCamelCase' => GeneratorUtils::singularCamelCase($model),
-         ],
-         stubName: 'views/show/image'
-       );
+        return GeneratorUtils::replaceStub(
+            replaces: [
+                'fieldUcWords' => $fieldUcWords,
+                'fieldSnakeCase' => str($field)->snake()->toString(),
+                'modelCamelCase' => GeneratorUtils::singularCamelCase($model),
+            ],
+            stubName: 'views/show/image'
+        );
+    }
+
+    private function generateColorRow(string $field, string $model): string
+    {
+        return GeneratorUtils::replaceStub(
+            replaces: [
+                'fieldUcWords' => GeneratorUtils::cleanUcWords($field),
+                'fieldSnakeCase' => str($field)->snake()->toString(),
+                'modelCamelCase' => GeneratorUtils::singularCamelCase($model),
+            ],
+            stubName: 'views/show/color'
+        );
+    }
+
+    private function generateBooleanRow(string $field, string $model): string
+    {
+        return GeneratorUtils::replaceStub(
+            replaces: [
+                'fieldUcWords' => GeneratorUtils::cleanUcWords($field),
+                'fieldSnakeCase' => str($field)->snake()->toString(),
+                'modelCamelCase' => GeneratorUtils::singularCamelCase($model),
+            ],
+            stubName: 'views/show/boolean'
+        );
     }
 
     /**

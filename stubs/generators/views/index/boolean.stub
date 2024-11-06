@@ -1,0 +1,14 @@
+                    
+                    {
+                        data: '{{fieldSnakeCase}}',
+                        name: '{{fieldSnakeCase}}',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data) {
+                           if(data == 0 || data == false || data == 'false'){
+                            return `<i class="bi bi-x-circle text-danger"></i>`
+                           }
+
+                            return `<i class="bi bi-check-circle text-success"></i>`
+                        }
+                    },
