@@ -10,15 +10,16 @@ return [
          *
          * Available options:
          * 1. public
-         * 2. storage
-         * 3. S3
+         * 2. storage.local
+         * 3. storage.public
+         * 4. S3
          */
-        "disk" => "storage",
+        "disk" => "storage.public",
 
         /**
          * Will be used if image is nullable and default value is null.
          */
-        "default" => "https://via.placeholder.com/350?text=No+Image+Avaiable",
+        "default" => "https://placehold.co/300?text=No+Image+Available",
 
         /**
          * Crop the uploaded image using intervention image.
@@ -33,8 +34,8 @@ return [
         /**
          * Crop image size.
          */
-        "width" => 500,
-        "height" => 500,
+        "width" => 300,
+        "height" => 300,
     ],
 
     "format" => [

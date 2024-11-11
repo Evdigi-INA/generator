@@ -9,27 +9,29 @@ class MenuGenerator
      */
     public function generate(array $request): void
     {
-        $model = GeneratorUtils::setModelName($request['model'], 'default');
-        $configSidebar = config('generator.sidebars');
+        if (empty($request['is_simple_generator']) && !GeneratorUtils::isGenerateApi()) {
+            $model = GeneratorUtils::setModelName($request['model'], 'default');
+            $configSidebar = config('generator.sidebars');
 
-        if ($request['header'] == 'new') {
-            $this->generateNewAllMenu(
-                request: $request,
-                model: $model,
-                configSidebar: $configSidebar
-            );
-        } elseif ($request['menu'] == 'new') {
-            $this->generateNewMenu(
-                request: $request,
-                model: $model,
-                configSidebar: $configSidebar
-            );
-        } else {
-            $this->generateNewSubMenu(
-                menu: json_decode($request['menu'], true),
-                model: $model,
-                configSidebar: $configSidebar,
-            );
+            if ($request['header'] == 'new') {
+                $this->generateNewAllMenu(
+                    request: $request,
+                    model: $model,
+                    configSidebar: $configSidebar
+                );
+            } elseif ($request['menu'] == 'new') {
+                $this->generateNewMenu(
+                    request: $request,
+                    model: $model,
+                    configSidebar: $configSidebar
+                );
+            } else {
+                $this->generateNewSubMenu(
+                    menu: json_decode($request['menu'], true),
+                    model: $model,
+                    configSidebar: $configSidebar,
+                );
+            }
         }
     }
 

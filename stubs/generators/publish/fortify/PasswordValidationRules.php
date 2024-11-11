@@ -11,7 +11,7 @@ trait PasswordValidationRules
      */
     protected function passwordRules(): array
     {
-        $validations = in_array(request()->method(), ['PUT', 'PATCH']) ? ['nullable', 'min:5'] : ['required', 'confirmed'];
+        $validations = request()->segment(2) ? ['nullable'] : ['required', 'confirmed'];
 
         if (app()->isProduction()) {
             $validations[] = [

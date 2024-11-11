@@ -1,12 +1,12 @@
 <td>
     @can('{{modelNameSingularLowercase}} view')
-        <a href="{{ route('{{modelNamePluralKebabCase}}.show', $model->id) }}" class="btn btn-outline-success btn-sm">
+        <a href="{{ route('{{modelNamePluralKebabCase}}.show', $model->id) }}" class="mb-1 btn btn-outline-success btn-sm">
             <i class="fa fa-eye"></i>
         </a>
     @endcan
 
     @can('{{modelNameSingularLowercase}} edit')
-        <a href="{{ route('{{modelNamePluralKebabCase}}.edit', $model->id) }}" class="btn btn-outline-primary btn-sm">
+        <a href="{{ route('{{modelNamePluralKebabCase}}.edit', $model->id) }}" class="mb-1 btn btn-outline-primary btn-sm">
             <i class="fa fa-pencil-alt"></i>
         </a>
     @endcan
@@ -17,7 +17,7 @@
             @csrf
             @method('delete')
 
-            <button class="btn btn-outline-danger btn-sm">
+            <button class="mb-1 btn btn-outline-danger btn-sm">
                 <i class="ace-icon fa fa-trash-alt"></i>
             </button>
         </form>

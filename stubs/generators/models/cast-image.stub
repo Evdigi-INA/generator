@@ -1,0 +1,23 @@
+protected function {{fieldCamelCase}}(): Attribute
+    {
+        $path = '{{path}}';
+        $disk = '{{disk}}';
+
+        return Attribute::make(
+            get: function (?string $value) use($path, $disk): string {
+                if (!$value) {
+                    return '{{defaultImage}}';
+                }
+
+                // public_path
+                {{returnPublicPath}} return asset("$path/$value");
+
+                // storage.public and s3
+                {{returnStoragePublicS3}} return Storage::disk(name: (new ImageService)->setDiskName(disk: $disk))->url(path: "$path/$value");
+
+                // storage.local
+                {{returnStorageLocal}} return Storage::disk(name: (new ImageService)->setDiskName(disk: $disk))->temporaryUrl(path: "$path/$value", expiration: now()->addMinutes(value: 5));
+            }
+        );
+    }
+

@@ -364,29 +364,29 @@ class FormViewGenerator
                                 );
                                 break;
                             case 'file':
-                                $default = GeneratorUtils::setDefaultImage(
-                                    default: $request['default_values'][$i],
-                                    field: $field,
-                                    model: $model
-                                );
+                                // $default = GeneratorUtils::setDefaultImage(
+                                //     default: $request['default_values'][$i],
+                                //     field: $field,
+                                //     model: $model
+                                // );
 
                                 $template .= GeneratorUtils::replaceStub(
                                     replaces: [
                                         'modelCamelCase' => $modelNameSingularCamelCase,
-                                        'fieldPluralSnakeCase' => GeneratorUtils::pluralSnakeCase($field),
-                                        'fieldSnakeCase' => str($field)->snake(),
+                                        // 'fieldPluralSnakeCase' => GeneratorUtils::pluralSnakeCase($field),
+                                        'fieldSnakeCase' => str($field)->snake()->toString(),
                                         'fieldLowercase' => GeneratorUtils::cleanSingularLowerCase($field),
                                         'fieldUcWords' => $fieldUcWords,
                                         'nullable' => $request['requireds'][$i] == 'yes' ? ' required' : '',
-                                        'uploadPathPublic' => config('generator.image.disk') == 'storage' ? "storage/uploads" : "uploads",
-                                        'fieldKebabCase' => str($field)->kebab(),
-                                        'defaultImage' => $default['image'],
-                                        'defaultImageCodeForm' => $default['form_code'],
-                                        'setDiskForCastImage' => str_replace(
-                                            search: "\$this->" . GeneratorUtils::singularCamelCase($field) . "Path",
-                                            replace: "'" . GeneratorUtils::pluralKebabCase($field) . "/'",
-                                            subject: GeneratorUtils::setDiskCodeForCastImage(model: $model, field: $field)
-                                        ),
+                                        // 'uploadPathPublic' => config('generator.image.disk') == 'storage' ? "storage/uploads" : "uploads",
+                                        'fieldKebabCase' => GeneratorUtils::kebabCase($field),
+                                        'defaultImage' => config('generator.image.default', $request['default_values'][$i]),
+                                        // 'defaultImageCodeForm' => $default['form_code'],
+                                        // 'setDiskForCastImage' => str_replace(
+                                        //     search: "\$this->" . GeneratorUtils::singularCamelCase($field) . "Path",
+                                        //     replace: "'" . GeneratorUtils::pluralKebabCase($field) . "/'",
+                                        //     subject: GeneratorUtils::setDiskCodeForCastImage(model: $model, field: $field)
+                                        // ),
                                     ],
                                     stubName: 'views/forms/image'
                                 );

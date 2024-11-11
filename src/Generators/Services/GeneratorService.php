@@ -42,7 +42,6 @@ class GeneratorService implements GeneratorServiceInterface
         }
 
         (new PermissionGenerator)->generate($request);
-
         (new ModelGenerator)->generate($request);
         (new MigrationGenerator)->generate($request);
         (new ControllerGenerator)->generate($request);
@@ -62,13 +61,8 @@ class GeneratorService implements GeneratorServiceInterface
                 (new ActionViewGenerator)->generate($request);
             }
 
-            if (empty($request['is_simple_generator']) && !GeneratorUtils::isGenerateApi()) {
-                (new MenuGenerator)->generate($request);
-            }
-
-            if (in_array(needle: 'foreignId', haystack: $request['column_types'], strict: true)) {
-                (new ViewComposerGenerator)->generate($request);
-            }
+            (new MenuGenerator)->generate($request);
+            (new ViewComposerGenerator)->generate($request);
         }
 
         (new RouteGenerator)->generate($request);

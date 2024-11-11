@@ -17,7 +17,7 @@ class ShowViewGenerator
         $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase(string: $model);
         $modelNameSingularCamelCase = GeneratorUtils::singularCamelCase(string: $model);
 
-        $trs = $this->generateTableRows(request: $request, model: $model, modelName: $modelNameSingularCamelCase);
+        $row = $this->generateTableRows(request: $request, model: $model, modelName: $modelNameSingularCamelCase);
 
         $template = GeneratorUtils::replaceStub(
             replaces: [
@@ -25,7 +25,7 @@ class ShowViewGenerator
                 'modelNameSingularLowerCase' => GeneratorUtils::cleanSingularLowerCase(string: $model),
                 'modelNamePluralKebabCase' => $modelNamePluralKebabCase,
                 'modelNameSingularCamelCase' => $modelNameSingularCamelCase,
-                'trs' => $trs,
+                'row' => $row,
                 'dateTimeFormat' => config(key: 'generator.format.datetime', default: 'Y-m-d H:i:s'),
             ],
             stubName: empty($request['is_simple_generator']) ? 'views/show' : 'views/simple/show'
@@ -39,20 +39,21 @@ class ShowViewGenerator
      */
     private function generateTableRows(array $request, string $model, string $modelName): string
     {
-        $trs = "";
+        $row = "";
         $totalFields = count(value: $request['fields']);
         $dateTimeFormat = config(key: 'generator.format.datetime', default: 'Y-m-d H:i:s');
 
         foreach ($request['fields'] as $i => $field) {
             if ($request['input_types'][$i] !== 'password') {
-                $trs .= $this->generateTableRow(request: $request, i: $i, field: $field, model: $model, modelName: $modelName, dateTimeFormat: $dateTimeFormat);
+                $row .= $this->generateTableRow(request: $request, i: $i, field: $field, model: $model, modelName: $modelName, dateTimeFormat: $dateTimeFormat);
+
                 if ($i + 1 !== $totalFields) {
-                    $trs .= "\n";
+                    $row .= "\n";
                 }
             }
         }
 
-        return $trs;
+        return $row;
     }
 
     /**
@@ -62,12 +63,12 @@ class ShowViewGenerator
     {
         $fieldUcWords = GeneratorUtils::cleanUcWords(string: $field);
         $fieldSnakeCase = str(string: $field)->snake();
-        $trs = "";
+        $row = "";
 
         if (isset($request['file_types'][$i]) && $request['file_types'][$i] === 'image') {
-            $trs .= $this->generateImageRow(request: $request, i: $i, field: $field, model: $model, fieldUcWords: $fieldUcWords);
+            $row .= $this->generateImageRow(field: $field, model: $model, fieldUcWords: $fieldUcWords);
         } else {
-            $trs .= match ($request['column_types'][$i]) {
+            $row .= match ($request['column_types'][$i]) {
                 'boolean' => "<tr>
                                 <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
                                 <td>{{ $" . $modelName . "->$fieldSnakeCase == 1 ? 'True' : 'False' }}</td>
@@ -83,7 +84,7 @@ class ShowViewGenerator
             };
         }
 
-        return $trs;
+        return $row;
     }
 
     private function generateDefaultRow(array $request, int $i, string $modelName, string $fieldUcWords, string $fieldSnakeCase): string
@@ -106,30 +107,16 @@ class ShowViewGenerator
     /**
      * Generate a row for image fields.
      */
-    private function generateImageRow(array $request, int $i, string $field, string $model, string $fieldUcWords): string
+    private function generateImageRow(string $field, string $model, string $fieldUcWords): string
     {
-        $default = GeneratorUtils::setDefaultImage(
-            default: $request['default_values'][$i],
-            field: $request['fields'][$i],
-            model: $model
-        );
-
-        $castImage = str_replace(
-            search: "\$this->" . GeneratorUtils::singularCamelCase(string: $field) . "Path",
-            replace: "'" . GeneratorUtils::pluralKebabCase(string: $field) . "/'",
-            subject: GeneratorUtils::setDiskCodeForCastImage(model: $model, field: $field)
-        );
-
-        return "<tr>
-                    <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                    <td>
-                        @if (" . $default['form_code'] . ")
-                            <img src=\"" . $default['image'] . "\" alt=\"$fieldUcWords\" class=\"rounded img-fluid\">
-                        @else
-                            <img src=\"{{ " . $castImage . " }}\" alt=\"$fieldUcWords\" class=\"rounded img-fluid\">
-                        @endif
-                    </td>
-                </tr>";
+       return GeneratorUtils::replaceStub(
+         replaces: [
+            'fieldUcWords' => $fieldUcWords,
+            'fieldSnakeCase' => str($field)->snake()->toString(),
+            'modelCamelCase' => GeneratorUtils::singularCamelCase($model),
+         ],
+         stubName: 'views/show/image'
+       );
     }
 
     /**

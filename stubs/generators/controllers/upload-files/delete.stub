@@ -1,0 +1,1 @@
+$this->imageServiceV2->delete(path: $this->{{fieldCamelCase}}Path, image: ${{fieldCamelCase}}, disk: $this->disk);

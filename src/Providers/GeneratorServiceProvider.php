@@ -3,7 +3,7 @@
 namespace EvdigiIna\Generator\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use EvdigiIna\Generator\Commands\{SetSidebarType, PublishAllFiles, PublishUtilsCommand, PublishApiCommand};
+use EvdigiIna\Generator\Commands\{SetSidebarType, PublishAllFiles, PublishUtilsCommand, PublishApiCommand, PublishImageServiceV2Command};
 use EvdigiIna\Generator\Generator;
 
 class GeneratorServiceProvider extends ServiceProvider
@@ -110,6 +110,14 @@ class GeneratorServiceProvider extends ServiceProvider
             __DIR__ . '/../../stubs/generators/publish/utils' => app_path('Generators')
         ], 'generator-utils');
 
+        $this->publishes([
+            __DIR__ . '/../../stubs/generators/publish/utils/Interfaces/ImageServiceInterfaceV2.php' => app_path('Generators/Interfaces/ImageServiceInterfaceV2.php')
+        ], 'image-service-v2');
+
+        $this->publishes([
+            __DIR__ . '/../../stubs/generators/publish/utils/Services/ImageServiceV2.php' => app_path('Generators/Services/ImageServiceV2.php')
+        ], 'image-service-v2');
+
         // bootstrap app (laravel 11)
         $this->publishes([
             __DIR__ . '/../../stubs/generators/publish/bootstrap/full-version/app.php' => base_path('bootstrap/app.php')
@@ -134,6 +142,6 @@ class GeneratorServiceProvider extends ServiceProvider
             $this->commands([PublishAllFiles::class]);
         }
 
-        $this->commands([SetSidebarType::class, PublishApiCommand::class, PublishUtilsCommand::class]);
+        $this->commands([SetSidebarType::class, PublishApiCommand::class, PublishUtilsCommand::class, PublishImageServiceV2Command::class]);
     }
 }
