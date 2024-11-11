@@ -1,17 +1,17 @@
 <td>
-    @can('{{modelNameSingularLowercase}} view')
+    {{-- @can('{{modelNameSingularLowercase}} view') --}}
         <a href="{{ route('{{modelNamePluralKebabCase}}.show', $model->id) }}" class="mb-1 btn btn-outline-success btn-sm">
             <i class="fa fa-eye"></i>
         </a>
-    @endcan
+    {{-- @endcan --}}
 
-    @can('{{modelNameSingularLowercase}} edit')
+    {{-- @can('{{modelNameSingularLowercase}} edit') --}}
         <a href="{{ route('{{modelNamePluralKebabCase}}.edit', $model->id) }}" class="mb-1 btn btn-outline-primary btn-sm">
             <i class="fa fa-pencil-alt"></i>
         </a>
-    @endcan
+    {{-- @endcan --}}
 
-    @can('{{modelNameSingularLowercase}} delete')
+    {{-- @can('{{modelNameSingularLowercase}} delete') --}}
         <form action="{{ route('{{modelNamePluralKebabCase}}.destroy', $model->id) }}" method="post" class="d-inline"
             onsubmit="return confirm('Are you sure to delete this record?')">
             @csrf
@@ -21,5 +21,5 @@
                 <i class="ace-icon fa fa-trash-alt"></i>
             </button>
         </form>
-    @endcan
+    {{-- @endcan --}}
 </td>
