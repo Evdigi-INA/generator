@@ -74,11 +74,17 @@
                 <label for="generate-factory">{{ __('Generate Factory') }}</label>
             </div>
         </div>
-        <div class="form-check">
+        <div class="form-check" @if(!class_exists(\Maatwebsite\Excel\ExcelServiceProvider::class)) data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Install 'composer require maatwebsite/excel' to enable this feature" @endif>
             <div class="checkbox">
                 <input type="checkbox" class="form-check-input" id="generate-export"
-                    name="generate_export">
-                <label for="generate-export">{{ __('Generate Export') }}</label>
+                    name="generate_export" @if(!class_exists(\Maatwebsite\Excel\ExcelServiceProvider::class)) disabled @endif>
+                <label for="generate-export">
+                    {{ __('Generate Export') }}
+
+                    @if (!class_exists(\Maatwebsite\Excel\ExcelServiceProvider::class))
+                        <i class="fas fa-question fa-xs"></i>
+                    @endif
+                </label>
             </div>
         </div>
     </div>

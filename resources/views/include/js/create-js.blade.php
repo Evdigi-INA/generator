@@ -2,6 +2,8 @@
     let selectMenu = $('#select-menu')
     let colNewMenu = $('#col-new-menu')
     let uri = '{{ request()->segment(1) }}'
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
     $('#btn-add').click(function() {
         let table = $('#tbl-field tbody')
@@ -386,12 +388,12 @@
             switchRequired.prop('checked', false)
             switchRequired.prop('disabled', true)
             addInputTypeHidden(index)
-        }else if(
+        } else if (
             $(this).val() == 'time' ||
             $(this).val() == 'week' ||
             $(this).val() == 'color' ||
             $(this).val() == 'datetime-local'
-        ){
+        ) {
             minLength.prop('readonly', true)
             maxLength.prop('readonly', true)
             minLength.val('')
@@ -441,7 +443,7 @@
         generateNo()
     })
 
-    $(document).on('click', '#generate-type-2', function () {
+    $(document).on('click', '#generate-type-2', function() {
         $('#select-header').removeAttr('required')
         $('#new-header').removeAttr('required')
         $('#input-new-menu').removeAttr('required')
@@ -450,7 +452,7 @@
         $('.section-menu').hide()
     })
 
-    $(document).on('click', '#generate-type-1', function () {
+    $(document).on('click', '#generate-type-1', function() {
         $('#select-header').attr('required')
         $('#new-header').attr('required')
         $('#input-new-menu').attr('required')
@@ -542,7 +544,7 @@
                     }
                 })
 
-                if(xhr?.responseJSON?.errors){
+                if (xhr?.responseJSON?.errors) {
                     $('#validation-errors').show()
                 }
 
@@ -635,7 +637,8 @@
                     `
 
                     res.forEach((value, index) => {
-                        options += `<option value='{"sidebar": ${indexHeader}, "menus": ${index}}'>${value.title}</option>`
+                        options +=
+                            `<option value='{"sidebar": ${indexHeader}, "menus": ${index}}'>${value.title}</option>`
                     })
 
                     selectMenu.html(options)
@@ -698,7 +701,9 @@
             colNewMenu.html('')
 
             if ($('#model').val()) {
-                $('#helper-text-menu').html(`Will generate a new submenu <b>${capitalizeFirstLetter(setModelName($('#model').val()))}</b> in <b>${$('#select-menu option:selected').text()}</b> menu.`)
+                $('#helper-text-menu').html(
+                    `Will generate a new submenu <b>${capitalizeFirstLetter(setModelName($('#model').val()))}</b> in <b>${$('#select-menu option:selected').text()}</b> menu.`
+                    )
             }
         }
     })
