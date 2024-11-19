@@ -1,0 +1,9 @@
+                        {
+                            data: '{{fieldSnakeCase}}',
+                            name: '{{fieldSnakeCase}}',
+                            orderable: false,
+                            searchable: false,
+                            render: function(data) {
+                                return `<div style="background-color: ${data}; width: 30px; height: 30px; border-radius: 5px;"></div>`;
+                                }
+                        },

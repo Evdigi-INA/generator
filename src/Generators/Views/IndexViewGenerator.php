@@ -11,8 +11,8 @@ class IndexViewGenerator
      */
     public function generate(array $request): void
     {
-        $model = GeneratorUtils::setModelName($request['model'], 'default');
-        $path = GeneratorUtils::getModelLocation($request['model']);
+        $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
+        $path = GeneratorUtils::getModelLocation(model: $request['model']);
 
         $modelNamePluralUcWords = GeneratorUtils::cleanPluralUcWords($model);
         $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase($model);
@@ -59,12 +59,26 @@ class IndexViewGenerator
                     name: '" . str()->snake($field) . "',
                     orderable: false,
                     searchable: false,
-                    render: function(data, type, full, meta) {
+                    render: function(data) {
                         return `<div class=\"avatar\">
-                            <img src=\"" . '$' . "{data}\" alt=\"" . GeneratorUtils::cleanSingularUcWords($field) . "\" $imgStyle>
+                            <img src=\"" . '$' . "{data}\" alt=\"" . GeneratorUtils::cleanSingularUcWords($field) . "\" $imgStyle />
                         </div>`;
                         }
                     },";
+                } elseif ($request['input_types'][$i] == 'color') {
+                    $tdColumns .= GeneratorUtils::replaceStub(
+                        replaces: [
+                            'fieldSnakeCase' => str()->snake($field),
+                        ],
+                        stubName: 'views/index/color'
+                    );
+                } elseif ($request['column_types'][$i] == 'boolean') {
+                    $tdColumns .= GeneratorUtils::replaceStub(
+                        replaces: [
+                            'fieldSnakeCase' => str()->snake($field),
+                        ],
+                        stubName: 'views/index/boolean'
+                    );
                 } elseif ($request['column_types'][$i] == 'foreignId') {
                     // remove '/' or sub folders
                     $constrainModel = GeneratorUtils::setModelName($request['constrains'][$i], 'default');
