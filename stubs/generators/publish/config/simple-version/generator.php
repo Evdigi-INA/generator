@@ -1,7 +1,7 @@
 <?php
 
 return [
-    /**
+   /**
      * If any input file(image) as default will use options below.
      */
     "image" => [
@@ -9,12 +9,12 @@ return [
          * Path for store the image.
          *
          * Available options:
-         * 1. public
-         * 2. storage.local
-         * 3. storage.public
+         * 1. public or storage.path
+         * 2. local or storage.local
+         * 3. public_path
          * 4. S3
          */
-        "disk" => "storage.public",
+        "disk" => "public",
 
         /**
          * Will be used if image is nullable and default value is null.
