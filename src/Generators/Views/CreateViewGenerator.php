@@ -41,7 +41,7 @@ class CreateViewGenerator
                 'modelNameSingularLowerCase' => $modelNameSingularLowerCase,
                 'modelNamePluralKebabCase' => $modelNamePluralKebabCase,
                 'enctype' => in_array(needle: 'file', haystack: $request['input_types']) ? ' enctype="multipart/form-data"' : '',
-                'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower(string: $path)) . "." : '',
+                'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower(string: $path)).'.' : '',
                 'alertForSingleForm' => $alertCode,
                 'exportButton' => $request['generate_variant'] == GeneratorVariant::SINGLE_FORM->value
                     ? (new IndexViewGenerator)->generateExportButton(request: $request) : '',
@@ -50,11 +50,11 @@ class CreateViewGenerator
         );
 
         if ($path) {
-            $fullPath = resource_path(path: "/views/" . strtolower(string: $path) . "/$modelNamePluralKebabCase");
+            $fullPath = resource_path(path: '/views/'.strtolower(string: $path)."/$modelNamePluralKebabCase");
 
             GeneratorUtils::checkFolder(path: $fullPath);
 
-            file_put_contents(filename: $fullPath . "/create.blade.php", data: $template);
+            file_put_contents(filename: $fullPath.'/create.blade.php', data: $template);
         } else {
             GeneratorUtils::checkFolder(path: resource_path(path: "/views/$modelNamePluralKebabCase"));
 

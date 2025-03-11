@@ -13,72 +13,73 @@ class ModelGenerator
         $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
         $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
 
-        $fields = "[";
-        $casts = "[";
-        $relations = "";
+        $fields = '[';
+        $casts = '[';
+        $relations = '';
         $totalFields = count($request['fields']);
         $dateTimeFormat = config('generator.format.datetime') ?? 'Y-m-d H:i:s';
-        $protectedHidden = "";
-        $castImages = "";
-        $uploadPaths = "";
+        $protectedHidden = '';
+        $castImages = '';
+        $uploadPaths = '';
 
         if (in_array(needle: 'password', haystack: $request['input_types'])) {
-            $protectedHidden .= <<<PHP
+            $protectedHidden .= <<<'PHP'
             /**
                  * The attributes that should be hidden for serialization.
                  *
                  * @var string[]
                 */
-                protected \$hidden = [
+                protected $hidden = [
             PHP;
         }
 
-        $namespace = !$path ? "namespace App\\Models;" : "namespace App\\Models\\$path;";
+        $namespace = ! $path ? 'namespace App\\Models;' : "namespace App\\Models\\$path;";
 
         foreach ($request['fields'] as $i => $field) {
             $fields .= match ($i + 1 != $totalFields) {
-                true => "'" . str()->snake($field) . "', ",
-                default => "'" . str()->snake($field) . "']",
+                true => "'".str()->snake($field)."', ",
+                default => "'".str()->snake($field)."']",
             };
 
             if ($request['input_types'][$i] == 'password') {
-                $protectedHidden .= "'" . str()->snake($field) . "', ";
+                $protectedHidden .= "'".str()->snake($field)."', ";
             }
 
             switch ($request['column_types'][$i]) {
                 case 'date':
                     if ($request['input_types'][$i] != 'month') {
                         $dateFormat = config('generator.format.date') ?? 'd/m/Y';
-                        $casts .= "'" . str()->snake($field) . "' => 'date:$dateFormat', ";
+                        $casts .= "'".str()->snake($field)."' => 'date:$dateFormat', ";
                     }
                     break;
                 case 'time':
                     $timeFormat = config('generator.format.time') ? config('generator.format.time') : 'H:i';
-                    $casts .= "'" . str()->snake($field) . "' => 'datetime:$timeFormat', ";
+                    $casts .= "'".str()->snake($field)."' => 'datetime:$timeFormat', ";
                     break;
                 case 'year':
-                    $casts .= "'" . str()->snake($field) . "' => 'integer', ";
+                    $casts .= "'".str()->snake($field)."' => 'integer', ";
                     break;
                 case 'dateTime':
-                    $casts .= "'" . str()->snake($field) . "' => 'datetime:$dateTimeFormat', ";
+                    $casts .= "'".str()->snake($field)."' => 'datetime:$dateTimeFormat', ";
                     break;
                 case 'float':
-                    $casts .= "'" . str()->snake($field) . "' => 'float', ";
+                    $casts .= "'".str()->snake($field)."' => 'float', ";
                     break;
                 case 'boolean':
-                    $casts .= "'" . str()->snake($field) . "' => 'boolean', ";
+                    $casts .= "'".str()->snake($field)."' => 'boolean', ";
                     break;
                 case 'double':
-                    $casts .= "'" . str()->snake($field) . "' => 'double', ";
+                    $casts .= "'".str()->snake($field)."' => 'double', ";
                     break;
                 case 'foreignId':
                     $constrainPath = GeneratorUtils::getModelLocation($request['constrains'][$i]);
                     $constrainName = GeneratorUtils::setModelName($request['constrains'][$i]);
 
-                    $foreign_id = isset($request['foreign_ids'][$i]) ? ", '" . $request['foreign_ids'][$i] . "'" : '';
+                    $foreign_id = isset($request['foreign_ids'][$i]) ? ", '".$request['foreign_ids'][$i]."'" : '';
 
-                    if ($i > 0)
+                    if ($i > 0) {
                         $relations .= "\t";
+                    }
 
                     /**
                      * will generate something like:
@@ -101,17 +102,17 @@ class ModelGenerator
                      *     return $this->belongsTo(\App\Models\Product::class);
                      * }
                      */
-                    $relations .= "\n\tpublic function " . str()->snake($constrainName) . "(): \Illuminate\Database\Eloquent\Relations\BelongsTo\n\t{\n\t\treturn \$this->belongsTo(" . $constrainPath . "::class" . $foreign_id . ");\n\t}";
+                    $relations .= "\n\tpublic function ".str()->snake($constrainName)."(): \Illuminate\Database\Eloquent\Relations\BelongsTo\n\t{\n\t\treturn \$this->belongsTo(".$constrainPath.'::class'.$foreign_id.");\n\t}";
                     break;
             }
 
             switch ($request['input_types'][$i]) {
                 case 'month':
                     $castFormat = config('generator.format.month') ? config('generator.format.month') : 'm/Y';
-                    $casts .= "'" . str()->snake($field) . "' => 'date:$castFormat', ";
+                    $casts .= "'".str()->snake($field)."' => 'date:$castFormat', ";
                     break;
                 case 'week':
-                    $casts .= "'" . str()->snake($field) . "' => 'date:Y-\WW', ";
+                    $casts .= "'".str()->snake($field)."' => 'date:Y-\WW', ";
                     break;
                 case 'file':
                     // $uploadPaths .= "public string $" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path = '" . GeneratorUtils::pluralKebabCase($request['fields'][$i]) . "', ";
@@ -127,32 +128,32 @@ class ModelGenerator
                         // 'returnStoragePublicS3' => $setReturnComment['storage_public_s3'],
                         // 'returnStorageLocal' => $setReturnComment['storage_local'],
                         'fieldSnakeCase' => str()->snake($field),
-                        'fieldPascalCase' => GeneratorUtils::pascalCase($field)
-                    ], stubName: 'model-cast') . "\n\t";
+                        'fieldPascalCase' => GeneratorUtils::pascalCase($field),
+                    ], stubName: 'model-cast')."\n\t";
                     break;
             }
 
             // integer/bigInteger/tinyInteger/
             if (str_contains(haystack: $request['column_types'][$i], needle: 'integer')) {
-                $casts .= "'" . str()->snake($field) . "' => 'integer', ";
+                $casts .= "'".str()->snake($field)."' => 'integer', ";
             }
 
             if (in_array(needle: $request['column_types'][$i], haystack: ['string', 'text', 'char']) && $request['input_types'][$i] != 'week' && $request['input_types'][$i] != 'file') {
-                $casts .= "'" . str()->snake($field) . "' => 'string', ";
+                $casts .= "'".str()->snake($field)."' => 'string', ";
             }
         }
 
-        if ($protectedHidden != "") {
+        if ($protectedHidden != '') {
             // remove "', " and then change to "'" in the of array for better code.
             // $protectedHidden  = str_replace("', ", "'", $protectedHidden);
-            $protectedHidden = substr(string: $protectedHidden, offset: 0, length: -2) . "];";
+            $protectedHidden = substr(string: $protectedHidden, offset: 0, length: -2).'];';
         }
 
         $casts .= <<<PHP
         'created_at' => 'datetime:$dateTimeFormat', 'updated_at' => 'datetime:$dateTimeFormat'
         PHP;
 
-        $casts .= "]";
+        $casts .= ']';
 
         // $constructFunc = GeneratorUtils::replaceStub(replaces: [
         //     'uploadPaths' => $uploadPaths,
@@ -172,7 +173,7 @@ class ModelGenerator
             // 'constructFunc' => $constructFunc
         ], stubName: 'model');
 
-        if (!$path) {
+        if (! $path) {
             file_put_contents(filename: app_path(path: "/Models/$modelNameSingularPascalCase.php"), data: $template);
         } else {
             $fullPath = app_path("/Models/$path");

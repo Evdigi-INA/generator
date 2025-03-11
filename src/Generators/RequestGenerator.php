@@ -28,7 +28,7 @@ class RequestGenerator
              * result:
              * 'name' =>
              */
-            $validations .= "'" . str(string: $field)->snake() . "' => ";
+            $validations .= "'".str(string: $field)->snake()."' => ";
 
             /**
              * result:
@@ -45,17 +45,17 @@ class RequestGenerator
                      * result:
                      * 'name' => 'required|url',
                      */
-                    $validations .= "|url";
+                    $validations .= '|url';
                     break;
                 case 'email':
                     if (GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value) {
-                        $uniqueValidation = 'unique:' . GeneratorUtils::pluralSnakeCase(string: $model) . ',' . GeneratorUtils::singularSnakeCase(string: $field);
+                        $uniqueValidation = 'unique:'.GeneratorUtils::pluralSnakeCase(string: $model).','.GeneratorUtils::singularSnakeCase(string: $field);
 
                         /**
                          * result:
                          * 'name' => 'required|email',
                          */
-                        $validations .= "|email|" . $uniqueValidation;
+                        $validations .= '|email|'.$uniqueValidation;
                     }
                     break;
                 case 'date':
@@ -63,14 +63,14 @@ class RequestGenerator
                      * result:
                      * 'name' => 'required|date',
                      */
-                    $validations .= "|date";
+                    $validations .= '|date';
                     break;
                 case 'password':
                     /**
                      * result:
                      * 'name' => 'required|confirmed',
                      */
-                    $validations .= "|confirmed";
+                    $validations .= '|confirmed';
                     break;
             }
 
@@ -78,19 +78,21 @@ class RequestGenerator
 
                 $maxSize = config(key: 'generator.image.size_max', default: 1024);
 
-                if ($request['files_sizes'][$i]) $maxSize = $request['files_sizes'][$i];
+                if ($request['files_sizes'][$i]) {
+                    $maxSize = $request['files_sizes'][$i];
+                }
 
                 /**
                  * result:
                  * 'cover' => 'required|image|size:1024',
                  */
-                $validations .= "|image|max:" . $maxSize;
+                $validations .= '|image|max:'.$maxSize;
             } elseif ($request['input_types'][$i] == 'file' && $request['file_types'][$i] == 'mimes') {
                 /**
                  * result:
                  * 'name' => 'required|mimes|size:1024',
                  */
-                $validations .= "|mimes:" . $request['mimes'][$i] . "|size:" . $request['files_sizes'][$i];
+                $validations .= '|mimes:'.$request['mimes'][$i].'|size:'.$request['files_sizes'][$i];
             }
 
             if ($request['column_types'][$i] == 'enum') {
@@ -98,7 +100,7 @@ class RequestGenerator
                  * result:
                  * 'name' => 'required|in:water,fire',
                  */
-                $in = "|in:";
+                $in = '|in:';
 
                 $options = explode(separator: '|', string: $request['select_options'][$i]);
 
@@ -106,7 +108,7 @@ class RequestGenerator
 
                 foreach ($options as $key => $option) {
                     if ($key + 1 != $totalOptions) {
-                        $in .= $option . ",";
+                        $in .= $option.',';
                     } else {
                         // for latest validation
                         $in .= $option;
@@ -121,7 +123,7 @@ class RequestGenerator
                  * result:
                  * 'name' => 'required|string',
                  */
-                $validations .= "|string";
+                $validations .= '|string';
             }
 
             if ($request['input_types'][$i] == 'number' || $request['column_types'][$i] == 'year' || $request['input_types'][$i] == 'range') {
@@ -129,7 +131,7 @@ class RequestGenerator
                  * result:
                  * 'name' => 'required|numeric',
                  */
-                $validations .= "|numeric";
+                $validations .= '|numeric';
             }
 
             if ($request['input_types'][$i] == 'range' && $request['max_lengths'][$i] >= 0) {
@@ -137,7 +139,7 @@ class RequestGenerator
                  * result:
                  * 'name' => 'numeric|between:1,10',
                  */
-                $validations .= "|between:" . $request['min_lengths'][$i] . "," . $request['max_lengths'][$i];
+                $validations .= '|between:'.$request['min_lengths'][$i].','.$request['max_lengths'][$i];
             }
 
             if ($request['min_lengths'][$i] && $request['input_types'][$i] !== 'range') {
@@ -145,7 +147,7 @@ class RequestGenerator
                  * result:
                  * 'name' => 'required|min:5',
                  */
-                $validations .= "|min:" . $request['min_lengths'][$i];
+                $validations .= '|min:'.$request['min_lengths'][$i];
             }
 
             if ($request['max_lengths'][$i] && $request['max_lengths'][$i] >= 0 && $request['input_types'][$i] !== 'range') {
@@ -153,7 +155,7 @@ class RequestGenerator
                  * result:
                  * 'name' => 'required|max:30',
                  */
-                $validations .= "|max:" . $request['max_lengths'][$i];
+                $validations .= '|max:'.$request['max_lengths'][$i];
             }
 
             switch ($request['column_types'][$i]) {
@@ -175,14 +177,14 @@ class RequestGenerator
                              * result:
                              * 'name' => 'required|max:30|exists:App\Models\Master\Product,id',
                              */
-                            $validations .= "|exists:App\Models\\" . str_replace(search: '/', replace: '\\', subject: $constrainsPath) . "\\" . GeneratorUtils::singularPascalCase(string: $constrainModel) . ",id',";
+                            $validations .= "|exists:App\Models\\".str_replace(search: '/', replace: '\\', subject: $constrainsPath).'\\'.GeneratorUtils::singularPascalCase(string: $constrainModel).",id',";
                             break;
                         default:
                             /**
                              * result:
                              * 'name' => 'required|max:30|exists:App\Models\Product,id',
                              */
-                            $validations .= "|exists:App\Models\\" . GeneratorUtils::singularPascalCase(string: $constrainModel) . ",id',";
+                            $validations .= "|exists:App\Models\\".GeneratorUtils::singularPascalCase(string: $constrainModel).",id',";
                             break;
                     }
                     break;
@@ -195,7 +197,9 @@ class RequestGenerator
                     break;
             }
 
-            if ($i + 1 != $totalFields) $validations .= "\n\t\t\t";
+            if ($i + 1 != $totalFields) {
+                $validations .= "\n\t\t\t";
+            }
         }
         // end of foreach
 
@@ -210,8 +214,8 @@ class RequestGenerator
         /**
          * on update request if any image validation, then set 'required' to nullable
          */
-        $updateValidations = match (str_contains(haystack: $storeRequestTemplate, needle: "required|image")) {
-            true => str_replace(search: "required|image", replace: "nullable|image", subject: $validations),
+        $updateValidations = match (str_contains(haystack: $storeRequestTemplate, needle: 'required|image')) {
+            true => str_replace(search: 'required|image', replace: 'nullable|image', subject: $validations),
             default => $validations,
         };
 
@@ -223,12 +227,12 @@ class RequestGenerator
              */
             $updateValidations = str_replace(
                 search: $uniqueValidation,
-                replace: $uniqueValidation . ",' . request()->segment(" . (GeneratorUtils::isGenerateApi() ? 3 : 2) . ")",
+                replace: $uniqueValidation.",' . request()->segment(".(GeneratorUtils::isGenerateApi() ? 3 : 2).')',
                 subject: $validations
             );
 
             // change "segment(2)'," to "segment(2),"
-            $updateValidations = str_replace(search: ")',", replace: "),", subject: $updateValidations);
+            $updateValidations = str_replace(search: ")',", replace: '),', subject: $updateValidations);
         }
 
         if (in_array(needle: 'password', haystack: $request['input_types'])) {
@@ -239,8 +243,8 @@ class RequestGenerator
                      * 'password' => 'required' to 'password' => 'nullable' in update request validation
                      */
                     $updateValidations = str_replace(
-                        search: "'" . $request['fields'][$key] . "' => 'required",
-                        replace: "'" . $request['fields'][$key] . "' => 'nullable",
+                        search: "'".$request['fields'][$key]."' => 'required",
+                        replace: "'".$request['fields'][$key]."' => 'nullable",
                         subject: $updateValidations
                     );
                 }

@@ -29,8 +29,9 @@ class ControllerGenerator
             case '':
                 $namespace = "namespace App\Http\Controllers;\n";
 
-                if (GeneratorUtils::isGenerateApi())
+                if (GeneratorUtils::isGenerateApi()) {
                     $namespace = "namespace App\Http\Controllers\Api;\n\nuse App\Http\Controllers\Controller;";
+                }
 
                 /**
                  * will generate something like:
@@ -38,8 +39,8 @@ class ControllerGenerator
                  * use App\Http\Requests\{StoreProductRequest, UpdateProductRequest};
                  */
                 $requestPath = match (GeneratorUtils::checkGeneratorVariant()) {
-                    GeneratorVariant::SINGLE_FORM->value => "App\Http\Requests\\$modelNamePluralPascalCase\Store" . $modelNameSingularPascalCase . "Request",
-                    default => "App\Http\Requests\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}"
+                    GeneratorVariant::SINGLE_FORM->value => "App\Http\Requests\\$modelNamePluralPascalCase\Store".$modelNameSingularPascalCase.'Request',
+                    default => "App\Http\Requests\\$modelNamePluralPascalCase\{Store".$modelNameSingularPascalCase.'Request, Update'.$modelNameSingularPascalCase.'Request}'
                 };
 
                 break;
@@ -53,8 +54,9 @@ class ControllerGenerator
                  */
                 $namespace = "namespace App\Http\Controllers\\$path;\n\nuse App\Http\Controllers\Controller;";
 
-                if (GeneratorUtils::isGenerateApi())
+                if (GeneratorUtils::isGenerateApi()) {
                     $namespace = "namespace App\Http\Controllers\Api\\$path;\n\nuse App\Http\Controllers\Controller;";
+                }
 
                 /**
                  * Will generate something like:
@@ -62,15 +64,15 @@ class ControllerGenerator
                  * use App\Http\Requests\Inventory\{StoreProductRequest, UpdateProductRequest};
                  */
                 $requestPath = match (GeneratorUtils::checkGeneratorVariant()) {
-                    GeneratorVariant::SINGLE_FORM->value => "App\Http\Requests\\$path\\$modelNamePluralPascalCase\Store" . $modelNameSingularPascalCase . "Request",
-                    default => "App\Http\Requests\\$path\\$modelNamePluralPascalCase\{Store" . $modelNameSingularPascalCase . "Request, Update" . $modelNameSingularPascalCase . "Request}"
+                    GeneratorVariant::SINGLE_FORM->value => "App\Http\Requests\\$path\\$modelNamePluralPascalCase\Store".$modelNameSingularPascalCase.'Request',
+                    default => "App\Http\Requests\\$path\\$modelNamePluralPascalCase\{Store".$modelNameSingularPascalCase.'Request, Update'.$modelNameSingularPascalCase.'Request}'
                 };
 
                 break;
         }
 
-        $relations = "";
-        $addColumns = "";
+        $relations = '';
+        $addColumns = '';
 
         if (
             in_array('text', $request['column_types']) ||
@@ -87,8 +89,8 @@ class ControllerGenerator
              */
             foreach ($request['column_types'] as $i => $type) {
                 if (in_array($type, ['text', 'longText'])) {
-                    $addColumns .= "->addColumn('" . str($request['fields'][$i])->snake() . "', function(\$row) {
-                        return str(\$row->" . str($request['fields'][$i])->snake() . ")->limit($limitText);
+                    $addColumns .= "->addColumn('".str($request['fields'][$i])->snake()."', function(\$row) {
+                        return str(\$row->".str($request['fields'][$i])->snake().")->limit($limitText);
                     })\n\t\t\t\t";
                 }
             }
@@ -97,7 +99,7 @@ class ControllerGenerator
         // load the relations for create, show, and edit
         if (in_array('foreignId', $request['column_types'])) {
             if (GeneratorUtils::isGenerateApi()) {
-                $relations .= "with([";
+                $relations .= 'with([';
 
                 $countForeignId = count(array_keys($request['column_types'], 'foreignId'));
 
@@ -121,10 +123,10 @@ class ControllerGenerator
                     }
                 }
 
-                $relations .= "])->";
+                $relations .= '])->';
                 $relations = str_replace("', ])->", "'])->", $relations);
             } else {
-                $relations .= "$" . $modelNameSingularCamelCase . "->load([";
+                $relations .= '$'.$modelNameSingularCamelCase.'->load([';
 
                 $countForeignId = count(array_keys($request['column_types'], 'foreignId'));
 
@@ -155,12 +157,12 @@ class ControllerGenerator
                          * })
                          */
                         $addColumns .= "->addColumn('$constrainSnakeCase', function (\$row) {
-                    return \$row?->" . $constrainSnakeCase . "?->$columnAfterId ?? '';
+                    return \$row?->".$constrainSnakeCase."?->$columnAfterId ?? '';
                 })";
                     }
                 }
 
-                $query .= "])";
+                $query .= '])';
                 $relations .= "]);\n\n\t\t";
 
                 $query = str_replace(search: "''", replace: "', '", subject: $query);
@@ -180,7 +182,7 @@ class ControllerGenerator
         };
 
         $updateDataAction = "\${$modelNameSingularCamelCase}->update(\$request->validated());";
-        $requestValidatedAttr = "";
+        $requestValidatedAttr = '';
 
         if (in_array(needle: 'password', haystack: $request['input_types']) || in_array(needle: 'month', haystack: $request['input_types'])) {
             /**
@@ -194,8 +196,8 @@ class ControllerGenerator
             $requestValidatedAttr = "\$validated = \$request->validated();\n";
         }
 
-        $passwordFieldStore = "";
-        $passwordFieldUpdate = "";
+        $passwordFieldStore = '';
+        $passwordFieldUpdate = '';
         if (in_array(needle: 'password', haystack: $request['input_types'])) {
             $passwordFieldStore .= $requestValidatedAttr;
             $passwordFieldUpdate .= $requestValidatedAttr;
@@ -207,13 +209,13 @@ class ControllerGenerator
                      *
                      * $validated['password'] = bcrypt($request->password);
                      */
-                    $passwordFieldStore .= "\t\t\$validated['" . str()->snake($request['fields'][$i]) . "'] = bcrypt(\$request->" . str()->snake($request['fields'][$i]) . ");\n";
+                    $passwordFieldStore .= "\t\t\$validated['".str()->snake($request['fields'][$i])."'] = bcrypt(\$request->".str()->snake($request['fields'][$i]).");\n";
 
-                    $passwordFieldUpdate .= "
-        if (!\$request->" . str()->snake($request['fields'][$i]) . ") {
-            unset(\$validated['" . str()->snake($request['fields'][$i]) . "']);
+                    $passwordFieldUpdate .= '
+        if (!$request->'.str()->snake($request['fields'][$i]).") {
+            unset(\$validated['".str()->snake($request['fields'][$i])."']);
         } else {
-            \$validated['" . str()->snake($request['fields'][$i]) . "'] = bcrypt(\$request->" . str()->snake($request['fields'][$i]) . ");
+            \$validated['".str()->snake($request['fields'][$i])."'] = bcrypt(\$request->".str()->snake($request['fields'][$i]).");
         }\n";
                 }
             }
@@ -223,9 +225,9 @@ class ControllerGenerator
          * Generate code for insert input type month with datatype date.
          * by default will get an error, cause invalid format.
          */
-        $inputMonths = "";
+        $inputMonths = '';
         if (in_array(needle: 'month', haystack: $request['input_types'])) {
-            if (!in_array(needle: 'password', haystack: $request['input_types'])) {
+            if (! in_array(needle: 'password', haystack: $request['input_types'])) {
                 /**
                  * don't concat string if any input type password, cause already concat ahead.
                  */
@@ -239,7 +241,7 @@ class ControllerGenerator
                      *
                      * $validated['month'] = $request->month ? \Carbon\Carbon::createFromFormat('Y-m', $request->month)->toDateTimeString() : null;
                      */
-                    $inputMonths .= "\t\t\$validated['" . str()->snake($request['fields'][$i]) . "'] = \$request->" . str()->snake($request['fields'][$i]) . " ? \Carbon\Carbon::createFromFormat('Y-m', \$request->" . str()->snake($request['fields'][$i]) . ")->toDateTimeString() : null;\n";
+                    $inputMonths .= "\t\t\$validated['".str()->snake($request['fields'][$i])."'] = \$request->".str()->snake($request['fields'][$i])." ? \Carbon\Carbon::createFromFormat('Y-m', \$request->".str()->snake($request['fields'][$i]).")->toDateTimeString() : null;\n";
                 }
             }
         }
@@ -250,16 +252,16 @@ class ControllerGenerator
         switch (in_array(needle: 'file', haystack: $request['input_types'])) {
             case true:
                 // $indexCode = "";
-                $storeCode = "";
-                $updateCode = "";
+                $storeCode = '';
+                $updateCode = '';
                 // $deleteCode = "";
 
                 // $castImageFunc = "";
                 // $castImageIndex = "";
-                $uploadPaths = "";
+                $uploadPaths = '';
                 // $assignUploadPaths = "";
-                $assignImageDelete = "";
-                $deleteImageCodes = "";
+                $assignImageDelete = '';
+                $deleteImageCodes = '';
 
                 /**
                  *    if (!$generator->image) {
@@ -277,19 +279,19 @@ class ControllerGenerator
 
                 foreach ($request['input_types'] as $i => $input) {
                     if ($input == 'file') {
-                        $uploadPaths .= "public string $" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path = '" . GeneratorUtils::pluralKebabCase($request['fields'][$i]) . "', ";
+                        $uploadPaths .= 'public string $'.GeneratorUtils::singularCamelCase($request['fields'][$i])."Path = '".GeneratorUtils::pluralKebabCase($request['fields'][$i])."', ";
 
                         // $assignUploadPaths .= "\$this->" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path = " . GeneratorUtils::setDiskCodeForController($request['fields'][$i]) . ";\n\t\t";
 
                         //  Generated code: $image = $generator->image;
-                        $assignImageDelete .= "$" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . " = $" . GeneratorUtils::singularCamelCase($model) . "->" . str($request['fields'][$i])->snake() . ";\n\t\t\t";
+                        $assignImageDelete .= '$'.GeneratorUtils::singularCamelCase($request['fields'][$i]).' = $'.GeneratorUtils::singularCamelCase($model).'->'.str($request['fields'][$i])->snake().";\n\t\t\t";
 
                         //  Generated code: $this->imageService->delete("$this->imagePath$image", disk: $this->disk);
                         // $deleteImageCodes .= "\$this->imageService->delete(image: \"\$this->" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path$" . GeneratorUtils::singularCamelCase($request['fields'][$i]) .  "\", disk: \$this->disk);\n\t\t\t";
 
                         $deleteImageCodes .= GeneratorUtils::replaceStub(replaces: [
                             'fieldCamelCase' => GeneratorUtils::singularCamelCase($request['fields'][$i]),
-                        ], stubName: 'controllers/upload-files/delete') . "\n\t\t\t";
+                        ], stubName: 'controllers/upload-files/delete')."\n\t\t\t";
 
                         // $castImageDataTable .= GeneratorUtils::setDiskCodeForCastImage($model, $request['fields'][$i]);
 
@@ -343,7 +345,7 @@ class ControllerGenerator
                      *      Product::create($validated);
                      *  }
                      */
-                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated') . ");";
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $".$modelNameSingularCamelCase.'?->id], '.(str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated').');';
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }
@@ -368,7 +370,7 @@ class ControllerGenerator
                         'namespace' => $namespace,
                         'requestPath' => $requestPath,
                         'modelPath' => $path != '' ? "App\Models\\$path\\$modelNameSingularPascalCase" : "App\Models\\$modelNameSingularPascalCase",
-                        'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower($path)) . "." : '',
+                        'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower($path)).'.' : '',
                         'passwordFieldStore' => $passwordFieldStore,
                         'passwordFieldUpdate' => $passwordFieldUpdate,
                         'updateDataAction' => $updateDataAction,
@@ -402,9 +404,8 @@ class ControllerGenerator
                      *  }
                      *
                      * Product::updateOrCreate(['id' => $product?->id], $validated);
-                     *
                      */
-                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $" . $modelNameSingularCamelCase . "?->id], " . (str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated') . ");";
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $".$modelNameSingularCamelCase.'?->id], '.(str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated').');';
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }
@@ -424,7 +425,7 @@ class ControllerGenerator
                     'namespace' => $namespace,
                     'requestPath' => $requestPath,
                     'modelPath' => $path != '' ? "App\Models\\$path\\$modelNameSingularPascalCase" : "App\Models\\$modelNameSingularPascalCase",
-                    'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower($path)) . "." : '',
+                    'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower($path)).'.' : '',
                     'passwordFieldStore' => $passwordFieldStore,
                     'passwordFieldUpdate' => $passwordFieldUpdate,
                     'insertDataAction' => $insertDataAction,
@@ -449,10 +450,10 @@ class ControllerGenerator
         /**
          * Create a controller file.
          */
-        if (!$path) {
+        if (! $path) {
             match (GeneratorUtils::isGenerateApi()) {
-                true => GeneratorUtils::checkFolder(app_path("/Http/Controllers/Api")),
-                default => GeneratorUtils::checkFolder(app_path("/Http/Controllers")),
+                true => GeneratorUtils::checkFolder(app_path('/Http/Controllers/Api')),
+                default => GeneratorUtils::checkFolder(app_path('/Http/Controllers')),
             };
 
             $controllerPath = GeneratorUtils::isGenerateApi() ? "/Api/{$modelNameSingularPascalCase}Controller.php" : "/{$modelNameSingularPascalCase}Controller.php";
@@ -469,7 +470,7 @@ class ControllerGenerator
     /**
      * Generate an upload file code.
      */
-    protected function generateUploadImageCode(string $field, string $path, string|null $model): string
+    protected function generateUploadImageCode(string $field, string $path, ?string $model): string
     {
         // $default = GeneratorUtils::setDefaultImage(default: $defaultValue, field: $field, model: $model);
 
@@ -484,7 +485,7 @@ class ControllerGenerator
             // 'aspectRatio' => config('generator.image.aspect_ratio') ? "\n\t\t\t\t\$constraint->aspectRatio();" : '',
             // 'defaultImageCode' => $default['index_code'],
             'fieldSingularCamelCase' => GeneratorUtils::singularCamelCase($field),
-            'defaultImage' => "$" . GeneratorUtils::singularCamelCase($model) . "?->" . str($field)->snake(),
+            'defaultImage' => '$'.GeneratorUtils::singularCamelCase($model).'?->'.str($field)->snake(),
             'fieldCamelCase' => GeneratorUtils::singularCamelCase($field),
             // 'modelNameSingularCamelCase' => GeneratorUtils::singularCamelCase($model),
             'disk' => config('generator.image.disk'),
@@ -535,14 +536,13 @@ class ControllerGenerator
             return $template;
         }
 
-
         return '';
     }
 
     public function generateExportNamespace(array $request): string
     {
         if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
-            return "\nuse App\Exports\\" . GeneratorUtils::pluralPascalCase(string: $request['model']) . "Export;\nuse Symfony\Component\HttpFoundation\BinaryFileResponse;";
+            return "\nuse App\Exports\\".GeneratorUtils::pluralPascalCase(string: $request['model'])."Export;\nuse Symfony\Component\HttpFoundation\BinaryFileResponse;";
         }
 
         return '';

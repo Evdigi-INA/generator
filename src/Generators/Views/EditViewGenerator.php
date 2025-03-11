@@ -25,18 +25,18 @@ class EditViewGenerator
                 'modelNamePluralKebabCase' => $modelNamePluralKebabCase,
                 'modelNameSingularCamelCase' => $modelNameSingularCamelCase,
                 'enctype' => in_array(needle: 'file', haystack: $request['input_types']) ? ' enctype="multipart/form-data"' : '',
-                'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower(string: $path)) . "." : '',
+                'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower(string: $path)).'.' : '',
             ],
             stubName: empty($request['is_simple_generator']) ? 'views/edit' : 'views/simple/edit'
         );
 
-        if (!$path) {
+        if (! $path) {
             GeneratorUtils::checkFolder(path: resource_path(path: "/views/$modelNamePluralKebabCase"));
             file_put_contents(filename: resource_path(path: "/views/$modelNamePluralKebabCase/edit.blade.php"), data: $template);
         } else {
-            $fullPath = resource_path(path: "/views/" . strtolower(string: $path) . "/$modelNamePluralKebabCase");
+            $fullPath = resource_path(path: '/views/'.strtolower(string: $path)."/$modelNamePluralKebabCase");
             GeneratorUtils::checkFolder(path: $fullPath);
-            file_put_contents(filename: $fullPath . "/edit.blade.php", data: $template);
+            file_put_contents(filename: $fullPath.'/edit.blade.php', data: $template);
         }
     }
 }

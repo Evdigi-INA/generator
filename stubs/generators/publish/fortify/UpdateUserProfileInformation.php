@@ -30,7 +30,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
-            'avatar' => ['nullable', 'image', 'max:1024']
+            'avatar' => ['nullable', 'image', 'max:1024'],
         ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['avatar']) && $input['avatar']->isValid()) {

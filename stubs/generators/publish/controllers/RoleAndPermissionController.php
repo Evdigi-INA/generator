@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Roles\{StoreRoleRequest, UpdateRoleRequest};
-use Spatie\Permission\Models\Role;
-use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use App\Http\Requests\Roles\StoreRoleRequest;
+use App\Http\Requests\Roles\UpdateRoleRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Spatie\Permission\Models\Role;
+use Yajra\DataTables\Facades\DataTables;
 
 class RoleAndPermissionController extends Controller implements HasMiddleware
 {
@@ -30,14 +32,14 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      *
      * @return \Illuminate\Http\Response
      */
-    public function index():  View|JsonResponse
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             $users = Role::query();
 
             return DataTables::of($users)
-                ->addColumn('created_at', fn($row) => $row->created_at->format('Y-m-d H:i:s'))
-                ->addColumn('updated_at',fn($row) => $row->updated_at->format('Y-m-d H:i:s'))
+                ->addColumn('created_at', fn ($row) => $row->created_at->format('Y-m-d H:i:s'))
+                ->addColumn('updated_at', fn ($row) => $row->updated_at->format('Y-m-d H:i:s'))
                 ->addColumn('action', 'roles.include.action')
                 ->toJson();
         }

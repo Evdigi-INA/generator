@@ -2,10 +2,10 @@
 
 namespace App\Generators\Services;
 
-use Illuminate\Http\UploadedFile;
 use App\Generators\ImageUploadOption;
-use Illuminate\Support\Facades\Storage;
 use App\Generators\Interfaces\ImageServiceInterfaceV2;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class ImageServiceV2 implements ImageServiceInterfaceV2
 {
@@ -25,7 +25,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
     ): ?string {
         $file = request()->file(key: $name);
 
-        if (!$file || !$file->isValid()) {
+        if (! $file || ! $file->isValid()) {
             return $this->getActualImageName(name: $defaultImage, path: $path, disk: $disk);
         }
 
@@ -53,7 +53,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      */
     public function delete(string $path, ?string $image, string $disk = 'storage.local'): bool
     {
-        if (!$image) {
+        if (! $image) {
             return false;
         }
 
@@ -143,7 +143,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      */
     public function getImageCastUrl(?string $image, string $path, ?string $disk = 'storage.public'): string
     {
-        if (!$image) {
+        if (! $image) {
             return $this->getPlaceholderImage();
         }
 
@@ -164,7 +164,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
         $filename = $this->generateFilename($options->file);
         $disk = $this->setDiskName($options->disk);
 
-        if (!$this->isInterventionAvailable()) {
+        if (! $this->isInterventionAvailable()) {
             return $this->handleWithoutIntervention(options: $options, filename: $filename, disk: $disk);
         }
 
@@ -199,7 +199,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
         if (in_array(needle: $disk, haystack: ['s3', 'public', 'local'])) {
             Storage::disk(name: $this->setDiskName($disk))->put(path: "$options->path/$filename", contents: (string) $image);
         } else {
-            if (!file_exists(filename: public_path($options->path))) {
+            if (! file_exists(filename: public_path($options->path))) {
                 mkdir(directory: public_path($options->path), permissions: 0755, recursive: true);
             }
 
@@ -231,7 +231,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      */
     private function generateFilename(UploadedFile $file): string
     {
-        return $this->isInterventionAvailable() ? str()->random(30) . '.webp' : $file->hashName();
+        return $this->isInterventionAvailable() ? str()->random(30).'.webp' : $file->hashName();
     }
 
     /**
@@ -272,9 +272,9 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      * parameters, and checks if the image exists on the specified disk. If the image
      * does not exist or if no name is provided, it returns null.
      */
-    protected function getActualImageName(string $name = null, string $path, string $disk = 'public'): ?string
+    protected function getActualImageName(?string $name, string $path, string $disk = 'public'): ?string
     {
-        if (!$name) {
+        if (! $name) {
             return null;
         }
 
@@ -288,7 +288,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
             default => file_exists(filename: public_path($fullPath)),
         };
 
-        if (!$exists) {
+        if (! $exists) {
             return null;
         }
 

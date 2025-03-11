@@ -39,7 +39,7 @@ class ShowViewGenerator
      */
     private function generateTableRows(array $request, string $model, string $modelName): string
     {
-        $row = "";
+        $row = '';
         $totalFields = count(value: $request['fields']);
         $dateTimeFormat = config(key: 'generator.format.datetime', default: 'Y-m-d H:i:s');
 
@@ -63,7 +63,7 @@ class ShowViewGenerator
     {
         $fieldUcWords = GeneratorUtils::cleanUcWords(string: $field);
         $fieldSnakeCase = str(string: $field)->snake();
-        $row = "";
+        $row = '';
 
         if (isset($request['file_types'][$i]) && $request['file_types'][$i] === 'image') {
             $row .= $this->generateImageRow(field: $field, model: $model, fieldUcWords: $fieldUcWords);
@@ -73,7 +73,7 @@ class ShowViewGenerator
                 'date' => $this->generateDateRow(request: $request, i: $i, modelName: $modelName, fieldUcWords: $fieldUcWords, fieldSnakeCase: $fieldSnakeCase),
                 'dateTime' => "<tr>
                                 <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                                <td>{{ isset($" . $modelName . "->$fieldSnakeCase) ? $" . $modelName . "->" . $fieldSnakeCase . "?->format(\"$dateTimeFormat\") : '' }}</td>
+                                <td>{{ isset($".$modelName."->$fieldSnakeCase) ? $".$modelName.'->'.$fieldSnakeCase."?->format(\"$dateTimeFormat\") : '' }}</td>
                                </tr>",
                 'boolean' => $this->generateBooleanRow(field: $field, model: $model),
                 'time' => $this->generateTimeRow(modelName: $modelName, fieldUcWords: $fieldUcWords, fieldSnakeCase: $fieldSnakeCase),
@@ -91,7 +91,7 @@ class ShowViewGenerator
 
             return "<tr>
                     <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                    <td>{{ isset($" . $modelName . "->$fieldSnakeCase) ? $" . $modelName . "->" . $fieldSnakeCase . "?->format(\"$weekFormat\") : '' }}</td>
+                    <td>{{ isset($".$modelName."->$fieldSnakeCase) ? $".$modelName.'->'.$fieldSnakeCase."?->format(\"$weekFormat\") : '' }}</td>
                 </tr>";
         }
 
@@ -101,7 +101,7 @@ class ShowViewGenerator
 
         return "<tr>
                     <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                    <td>{{ $" . $modelName . "->$fieldSnakeCase }}</td>
+                    <td>{{ $".$modelName."->$fieldSnakeCase }}</td>
                 </tr>";
     }
 
@@ -152,8 +152,8 @@ class ShowViewGenerator
         $constrainModel = GeneratorUtils::setModelName(model: $request['constrains'][$i], style: 'default');
 
         return "<tr>
-                    <td class=\"fw-bold\">{{ __('" . GeneratorUtils::cleanSingularUcWords(string: $constrainModel) . "') }}</td>
-                    <td>{{ $" . $modelName . "->" . GeneratorUtils::singularSnakeCase(string: $constrainModel) . " ? $" . $modelName . "->" . GeneratorUtils::singularSnakeCase(string: $constrainModel) . "->" . GeneratorUtils::getColumnAfterId($constrainModel) . " : '' }}</td>
+                    <td class=\"fw-bold\">{{ __('".GeneratorUtils::cleanSingularUcWords(string: $constrainModel)."') }}</td>
+                    <td>{{ $".$modelName.'->'.GeneratorUtils::singularSnakeCase(string: $constrainModel).' ? $'.$modelName.'->'.GeneratorUtils::singularSnakeCase(string: $constrainModel).'->'.GeneratorUtils::getColumnAfterId($constrainModel)." : '' }}</td>
                 </tr>";
     }
 
@@ -169,7 +169,7 @@ class ShowViewGenerator
 
         return "<tr>
                     <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                    <td>{{ isset($" . $modelName . "->$fieldSnakeCase) ? $" . $modelName . "->" . $fieldSnakeCase . "?->format(\"$dateFormat\") : '' }}</td>
+                    <td>{{ isset($".$modelName."->$fieldSnakeCase) ? $".$modelName.'->'.$fieldSnakeCase."?->format(\"$dateFormat\") : '' }}</td>
                 </tr>";
     }
 
@@ -182,7 +182,7 @@ class ShowViewGenerator
 
         return "<tr>
                     <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
-                    <td>{{ isset($" . $modelName . "->$fieldSnakeCase) ? $" . $modelName . "->" . $fieldSnakeCase . "?->format(\"$timeFormat\") : '' }}</td>
+                    <td>{{ isset($".$modelName."->$fieldSnakeCase) ? $".$modelName.'->'.$fieldSnakeCase."?->format(\"$timeFormat\") : '' }}</td>
                 </tr>";
     }
 
@@ -191,7 +191,7 @@ class ShowViewGenerator
      */
     private function saveTemplate(string $template, string $path, string $modelName): void
     {
-        $viewPath = $path ? resource_path(path: "/views/" . strtolower(string: $path) . "/$modelName") : resource_path(path: "/views/$modelName");
+        $viewPath = $path ? resource_path(path: '/views/'.strtolower(string: $path)."/$modelName") : resource_path(path: "/views/$modelName");
         GeneratorUtils::checkFolder(path: $viewPath);
         file_put_contents(filename: "$viewPath/show.blade.php", data: $template);
     }

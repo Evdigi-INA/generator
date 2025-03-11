@@ -75,8 +75,8 @@ return [
         /*
          * Change this if you want to name the related pivots other than defaults
          */
-        'role_pivot_key' => null, //default 'role_id',
-        'permission_pivot_key' => null, //default 'permission_id',
+        'role_pivot_key' => null, // default 'role_id',
+        'permission_pivot_key' => null, // default 'permission_id',
 
         /*
          * Change this if you want to name the related model primary key other than
@@ -195,7 +195,7 @@ return [
                 'user create',
                 'user edit',
                 'user delete',
-            ]
+            ],
         ],
         [
             'group' => 'roles & permissions',
@@ -204,13 +204,13 @@ return [
                 'role & permission create',
                 'role & permission edit',
                 'role & permission delete',
-            ]
+            ],
         ],
         [
             'group' => 'tests',
             'access' => [
                 'test view',
-            ]
+            ],
         ],
     ],
 ];

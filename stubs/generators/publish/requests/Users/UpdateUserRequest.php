@@ -24,10 +24,10 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'min:3', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email,' . $this?->user?->id ?? request()->segment(2)],
+            'email' => ['required', 'email', 'unique:users,email,'.$this?->user?->id ?? request()->segment(2)],
             'avatar' => ['nullable', 'image', 'max:1024'],
             'role' => ['required', 'exists:roles,id'],
-            'password' =>  $this->passwordRules()
+            'password' => $this->passwordRules(),
         ];
     }
 }

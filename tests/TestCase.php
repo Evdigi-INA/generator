@@ -2,20 +2,16 @@
 
 namespace Tests;
 
-use Orchestra\Testbench\Concerns\WithWorkbench;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Orchestra\Testbench\Attributes\WithMigration;
+use Orchestra\Testbench\Concerns\WithWorkbench;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\CommandTest;
-use Tests\GeneratorTest;
-use Tests\GeneratorUtilsTest;
-use Tests\HelperTest;
 
 #[WithMigration]
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-    use WithWorkbench, InteractsWithViews, RefreshDatabase;
+    use InteractsWithViews, RefreshDatabase, WithWorkbench;
 
     /**
      * Setup the test environment.
@@ -56,7 +52,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function defineEnvironment($app)
     {
         $app['config']->set('view.paths', [
-            __DIR__ . '/views',
+            __DIR__.'/views',
             resource_path('views'),
         ]);
 
@@ -64,14 +60,14 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
 
         $app['config']->set('filesystems.disks.unit-downloads', [
             'driver' => 'local',
-            'root' => __DIR__ . '/fixtures',
+            'root' => __DIR__.'/fixtures',
         ]);
     }
 

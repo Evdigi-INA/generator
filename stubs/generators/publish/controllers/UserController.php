@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Yajra\DataTables\Facades\DataTables;
 use App\Generators\Services\ImageServiceV2;
-use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
-use App\Http\Requests\Users\{StoreUserRequest, UpdateUserRequest};
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\Users\StoreUserRequest;
+use App\Http\Requests\Users\UpdateUserRequest;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller implements HasMiddleware
 {
@@ -43,7 +45,7 @@ class UserController extends Controller implements HasMiddleware
 
             return Datatables::of($users)
                 ->addColumn('action', 'users.include.action')
-                ->addColumn('role', fn($row) => $row->getRoleNames()->toArray() !== [] ? $row->getRoleNames()[0] : '-')
+                ->addColumn('role', fn ($row) => $row->getRoleNames()->toArray() !== [] ? $row->getRoleNames()[0] : '-')
                 ->toJson();
         }
 
@@ -107,7 +109,7 @@ class UserController extends Controller implements HasMiddleware
             $validated = $request->validated();
             $validated['avatar'] = $this->imageServiceV2->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user?->avatar);
 
-            if (!$request->password) {
+            if (! $request->password) {
                 unset($validated['password']);
             } else {
                 $validated['password'] = bcrypt($request->password);
