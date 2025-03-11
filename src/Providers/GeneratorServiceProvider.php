@@ -70,10 +70,15 @@ class GeneratorServiceProvider extends ServiceProvider
             __DIR__.'/../../stubs/generators/publish/requests/Auth' => app_path('Http/Requests/Auth'),
         ], 'generator-request-api');
 
-        // Api Auth Controller
+        // API Controller
         $this->publishes([
-            __DIR__.'/../../stubs/generators/publish/controllers/AuthController.php' => app_path('Http/Controllers/Api/AuthController.php'),
+            __DIR__.'/../../stubs/generators/publish/controllers/api' => app_path('Http/Controllers/Api'),
         ], 'generator-controller-api');
+
+        // Role and user resources API
+        $this->publishes([
+            __DIR__.'/../../stubs/generators/publish/resources' => app_path('Http/Resources'),
+        ], 'generator-role-user-resource-api');
 
         // Actions fortify
         $this->publishes([
