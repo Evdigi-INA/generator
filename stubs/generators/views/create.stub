@@ -33,15 +33,17 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
+                            {{exportButton}}
+
                             <form action="{{ route('{{modelNamePluralKebabCase}}.store') }}" method="POST"{{enctype}}>
                                 @csrf
                                 @method('POST')
 
                                 @include('{{viewPath}}{{modelNamePluralKebabCase}}.include.form')
 
-                                <a href="{{ route('{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
+                                <a href="{{ route('{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary mt-2">{{ __('Back') }}</a>
 
-                                <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
+                                <button type="submit" class="btn btn-primary mt-2">{{ __('Save') }}</button>
                             </form>
                         </div>
                     </div>

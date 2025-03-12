@@ -6,7 +6,7 @@ use {{requestPath}};
 use Illuminate\Contracts\View\View;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\{JsonResponse, RedirectResponse};
-use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};{{useExportNamespace}}
 
 class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
 {
@@ -16,9 +16,9 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     public static function middleware(): array
     {
         return [
-            // '{{middlewareName}}',
+            // {{middlewareName}}
 
-            // TODO: uncomment this code if you are using spatie permission
+            // TODO: uncomment this code below if you are using spatie permission
             // new Middleware('permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
             // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
             // new Middleware('permission:{{modelNameSpaceLowercase}} edit', only: ['edit', 'update']),

@@ -1,0 +1,6 @@
+                                    <tr>
+                                        <td class="fw-bold">{{ __('{{fieldUcWords}}') }}</td>
+                                        <td>
+                                            <img src="{{ ${{modelCamelCase}}->{{fieldSnakeCase}} }}" alt="{{fieldUcWords}}" class="rounded img-fluid" style="object-fit: cover; width: 350px; height: 200px;" />
+                                        </td>
+                                    </tr>

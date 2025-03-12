@@ -12,7 +12,6 @@
                         {{ __('Detail of {{modelNameSingularLowerCase}}.') }}
                     </p>
                 </div>
-
                 <x-breadcrumb>
                     <li class="breadcrumb-item">
                         <a href="/">{{ __('Dashboard') }}</a>
@@ -26,7 +25,6 @@
                 </x-breadcrumb>
             </div>
         </div>
-
         <section class="section">
             <div class="row">
                 <div class="col-md-12">
@@ -34,7 +32,7 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-hover table-striped">
-                                    {{trs}}
+                                    {{row}}
                                     <tr>
                                         <td class="fw-bold">{{ __('Created at') }}</td>
                                         <td>{{ ${{modelNameSingularCamelCase}}->created_at->format('{{dateTimeFormat}}') }}</td>
@@ -45,7 +43,6 @@
                                     </tr>
                                 </table>
                             </div>
-
                             <a href="{{ route('{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary">{{ __('Back') }}</a>
                         </div>
                     </div>

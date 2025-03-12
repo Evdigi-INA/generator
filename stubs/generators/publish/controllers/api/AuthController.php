@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\{LoginRequest, RegisterRequest};
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\{Auth, Hash};
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -14,12 +16,11 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $user = User::where('email', $request->email)->first();
-
         $credentials = $request->only(['email', 'password']);
 
-        if (!Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials)) {
             return response()->json([
-                'message' => 'These credentials do not match our records.'
+                'message' => 'These credentials do not match our records.',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -35,13 +36,10 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $validated = $request->validated();
-
+        $validated['password'] = Hash::make($request->password);
         unset($validated['password_confirmation']);
 
-        $validated['password'] = Hash::make($request->password);
-
         $user = User::create($validated);
-
         $token = $user->createToken('apiToken')->plainTextToken;
 
         return response()->json([
@@ -53,7 +51,7 @@ class AuthController extends Controller
 
     public function logout(): JsonResponse
     {
-        auth()->user()->tokens()->delete();
+        Auth::user()->tokens()->delete();
 
         return response()->json(['message' => 'Successfully logged out'], Response::HTTP_OK);
     }
@@ -62,7 +60,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'message' => 'Authenticated',
-            'user' => auth()->user(),
+            'user' => Auth::user(),
         ], Response::HTTP_OK);
     }
 }

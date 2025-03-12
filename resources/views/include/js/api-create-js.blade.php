@@ -2,6 +2,8 @@
     let selectMenu = $('#select-menu')
     let colNewMenu = $('#col-new-menu')
     let uri = '{{ request()->segment(1) }}'
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
     $('#btn-add').click(function() {
         let table = $('#tbl-field tbody')
@@ -213,7 +215,7 @@
                 <option value="text">Text</option>
                 <option value="textarea">Textarea</option>
                 <option value="email">Email</option>
-                <option value="tel">Telepon</option>
+                <option value="tel">Telephone</option>
                 <option value="password">Password</option>
                 <option value="url">Url</option>
                 <option value="search">Search</option>
@@ -261,7 +263,7 @@
                 <option value="" disabled selected>-- Select input type --</option>
                 <option value="text">Text</option>
                 <option value="email">Email</option>
-                <option value="tel">Telepon</option>
+                <option value="tel">Telephone</option>
                 <option value="url">Url</option>
                 <option value="week">Week</option>
                 <option value="color">Color</option>
@@ -386,12 +388,12 @@
             switchRequired.prop('checked', false)
             switchRequired.prop('disabled', true)
             addInputTypeHidden(index)
-        }else if(
+        } else if (
             $(this).val() == 'time' ||
             $(this).val() == 'week' ||
             $(this).val() == 'color' ||
             $(this).val() == 'datetime-local'
-        ){
+        ) {
             minLength.prop('readonly', true)
             maxLength.prop('readonly', true)
             minLength.val('')

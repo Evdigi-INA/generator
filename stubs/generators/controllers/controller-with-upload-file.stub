@@ -5,15 +5,15 @@ use {{modelPath}};
 use {{requestPath}};
 use Illuminate\Contracts\View\View;
 use Yajra\DataTables\Facades\DataTables;
-use App\Generators\Services\ImageService;
+use App\Generators\Services\ImageServiceV2;
 use Illuminate\Http\{JsonResponse, RedirectResponse};
-use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};{{useExportNamespace}}
 
 class {{modelNameSingularPascalCase}}Controller extends Controller implements HasMiddleware
 {
-    public function __construct(public ImageService $imageService{{uploadPaths}})
+    public function __construct(public ImageServiceV2 $imageServiceV2, {{uploadPaths}}public string $disk = '{{disk}}')
     {
-        {{assignUploadPaths}}
+        //
     }
 
     /**
@@ -22,9 +22,9 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     public static function middleware(): array
     {
         return [
-            // '{{middlewareName}}',
+            // {{middlewareName}}
 
-            // TODO: uncomment this code if you are using spatie permission
+            // TODO: uncomment this code below if you are using spatie permission
             // new Middleware('permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
             // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
             // new Middleware('permission:{{modelNameSpaceLowercase}} edit', only: ['edit', 'update']),
@@ -42,7 +42,6 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
 
             return Datatables::of(${{modelNamePluralCamelCase}})
                 {{addColumns}}
-{{indexCode}}
                 ->addColumn('action', '{{viewPath}}{{modelNamePluralKebabCase}}.include.action')
                 ->toJson();
         }
@@ -115,4 +114,5 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameCleanSingular}} can't be deleted because it's related to another table."));
         }
     }
+    {{exportFunction}}
 }

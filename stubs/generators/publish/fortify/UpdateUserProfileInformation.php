@@ -2,7 +2,7 @@
 
 namespace App\Actions\Fortify;
 
-use App\Generators\Services\ImageService;
+use App\Generators\Services\ImageServiceV2;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
@@ -11,16 +11,9 @@ use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
 
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
-    public function __construct(public string $avatarPath = '')
+    public function __construct(public string $avatarPath = 'avatars', public string $disk = 'storage.public')
     {
-        // storage
-        $this->avatarPath = storage_path('app/public/uploads/avatars/');
-
-        // public
-        // $this->avatarPath = public_path('uploads/avatars/');
-
-        // s3
-        // $this->avatarPath = '/avatars/';
+        //
     }
 
     /**
@@ -37,12 +30,11 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
-            'avatar' => ['nullable', 'image', 'max:1024']
+            'avatar' => ['nullable', 'image', 'max:1024'],
         ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['avatar']) && $input['avatar']->isValid()) {
-
-            $filename = (new ImageService)->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user->avatar);
+            $filename = (new ImageServiceV2)->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user?->avatar);
 
             $user->forceFill(['avatar' => $filename])->save();
         }

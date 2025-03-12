@@ -1,0 +1,13 @@
+                                    <tr>
+                                        <td class="fw-bold">{{ __('{{fieldUcWords}}') }}</td>
+                                        <td>
+                                            <div class="d-flex justify-content-start align-items-center">
+                                                <div class="rounded"
+                                                    style="height: 50px; width: 50px; background-color: {{ ${{modelCamelCase}}->{{fieldSnakeCase}} }}">
+                                                </div>
+                                                <p class="pt-3 ps-2">{{ ${{modelCamelCase}}->{{fieldSnakeCase}} }}</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    

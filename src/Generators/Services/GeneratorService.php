@@ -3,32 +3,28 @@
 namespace EvdigiIna\Generator\Generators\Services;
 
 use EvdigiIna\Generator\Enums\GeneratorVariant;
+use EvdigiIna\Generator\Generators\ControllerGenerator;
+use EvdigiIna\Generator\Generators\ExportExcelGenerator;
+use EvdigiIna\Generator\Generators\FactoryGenerator;
+use EvdigiIna\Generator\Generators\GeneratorUtils;
 use EvdigiIna\Generator\Generators\Interfaces\GeneratorServiceInterface;
+use EvdigiIna\Generator\Generators\MenuGenerator;
+use EvdigiIna\Generator\Generators\MigrationGenerator;
+use EvdigiIna\Generator\Generators\ModelGenerator;
+use EvdigiIna\Generator\Generators\PermissionGenerator;
+use EvdigiIna\Generator\Generators\RequestGenerator;
+use EvdigiIna\Generator\Generators\ResourceApiGenerator;
+use EvdigiIna\Generator\Generators\RouteGenerator;
+use EvdigiIna\Generator\Generators\SeederGenerator;
+use EvdigiIna\Generator\Generators\ViewComposerGenerator;
+use EvdigiIna\Generator\Generators\Views\ActionViewGenerator;
+use EvdigiIna\Generator\Generators\Views\CreateViewGenerator;
+use EvdigiIna\Generator\Generators\Views\EditViewGenerator;
+use EvdigiIna\Generator\Generators\Views\FormViewGenerator;
+use EvdigiIna\Generator\Generators\Views\IndexViewGenerator;
+use EvdigiIna\Generator\Generators\Views\ShowViewGenerator;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
-use EvdigiIna\Generator\Generators\{
-    ControllerGenerator,
-    ExportExcelGenerator,
-    FactoryGenerator,
-    GeneratorUtils,
-    MenuGenerator,
-    ModelGenerator,
-    MigrationGenerator,
-    PermissionGenerator,
-    RequestGenerator,
-    ResourceApiGenerator,
-    RouteGenerator,
-    SeederGenerator,
-    ViewComposerGenerator
-};
-use EvdigiIna\Generator\Generators\Views\{
-    ActionViewGenerator,
-    CreateViewGenerator,
-    EditViewGenerator,
-    FormViewGenerator,
-    IndexViewGenerator,
-    ShowViewGenerator,
-};
 
 class GeneratorService implements GeneratorServiceInterface
 {
@@ -37,14 +33,11 @@ class GeneratorService implements GeneratorServiceInterface
      */
     public function generate(array $request): void
     {
-        if (GeneratorUtils::isGenerateApi() && !$this->apiRouteAlreadyExists()) {
-            abort(Response::HTTP_FORBIDDEN, 'You have not yet installed the API, to use this feature, you must be running the artisan command: "php artisan install:api".');
+        if (GeneratorUtils::isGenerateApi() && ! $this->apiRouteAlreadyExists()) {
+            abort(code: Response::HTTP_FORBIDDEN, message: 'You have not yet installed the API, to use this feature, you must be running the artisan command: "php artisan install:api".');
         }
 
-        if (empty($request['is_simple_generator'])) {
-            (new PermissionGenerator)->generate($request);
-        }
-
+        (new PermissionGenerator)->generate($request);
         (new ModelGenerator)->generate($request);
         (new MigrationGenerator)->generate($request);
         (new ControllerGenerator)->generate($request);
@@ -64,36 +57,20 @@ class GeneratorService implements GeneratorServiceInterface
                 (new ActionViewGenerator)->generate($request);
             }
 
-            if (empty($request['is_simple_generator']) && !GeneratorUtils::isGenerateApi()) {
-                (new MenuGenerator)->generate($request);
-            }
-
-            if (in_array('foreignId', $request['column_types'], true)) {
-                (new ViewComposerGenerator)->generate($request);
-            }
+            (new MenuGenerator)->generate($request);
+            (new ViewComposerGenerator)->generate($request);
         }
 
         (new RouteGenerator)->generate($request);
-
-        if (isset($request['generate_seeder'])) {
-            (new SeederGenerator)->generate($request);
-        }
-
-        if (isset($request['generate_factory'])) {
-            (new FactoryGenerator)->generate($request);
-        }
-
-        if (GeneratorUtils::isGenerateApi()) {
-            (new ResourceApiGenerator)->generate($request);
-        }
+        (new SeederGenerator)->generate($request);
+        (new FactoryGenerator)->generate($request);
+        (new ResourceApiGenerator)->generate($request);
 
         if ((empty($request['generate_variant']) && $request['generate_variant'] !== 'api') || empty($request['is_simple_generator'])) {
             $this->checkSidebarType();
         }
 
-        if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
-            (new ExportExcelGenerator)->generate($request);
-        }
+        (new ExportExcelGenerator)->generate($request);
 
         Artisan::call('migrate');
     }
@@ -104,16 +81,9 @@ class GeneratorService implements GeneratorServiceInterface
     public function onlyGenerateModelAndMigration(array $request): void
     {
         (new ModelGenerator)->generate($request);
-
         (new MigrationGenerator)->generate($request);
-
-        if (isset($request['generate_seeder'])) {
-            (new SeederGenerator)->generate($request);
-        }
-
-        if (isset($request['generate_factory'])) {
-            (new FactoryGenerator)->generate($request);
-        }
+        (new SeederGenerator)->generate($request);
+        (new FactoryGenerator)->generate($request);
     }
 
     /**
@@ -121,7 +91,7 @@ class GeneratorService implements GeneratorServiceInterface
      */
     public function getSidebarMenusByIndex(int $index): array
     {
-        abort_if(!request()->ajax(), Response::HTTP_FORBIDDEN);
+        abort_if(! request()->ajax(), Response::HTTP_FORBIDDEN);
 
         return config('generator.sidebars')[$index];
     }
@@ -134,7 +104,7 @@ class GeneratorService implements GeneratorServiceInterface
         $sidebar = file_get_contents(resource_path('views/layouts/sidebar.blade.php'));
 
         /** if the sidebar is static, then must be regenerated to update new menus */
-        if (!str($sidebar)->contains("\$permissions = empty(\$menu['permission'])")) {
+        if (! str($sidebar)->contains("\$permissions = empty(\$menu['permission'])")) {
             Artisan::call('generator:sidebar dynamic');
         }
     }
@@ -144,15 +114,15 @@ class GeneratorService implements GeneratorServiceInterface
      */
     public function apiRouteAlreadyExists(): bool
     {
-        $bootstrapApp = file_get_contents(base_path("/bootstrap/app.php"));
+        $bootstrapApp = file_get_contents(base_path('/bootstrap/app.php'));
 
-        $checkApiRoute = (bool) str_contains($bootstrapApp, "api") && str_contains($bootstrapApp, "api.php") && str_contains($bootstrapApp, "api:");
+        $checkApiRoute = (bool) str_contains($bootstrapApp, 'api') && str_contains($bootstrapApp, 'api.php') && str_contains($bootstrapApp, 'api:');
 
-        $composerJson = file_get_contents(base_path("/composer.json"));
+        $composerJson = file_get_contents(base_path('/composer.json'));
 
-        $checkLaravelSanctum = str_contains($composerJson, "sanctum");
+        $checkLaravelSanctum = str_contains($composerJson, 'sanctum');
 
-        return $checkApiRoute && file_exists(base_path("/routes/api.php")) && $checkLaravelSanctum;
+        return $checkApiRoute && file_exists(base_path('/routes/api.php')) && $checkLaravelSanctum;
     }
 
     /**
@@ -224,7 +194,7 @@ class GeneratorService implements GeneratorServiceInterface
             'mediumInteger',
             'tinyText',
             'mediumText',
-            'longText'
+            'longText',
         ];
     }
 }

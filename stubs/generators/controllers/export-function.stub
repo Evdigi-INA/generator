@@ -1,5 +1,7 @@
-
-    public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    /**
+     * Download an Excel file containing all records.
+     */
+    public function export(): BinaryFileResponse
     {
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\{{modelPluralPascalCase}}Export, '{{modelPluralKebabCase}}.xlsx');
+        return (new {{modelPluralPascalCase}}Export)->download('{{modelPluralKebabCase}}.xlsx');
     }

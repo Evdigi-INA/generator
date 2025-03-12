@@ -11,8 +11,8 @@ class IndexViewGenerator
      */
     public function generate(array $request): void
     {
-        $model = GeneratorUtils::setModelName($request['model'], 'default');
-        $path = GeneratorUtils::getModelLocation($request['model']);
+        $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
+        $path = GeneratorUtils::getModelLocation(model: $request['model']);
 
         $modelNamePluralUcWords = GeneratorUtils::cleanPluralUcWords($model);
         $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase($model);
@@ -30,7 +30,7 @@ class IndexViewGenerator
                  * <th>{{ __('Price') }}</th>
                  */
                 if ($request['column_types'][$i] != 'foreignId') {
-                    $thColumns .= "<th>{{ __('" . GeneratorUtils::cleanUcWords($field) . "') }}</th>";
+                    $thColumns .= "<th>{{ __('".GeneratorUtils::cleanUcWords($field)."') }}</th>";
                 }
 
                 if ($request['input_types'][$i] == 'file') {
@@ -41,34 +41,48 @@ class IndexViewGenerator
                      *    name: 'photo',
                      *    orderable: false,
                      *    searchable: false,
-                     *    render: function(data, type, full, meta) {
+                     *    render: function(data) {
                      *        return `<div class="avatar">
-                     *            <img src="${data}" alt="Photo">
+                     *            <img src="${data}" alt="Photo"/>
                      *        </div>`;
                      *    }
                      * },
                      */
-
                     $imgStyle = '';
-                    if (isset($request['is_simple_generator']))
+                    if (isset($request['is_simple_generator'])) {
                         $imgStyle = 'class="rounded" width="50" height="40" style="object-fit: cover"';
+                    }
 
                     $tdColumns .= "{
-                    data: '" . str()->snake($field) . "',
-                    name: '" . str()->snake($field) . "',
+                    data: '".str()->snake($field)."',
+                    name: '".str()->snake($field)."',
                     orderable: false,
                     searchable: false,
-                    render: function(data, type, full, meta) {
+                    render: function(data) {
                         return `<div class=\"avatar\">
-                            <img src=\"" . '$' . "{data}\" alt=\"" . GeneratorUtils::cleanSingularUcWords($field) . "\" $imgStyle>
+                            <img src=\"".'$'.'{data}" alt="'.GeneratorUtils::cleanSingularUcWords($field)."\" $imgStyle />
                         </div>`;
                         }
                     },";
+                } elseif ($request['input_types'][$i] == 'color') {
+                    $tdColumns .= GeneratorUtils::replaceStub(
+                        replaces: [
+                            'fieldSnakeCase' => str()->snake($field),
+                        ],
+                        stubName: 'views/index/color'
+                    );
+                } elseif ($request['column_types'][$i] == 'boolean') {
+                    $tdColumns .= GeneratorUtils::replaceStub(
+                        replaces: [
+                            'fieldSnakeCase' => str()->snake($field),
+                        ],
+                        stubName: 'views/index/boolean'
+                    );
                 } elseif ($request['column_types'][$i] == 'foreignId') {
                     // remove '/' or sub folders
                     $constrainModel = GeneratorUtils::setModelName($request['constrains'][$i], 'default');
 
-                    $thColumns .= "<th>{{ __('" . GeneratorUtils::cleanSingularUcWords($constrainModel) . "') }}</th>";
+                    $thColumns .= "<th>{{ __('".GeneratorUtils::cleanSingularUcWords($constrainModel)."') }}</th>";
 
                     /**
                      * will generate something like:
@@ -78,8 +92,8 @@ class IndexViewGenerator
                      * }
                      */
                     $tdColumns .= "{
-                    data: '" . GeneratorUtils::singularSnakeCase($constrainModel) . "',
-                    name: '" . GeneratorUtils::singularSnakeCase($constrainModel) . "." . GeneratorUtils::getColumnAfterId($constrainModel) . "'
+                    data: '".GeneratorUtils::singularSnakeCase($constrainModel)."',
+                    name: '".GeneratorUtils::singularSnakeCase($constrainModel).'.'.GeneratorUtils::getColumnAfterId($constrainModel)."'
                 },";
                 } else {
                     /**
@@ -90,8 +104,8 @@ class IndexViewGenerator
                      * }
                      */
                     $tdColumns .= "{
-                    data: '" . str()->snake($field) . "',
-                    name: '" . str()->snake($field) . "',
+                    data: '".str()->snake($field)."',
+                    name: '".str()->snake($field)."',
                 },";
                 }
 
@@ -103,26 +117,17 @@ class IndexViewGenerator
             }
         }
 
-        $template = str_replace(
-            [
-                '{{modelNamePluralUcWords}}',
-                '{{modelNamePluralKebabCase}}',
-                '{{modelNameSingularLowerCase}}',
-                '{{modelNamePluralLowerCase}}',
-                '{{thColumns}}',
-                '{{tdColumns}}',
-                '{{exportButton}}',
+        $template = GeneratorUtils::replaceStub(
+            replaces: [
+                'modelNamePluralUcWords' => $modelNamePluralUcWords,
+                'modelNamePluralKebabCase' => $modelNamePluralKebabCase,
+                'modelNameSingularLowerCase' => $modelNameSingularLowercase,
+                'modelNamePluralLowerCase' => $modelNamePluralLowerCase,
+                'thColumns' => $thColumns,
+                'tdColumns' => $tdColumns,
+                'exportButton' => $this->generateExportButton(request: $request),
             ],
-            [
-                $modelNamePluralUcWords,
-                $modelNamePluralKebabCase,
-                $modelNameSingularLowercase,
-                $modelNamePluralLowerCase,
-                $thColumns,
-                $tdColumns,
-                $this->generateExportButton($request),
-            ],
-            empty($request['is_simple_generator']) ? GeneratorUtils::getStub('views/index') : GeneratorUtils::getStub('views/simple/index')
+            stubName: empty($request['is_simple_generator']) ? 'views/index' : 'views/simple/index'
         );
 
         switch ($path) {
@@ -131,9 +136,9 @@ class IndexViewGenerator
                 file_put_contents(resource_path("/views/$modelNamePluralKebabCase/index.blade.php"), $template);
                 break;
             default:
-                $fullPath = resource_path("/views/" . strtolower($path) . "/$modelNamePluralKebabCase");
+                $fullPath = resource_path('/views/'.strtolower($path)."/$modelNamePluralKebabCase");
                 GeneratorUtils::checkFolder($fullPath);
-                file_put_contents($fullPath . "/index.blade.php", $template);
+                file_put_contents("$fullPath/index.blade.php", $template);
                 break;
         }
     }
@@ -141,10 +146,12 @@ class IndexViewGenerator
     public function generateExportButton(array $request): string
     {
         if (isset($request['generate_export']) && $request['generate_export'] == 'on') {
-            return str_replace(
-                search: ['{{modelNamePluralKebabCase}}', '{{modelNameSingularClean}}'],
-                replace: [GeneratorUtils::pluralKebabCase(string: $request['model']), GeneratorUtils::cleanSingularUcWords(string: $request['model'])],
-                subject: GeneratorUtils::getStub(path: 'views/export-button')
+            return GeneratorUtils::replaceStub(
+                replaces: [
+                    'modelNamePluralKebabCase' => GeneratorUtils::pluralKebabCase($request['model']),
+                    'modelNameSingularClean' => GeneratorUtils::cleanSingularLowerCase($request['model']),
+                ],
+                stubName: 'views/export-button'
             );
         }
 

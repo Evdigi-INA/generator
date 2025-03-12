@@ -2,13 +2,16 @@
 
 namespace App\Providers;
 
-use App\Actions\Fortify\{CreateNewUser, ResetUserPassword, UpdateUserPassword, UpdateUserProfileInformation};
+use App\Actions\Fortify\CreateNewUser;
+use App\Actions\Fortify\ResetUserPassword;
+use App\Actions\Fortify\UpdateUserPassword;
+use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Fortify\Fortify;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -36,17 +39,17 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($throttleKey);
         });
 
-        RateLimiter::for('two-factor', fn (Request $request)  => Limit::perMinute(5)->by($request->session()->get('login.id')));
+        RateLimiter::for('two-factor', fn (Request $request) => Limit::perMinute(5)->by($request->session()->get('login.id')));
 
         Fortify::registerView(fn () => view('auth.register'));
 
-        Fortify::loginView(fn() => view('auth.login'));
+        Fortify::loginView(fn () => view('auth.login'));
 
-        Fortify::confirmPasswordView(fn() => view('auth.confirm-password'));
+        Fortify::confirmPasswordView(fn () => view('auth.confirm-password'));
 
         Fortify::twoFactorChallengeView(fn () => view('auth.two-factor-challenge'));
 
-        Fortify::requestPasswordResetLinkView(fn() => view('auth.forgot-password'));
+        Fortify::requestPasswordResetLinkView(fn () => view('auth.forgot-password'));
 
         Fortify::resetPasswordView(fn (Request $request) => view('auth.reset-password', ['request' => $request]));
     }

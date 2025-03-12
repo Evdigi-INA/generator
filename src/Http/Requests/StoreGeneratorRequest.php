@@ -5,8 +5,8 @@ namespace EvdigiIna\Generator\Http\Requests;
 use EvdigiIna\Generator\Enums\GeneratorType;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
 use EvdigiIna\Generator\Generators\Services\GeneratorService;
-use Illuminate\Validation\Rules\Enum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreGeneratorRequest extends FormRequest
 {
@@ -63,7 +63,7 @@ class StoreGeneratorRequest extends FormRequest
             'select_options.*' => ['nullable', 'required_if:column_types.*,enum'],
             'constrains.*' => ['nullable', 'required_if:column_types.*,foreignId'],
             'file_types.*' => ['nullable', 'required_if:input_types.*,file', 'in:image,mimes'],
-            'column_types.*' => ['required', 'in:' . implode(',', (new GeneratorService)->columnTypes())],
+            'column_types.*' => ['required', 'in:'.implode(',', (new GeneratorService)->columnTypes())],
             'on_update_foreign.*' => ['nullable'],
             'on_delete_foreign.*' => ['nullable'],
             'new_header' => ['nullable'],
@@ -77,7 +77,7 @@ class StoreGeneratorRequest extends FormRequest
             'generate_export' => ['nullable'],
         ];
 
-        if(GeneratorUtils::isGenerateApi() || request()->input('generate_type') == GeneratorType::ONLY_MODEL_AND_MIGRATION->value) {
+        if (GeneratorUtils::isGenerateApi() || request()->input('generate_type') == GeneratorType::ONLY_MODEL_AND_MIGRATION->value) {
             return $validations;
         }
 

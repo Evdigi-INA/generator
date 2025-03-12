@@ -2,18 +2,17 @@
 
 namespace EvdigiIna\Generator\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Log;
 use EvdigiIna\Generator\Enums\GeneratorType;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Symfony\Component\HttpFoundation\Response;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use EvdigiIna\Generator\Http\Requests\StoreGeneratorRequest;
 use EvdigiIna\Generator\Generators\Services\GeneratorService;
+use EvdigiIna\Generator\Http\Requests\StoreGeneratorRequest;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller as BaseController;
+use Symfony\Component\HttpFoundation\Response;
 
 class GeneratorController extends BaseController
 {
@@ -37,7 +36,6 @@ class GeneratorController extends BaseController
      */
     public function store(StoreGeneratorRequest $request): JsonResponse
     {
-        Log::debug('log arr', $request->validated());
         switch ($request->generate_type) {
             case GeneratorType::ALL->value:
                 $this->generatorService->generate($request->validated());
@@ -50,12 +48,12 @@ class GeneratorController extends BaseController
         $model = GeneratorUtils::setModelName($request->model, 'default');
 
         $route = $request->generate_type == GeneratorType::ALL->value
-            ? (GeneratorUtils::isGenerateApi() ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model))
-            : request()->path() . '/create';
+            ? (GeneratorUtils::isGenerateApi() ? 'api/'.GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model))
+            : request()->path().'/create';
 
         return response()->json([
             'message' => 'success',
-            'route' => $route
+            'route' => $route,
         ], Response::HTTP_CREATED);
     }
 

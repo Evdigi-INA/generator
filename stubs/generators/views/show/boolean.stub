@@ -1,0 +1,11 @@
+                                    <tr>
+                                        <td class="fw-bold">{{ __('{{fieldUcWords}}') }}</td>
+                                        <td>
+                                            @if (in_array(${{modelCamelCase}}->{{fieldSnakeCase}}, [true, 1, '1', 'true']))
+                                                <i class="bi bi-check-circle text-success"></i>
+                                            @else
+                                                <i class="bi bi-x-circle text-danger"></i>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    

@@ -37,11 +37,7 @@
                                     <tr>
                                         <td colspan="2" class="text-center">
                                             <div class="avatar avatar-xl">
-                                                @if (!$user->avatar)
-                                                    <img src="https://via.placeholder.com/350?text=No+Image+Avaiable" alt="Avatar" class="rounded img-fluid">
-                                                @else
-                                                    <img src="{{ asset('storage/uploads/avatars/' . $user->avatar) }}" alt="Avatar" class="rounded img-fluid">
-                                                @endif
+                                                <img src="{{ $user->avatar }}" alt="Avatar" class="rounded img-fluid" style="object-fit: cover; width: 350px; height: 200px;" >
                                             </div>
                                         </td>
                                     </tr>
