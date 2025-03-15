@@ -1,5 +1,5 @@
                                     <tr>
-                                        <td class="fw-bold">{{ __('{{fieldUcWords}}') }}</td>
+                                        <td class="fw-bold">{{ __(key: '{{fieldUcWords}}') }}</td>
                                         <td>
                                             @if (in_array(${{modelCamelCase}}->{{fieldSnakeCase}}, [true, 1, '1', 'true']))
                                                 <i class="bi bi-check-circle text-success"></i>

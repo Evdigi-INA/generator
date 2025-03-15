@@ -7,14 +7,14 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-8 order-md-1 order-last">
-                    <h3>{{ __('User') }}</h3>
+                    <h3>{{ __(key: 'User') }}</h3>
                     <p class="text-subtitle text-muted">
-                        {{ __('Below is a list of all users.') }}
+                        {{ __(key: 'Below is a list of all users.') }}
                     </p>
                 </div>
                 <x-breadcrumb>
-                    <li class="breadcrumb-item"><a href="/">{{ __('Dashboard') }}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ __('User') }}</li>
+                    <li class="breadcrumb-item"><a href="/">{{ __(key: 'Dashboard') }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ __(key: 'User') }}</li>
                 </x-breadcrumb>
             </div>
         </div>
@@ -26,7 +26,7 @@
                 <div class="d-flex justify-content-end">
                     <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">
                         <i class="fas fa-plus"></i>
-                        {{ __('Create a new user') }}
+                        {{ __(key: 'Create a new user') }}
                     </a>
                 </div>
             @endcan
@@ -40,13 +40,13 @@
                                     <thead>
                                         <tr>
                                             {{-- <th>No</th> --}}
-                                            <th>{{ __('Avatar') }}</th>
-                                            <th>{{ __('Name') }}</th>
-                                            <th>{{ __('Email') }}</th>
-                                            <th>{{ __('Role') }}</th>
-                                            <th>{{ __('Created At') }}</th>
-                                            <th>{{ __('Updated At') }}</th>
-                                            <th>{{ __('Action') }}</th>
+                                            <th>{{ __(key: 'Avatar') }}</th>
+                                            <th>{{ __(key: 'Name') }}</th>
+                                            <th>{{ __(key: 'Email') }}</th>
+                                            <th>{{ __(key: 'Role') }}</th>
+                                            <th>{{ __(key: 'Created At') }}</th>
+                                            <th>{{ __(key: 'Updated At') }}</th>
+                                            <th>{{ __(key: 'Action') }}</th>
                                         </tr>
                                     </thead>
                                 </table>

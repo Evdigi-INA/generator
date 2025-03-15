@@ -18,15 +18,15 @@
                     <div class="card-body">
                         {{exportButton}}
 
-                        <form action="{{ route('{{modelNamePluralKebabCase}}.store') }}" method="POST"{{enctype}}>
+                        <form action="{{ route(name: '{{modelNamePluralKebabCase}}.store') }}" method="POST"{{enctype}}>
                         @csrf
                         @method('POST')
 
                         @include('{{viewPath}}{{modelNamePluralKebabCase}}.include.form')
 
-                        <a href="{{ route('{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary mt-2">{{ __('Back') }}</a>
+                        <a href="{{ route(name: '{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary mt-2">{{ __(key: 'Back') }}</a>
 
-                        <button type="submit" class="btn btn-primary mt-2">{{ __('Save') }}</button>
+                        <button type="submit" class="btn btn-primary mt-2">{{ __(key: 'Save') }}</button>
                         </form>
                     </div>
                 </div>

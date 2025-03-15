@@ -1,9 +1,9 @@
 <div class="row mb-2">
     <div class="col-md-6">
         <div class="form-group">
-            <label for="name">{{ __('Name') }}</label>
+            <label for="name">{{ __(key: 'Name') }}</label>
             <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror"
-                placeholder="{{ __('Name') }}" value="{{ isset($user) ? $user->name : old('name') }}" required
+                placeholder="{{ __(key: 'Name') }}" value="{{ isset($user) ? $user->name : old('name') }}" required
                 autofocus>
             @error('name')
                 <span class="text-danger">
@@ -14,9 +14,9 @@
     </div>
     <div class="col-md-6">
         <div class="form-group">
-            <label for="email">{{ __('Email') }}</label>
+            <label for="email">{{ __(key: 'Email') }}</label>
             <input type="email" name="email" id="email"
-                class="form-control @error('email') is-invalid @enderror" placeholder="{{ __('Email') }}"
+                class="form-control @error('email') is-invalid @enderror" placeholder="{{ __(key: 'Email') }}"
                 value="{{ isset($user) ? $user->email : old('email') }}" required>
             @error('email')
                 <span class="text-danger">
@@ -27,9 +27,9 @@
     </div>
     <div class="col-md-6">
         <div class="form-group">
-            <label for="password">{{ __('Password') }}</label>
+            <label for="password">{{ __(key: 'Password') }}</label>
             <input type="password" name="password" id="password"
-                class="form-control @error('password') is-invalid @enderror" placeholder="{{ __('Password') }}"
+                class="form-control @error('password') is-invalid @enderror" placeholder="{{ __(key: 'Password') }}"
                 {{ empty($user) ? 'required' : '' }}>
             @error('password')
                 <span class="text-danger">
@@ -38,23 +38,23 @@
             @enderror
             @isset($user)
                 <div id="passwordHelpBlock" class="form-text">
-                    {{ __('Leave the password & password confirmation blank if you don`t want to change them.') }}
+                    {{ __(key: 'Leave the password & password confirmation blank if you don`t want to change them.') }}
                 </div>
             @endisset
         </div>
     </div>
     <div class="col-md-6">
         <div class="form-group">
-            <label for="password-confirmation">{{ __('Password Confirmation') }}</label>
+            <label for="password-confirmation">{{ __(key: 'Password Confirmation') }}</label>
             <input type="password" name="password_confirmation" id="password-confirmation" class="form-control"
-                placeholder="{{ __('Password Confirmation') }}" {{ empty($user) ? 'required' : '' }}>
+                placeholder="{{ __(key: 'Password Confirmation') }}" {{ empty($user) ? 'required' : '' }}>
         </div>
     </div>
     <div class="col-md-6">
         <div class="form-group">
-            <label for="role">{{ __('Role') }}</label>
+            <label for="role">{{ __(key: 'Role') }}</label>
             <select class="form-select" name="role" id="role" class="form-control" required>
-                <option value="" selected disabled>{{ __('-- Select role --') }}</option>
+                <option value="" selected disabled>{{ __(key: '-- Select role --') }}</option>
                 @foreach ($roles as $role)
                     @isset($user)
                         <option value="{{ $role->id }}"
@@ -80,7 +80,7 @@
             </div>
             <div class="col-md-7">
                 <div class="form-group ms-3">
-                    <label for="avatar">{{ __('Avatar') }}</label>
+                    <label for="avatar">{{ __(key: 'Avatar') }}</label>
                     <input type="file" name="avatar" class="form-control @error('avatar') is-invalid @enderror"
                         id="avatar">
                     @error('avatar')
@@ -90,7 +90,7 @@
                     @enderror
                     @isset($user)
                         <div id="avatar-help-block" class="form-text">
-                            {{ __('Leave the avatar blank if you don`t want to change it.') }}
+                            {{ __(key: 'Leave the avatar blank if you don`t want to change it.') }}
                         </div>
                     @endisset
                 </div>

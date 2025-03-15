@@ -72,7 +72,7 @@ class ShowViewGenerator
                 'foreignId' => $this->generateForeignIdRow(request: $request, i: $i, modelName: $modelName),
                 'date' => $this->generateDateRow(request: $request, i: $i, modelName: $modelName, fieldUcWords: $fieldUcWords, fieldSnakeCase: $fieldSnakeCase),
                 'dateTime' => "<tr>
-                                <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
+                                <td class=\"fw-bold\">{{ __(key: '$fieldUcWords') }}</td>
                                 <td>{{ isset($".$modelName."->$fieldSnakeCase) ? $".$modelName.'->'.$fieldSnakeCase."?->format(\"$dateTimeFormat\") : '' }}</td>
                                </tr>",
                 'boolean' => $this->generateBooleanRow(field: $field, model: $model),
@@ -90,7 +90,7 @@ class ShowViewGenerator
             $weekFormat = config(key: 'generator.format.week', default: 'Y-\WW');
 
             return "<tr>
-                    <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
+                    <td class=\"fw-bold\">{{ __(key: '$fieldUcWords') }}</td>
                     <td>{{ isset($".$modelName."->$fieldSnakeCase) ? $".$modelName.'->'.$fieldSnakeCase."?->format(\"$weekFormat\") : '' }}</td>
                 </tr>";
         }
@@ -100,7 +100,7 @@ class ShowViewGenerator
         }
 
         return "<tr>
-                    <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
+                    <td class=\"fw-bold\">{{ __(key: '$fieldUcWords') }}</td>
                     <td>{{ $".$modelName."->$fieldSnakeCase }}</td>
                 </tr>";
     }
@@ -152,7 +152,7 @@ class ShowViewGenerator
         $constrainModel = GeneratorUtils::setModelName(model: $request['constrains'][$i], style: 'default');
 
         return "<tr>
-                    <td class=\"fw-bold\">{{ __('".GeneratorUtils::cleanSingularUcWords(string: $constrainModel)."') }}</td>
+                    <td class=\"fw-bold\">{{ __(key: '".GeneratorUtils::cleanSingularUcWords(string: $constrainModel)."') }}</td>
                     <td>{{ $".$modelName.'->'.GeneratorUtils::singularSnakeCase(string: $constrainModel).' ? $'.$modelName.'->'.GeneratorUtils::singularSnakeCase(string: $constrainModel).'->'.GeneratorUtils::getColumnAfterId($constrainModel)." : '' }}</td>
                 </tr>";
     }
@@ -168,7 +168,7 @@ class ShowViewGenerator
         };
 
         return "<tr>
-                    <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
+                    <td class=\"fw-bold\">{{ __(key: '$fieldUcWords') }}</td>
                     <td>{{ isset($".$modelName."->$fieldSnakeCase) ? $".$modelName.'->'.$fieldSnakeCase."?->format(\"$dateFormat\") : '' }}</td>
                 </tr>";
     }
@@ -181,7 +181,7 @@ class ShowViewGenerator
         $timeFormat = config(key: 'generator.format.time', default: 'H:i');
 
         return "<tr>
-                    <td class=\"fw-bold\">{{ __('$fieldUcWords') }}</td>
+                    <td class=\"fw-bold\">{{ __(key: '$fieldUcWords') }}</td>
                     <td>{{ isset($".$modelName."->$fieldSnakeCase) ? $".$modelName.'->'.$fieldSnakeCase."?->format(\"$timeFormat\") : '' }}</td>
                 </tr>";
     }

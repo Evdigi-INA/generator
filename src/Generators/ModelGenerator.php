@@ -9,18 +9,17 @@ class ModelGenerator
      */
     public function generate(array $request): void
     {
-        $path = GeneratorUtils::getModelLocation($request['model']);
+        $path = GeneratorUtils::getModelLocation(model: $request['model']);
         $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
-        $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
+        $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase(string: $model);
 
         $fields = '[';
         $casts = '[';
         $relations = '';
-        $totalFields = count($request['fields']);
-        $dateTimeFormat = config('generator.format.datetime') ?? 'Y-m-d H:i:s';
+        $totalFields = count(value: $request['fields']);
+        $dateTimeFormat = config(key: 'generator.format.datetime') ?? 'Y-m-d H:i:s';
         $protectedHidden = '';
         $castImages = '';
-        $uploadPaths = '';
 
         if (in_array(needle: 'password', haystack: $request['input_types'])) {
             $protectedHidden .= <<<'PHP'
@@ -48,12 +47,12 @@ class ModelGenerator
             switch ($request['column_types'][$i]) {
                 case 'date':
                     if ($request['input_types'][$i] != 'month') {
-                        $dateFormat = config('generator.format.date') ?? 'd/m/Y';
+                        $dateFormat = config(key: 'generator.format.date') ?? 'd/m/Y';
                         $casts .= "'".str()->snake($field)."' => 'date:$dateFormat', ";
                     }
                     break;
                 case 'time':
-                    $timeFormat = config('generator.format.time') ? config('generator.format.time') : 'H:i';
+                    $timeFormat = config(key: 'generator.format.time') ?? 'H:i';
                     $casts .= "'".str()->snake($field)."' => 'datetime:$timeFormat', ";
                     break;
                 case 'year':
@@ -102,33 +101,26 @@ class ModelGenerator
                      *     return $this->belongsTo(\App\Models\Product::class);
                      * }
                      */
-                    $relations .= "\n\tpublic function ".str()->snake($constrainName)."(): \Illuminate\Database\Eloquent\Relations\BelongsTo\n\t{\n\t\treturn \$this->belongsTo(".$constrainPath.'::class'.$foreign_id.");\n\t}";
+                    $relations .= "\n\tpublic function ".str()->snake($constrainName)."(): \Illuminate\Database\Eloquent\Relations\BelongsTo\n\t{\n\t\treturn \$this->belongsTo(related: ".$constrainPath.'::class'.$foreign_id.");\n\t}";
                     break;
             }
 
             switch ($request['input_types'][$i]) {
                 case 'month':
-                    $castFormat = config('generator.format.month') ? config('generator.format.month') : 'm/Y';
+                    $castFormat = config(key: 'generator.format.month') ? config(key: 'generator.format.month') : 'm/Y';
                     $casts .= "'".str()->snake($field)."' => 'date:$castFormat', ";
                     break;
                 case 'week':
                     $casts .= "'".str()->snake($field)."' => 'date:Y-\WW', ";
                     break;
                 case 'file':
-                    // $uploadPaths .= "public string $" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path = '" . GeneratorUtils::pluralKebabCase($request['fields'][$i]) . "', ";
-
-                    // $setReturnComment = $this->setReturnComment(config(key: 'generator.image.disk', default: 'storage.public'));
-
                     $castImages .= GeneratorUtils::replaceStub(replaces: [
-                        'fieldCamelCase' => str($field)->camel(),
-                        'path' => GeneratorUtils::pluralKebabCase($field),
+                        'fieldCamelCase' => str(string: $field)->camel(),
+                        'path' => GeneratorUtils::pluralKebabCase(string: $field),
                         'disk' => config(key: 'generator.image.disk', default: 'storage.local'),
                         'defaultImage' => config(key: 'generator.image.default', default: 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
-                        // 'returnPublicPath' => $setReturnComment['public_path'],
-                        // 'returnStoragePublicS3' => $setReturnComment['storage_public_s3'],
-                        // 'returnStorageLocal' => $setReturnComment['storage_local'],
                         'fieldSnakeCase' => str()->snake($field),
-                        'fieldPascalCase' => GeneratorUtils::pascalCase($field),
+                        'fieldPascalCase' => GeneratorUtils::pascalCase(string: $field),
                     ], stubName: 'model-cast')."\n\t";
                     break;
             }
@@ -155,11 +147,6 @@ class ModelGenerator
 
         $casts .= ']';
 
-        // $constructFunc = GeneratorUtils::replaceStub(replaces: [
-        //     'uploadPaths' => $uploadPaths,
-        //     'disk' => config(key: 'generator.image.disk', default: 'storage.local'),
-        // ], stubName: 'models/construct-function');
-
         $template = GeneratorUtils::replaceStub(replaces: [
             'modelName' => $modelNameSingularPascalCase,
             'fields' => $fields,
@@ -167,17 +154,16 @@ class ModelGenerator
             'relations' => $relations,
             'namespace' => $namespace,
             'protectedHidden' => $protectedHidden,
-            'pluralSnakeCase' => GeneratorUtils::pluralSnakeCase($model),
+            'pluralSnakeCase' => GeneratorUtils::pluralSnakeCase(string: $model),
             'castImages' => $castImages,
             'importCastImage' => "use Illuminate\Database\Eloquent\Casts\Attribute;\nuse App\Generators\Services\ImageServiceV2;\n",
-            // 'constructFunc' => $constructFunc
         ], stubName: 'model');
 
         if (! $path) {
             file_put_contents(filename: app_path(path: "/Models/$modelNameSingularPascalCase.php"), data: $template);
         } else {
-            $fullPath = app_path("/Models/$path");
-            GeneratorUtils::checkFolder($fullPath);
+            $fullPath = app_path(path: "/Models/$path");
+            GeneratorUtils::checkFolder(path: $fullPath);
             file_put_contents(filename: "$fullPath/$modelNameSingularPascalCase.php", data: $template);
         }
     }

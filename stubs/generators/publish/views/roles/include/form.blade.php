@@ -1,9 +1,9 @@
 <div class="row mb-2">
     <div class="col-md-6">
         <div class="form-group">
-            <label for="name">{{ __('Name') }}</label>
+            <label for="name">{{ __(key: 'Name') }}</label>
             <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror"
-                placeholder="{{ __('Name') }}" value="{{ isset($role) ? $role->name : old('name') }}" autofocus required>
+                placeholder="{{ __(key: 'Name') }}" value="{{ isset($role) ? $role->name : old('name') }}" autofocus required>
             @error('name')
                 <span class="text-danger">
                     {{ $message }}
@@ -15,7 +15,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <label class="mb-1">{{ __('Permissions') }}</label>
+        <label class="mb-1">{{ __(key: 'Permissions') }}</label>
         @error('permissions')
             <div class="text-danger mb-2 mt-0">{{ $message }}</div>
         @enderror

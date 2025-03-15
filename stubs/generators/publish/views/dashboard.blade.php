@@ -20,7 +20,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4>Hi 👋, {{ auth()->user()->name }}</h4>
-                        <p>{{ __('You are logged in!') }}</p>
+                        <p>{{ __(key: 'You are logged in!') }}</p>
                     </div>
                 </div>
             </div>

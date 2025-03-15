@@ -44,7 +44,7 @@ class SetSidebarType extends Command
                 foreach (config(key: 'generator.sidebars') as $sidebar) {
                     if (isset($sidebar['permissions'])) {
                         $sidebarCode .= "
-                            <li class=\"sidebar-title\">{{ __('".$sidebar['header']."') }}</li>
+                            <li class=\"sidebar-title\">{{ __(key: '".$sidebar['header']."') }}</li>
                             @canany([";
 
                         foreach ($sidebar['menus'] as $menu) {
@@ -64,7 +64,7 @@ class SetSidebarType extends Command
                                         <li class=\"sidebar-item{{ is_active_menu('".$menu['route']."') }}\">
                                         <a href=\"{{ route('".str(string: $menu['route'])->remove('/')->singular()->plural().'.index'."') }}\" class=\"sidebar-link\">
                                                 ".$menu['icon']."
-                                                <span>{{ __('".$menu['title']."') }}</span>
+                                                <span>{{ __(key: '".$menu['title']."') }}</span>
                                             </a>
                                         </li>
                                     @endcan\n";
@@ -74,7 +74,7 @@ class SetSidebarType extends Command
                                     $sidebarCode .= "\n@canany([".GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions).'])<li class="sidebar-item has-sub{{  is_active_menu(['.GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions).']) }}">
                                     <a href="#" class="sidebar-link">
                                         '.$menu['icon']."
-                                        <span>{{ __('".$menu['title']."') }}</span>
+                                        <span>{{ __(key: '".$menu['title']."') }}</span>
                                     </a>
                                     <ul class=\"submenu\">
                                     @canany([".GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions).'])';
@@ -83,7 +83,7 @@ class SetSidebarType extends Command
                                         $sidebarCode .= "
                                         @can('".$submenu['permission']."')
                                             <li class=\"submenu-item{{ is_active_menu('".$submenu['route']."') }}\">
-                                            <a href=\"{{ route('".str(string: $submenu['route'])->remove('/')->singular()->plural().'.index'."') }}\">{{ __('".$submenu['title']."') }}</a>
+                                            <a href=\"{{ route('".str(string: $submenu['route'])->remove('/')->singular()->plural().'.index'."') }}\">{{ __(key: '".$submenu['title']."') }}</a>
                                             </li>
                                         @endcan\n";
                                     }

@@ -44,7 +44,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
                 ->toJson();
         }
 
-        return view('roles.index');
+        return view(view: 'roles.index');
     }
 
     /**
@@ -52,7 +52,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      */
     public function create(): View
     {
-        return view('roles.create');
+        return view(view: 'roles.create');
     }
 
     /**
@@ -60,10 +60,10 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      */
     public function store(StoreRoleRequest $request): RedirectResponse
     {
-        $role = Role::create(['name' => $request->name]);
-        $role->givePermissionTo($request->permissions);
+        $role = Role::create(attributes: ['name' => $request->name]);
+        $role->givePermissionTo(permissions: $request->permissions);
 
-        return to_route('roles.index')->with('success', __('The role was created successfully.'));
+        return to_route(route: 'roles.index')->with('success', __(key: 'The role was created successfully.'));
     }
 
     /**
@@ -73,7 +73,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     {
         $role = Role::with('permissions')->findOrFail($id);
 
-        return view('roles.show', compact('role'));
+        return view(view: 'roles.show', data: compact('role'));
     }
 
     /**
@@ -83,7 +83,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     {
         $role = Role::with('permissions')->findOrFail($id);
 
-        return view('roles.edit', compact('role'));
+        return view(view: 'roles.edit', data: compact('role'));
     }
 
     /**
@@ -95,7 +95,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
         $role->update(['name' => $request->name]);
         $role->syncPermissions($request->permissions);
 
-        return to_route('roles.index')->with('success', __('The role was updated successfully.'));
+        return to_route(route: 'roles.index')->with('success', __(key: 'The role was updated successfully.'));
     }
 
     /**
@@ -108,9 +108,9 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
         if ($role->users_count < 1) {
             $role->delete();
 
-            return to_route('roles.index')->with('success', __('The role was deleted successfully.'));
+            return to_route(route: 'roles.index')->with('success', __(key: 'The role was deleted successfully.'));
         }
 
-        return to_route('roles.index')->with('error', __('Can`t delete role.'));
+        return to_route(route: 'roles.index')->with('error', __(key: 'Can`t delete role.'));
     }
 }

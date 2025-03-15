@@ -16,8 +16,8 @@
                     </a>
                 </div>
 
-                <h1 class="auth-title">{{ __('Sign Up.') }}</h1>
-                <p class="auth-subtitle mb-3">{{ __('Input your data to register to our website.') }}</p>
+                <h1 class="auth-title">{{ __(key: 'Sign Up.') }}</h1>
+                <p class="auth-subtitle mb-3">{{ __(key: 'Input your data to register to our website.') }}</p>
 
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible show fade">
@@ -64,18 +64,18 @@
                             <i class="bi bi-shield-lock"></i>
                         </div>
                     </div>
-                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __('Sign Up') }}</button>
+                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __(key: 'Sign Up') }}</button>
                 </form>
 
                 <div class="text-center mt-4 text-lg fs-4">
-                    <p class="text-gray-600">{{ __('Already have an account') }}?
-                        <a href="/login" class="font-bold">{{ __('Log in.') }}</a>
+                    <p class="text-gray-600">{{ __(key: 'Already have an account') }}?
+                        <a href="/login" class="font-bold">{{ __(key: 'Log in.') }}</a>
                     </p>
 
                     @if (Route::has('password.request'))
                         <p>
                             <a class="font-bold" href="{{ route('password.request') }}">
-                                {{ __('Forgot password?.') }}
+                                {{ __(key: 'Forgot password?.') }}
                             </a>
                         </p>
                     @endif

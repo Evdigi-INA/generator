@@ -15,8 +15,8 @@
                         <img src="{{ asset('mazer') }}/static/images/logo/logo.svg" alt="Logo">
                     </a>
                 </div>
-                <h1 class="auth-title">{{ __('Log in.') }}</h1>
-                <p class="auth-subtitle mb-3">{{ __('Log in with your data that you entered during registration.') }}</p>
+                <h1 class="auth-title">{{ __(key: 'Log in.') }}</h1>
+                <p class="auth-subtitle mb-3">{{ __(key: 'Log in with your data that you entered during registration.') }}</p>
 
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible show fade">
@@ -65,20 +65,20 @@
                         </label>
                     </div>
 
-                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __('Log in') }}</button>
+                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __(key: 'Log in') }}</button>
                 </form>
 
                 <div class="text-center mt-4 text-lg fs-4">
                     <p class="text-gray-600">{{ __("Don't have an account") }}?
                         <a href="/register" class="font-bold">
-                            {{ __('Sign up.') }}
+                            {{ __(key: 'Sign up.') }}
                         </a>
                     </p>
 
                     @if (Route::has('password.request'))
                         <p>
                             <a class="font-bold" href="{{ route('password.request') }}">
-                                {{ __('Forgot password') }}?
+                                {{ __(key: 'Forgot password') }}?
                             </a>
                         </p>
                     @endif

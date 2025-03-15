@@ -35,7 +35,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     {
         ${{modelNameSingularCamelCase}} = {{query}}->first();
 
-        return view('{{viewPath}}{{modelNamePluralKebabCase}}.create', compact('{{modelNameSingularCamelCase}}'));
+        return view(view: '{{viewPath}}{{modelNamePluralKebabCase}}.create', compact('{{modelNameSingularCamelCase}}'));
     }
 
     /**
@@ -50,7 +50,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
 {{updateCode}}
         {{updateDataAction}}
 
-        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was created successfully.'));
+        return to_route(route: '{{modelNamePluralKebabCase}}.index')->with('success', __(key: 'The {{modelNameCleanSingular}} was created successfully.'));
     }
     {{exportFunction}}
 }

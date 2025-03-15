@@ -12,18 +12,18 @@ class FormViewGenerator
     public function generate(array $request): void
     {
         $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
-        $path = GeneratorUtils::getModelLocation($request['model']);
+        $path = GeneratorUtils::getModelLocation(model: $request['model']);
 
-        $modelNameSingularCamelCase = GeneratorUtils::singularCamelCase($model);
-        $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase($model);
+        $modelNameSingularCamelCase = GeneratorUtils::singularCamelCase(string: $model);
+        $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase(string: $model);
 
         $template = "<div class=\"row mb-2\">\n";
 
         foreach ($request['fields'] as $i => $field) {
 
             if ($request['input_types'][$i] !== 'no-input') {
-                $fieldSnakeCase = str($field)->snake();
-                $fieldUcWords = GeneratorUtils::cleanUcWords($field);
+                $fieldSnakeCase = str(string: $field)->snake();
+                $fieldUcWords = GeneratorUtils::cleanUcWords(string: $field);
 
                 switch ($request['column_types'][$i]) {
                     case 'enum':
@@ -31,14 +31,14 @@ class FormViewGenerator
 
                         $arrOption = explode(separator: '|', string: $request['select_options'][$i]);
 
-                        $totalOptions = count($arrOption);
+                        $totalOptions = count(value: $arrOption);
 
                         switch ($request['input_types'][$i]) {
                             case 'select':
                                 // select
                                 foreach ($arrOption as $arrOptionIndex => $value) {
                                     $options .= <<<BLADE
-                                    <option value="$value" {{ isset(\$$modelNameSingularCamelCase) && \$$modelNameSingularCamelCase->$fieldSnakeCase == '$value' ? 'selected' : (old('$fieldSnakeCase') == '$value' ? 'selected' : '') }}>$value</option>
+                                    <option value="$value" {{ isset(\$$modelNameSingularCamelCase) && \$$modelNameSingularCamelCase->$fieldSnakeCase == '$value' ? 'selected' : (old(key: '$fieldSnakeCase') == '$value' ? 'selected' : '') }}>$value</option>
                                     BLADE;
 
                                     if ($arrOptionIndex + 1 != $totalOptions) {
@@ -51,7 +51,7 @@ class FormViewGenerator
                                 $template .= GeneratorUtils::replaceStub(
                                     replaces: [
                                         'fieldUcWords' => $fieldUcWords,
-                                        'fieldKebabCase' => GeneratorUtils::kebabCase($field),
+                                        'fieldKebabCase' => GeneratorUtils::kebabCase(string: $field),
                                         'fieldSnakeCase' => $fieldSnakeCase,
                                         'fieldSpaceLowercase' => GeneratorUtils::cleanLowerCase($field),
                                         'options' => $options,
@@ -79,7 +79,7 @@ class FormViewGenerator
                                         'fieldSnakeCase' => $fieldSnakeCase,
                                         'options' => $options,
                                         'nullable' => $request['requireds'][$i] === 'yes' ? ' required' : '',
-                                        'value' => '{{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase.' ? $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase." : old('".$fieldSnakeCase."') }}",
+                                        'value' => '{{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase.' ? $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase." : old(key: '".$fieldSnakeCase."') }}",
                                     ],
                                     stubName: 'views/forms/datalist'
                                 );
@@ -92,10 +92,10 @@ class FormViewGenerator
                                     $options .= GeneratorUtils::replaceStub(
                                         replaces: [
                                             'fieldSnakeCase' => $fieldSnakeCase,
-                                            'optionKebabCase' => GeneratorUtils::singularKebabCase($value),
+                                            'optionKebabCase' => GeneratorUtils::singularKebabCase(string: $value),
                                             'value' => $value,
                                             'optionLowerCase' => GeneratorUtils::cleanSingularLowerCase($value),
-                                            'checked' => '{{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase."?->$field == '$value' ? 'checked' : (old('$field') == '$value' ? 'checked' : '') }}",
+                                            'checked' => '{{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase."?->$field == '$value' ? 'checked' : (old(key: '$field') == '$value' ? 'checked' : '') }}",
                                             'nullable' => $request['requireds'][$i] === 'yes' ? ' required' : '',
                                         ],
                                         stubName: 'views/forms/radio'
@@ -111,15 +111,13 @@ class FormViewGenerator
                         break;
                     case 'foreignId':
                         // remove '/' or sub folders
-                        $constrainModel = GeneratorUtils::setModelName($request['constrains'][$i], 'default');
-
-                        $constrainSingularCamelCase = GeneratorUtils::singularCamelCase($constrainModel);
-
-                        $columnAfterId = GeneratorUtils::getColumnAfterId($constrainModel);
+                        $constrainModel = GeneratorUtils::setModelName(model: $request['constrains'][$i], style: 'default');
+                        $constrainSingularCamelCase = GeneratorUtils::singularCamelCase(string: $constrainModel);
+                        $columnAfterId = GeneratorUtils::getColumnAfterId(table: $constrainModel);
 
                         $options = '
-                        @foreach ($'.GeneratorUtils::pluralCamelCase($constrainModel)." as $$constrainSingularCamelCase)
-                            <option value=\"{{ $".$constrainSingularCamelCase."?->id }}\" {{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase == $".$constrainSingularCamelCase."?->id ? 'selected' : (old('$fieldSnakeCase') == $".$constrainSingularCamelCase."?->id ? 'selected' : '') }}>
+                        @foreach ($'.GeneratorUtils::pluralCamelCase(string: $constrainModel)." as $$constrainSingularCamelCase)
+                            <option value=\"{{ $".$constrainSingularCamelCase."?->id }}\" {{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase == $".$constrainSingularCamelCase."?->id ? 'selected' : (old(key: '$fieldSnakeCase') == $".$constrainSingularCamelCase."?->id ? 'selected' : '') }}>
                                 {{ $".$constrainSingularCamelCase."?->$columnAfterId }}
                             </option>
                         @endforeach";
@@ -128,13 +126,13 @@ class FormViewGenerator
                             case 'datalist':
                                 $template .= GeneratorUtils::replaceStub(
                                     replaces: [
-                                        'fieldKebabCase' => GeneratorUtils::KebabCase($field),
+                                        'fieldKebabCase' => GeneratorUtils::KebabCase(string: $field),
                                         'fieldSnakeCase' => $fieldSnakeCase,
-                                        'fieldUcWords' => GeneratorUtils::cleanSingularUcWords($constrainModel),
-                                        'fieldCamelCase' => GeneratorUtils::singularCamelCase($field),
+                                        'fieldUcWords' => GeneratorUtils::cleanSingularUcWords(string: $constrainModel),
+                                        'fieldCamelCase' => GeneratorUtils::singularCamelCase(string: $field),
                                         'options' => $options,
                                         'nullable' => $request['requireds'][$i] === 'yes' ? ' required' : '',
-                                        'value' => '{{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase.' ? $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase." : old('".$fieldSnakeCase."') }}",
+                                        'value' => '{{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase.' ? $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase." : old(key: '".$fieldSnakeCase."') }}",
                                     ],
                                     stubName: 'views/forms/datalist'
                                 );
@@ -143,9 +141,9 @@ class FormViewGenerator
                                 // select
                                 $template .= GeneratorUtils::replaceStub(
                                     replaces: [
-                                        'fieldKebabCase' => GeneratorUtils::singularKebabCase($field),
-                                        'fieldUcWords' => GeneratorUtils::cleanSingularUcWords($constrainModel),
-                                        'fieldSpaceLowercase' => GeneratorUtils::cleanSingularLowerCase($constrainModel),
+                                        'fieldKebabCase' => GeneratorUtils::singularKebabCase(string: $field),
+                                        'fieldUcWords' => GeneratorUtils::cleanSingularUcWords(string: $constrainModel),
+                                        'fieldSpaceLowercase' => GeneratorUtils::cleanSingularLowerCase(string: $constrainModel),
                                         'options' => $options,
                                         'nullable' => $request['requireds'][$i] === 'yes' ? ' required' : '',
                                         'fieldSnakeCase' => $fieldSnakeCase,
@@ -162,11 +160,11 @@ class FormViewGenerator
                          * Will generate something like:
                          *
                          * <select class="form-select" name="year" id="year" class="form-control" required>
-                         * <option value="" selected disabled>-- {{ __('Select year') }} --</option>
+                         * <option value="" selected disabled>-- {{ __(key: 'Select year') }} --</option>
                          *
                          *  @foreach (range(1900, strftime('%Y', time())) as $year)
                          *     <option value="{{ $year }}"
-                         *        {{ isset($book) && $book->year == $year ? 'selected' : (old('year') == $year ? 'selected' : '') }}>
+                         *        {{ isset($book) && $book->year == $year ? 'selected' : (old(key: 'year') == $year ? 'selected' : '') }}>
                          *      {{ $year }}
                          * </option>
                          *
@@ -175,7 +173,7 @@ class FormViewGenerator
                          */
                         $options = "
                         @foreach (range($firstYear, date('Y')) as \$year)
-                            <option value=\"{{ \$year }}\" {{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase == \$year ? 'selected' : (old('$fieldSnakeCase') == \$year ? 'selected' : '') }}>
+                            <option value=\"{{ \$year }}\" {{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase == \$year ? 'selected' : (old(key: '$fieldSnakeCase') == \$year ? 'selected' : '') }}>
                                 {{ \$year }}
                             </option>
                         @endforeach";
@@ -183,22 +181,22 @@ class FormViewGenerator
                         $template .= match ($request['input_types'][$i]) {
                             'datalist' => GeneratorUtils::replaceStub(
                                 replaces: [
-                                    'fieldKebabCase' => GeneratorUtils::singularKebabCase($field),
-                                    'fieldCamelCase' => GeneratorUtils::singularCamelCase($field),
+                                    'fieldKebabCase' => GeneratorUtils::singularKebabCase(string: $field),
+                                    'fieldCamelCase' => GeneratorUtils::singularCamelCase(string: $field),
                                     'fieldUcWords' => $fieldUcWords,
                                     'fieldSnakeCase' => $fieldSnakeCase,
                                     'options' => $options,
                                     'nullable' => $request['requireds'][$i] === 'yes' ? ' required' : '',
-                                    'value' => '{{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase.' ? $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase." : old('".$fieldSnakeCase."') }}",
+                                    'value' => '{{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase.' ? $'.$modelNameSingularCamelCase.'?->'.$fieldSnakeCase." : old(key: '".$fieldSnakeCase."') }}",
                                 ],
                                 stubName: 'views/forms/datalist'
                             ),
                             default => GeneratorUtils::replaceStub(
                                 replaces: [
-                                    'fieldUcWords' => GeneratorUtils::cleanUcWords($field),
-                                    'fieldKebabCase' => GeneratorUtils::kebabCase($field),
+                                    'fieldUcWords' => GeneratorUtils::cleanUcWords(string: $field),
+                                    'fieldKebabCase' => GeneratorUtils::kebabCase(string: $field),
                                     'fieldSnakeCase' => $fieldSnakeCase,
-                                    'fieldSpaceLowercase' => GeneratorUtils::cleanLowerCase($field),
+                                    'fieldSpaceLowercase' => GeneratorUtils::cleanLowerCase(string: $field),
                                     'options' => $options,
                                     'nullable' => $request['requireds'][$i] === 'yes' ? ' required' : '',
                                 ],
@@ -210,7 +208,7 @@ class FormViewGenerator
                         switch ($request['input_types'][$i]) {
                             case 'select':
                                 // select
-                                $options = '<option value="0" {{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase."?->$fieldSnakeCase == '0' ? 'selected' : (old('$fieldSnakeCase') == '0' ? 'selected' : '') }}>{{ __('True') }}</option>\n\t\t\t\t<option value=\"1\" {{ isset($".$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase."?->$fieldSnakeCase == '1' ? 'selected' : (old('$fieldSnakeCase') == '1' ? 'selected' : '') }}>{{ __('False') }}</option>";
+                                $options = '<option value="0" {{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase."?->$fieldSnakeCase == '0' ? 'selected' : (old(key: '$fieldSnakeCase') == '0' ? 'selected' : '') }}>{{ __(key: 'True') }}</option>\n\t\t\t\t<option value=\"1\" {{ isset($".$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase."?->$fieldSnakeCase == '1' ? 'selected' : (old(key: '$fieldSnakeCase') == '1' ? 'selected' : '') }}>{{ __(key: 'False') }}</option>";
 
                                 $template .= GeneratorUtils::replaceStub(
                                     replaces: [
@@ -233,21 +231,21 @@ class FormViewGenerator
                                  * will generate something like:
                                  *
                                  * <div class="form-check mb-2">
-                                 *  <input class="form-check-input" type="radio" name="is_active" id="is_active-1" value="1" {{ isset($product) && $product->is_active == '1' ? 'checked' : (old('is_active') == '1' ? 'checked' : '') }}>
+                                 *  <input class="form-check-input" type="radio" name="is_active" id="is_active-1" value="1" {{ isset($product) && $product->is_active == '1' ? 'checked' : (old(key: 'is_active') == '1' ? 'checked' : '') }}>
                                  *     <label class="form-check-label" for="is_active-1">True</label>
                                  * </div>
                                  *  <div class="form-check mb-2">
-                                 *    <input class="form-check-input" type="radio" name="is_active" id="is_active-0" value="0" {{ isset($product) && $product->is_active == '0' ? 'checked' : (old('is_active') == '0' ? 'checked' : '') }}>
+                                 *    <input class="form-check-input" type="radio" name="is_active" id="is_active-0" value="0" {{ isset($product) && $product->is_active == '0' ? 'checked' : (old(key: 'is_active') == '0' ? 'checked' : '') }}>
                                  *      <label class="form-check-label" for="is_active-0">False</label>
                                  * </div>
                                  */
                                 $options .= "
                                 <div class=\"form-check mb-2\">
-                                    <input class=\"form-check-input\" type=\"radio\" name=\"$fieldSnakeCase\" id=\"$fieldSnakeCase-1\" value=\"1\" {{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase == '1' ? 'checked' : (old('$fieldSnakeCase') == '1' ? 'checked' : '') }}>
+                                    <input class=\"form-check-input\" type=\"radio\" name=\"$fieldSnakeCase\" id=\"$fieldSnakeCase-1\" value=\"1\" {{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase == '1' ? 'checked' : (old(key: '$fieldSnakeCase') == '1' ? 'checked' : '') }}>
                                     <label class=\"form-check-label\" for=\"$fieldSnakeCase-1\">True</label>
                                 </div>
                                 <div class=\"form-check mb-2\">
-                                    <input class=\"form-check-input\" type=\"radio\" name=\"$fieldSnakeCase\" id=\"$fieldSnakeCase-0\" value=\"0\" {{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase == '0' ? 'checked' : (old('$fieldSnakeCase') == '0' ? 'checked' : '') }}>
+                                    <input class=\"form-check-input\" type=\"radio\" name=\"$fieldSnakeCase\" id=\"$fieldSnakeCase-0\" value=\"0\" {{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase == '0' ? 'checked' : (old(key: '$fieldSnakeCase') == '0' ? 'checked' : '') }}>
                                     <label class=\"form-check-label\" for=\"$fieldSnakeCase-0\">False</label>
                                 </div>\n";
 
@@ -261,9 +259,9 @@ class FormViewGenerator
                     default:
                         // input form
                         if ($request['default_values'][$i]) {
-                            $formatValue = "{{ (isset($$modelNameSingularCamelCase) ? $$modelNameSingularCamelCase->$fieldSnakeCase : old('$fieldSnakeCase')) ? old('$fieldSnakeCase') : '".$request['default_values'][$i]."' }}";
+                            $formatValue = "{{ (isset($$modelNameSingularCamelCase) ? $$modelNameSingularCamelCase->$fieldSnakeCase : old(key: '$fieldSnakeCase')) ? old(key: '$fieldSnakeCase') : '".$request['default_values'][$i]."' }}";
                         } else {
-                            $formatValue = "{{ isset($$modelNameSingularCamelCase) ? $$modelNameSingularCamelCase->$fieldSnakeCase : old('$fieldSnakeCase') }}";
+                            $formatValue = "{{ isset($$modelNameSingularCamelCase) ? $$modelNameSingularCamelCase->$fieldSnakeCase : old(key: '$fieldSnakeCase') }}";
                         }
 
                         switch ($request['input_types'][$i]) {
@@ -271,9 +269,9 @@ class FormViewGenerator
                                 /**
                                  * Will generate something like:
                                  *
-                                 * {{ isset($book) && $book->datetime ? $book->datetime->format('Y-m-d\TH:i') : old('datetime') }}
+                                 * {{ isset($book) && $book->datetime ? $book->datetime->format('Y-m-d\TH:i') : old(key: 'datetime') }}
                                  */
-                                $formatValue = "{{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase ? $".$modelNameSingularCamelCase.'?->'.$fieldSnakeCase."?->format('Y-m-d\TH:i') : old('$fieldSnakeCase') }}";
+                                $formatValue = "{{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase ? $".$modelNameSingularCamelCase.'?->'.$fieldSnakeCase."?->format('Y-m-d\TH:i') : old(key: '$fieldSnakeCase') }}";
 
                                 $template .= $this->setInputTypeTemplate(
                                     field: $field,
@@ -288,9 +286,9 @@ class FormViewGenerator
                                 /**
                                  * Will generate something like:
                                  *
-                                 * {{ isset($book) && $book->date ? $book->date->format('Y-m-d') : old('date') }}
+                                 * {{ isset($book) && $book->date ? $book->date->format('Y-m-d') : old(key: 'date') }}
                                  */
-                                $formatValue = "{{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase ? $".$modelNameSingularCamelCase.'?->'.$fieldSnakeCase."?->format('Y-m-d') : old('$fieldSnakeCase') }}";
+                                $formatValue = "{{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase ? $".$modelNameSingularCamelCase.'?->'.$fieldSnakeCase."?->format('Y-m-d') : old(key: '$fieldSnakeCase') }}";
 
                                 $template .= $this->setInputTypeTemplate(
                                     field: $field,
@@ -305,9 +303,9 @@ class FormViewGenerator
                                 /**
                                  * Will generate something like:
                                  *
-                                 * {{ isset($book) ? $book->time->format('H:i') : old('time') }}
+                                 * {{ isset($book) ? $book->time->format('H:i') : old(key: 'time') }}
                                  */
-                                $formatValue = "{{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase ? $".$modelNameSingularCamelCase.'?->'.$fieldSnakeCase."?->format('H:i') : old('$fieldSnakeCase') }}";
+                                $formatValue = "{{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase ? $".$modelNameSingularCamelCase.'?->'.$fieldSnakeCase."?->format('H:i') : old(key: '$fieldSnakeCase') }}";
 
                                 $template .= $this->setInputTypeTemplate(
                                     field: $field,
@@ -322,9 +320,9 @@ class FormViewGenerator
                                 /**
                                  * Will generate something like:
                                  *
-                                 * {{ isset($book) ? $book->week->format('Y-\WW') : old('week') }}
+                                 * {{ isset($book) ? $book->week->format('Y-\WW') : old(key: 'week') }}
                                  */
-                                $formatValue = "{{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase ? $".$modelNameSingularCamelCase.'?->'.$fieldSnakeCase."?->format('Y-\WW') : old('$fieldSnakeCase') }}";
+                                $formatValue = "{{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase ? $".$modelNameSingularCamelCase.'?->'.$fieldSnakeCase."?->format('Y-\WW') : old(key: '$fieldSnakeCase') }}";
 
                                 $template .= $this->setInputTypeTemplate(
                                     field: $field,
@@ -339,9 +337,9 @@ class FormViewGenerator
                                 /**
                                  * Will generate something like:
                                  *
-                                 * {{ isset($book) ? $book->month->format('Y-\WW') : old('month') }}
+                                 * {{ isset($book) ? $book->month->format('Y-\WW') : old(key: 'month') }}
                                  */
-                                $formatValue = "{{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase ? $".$modelNameSingularCamelCase.'?->'.$fieldSnakeCase."?->format('Y-m') : old('$fieldSnakeCase') }}";
+                                $formatValue = "{{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase ? $".$modelNameSingularCamelCase.'?->'.$fieldSnakeCase."?->format('Y-m') : old(key: '$fieldSnakeCase') }}";
 
                                 $template .= $this->setInputTypeTemplate(
                                     field: $field,
@@ -353,10 +351,9 @@ class FormViewGenerator
                                 );
                                 break;
                             case 'textarea':
-                                // textarea
                                 $template .= GeneratorUtils::replaceStub(
                                     replaces: [
-                                        'fieldKebabCase' => GeneratorUtils::kebabCase($field),
+                                        'fieldKebabCase' => GeneratorUtils::kebabCase(string: $field),
                                         'fieldUppercase' => $fieldUcWords,
                                         'modelName' => $modelNameSingularCamelCase,
                                         'nullable' => $request['requireds'][$i] === 'yes' ? ' required' : '',
@@ -366,29 +363,15 @@ class FormViewGenerator
                                 );
                                 break;
                             case 'file':
-                                // $default = GeneratorUtils::setDefaultImage(
-                                //     default: $request['default_values'][$i],
-                                //     field: $field,
-                                //     model: $model
-                                // );
-
                                 $template .= GeneratorUtils::replaceStub(
                                     replaces: [
                                         'modelCamelCase' => $modelNameSingularCamelCase,
-                                        // 'fieldPluralSnakeCase' => GeneratorUtils::pluralSnakeCase($field),
-                                        'fieldSnakeCase' => str($field)->snake()->toString(),
-                                        'fieldLowercase' => GeneratorUtils::cleanSingularLowerCase($field),
+                                        'fieldSnakeCase' => str(string: $field)->snake()->toString(),
+                                        'fieldLowercase' => GeneratorUtils::cleanSingularLowerCase(string: $field),
                                         'fieldUcWords' => $fieldUcWords,
                                         'nullable' => $request['requireds'][$i] == 'yes' ? ' required' : '',
-                                        // 'uploadPathPublic' => config('generator.image.disk') == 'storage' ? "storage/uploads" : "uploads",
-                                        'fieldKebabCase' => GeneratorUtils::kebabCase($field),
-                                        'defaultImage' => config('generator.image.default', $request['default_values'][$i]),
-                                        // 'defaultImageCodeForm' => $default['form_code'],
-                                        // 'setDiskForCastImage' => str_replace(
-                                        //     search: "\$this->" . GeneratorUtils::singularCamelCase($field) . "Path",
-                                        //     replace: "'" . GeneratorUtils::pluralKebabCase($field) . "/'",
-                                        //     subject: GeneratorUtils::setDiskCodeForCastImage(model: $model, field: $field)
-                                        // ),
+                                        'fieldKebabCase' => GeneratorUtils::kebabCase(string: $field),
+                                        'defaultImage' => config(key: 'generator.image.default', default: $request['default_values'][$i]),
                                     ],
                                     stubName: 'views/forms/image'
                                 );
@@ -396,9 +379,9 @@ class FormViewGenerator
                             case 'range':
                                 $template .= GeneratorUtils::replaceStub(
                                     replaces: [
-                                        'fieldSnakeCase' => GeneratorUtils::singularSnakeCase($field),
+                                        'fieldSnakeCase' => GeneratorUtils::singularSnakeCase(string: $field),
                                         'fieldUcWords' => $fieldUcWords,
-                                        'fieldKebabCase' => GeneratorUtils::singularKebabCase($field),
+                                        'fieldKebabCase' => GeneratorUtils::singularKebabCase(string: $field),
                                         'nullable' => $request['requireds'][$i] === 'yes' ? ' required' : '',
                                         'min' => $request['min_lengths'][$i],
                                         'max' => $request['max_lengths'][$i],
@@ -415,9 +398,9 @@ class FormViewGenerator
                                     replaces: [
                                         'fieldUcWords' => $fieldUcWords,
                                         'fieldSnakeCase' => $fieldSnakeCase,
-                                        'fieldKebabCase' => GeneratorUtils::singularKebabCase($field),
+                                        'fieldKebabCase' => GeneratorUtils::singularKebabCase(string: $field),
                                         'model' => $modelNameSingularCamelCase,
-                                        'isNullable' => $request['requireds'][$i] === 'yes' ? '{{ empty($'.GeneratorUtils::singularCamelCase($model).") ? ' required' : '' }}" : '',
+                                        'isNullable' => $request['requireds'][$i] === 'yes' ? '{{ empty($'.GeneratorUtils::singularCamelCase(string: $model).") ? ' required' : '' }}" : '',
                                     ],
                                     stubName: 'views/forms/input-password'
                                 );
@@ -442,12 +425,12 @@ class FormViewGenerator
 
         // create a blade file
         if ($path) {
-            $fullPath = resource_path('/views/'.strtolower($path)."/$modelNamePluralKebabCase/include");
-            GeneratorUtils::checkFolder($fullPath);
-            file_put_contents($fullPath.'/form.blade.php', $template);
+            $fullPath = resource_path(path: '/views/'.strtolower(string: $path)."/$modelNamePluralKebabCase/include");
+            GeneratorUtils::checkFolder(path: $fullPath);
+            file_put_contents(filename: $fullPath.'/form.blade.php', data: $template);
         } else {
-            GeneratorUtils::checkFolder(resource_path("/views/$modelNamePluralKebabCase/include"));
-            file_put_contents(resource_path("/views/$modelNamePluralKebabCase/include/form.blade.php"), $template);
+            GeneratorUtils::checkFolder(path: resource_path(path: "/views/$modelNamePluralKebabCase/include"));
+            file_put_contents(filename: resource_path(path: "/views/$modelNamePluralKebabCase/include/form.blade.php"), data: $template);
         }
     }
 
@@ -458,9 +441,9 @@ class FormViewGenerator
     {
         return GeneratorUtils::replaceStub(
             replaces: [
-                'fieldKebabCase' => GeneratorUtils::singularKebabCase($field),
-                'fieldUcWords' => GeneratorUtils::cleanUcWords($field),
-                'fieldSnakeCase' => str($field)->snake(),
+                'fieldKebabCase' => GeneratorUtils::singularKebabCase(string: $field),
+                'fieldUcWords' => GeneratorUtils::cleanUcWords(string: $field),
+                'fieldSnakeCase' => str(string: $field)->snake(),
                 'type' => $request['input_types'],
                 'value' => $formatValue,
                 'nullable' => $request['requireds'] == 'yes' ? ' required' : '',

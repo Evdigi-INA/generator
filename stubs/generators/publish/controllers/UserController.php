@@ -49,7 +49,7 @@ class UserController extends Controller implements HasMiddleware
                 ->toJson();
         }
 
-        return view('users.index');
+        return view(view: 'users.index');
     }
 
     /**
@@ -57,7 +57,7 @@ class UserController extends Controller implements HasMiddleware
      */
     public function create(): View
     {
-        return view('users.create');
+        return view(view: 'users.create');
     }
 
     /**
@@ -65,10 +65,10 @@ class UserController extends Controller implements HasMiddleware
      */
     public function store(StoreUserRequest $request): RedirectResponse
     {
-        return DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request): RedirectResponse {
             $validated = $request->validated();
             $validated['avatar'] = $this->imageServiceV2->upload(name: 'avatar', path: $this->avatarPath);
-            $validated['password'] = bcrypt($request->password);
+            $validated['password'] = bcrypt(value: $request->password);
 
             $user = User::create($validated);
 
@@ -76,7 +76,7 @@ class UserController extends Controller implements HasMiddleware
 
             $user->assignRole($role->name);
 
-            return to_route('users.index')->with('success', __('The user was created successfully.'));
+            return to_route(route: 'users.index')->with('success', __(key: 'The user was created successfully.'));
         });
     }
 
@@ -87,7 +87,7 @@ class UserController extends Controller implements HasMiddleware
     {
         $user->load('roles:id,name');
 
-        return view('users.show', compact('user'));
+        return view(view: 'users.show', data: compact('user'));
     }
 
     /**
@@ -97,7 +97,7 @@ class UserController extends Controller implements HasMiddleware
     {
         $user->load('roles:id,name');
 
-        return view('users.edit', compact('user'));
+        return view(view: 'users.edit', data: compact('user'));
     }
 
     /**
@@ -105,14 +105,14 @@ class UserController extends Controller implements HasMiddleware
      */
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        return DB::transaction(function () use ($request, $user) {
+        return DB::transaction(function () use ($request, $user): RedirectResponse {
             $validated = $request->validated();
             $validated['avatar'] = $this->imageServiceV2->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user?->avatar);
 
             if (! $request->password) {
                 unset($validated['password']);
             } else {
-                $validated['password'] = bcrypt($request->password);
+                $validated['password'] = bcrypt(value: $request->password);
             }
 
             $user->update($validated);
@@ -121,7 +121,7 @@ class UserController extends Controller implements HasMiddleware
 
             $user->syncRoles($role->name);
 
-            return to_route('users.index')->with('success', __('The user was updated successfully.'));
+            return to_route(route: 'users.index')->with('success', __(key: 'The user was updated successfully.'));
         });
     }
 
@@ -131,17 +131,17 @@ class UserController extends Controller implements HasMiddleware
     public function destroy(User $user): RedirectResponse
     {
         try {
-            return DB::transaction(function () use ($user) {
+            return DB::transaction(function () use ($user): RedirectResponse {
                 $avatar = $user->avatar;
 
                 $user->delete();
 
                 $this->imageServiceV2->delete(path: $this->avatarPath, image: $avatar, disk: $this->disk);
 
-                return to_route('users.index')->with('success', __('The user was deleted successfully.'));
+                return to_route(route: 'users.index')->with('success', __(key: 'The user was deleted successfully.'));
             });
         } catch (\Exception $e) {
-            return to_route('users.index')->with('error', __("The user can't be deleted because it's related to another table."));
+            return to_route(route: 'users.index')->with('error', __(key: "The user can't be deleted because it's related to another table."));
         }
     }
 }

@@ -16,9 +16,9 @@
                     </a>
                 </div>
 
-                <h1 class="auth-title">{{ __('Confirm Password.') }}</h1>
+                <h1 class="auth-title">{{ __(key: 'Confirm Password.') }}</h1>
 
-                <p class="auth-subtitle mb-3">{{ __('Confirm your password to proceed to the next step.') }}</p>
+                <p class="auth-subtitle mb-3">{{ __(key: 'Confirm your password to proceed to the next step.') }}</p>
 
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible show fade">
@@ -44,7 +44,7 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __('Confirm Password') }}</button>
+                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __(key: 'Confirm Password') }}</button>
                 </form>
             </div>
         </div>

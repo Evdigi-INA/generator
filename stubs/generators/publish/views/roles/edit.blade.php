@@ -7,21 +7,21 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-8 order-md-1 order-last">
-                    <h3>{{ __('Role') }}</h3>
+                    <h3>{{ __(key: 'Role') }}</h3>
                     <p class="text-subtitle text-muted">
-                        {{ __('Edit an new role.') }}
+                        {{ __(key: 'Edit an new role.') }}
                     </p>
                 </div>
 
                 <x-breadcrumb>
                     <li class="breadcrumb-item">
-                        <a href="/">{{ __('Dashboard') }}</a>
+                        <a href="/">{{ __(key: 'Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('roles.index') }}">{{ __('Role') }}</a>
+                        <a href="{{ route('roles.index') }}">{{ __(key: 'Role') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
-                        {{ __('Edit') }}
+                        {{ __(key: 'Edit') }}
                     </li>
                 </x-breadcrumb>
             </div>
@@ -39,9 +39,9 @@
 
                                 @include('roles.include.form')
 
-                                <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __('Back') }}</a>
+                                <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
 
-                                <button type="submit" class="btn btn-primary">{{ __('Update') }}</button>
+                                <button type="submit" class="btn btn-primary">{{ __(key: 'Update') }}</button>
                             </form>
                         </div>
                     </div>

@@ -1,5 +1,5 @@
                                     <tr>
-                                        <td class="fw-bold">{{ __('{{fieldUcWords}}') }}</td>
+                                        <td class="fw-bold">{{ __(key: '{{fieldUcWords}}') }}</td>
                                         <td>
                                             <div class="d-flex justify-content-start align-items-center">
                                                 <div class="rounded"

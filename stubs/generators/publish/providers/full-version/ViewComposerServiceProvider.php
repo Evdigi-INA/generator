@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\Models\Role;
@@ -21,11 +22,9 @@ class ViewComposerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer(['users.create', 'users.edit'], function ($view) {
-            return $view->with(
-                'roles',
-                Role::select('id', 'name')->get()
-            );
-        });
+        View::composer(views: ['users.create', 'users.edit'], callback: fn (ViewContract $view) => $view->with(
+            'roles',
+            Role::select('id', 'name')->get()
+        ));
     }
 }

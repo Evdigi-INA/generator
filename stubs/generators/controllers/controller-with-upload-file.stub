@@ -42,11 +42,11 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
 
             return Datatables::of(${{modelNamePluralCamelCase}})
                 {{addColumns}}
-                ->addColumn('action', '{{viewPath}}{{modelNamePluralKebabCase}}.include.action')
+                ->addColumn(name: 'action', content: '{{viewPath}}{{modelNamePluralKebabCase}}.include.action')
                 ->toJson();
         }
 
-        return view('{{viewPath}}{{modelNamePluralKebabCase}}.index');
+        return view(view: '{{viewPath}}{{modelNamePluralKebabCase}}.index');
     }
 
     /**
@@ -54,7 +54,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function create(): View
     {
-        return view('{{viewPath}}{{modelNamePluralKebabCase}}.create');
+        return view(view: '{{viewPath}}{{modelNamePluralKebabCase}}.create');
     }
 
     /**
@@ -67,7 +67,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
 {{storeCode}}
         {{modelNameSingularPascalCase}}::create($validated);
 
-        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was created successfully.'));
+        return to_route(route: '{{modelNamePluralKebabCase}}.index')->with(key: 'success', value: __(key: 'The {{modelNameCleanSingular}} was created successfully.'));
     }
 
     /**
@@ -75,7 +75,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function show({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): View
     {
-        {{loadRelation}}return view('{{viewPath}}{{modelNamePluralKebabCase}}.show', compact('{{modelNameSingularCamelCase}}'));
+        {{loadRelation}}return view(view: '{{viewPath}}{{modelNamePluralKebabCase}}.show', data: compact(var_name: '{{modelNameSingularCamelCase}}'));
     }
 
     /**
@@ -83,7 +83,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function edit({{modelNameSingularPascalCase}} ${{modelNameSingularCamelCase}}): View
     {
-        {{loadRelation}}return view('{{viewPath}}{{modelNamePluralKebabCase}}.edit', compact('{{modelNameSingularCamelCase}}'));
+        {{loadRelation}}return view(view: '{{viewPath}}{{modelNamePluralKebabCase}}.edit', data: compact(var_name: '{{modelNameSingularCamelCase}}'));
     }
 
     /**
@@ -96,7 +96,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
 {{updateCode}}
         {{updateDataAction}}
 
-        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was updated successfully.'));
+        return to_route(route: '{{modelNamePluralKebabCase}}.index')->with(key: 'success', value: __(key: 'The {{modelNameCleanSingular}} was updated successfully.'));
     }
 
     /**
@@ -109,10 +109,11 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             ${{modelNameSingularCamelCase}}->delete();
 
             {{deleteImageCodes}}
-            return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was deleted successfully.'));
+            return to_route(route: '{{modelNamePluralKebabCase}}.index')->with(key: 'success', value: __(key: 'The {{modelNameCleanSingular}} was deleted successfully.'));
         } catch (\Exception $e) {
-            return to_route('{{modelNamePluralKebabCase}}.index')->with('error', __("The {{modelNameCleanSingular}} can't be deleted because it's related to another table."));
+            return to_route(route: '{{modelNamePluralKebabCase}}.index')->with(key: 'error', value: __(key: "The {{modelNameCleanSingular}} can't be deleted because it's related to another table."));
         }
     }
+    
     {{exportFunction}}
 }
