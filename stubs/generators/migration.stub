@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('{{tableNamePluralLowercase}}', function (Blueprint $table) {
+        Schema::create('{{tableNamePluralLowercase}}', function (Blueprint $table): void {
             $table->id();
             {{fields}}
             $table->timestamps();

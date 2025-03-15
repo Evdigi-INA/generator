@@ -15,17 +15,17 @@ class {{modelNameSingularPascalCase}}Seeder extends Seeder
      */
     public function run(): void
     {
-        // ${{modelNamePluralCamelCase}} = [
-        //      [
-        //          //
-        //      ]
-        // ];
+        ${{modelNamePluralCamelCase}} = [
+            [
+                {{fields}}
+            ]
+        ];
 
-        // foreach (${{modelNamePluralCamelCase}} as ${{modelNameSingularCamelCase}}) {
-        //     {{modelNameSingularPascalCase}}::create(${{modelNameSingularCamelCase}});
-        // }
+        foreach (${{modelNamePluralCamelCase}} as ${{modelNameSingularCamelCase}}) {
+            {{modelNameSingularPascalCase}}::create(${{modelNameSingularCamelCase}});
+        }
 
-        // {{modelNameSingularPascalCase}}::factory()->count(10)->create();
+        {{modelNameSingularPascalCase}}::factory()->count(10)->create();
 
         {{modelNameSingularPascalCase}}::create([
             {{fields}}

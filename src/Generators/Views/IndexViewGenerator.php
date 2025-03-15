@@ -27,10 +27,10 @@ class IndexViewGenerator
             if ($request['input_types'][$i] != 'password') {
                 /**
                  * will generate something like:
-                 * <th>{{ __('Price') }}</th>
+                 * <th>{{ __(key: 'Price') }}</th>
                  */
                 if ($request['column_types'][$i] != 'foreignId') {
-                    $thColumns .= "<th>{{ __('".GeneratorUtils::cleanUcWords($field)."') }}</th>";
+                    $thColumns .= "<th>{{ __(key: '".GeneratorUtils::cleanUcWords($field)."') }}</th>";
                 }
 
                 if ($request['input_types'][$i] == 'file') {
@@ -82,7 +82,7 @@ class IndexViewGenerator
                     // remove '/' or sub folders
                     $constrainModel = GeneratorUtils::setModelName($request['constrains'][$i], 'default');
 
-                    $thColumns .= "<th>{{ __('".GeneratorUtils::cleanSingularUcWords($constrainModel)."') }}</th>";
+                    $thColumns .= "<th>{{ __(key: '".GeneratorUtils::cleanSingularUcWords($constrainModel)."') }}</th>";
 
                     /**
                      * will generate something like:

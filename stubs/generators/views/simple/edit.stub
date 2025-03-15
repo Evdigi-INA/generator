@@ -15,15 +15,15 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                         <form action="{{ route('{{modelNamePluralKebabCase}}.update', ${{modelNameSingularCamelCase}}->id) }}" method="POST"{{enctype}}>
+                         <form action="{{ route(name: '{{modelNamePluralKebabCase}}.update', ${{modelNameSingularCamelCase}}->id) }}" method="POST"{{enctype}}>
                                 @csrf
                                 @method('PUT')
 
                                 @include('{{viewPath}}{{modelNamePluralKebabCase}}.include.form')
 
-                                <a href="{{ route('{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary mt-2">{{ __('Back') }}</a>
+                                <a href="{{ route(name: '{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary mt-2">{{ __(key: 'Back') }}</a>
 
-                                <button type="submit" class="btn btn-primary mt-2">{{ __('Update') }}</button>
+                                <button type="submit" class="btn btn-primary mt-2">{{ __(key: 'Update') }}</button>
                         </form>
                     </div>
                 </div>

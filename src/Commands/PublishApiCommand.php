@@ -35,9 +35,12 @@ class PublishApiCommand extends Command
             return;
         }
 
+        if ($this->confirm('Do you want to publish user and role resources?', false)) {
+            Artisan::call('vendor:publish --tag=generator-role-user-resource-api --force');
+        }
+
         Artisan::call('vendor:publish --tag=generator-request-api --force');
         Artisan::call('vendor:publish --tag=generator-controller-api --force');
-        Artisan::call('vendor:publish --tag=generator-role-user-resource-api --force');
 
         $template = GeneratorUtils::getStub('api');
 

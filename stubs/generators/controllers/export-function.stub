@@ -1,7 +1,7 @@
-    /**
+/**
      * Download an Excel file containing all records.
      */
     public function export(): BinaryFileResponse
     {
-        return (new {{modelPluralPascalCase}}Export)->download('{{modelPluralKebabCase}}.xlsx');
+        return (new {{modelPluralPascalCase}}Export)->download(fileName: '{{modelPluralKebabCase}}.xlsx');
     }

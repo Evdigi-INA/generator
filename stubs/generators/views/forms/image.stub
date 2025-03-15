@@ -5,7 +5,7 @@
                     </div>
                     <div class="col-md-7">
                         <div class="form-group ms-3">
-                            <label for="{{fieldKebabCase}}">{{ __('{{fieldUcWords}}') }}</label>
+                            <label for="{{fieldKebabCase}}">{{ __(key: '{{fieldUcWords}}') }}</label>
                             <input type="file" name="{{fieldSnakeCase}}" class="form-control @error('{{fieldSnakeCase}}') is-invalid @enderror" id="{{fieldKebabCase}}"{{nullable}}>
                             @error('{{fieldSnakeCase}}')
                                 <span class="text-danger">
@@ -14,7 +14,7 @@
                             @enderror
                             @isset(${{modelCamelCase}})
                                 <div id="{{fieldKebabCase}}-help-block" class="form-text">
-                                    {{ __('Leave the {{fieldLowercase}} blank if you don`t want to change it.') }}
+                                    {{ __(key: 'Leave the {{fieldLowercase}} blank if you don`t want to change it.') }}
                                 </div>
                             @endisset
                         </div>

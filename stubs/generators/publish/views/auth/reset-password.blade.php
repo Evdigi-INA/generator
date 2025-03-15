@@ -10,8 +10,8 @@
     <div class="row h-100">
         <div class="col-lg-7 col-12">
             <div id="auth-left">
-                <h1 class="auth-title">{{ __('Reset Password.') }}</h1>
-                <p class="auth-subtitle mb-3">{{ __('Enter your new password below.') }}</p>
+                <h1 class="auth-title">{{ __(key: 'Reset Password.') }}</h1>
+                <p class="auth-subtitle mb-3">{{ __(key: 'Enter your new password below.') }}</p>
 
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible show fade">
@@ -32,7 +32,7 @@
 
                     <div class="form-group position-relative has-icon-left mb-4">
                         <input type="email" class="form-control form-control-xl @error('email') is-invalid @enderror"
-                            placeholder="{{ __('E-Mail Address') }}" name="email" required autocomplete="current-email"
+                            placeholder="{{ __(key: 'E-Mail Address') }}" name="email" required autocomplete="current-email"
                             value="{{ request()->email ?? old('email') }}" readonly>
                         <div class="form-control-icon">
                             <i class="bi bi-person"></i>
@@ -53,7 +53,7 @@
                             <i class="bi bi-shield-lock"></i>
                         </div>
                     </div>
-                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __('Reset Password') }}</button>
+                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __(key: 'Reset Password') }}</button>
                 </form>
             </div>
         </div>

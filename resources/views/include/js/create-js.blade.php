@@ -573,7 +573,7 @@
             selectMenu.prop('disabled', true)
 
             selectMenu.html(
-                `<option value="" disabled selected>--{{ __('Select the header first') }}--</option>`)
+                `<option value="" disabled selected>--{{ __(key: 'Select the header first') }}--</option>`)
 
             colNewMenu.hide(300)
 
@@ -581,26 +581,26 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="new-header">{{ __('Header') }}</label>
+                            <label for="new-header">{{ __(key: 'Header') }}</label>
                             <input type="text" id="new-header" name="new_header" class="form-control"
-                                placeholder="{{ __('New Header') }}" value="${setNewHeaderName($('#model').val())}" required autofocus>
+                                placeholder="{{ __(key: 'New Header') }}" value="${setNewHeaderName($('#model').val())}" required autofocus>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group" id="input-new-menu">
-                            <label for="new-menu">{{ __('New Menu') }}</label>
+                            <label for="new-menu">{{ __(key: 'New Menu') }}</label>
                             <input type="text" name="new_menu" id="new-menu" class="form-control"
-                                placeholder="{{ __('Title') }}" value="${capitalizeFirstLetter(setModelName($('#model').val()))}" required>
-                            <small>{{ __('If null will used the model name, e.g.: "Products"') }}</small>
+                                placeholder="{{ __(key: 'Title') }}" value="${capitalizeFirstLetter(setModelName($('#model').val()))}" required>
+                            <small>{{ __(key: 'If null will used the model name, e.g.: "Products"') }}</small>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="new-icon">{{ __('Icon') }}</label>
+                            <label for="new-icon">{{ __(key: 'Icon') }}</label>
                             <input type="text" id="new-icon" name="new_icon" class="form-control"
-                                placeholder="{{ __('New Icon') }}" required>
+                                placeholder="{{ __(key: 'New Icon') }}" required>
                             <small>{!! __(
                                 'We recomended you to use <a href="https://icons.getbootstrap.com/" target="_blank">bootstrap icon</a>, e.g.: ',
                             ) !!} {{ '<i class="bi bi-people"></i>' }}</small>
@@ -609,10 +609,10 @@
 
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="new-submenu">{{ __('Submenu') }}</label>
+                            <label for="new-submenu">{{ __(key: 'Submenu') }}</label>
                             <input type="text" id="new-submenu" name="new_submenu" class="form-control"
-                                placeholder="{{ __('New Submenu') }}">
-                            <small>{{ __('Optional.') }}</small>
+                                placeholder="{{ __(key: 'New Submenu') }}">
+                            <small>{{ __(key: 'Optional.') }}</small>
                         </div>
                     </div>
                 </div>
@@ -632,8 +632,8 @@
                     // console.log(res)
 
                     let options = `
-                        <option value="" disabled selected>-- {{ __('Select menu') }} --</option>
-                        <option value="new">{{ __('Create a New Menu') }}</option>
+                        <option value="" disabled selected>-- {{ __(key: 'Select menu') }} --</option>
+                        <option value="new">{{ __(key: 'Create a New Menu') }}</option>
                     `
 
                     res.forEach((value, index) => {
@@ -664,18 +664,18 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group" id="input-new-menu">
-                            <label for="new-menu">{{ __('New Menu') }}</label>
+                            <label for="new-menu">{{ __(key: 'New Menu') }}</label>
                             <input type="text" name="new_menu" id="new-menu" class="form-control"
-                                placeholder="{{ __('Title') }}" value="${capitalizeFirstLetter(setModelName($('#model').val()))}" required>
-                            <small>{{ __('If null will used the model name, e.g.: "Products"') }}</small>
+                                placeholder="{{ __(key: 'Title') }}" value="${capitalizeFirstLetter(setModelName($('#model').val()))}" required>
+                            <small>{{ __(key: 'If null will used the model name, e.g.: "Products"') }}</small>
                         </div>
                     </div>
 
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="new-icon">{{ __('Icon') }}</label>
+                            <label for="new-icon">{{ __(key: 'Icon') }}</label>
                             <input type="text" id="new-icon" name="new_icon" class="form-control"
-                                placeholder="{{ __('New Icon') }}" required>
+                                placeholder="{{ __(key: 'New Icon') }}" required>
                             <small>{!! __(
                                 'We recomended you to use <a href="https://icons.getbootstrap.com/" target="_blank">bootstrap icon</a>, e.g.: ',
                             ) !!} {{ '<i class="bi bi-people"></i>' }}</small>
@@ -684,10 +684,10 @@
 
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="new-submenu">{{ __('Submenu') }}</label>
+                            <label for="new-submenu">{{ __(key: 'Submenu') }}</label>
                             <input type="text" id="new-submenu" name="new_submenu" class="form-control"
-                                placeholder="{{ __('New Submenu') }}">
-                            <small>{{ __('Optional.') }}</small>
+                                placeholder="{{ __(key: 'New Submenu') }}">
+                            <small>{{ __(key: 'Optional.') }}</small>
                         </div>
                     </div>
                 </div>

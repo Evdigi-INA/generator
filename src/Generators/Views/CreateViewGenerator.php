@@ -26,7 +26,7 @@ class CreateViewGenerator
                 $alertCode = "@if (session('success'))
             <div class=\"alert alert-success alert-dismissible fade show\" role=\"alert\">
                 <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>
-                    <h4 class=\"alert-heading\">{{ __('Success') }}</h4>
+                    <h4 class=\"alert-heading\">{{ __(key: 'Success') }}</h4>
                     <p>{{ session('success') }}</p>
             </div>
         @endif";

@@ -8,6 +8,6 @@ class ProfileController extends Controller
 {
     public function __invoke(): View
     {
-        return view('profile');
+        return view(view: 'profile');
     }
 }

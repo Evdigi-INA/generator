@@ -7,12 +7,12 @@ class SeederGenerator
     public function generate(array $request): void
     {
         if (isset($request['generate_seeder'])) {
-            $model = GeneratorUtils::setModelName($request['model'], 'default');
-            $path = GeneratorUtils::getModelLocation($request['model']);
-            $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
+            $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
+            $path = GeneratorUtils::getModelLocation(model: $request['model']);
+            $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase(string: $model);
 
             $fields = '';
-            $totalField = count($request['fields']);
+            $totalField = count(value: $request['fields']);
             foreach ($request['fields'] as $i => $field) {
                 $fields .= "'".$field."' => ";
                 $fields .= $request['requireds'][$i] == 'yes' ? "''" : 'null';
@@ -29,13 +29,13 @@ class SeederGenerator
                     'modelPath' => "App\Models\\".$modelPath.$modelNameSingularPascalCase,
                     'fields' => $fields,
                     'modelNameSingularPascalCase' => $modelNameSingularPascalCase,
-                    'modelNameSingularCamelCase' => GeneratorUtils::singularCamelCase($model),
-                    'modelNamePluralCamelCase' => GeneratorUtils::pluralCamelCase($model),
+                    'modelNameSingularCamelCase' => GeneratorUtils::singularCamelCase(string: $model),
+                    'modelNamePluralCamelCase' => GeneratorUtils::pluralCamelCase(string: $model),
                 ],
                 stubName: 'seeder'
             );
 
-            file_put_contents(app_path('../database/seeders/'.$modelNameSingularPascalCase.'Seeder.php'), $template);
+            file_put_contents(filename: app_path(path: '../database/seeders/'.$modelNameSingularPascalCase.'Seeder.php'), data: $template);
         }
     }
 }

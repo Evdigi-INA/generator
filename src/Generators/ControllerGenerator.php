@@ -11,17 +11,17 @@ class ControllerGenerator
      */
     public function generate(array $request): void
     {
-        $model = GeneratorUtils::setModelName($request['model'], 'default');
-        $path = GeneratorUtils::getModelLocation($request['model']);
+        $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
+        $path = GeneratorUtils::getModelLocation(model: $request['model']);
 
-        $modelNameSingularCamelCase = GeneratorUtils::singularCamelCase($model);
-        $modelNamePluralCamelCase = GeneratorUtils::pluralCamelCase($model);
-        $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase($model);
-        $modelNameSpaceLowercase = GeneratorUtils::cleanSingularLowerCase($model);
-        $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase($model);
-        $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase($model);
-        $modelNameCleanSingular = GeneratorUtils::cleanSingularLowerCase($model);
-        $modelNameCleanPlural = GeneratorUtils::cleanPluralLowerCase($model);
+        $modelNameSingularCamelCase = GeneratorUtils::singularCamelCase(string: $model);
+        $modelNamePluralCamelCase = GeneratorUtils::pluralCamelCase(string: $model);
+        $modelNamePluralKebabCase = GeneratorUtils::pluralKebabCase(string: $model);
+        $modelNameSpaceLowercase = GeneratorUtils::cleanSingularLowerCase(string: $model);
+        $modelNameSingularPascalCase = GeneratorUtils::singularPascalCase(string: $model);
+        $modelNamePluralPascalCase = GeneratorUtils::pluralPascalCase(string: $model);
+        $modelNameCleanSingular = GeneratorUtils::cleanSingularLowerCase(string: $model);
+        $modelNameCleanPlural = GeneratorUtils::cleanPluralLowerCase(string: $model);
 
         $query = "$modelNameSingularPascalCase::query()";
 
@@ -75,71 +75,65 @@ class ControllerGenerator
         $addColumns = '';
 
         if (
-            in_array('text', $request['column_types']) ||
-            in_array('longText', $request['column_types'])
+            in_array(needle: 'text', haystack: $request['column_types']) ||
+            in_array(needle: 'longText', haystack: $request['column_types'])
         ) {
-            $limitText = config('generator.format.limit_text') ? config('generator.format.limit_text') : 200;
+            $limitText = config(key: 'generator.format.limit_text') ?? 200;
 
             /**
              * will generate something like:
              *
-             * ->addColumn('role', function ($row) {
-             *       return str($row->body)->limit($limitText);
-             *  })
+             *  ->addColumn(name: 'address', content: fn($row) => str(string: $row->address)->limit(100))
              */
             foreach ($request['column_types'] as $i => $type) {
-                if (in_array($type, ['text', 'longText'])) {
-                    $addColumns .= "->addColumn('".str($request['fields'][$i])->snake()."', function(\$row) {
-                        return str(\$row->".str($request['fields'][$i])->snake().")->limit($limitText);
-                    })\n\t\t\t\t";
+                if (in_array(needle: $type, haystack: ['text', 'longText'])) {
+                    $addColumns .= "->addColumn(name: '".str(string: $request['fields'][$i])->snake()."', content: fn(\$row): ?string => str(string: \$row->".str(string: $request['fields'][$i])->snake().")->limit($limitText))\n\t\t\t\t";
                 }
             }
         }
 
         // load the relations for create, show, and edit
-        if (in_array('foreignId', $request['column_types'])) {
+        if (in_array(needle: 'foreignId', haystack: $request['column_types'])) {
             if (GeneratorUtils::isGenerateApi()) {
-                $relations .= 'with([';
+                $relations .= 'with(relations: [';
 
-                $countForeignId = count(array_keys($request['column_types'], 'foreignId'));
+                $countForeignId = count(value: array_keys(array: $request['column_types'], filter_value: 'foreignId'));
 
                 foreach ($request['constrains'] as $i => $constrain) {
                     if ($constrain != null) {
                         // remove path or '/' if exists
-                        $constrainName = GeneratorUtils::setModelName($request['constrains'][$i]);
+                        $constrainName = GeneratorUtils::setModelName(model: $request['constrains'][$i]);
 
-                        $constrainSnakeCase = GeneratorUtils::singularSnakeCase($constrainName);
-                        $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself($constrainName);
+                        $constrainSnakeCase = GeneratorUtils::singularSnakeCase(string: $constrainName);
+                        $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself(table: $constrainName);
 
                         $relations .= "'$constrainSnakeCase:$selectedColumns', ";
 
                         if ($countForeignId + 1 < $i) {
-                            // $relations .= "'$constrainSnakeCase:$selectedColumns', ";
                             $query .= "'$constrainSnakeCase:$selectedColumns', ";
                         } else {
-                            // $relations .= "'$constrainSnakeCase:$selectedColumns'";
                             $query .= "'$constrainSnakeCase:$selectedColumns'";
                         }
                     }
                 }
 
                 $relations .= '])->';
-                $relations = str_replace("', ])->", "'])->", $relations);
+                $relations = str_replace(search: "', ])->", replace: "'])->", subject: $relations);
             } else {
-                $relations .= '$'.$modelNameSingularCamelCase.'->load([';
+                $relations .= '$'.$modelNameSingularCamelCase.'->load(relations: [';
 
-                $countForeignId = count(array_keys($request['column_types'], 'foreignId'));
+                $countForeignId = count(value: array_keys(array: $request['column_types'], filter_value: 'foreignId'));
 
-                $query = "$modelNameSingularPascalCase::with([";
+                $query = "$modelNameSingularPascalCase::with(relations: [";
 
                 foreach ($request['constrains'] as $i => $constrain) {
                     if ($constrain != null) {
                         // remove path or '/' if exists
-                        $constrainName = GeneratorUtils::setModelName($request['constrains'][$i]);
+                        $constrainName = GeneratorUtils::setModelName(model: $request['constrains'][$i]);
 
-                        $constrainSnakeCase = GeneratorUtils::singularSnakeCase($constrainName);
-                        $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself($constrainName);
-                        $columnAfterId = GeneratorUtils::getColumnAfterId($constrainName);
+                        $constrainSnakeCase = GeneratorUtils::singularSnakeCase(string: $constrainName);
+                        $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself(table: $constrainName);
+                        $columnAfterId = GeneratorUtils::getColumnAfterId(table: $constrainName);
 
                         if ($countForeignId + 1 < $i) {
                             $relations .= "'$constrainSnakeCase:$selectedColumns', ";
@@ -152,13 +146,9 @@ class ControllerGenerator
                         /**
                          * Will generate something like:
                          *
-                         * ->addColumn('category', function($row){
-                         *     return $row?->category?->name ?? '';
-                         * })
+                         *  ->addColumn(name: 'user', content: fn($row) => $row?->user?->name ?? '')
                          */
-                        $addColumns .= "->addColumn('$constrainSnakeCase', function (\$row) {
-                    return \$row?->".$constrainSnakeCase."?->$columnAfterId ?? '';
-                })";
+                        $addColumns .= "->addColumn(name: '$constrainSnakeCase', content: fn(\$row): ?string => \$row?->".$constrainSnakeCase."?->$columnAfterId ?? '')\n\t\t\t\t";
                     }
                 }
 
@@ -222,7 +212,7 @@ class ControllerGenerator
         }
 
         /**
-         * Generate code for insert input type month with datatype date.
+         * Generate code for insert input type month with relations: datatype date.
          * by default will get an error, cause invalid format.
          */
         $inputMonths = '';
@@ -251,15 +241,9 @@ class ControllerGenerator
          */
         switch (in_array(needle: 'file', haystack: $request['input_types'])) {
             case true:
-                // $indexCode = "";
                 $storeCode = '';
                 $updateCode = '';
-                // $deleteCode = "";
-
-                // $castImageFunc = "";
-                // $castImageIndex = "";
                 $uploadPaths = '';
-                // $assignUploadPaths = "";
                 $assignImageDelete = '';
                 $deleteImageCodes = '';
 
@@ -273,34 +257,17 @@ class ControllerGenerator
                  *    return $generator;
                  * })
                  */
-                // $castImageIndex .= "\n\t\t$" . $modelNamePluralCamelCase . "->through(function ($" . $modelNameSingularCamelCase . ") {\n\t\t\t\$this->castImages($" . $modelNameSingularCamelCase . ");\n\t\t\treturn $" . $modelNameSingularCamelCase . ";\n\t\t});\n";
-
-                // $castImageDataTable = "";
-
                 foreach ($request['input_types'] as $i => $input) {
                     if ($input == 'file') {
-                        $uploadPaths .= 'public string $'.GeneratorUtils::singularCamelCase($request['fields'][$i])."Path = '".GeneratorUtils::pluralKebabCase($request['fields'][$i])."', ";
-
-                        // $assignUploadPaths .= "\$this->" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path = " . GeneratorUtils::setDiskCodeForController($request['fields'][$i]) . ";\n\t\t";
+                        $uploadPaths .= 'public string $'.GeneratorUtils::singularCamelCase(string: $request['fields'][$i])."Path = '".GeneratorUtils::pluralKebabCase(string: $request['fields'][$i])."', ";
 
                         //  Generated code: $image = $generator->image;
-                        $assignImageDelete .= '$'.GeneratorUtils::singularCamelCase($request['fields'][$i]).' = $'.GeneratorUtils::singularCamelCase($model).'->'.str($request['fields'][$i])->snake().";\n\t\t\t";
+                        $assignImageDelete .= '$'.GeneratorUtils::singularCamelCase(string: $request['fields'][$i]).' = $'.GeneratorUtils::singularCamelCase(string: $model).'->'.str(string: $request['fields'][$i])->snake().";\n\t\t\t";
 
                         //  Generated code: $this->imageService->delete("$this->imagePath$image", disk: $this->disk);
-                        // $deleteImageCodes .= "\$this->imageService->delete(image: \"\$this->" . GeneratorUtils::singularCamelCase($request['fields'][$i]) . "Path$" . GeneratorUtils::singularCamelCase($request['fields'][$i]) .  "\", disk: \$this->disk);\n\t\t\t";
-
                         $deleteImageCodes .= GeneratorUtils::replaceStub(replaces: [
-                            'fieldCamelCase' => GeneratorUtils::singularCamelCase($request['fields'][$i]),
+                            'fieldCamelCase' => GeneratorUtils::singularCamelCase(string: $request['fields'][$i]),
                         ], stubName: 'controllers/upload-files/delete')."\n\t\t\t";
-
-                        // $castImageDataTable .= GeneratorUtils::setDiskCodeForCastImage($model, $request['fields'][$i]);
-
-                        // $indexCode .= $this->generateUploadImageCode(
-                        //     field: $request['fields'][$i],
-                        //     path: 'index',
-                        //     model: $modelNameSingularCamelCase,
-                        //     defaultValue: $request['default_values'][$i]
-                        // );
 
                         $storeCode .= $this->generateUploadImageCode(
                             field: $request['fields'][$i],
@@ -313,18 +280,6 @@ class ControllerGenerator
                             path: 'update',
                             model: $modelNameSingularCamelCase
                         );
-
-                        // $deleteCode .= $this->generateUploadImageCode(
-                        //     field: $request['fields'][$i],
-                        //     path: 'delete',
-                        //     model: $modelNameSingularCamelCase
-                        // );
-
-                        // $castImageFunc .= $this->generateCastImageCode(
-                        //     field: $request['fields'][$i],
-                        //     path: 'index',
-                        //     model: $modelNameSingularCamelCase,
-                        // ) . "\t\t";
                     }
                 }
 
@@ -351,7 +306,7 @@ class ControllerGenerator
                 }
 
                 /**
-                 * controller with upload file code
+                 * controller with relations: upload file code
                  */
                 $template = GeneratorUtils::replaceStub(
                     replaces: [
@@ -360,10 +315,8 @@ class ControllerGenerator
                         'modelNamePluralCamelCase' => $modelNamePluralCamelCase,
                         'modelNamePluralKebabCase' => $modelNamePluralKebabCase,
                         'modelNameSpaceLowercase' => $modelNameSpaceLowercase,
-                        // 'indexCode' => $indexCode,
                         'storeCode' => $storeCode,
                         'updateCode' => $updateCode,
-                        // 'deleteCode' => $deleteCode,
                         'loadRelation' => $relations,
                         'addColumns' => $addColumns,
                         'query' => $query,
@@ -380,16 +333,12 @@ class ControllerGenerator
                         'modelNameCleanPlural' => $modelNameCleanPlural,
                         'relations' => $relations,
                         'uploadPaths' => $uploadPaths,
-                        // 'assignUploadPaths' => $assignUploadPaths,
                         'assignImageDelete' => $assignImageDelete,
                         'deleteImageCodes' => $deleteImageCodes,
-                        // 'castImageFunction' => $castImageFunc,
-                        // 'castImageIndex' => $castImageIndex,
-                        // 'castImageShow' => "\n\t\t\$this->castImages($$modelNameSingularCamelCase);\n",
                         'middlewareName' => GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
-                        'useExportNamespace' => $this->generateExportNamespace($request),
-                        'exportFunction' => $this->generateExportFunction($request),
-                        'disk' => config('generator.image.disk', 'storage.local'),
+                        'useExportNamespace' => $this->generateExportNamespace(request: $request),
+                        'exportFunction' => $this->generateExportFunction(request: $request),
+                        'disk' => config(key: 'generator.image.disk', default: 'storage.local'),
                     ],
                     stubName: GeneratorUtils::getControllerStubByGeneratorVariant(withUploadFile: true)
                 );
@@ -437,8 +386,8 @@ class ControllerGenerator
                     'relations' => $relations,
                     'publicOrStorage' => config(key: 'generator.image.disk', default: 'storage'),
                     'middlewareName' => GeneratorUtils::isGenerateApi() ? "'auth:sanctum'," : "'auth',",
-                    'exportFunction' => $this->generateExportFunction($request),
-                    'useExportNamespace' => $this->generateExportNamespace($request),
+                    'exportFunction' => $this->generateExportFunction(request: $request),
+                    'useExportNamespace' => $this->generateExportNamespace(request: $request),
                 ], stubName: GeneratorUtils::getControllerStubByGeneratorVariant());
                 break;
         }
@@ -452,16 +401,16 @@ class ControllerGenerator
          */
         if (! $path) {
             match (GeneratorUtils::isGenerateApi()) {
-                true => GeneratorUtils::checkFolder(app_path('/Http/Controllers/Api')),
-                default => GeneratorUtils::checkFolder(app_path('/Http/Controllers')),
+                true => GeneratorUtils::checkFolder(path: app_path(path: '/Http/Controllers/Api')),
+                default => GeneratorUtils::checkFolder(path: app_path(path: '/Http/Controllers')),
             };
 
             $controllerPath = GeneratorUtils::isGenerateApi() ? "/Api/{$modelNameSingularPascalCase}Controller.php" : "/{$modelNameSingularPascalCase}Controller.php";
 
-            file_put_contents(filename: app_path("/Http/Controllers$controllerPath"), data: $template);
+            file_put_contents(filename: app_path(path: "/Http/Controllers$controllerPath"), data: $template);
         } else {
-            $fullPath = GeneratorUtils::isGenerateApi() ? app_path("/Http/Controllers/Api/$path/") : app_path("/Http/Controllers/$path/");
-            GeneratorUtils::checkFolder($fullPath);
+            $fullPath = GeneratorUtils::isGenerateApi() ? app_path(path: "/Http/Controllers/Api/$path/") : app_path(path: "/Http/Controllers/$path/");
+            GeneratorUtils::checkFolder(path: $fullPath);
 
             file_put_contents(filename: "$fullPath{$modelNameSingularPascalCase}Controller.php", data: $template);
         }
@@ -472,24 +421,12 @@ class ControllerGenerator
      */
     protected function generateUploadImageCode(string $field, string $path, ?string $model): string
     {
-        // $default = GeneratorUtils::setDefaultImage(default: $defaultValue, field: $field, model: $model);
-
         $replaces = [
             'fieldSnakeCase' => str()->snake($field),
-            // 'fieldPluralSnakeCase' => GeneratorUtils::pluralSnakeCase($field),
-            // 'fieldPluralKebabCase' => GeneratorUtils::pluralKebabCase($field),
-            // 'uploadPath' => config('generator.image.disk') == 'storage' ? "storage_path('app/public/uploads" : "public_path('uploads",
-            // 'uploadPathPublic' => config('generator.image.disk') == 'storage' ? "storage/uploads" : "uploads",
-            // 'width' => is_int(config('generator.image.width')) ? config('generator.image.width') : 500,
-            // 'height' => is_int(config('generator.image.height')) ? config('generator.image.height') : 500,
-            // 'aspectRatio' => config('generator.image.aspect_ratio') ? "\n\t\t\t\t\$constraint->aspectRatio();" : '',
-            // 'defaultImageCode' => $default['index_code'],
-            'fieldSingularCamelCase' => GeneratorUtils::singularCamelCase($field),
-            'defaultImage' => '$'.GeneratorUtils::singularCamelCase($model).'?->'.str($field)->snake(),
-            'fieldCamelCase' => GeneratorUtils::singularCamelCase($field),
-            // 'modelNameSingularCamelCase' => GeneratorUtils::singularCamelCase($model),
-            'disk' => config('generator.image.disk'),
-            // 'castImageDataTable' => GeneratorUtils::setDiskCodeForCastImage(model: $model, field: $field),
+            'fieldSingularCamelCase' => GeneratorUtils::singularCamelCase(string: $field),
+            'defaultImage' => '$'.GeneratorUtils::singularCamelCase(string: $model).'?->'.str(string: $field)->snake(),
+            'fieldCamelCase' => GeneratorUtils::singularCamelCase(string: $field),
+            'disk' => config(key: 'generator.image.disk'),
         ];
 
         if ($model) {
@@ -508,12 +445,12 @@ class ControllerGenerator
     public function generateCastImageCode(string $field, string $path, string $model): string
     {
         $replaces = [
-            'modelNamePluralCamelCase' => GeneratorUtils::pluralCamelCase($model),
-            'modelNameSingularCamelCase' => GeneratorUtils::singularCamelCase($model),
+            'modelNamePluralCamelCase' => GeneratorUtils::pluralCamelCase(string: $model),
+            'modelNameSingularCamelCase' => GeneratorUtils::singularCamelCase(string: $model),
             'field' => $field,
-            'defaultImage' => config('generator.image.default', 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
-            'castImage' => GeneratorUtils::setDiskCodeForCastImage($model, $field),
-            'fieldPluralKebabCase' => GeneratorUtils::pluralKebabCase($field),
+            'defaultImage' => config(key: 'generator.image.default', default: 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
+            'castImage' => GeneratorUtils::setDiskCodeForCastImage(model: $model, field: $field),
+            'fieldPluralKebabCase' => GeneratorUtils::pluralKebabCase(string: $field),
         ];
 
         return GeneratorUtils::replaceStub(

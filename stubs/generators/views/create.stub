@@ -1,27 +1,27 @@
 @extends('layouts.app')
 
-@section('title', __('Create {{modelNamePluralUcWords}}'))
+@section('title', __(key: 'Create {{modelNamePluralUcWords}}'))
 
 @section('content')
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-8 order-md-1 order-last">
-                    <h3>{{ __('{{modelNamePluralUcWords}}') }}</h3>
+                    <h3>{{ __(key: '{{modelNamePluralUcWords}}') }}</h3>
                     <p class="text-subtitle text-muted">
-                        {{ __('Create a new {{modelNameSingularLowerCase}}.') }}
+                        {{ __(key: 'Create a new {{modelNameSingularLowerCase}}.') }}
                     </p>
                 </div>
 
                 <x-breadcrumb>
                     <li class="breadcrumb-item">
-                        <a href="/">{{ __('Dashboard') }}</a>
+                        <a href="/">{{ __(key: 'Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('{{modelNamePluralKebabCase}}.index') }}">{{ __('{{modelNamePluralUcWords}}') }}</a>
+                        <a href="{{ route(name: '{{modelNamePluralKebabCase}}.index') }}">{{ __(key: '{{modelNamePluralUcWords}}') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
-                        {{ __('Create') }}
+                        {{ __(key: 'Create') }}
                     </li>
                 </x-breadcrumb>
             </div>
@@ -35,15 +35,15 @@
                         <div class="card-body">
                             {{exportButton}}
 
-                            <form action="{{ route('{{modelNamePluralKebabCase}}.store') }}" method="POST"{{enctype}}>
+                            <form action="{{ route(name: '{{modelNamePluralKebabCase}}.store') }}" method="POST"{{enctype}}>
                                 @csrf
                                 @method('POST')
 
                                 @include('{{viewPath}}{{modelNamePluralKebabCase}}.include.form')
 
-                                <a href="{{ route('{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary mt-2">{{ __('Back') }}</a>
+                                <a href="{{ route(name: '{{modelNamePluralKebabCase}}.index') }}" class="btn btn-secondary mt-2">{{ __(key: 'Back') }}</a>
 
-                                <button type="submit" class="btn btn-primary mt-2">{{ __('Save') }}</button>
+                                <button type="submit" class="btn btn-primary mt-2">{{ __(key: 'Save') }}</button>
                             </form>
                         </div>
                     </div>

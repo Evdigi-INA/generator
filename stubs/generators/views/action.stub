@@ -1,18 +1,18 @@
 <td>
     {{-- @can('{{modelNameSingularLowercase}} view') --}}
-        <a href="{{ route('{{modelNamePluralKebabCase}}.show', $model->id) }}" class="mb-1 btn btn-outline-success btn-sm">
+        <a href="{{ route(name: '{{modelNamePluralKebabCase}}.show', parameters: $model->id) }}" class="mb-1 btn btn-outline-success btn-sm">
             <i class="fa fa-eye"></i>
         </a>
     {{-- @endcan --}}
 
     {{-- @can('{{modelNameSingularLowercase}} edit') --}}
-        <a href="{{ route('{{modelNamePluralKebabCase}}.edit', $model->id) }}" class="mb-1 btn btn-outline-primary btn-sm">
+        <a href="{{ route(name: '{{modelNamePluralKebabCase}}.edit', parameters: $model->id) }}" class="mb-1 btn btn-outline-primary btn-sm">
             <i class="fa fa-pencil-alt"></i>
         </a>
     {{-- @endcan --}}
 
     {{-- @can('{{modelNameSingularLowercase}} delete') --}}
-        <form action="{{ route('{{modelNamePluralKebabCase}}.destroy', $model->id) }}" method="post" class="d-inline"
+        <form action="{{ route(name: '{{modelNamePluralKebabCase}}.destroy', parameters: $model->id) }}" method="post" class="d-inline"
             onsubmit="return confirm('Are you sure to delete this record?')">
             @csrf
             @method('delete')

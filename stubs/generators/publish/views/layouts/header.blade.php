@@ -42,12 +42,12 @@
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                         <li>
-                                            <h6 class="dropdown-header">{{ __('Language') }}</h6>
+                                            <h6 class="dropdown-header">{{ __(key: 'Language') }}</h6>
                                         </li>
                                         <li><a class="dropdown-item{{ config('app.locale') == 'id' ? ' active' : '' }}"
-                                                href="#">{{ __('Indonesia') }}</a></li>
+                                                href="#">{{ __(key: 'Indonesia') }}</a></li>
                                         <li><a class="dropdown-item{{ config('app.locale') == 'en' ? ' active' : '' }}"
-                                                href="#">{{ __('English') }}</a></li>
+                                                href="#">{{ __(key: 'English') }}</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -71,18 +71,18 @@
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton"
                                         style="min-width: 11rem;">
                                         <li>
-                                            <h6 class="dropdown-header">{{ __('Hello') }}, {{ auth()?->user()?->name }}!
+                                            <h6 class="dropdown-header">{{ __(key: 'Hello') }}, {{ auth()?->user()?->name }}!
                                             </h6>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="{{ route('profile') }}"><i
-                                                    class="icon-mid bi bi-person-fill me-2"></i>{{ __('My Profile') }}</a>
+                                                    class="icon-mid bi bi-person-fill me-2"></i>{{ __(key: 'My Profile') }}</a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="{{ route('logout') }}"
                                                 onclick="event.preventDefault();document.getElementById('logout-form-nav').submit();">
                                                 <i class="bi bi-door-open-fill"></i>
-                                                {{ __('Logout') }}
+                                                {{ __(key: 'Logout') }}
                                             </a>
 
                                             <form id="logout-form-nav" action="{{ route('logout') }}" method="POST"

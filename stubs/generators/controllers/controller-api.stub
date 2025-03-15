@@ -113,5 +113,6 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
                 ->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
     {{exportFunction}}
 }

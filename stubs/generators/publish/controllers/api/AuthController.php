@@ -19,18 +19,18 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (! Auth::attempt($credentials)) {
-            return response()->json([
+            return response()->json(data: [
                 'message' => 'These credentials do not match our records.',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            ], status: Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $token = $user->createToken('apiToken')->plainTextToken;
 
-        return response()->json([
+        return response()->json(data: [
             'message' => 'Successfully logged in',
             'token' => $token,
             'user' => $user,
-        ], Response::HTTP_OK);
+        ], status: Response::HTTP_OK);
     }
 
     public function register(RegisterRequest $request): JsonResponse
@@ -42,25 +42,25 @@ class AuthController extends Controller
         $user = User::create($validated);
         $token = $user->createToken('apiToken')->plainTextToken;
 
-        return response()->json([
+        return response()->json(data: [
             'message' => 'Successfully registered',
             'token' => $token,
             'user' => $user,
-        ], Response::HTTP_OK);
+        ], status: Response::HTTP_OK);
     }
 
     public function logout(): JsonResponse
     {
         Auth::user()->tokens()->delete();
 
-        return response()->json(['message' => 'Successfully logged out'], Response::HTTP_OK);
+        return response()->json(data: ['message' => 'Successfully logged out'], status: Response::HTTP_OK);
     }
 
     public function me(): JsonResponse
     {
-        return response()->json([
+        return response()->json(data: [
             'message' => 'Authenticated',
             'user' => Auth::user(),
-        ], Response::HTTP_OK);
+        ], status: Response::HTTP_OK);
     }
 }
