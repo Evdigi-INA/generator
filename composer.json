@@ -24,17 +24,22 @@
             "name": "Mohammad Zulfahmi",
             "email": "mohammad.zulfahmi03@gmail.com",
             "homepage": "https://github.com/Zzzul"
+        },
+        {
+            "name": "Rachmad Nur Hayat",
+            "email": "rachmadnurhayat@gmail.com",
+            "homepage": "https://github.com/rachyharkov"
         }
     ],
     "require": {
         "php": "^8.2",
-        "intervention/image-laravel": "^1.1",
-        "yajra/laravel-datatables-oracle": "^10.0|^11.0"
+        "intervention/image-laravel": "^1.5",
+        "yajra/laravel-datatables-oracle": "^12.0"
     },
     "require-dev": {
-        "larastan/larastan": "^2.0",
+        "larastan/larastan": "^3.0",
         "nunomaduro/phpinsights": "^2.11",
-        "orchestra/testbench": "^9.0"
+        "orchestra/testbench": "^10.0"
     },
     "config": {
         "optimize-autoloader": true,
