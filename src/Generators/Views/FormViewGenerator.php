@@ -208,7 +208,7 @@ class FormViewGenerator
                         switch ($request['input_types'][$i]) {
                             case 'select':
                                 // select
-                                $options = '<option value="0" {{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase."?->$fieldSnakeCase == '0' ? 'selected' : (old(key: '$fieldSnakeCase') == '0' ? 'selected' : '') }}>{{ __(key: 'True') }}</option>\n\t\t\t\t<option value=\"1\" {{ isset($".$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase."?->$fieldSnakeCase == '1' ? 'selected' : (old(key: '$fieldSnakeCase') == '1' ? 'selected' : '') }}>{{ __(key: 'False') }}</option>";
+                                $options = '<option value="0" {{ isset($'.$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase."?->$fieldSnakeCase == '0' ? 'selected' : (old(key: '$fieldSnakeCase') == '0' ? 'selected' : '') }}>{{ __(key: 'False') }}</option>\n\t\t\t\t<option value=\"1\" {{ isset($".$modelNameSingularCamelCase.') && $'.$modelNameSingularCamelCase."?->$fieldSnakeCase == '1' ? 'selected' : (old(key: '$fieldSnakeCase') == '1' ? 'selected' : '') }}>{{ __(key: 'True') }}</option>";
 
                                 $template .= GeneratorUtils::replaceStub(
                                     replaces: [

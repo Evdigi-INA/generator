@@ -29,7 +29,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     {
         ${{modelNameSingularCamelCase}} = {{query}}->first();
 
-        return view(view: '{{viewPath}}{{modelNamePluralKebabCase}}.create', compact(var_name:'{{modelNameSingularCamelCase}}'));
+        return view(view: '{{viewPath}}{{modelNamePluralKebabCase}}.create', data: compact(var_name:'{{modelNameSingularCamelCase}}'));
     }
 
     /**

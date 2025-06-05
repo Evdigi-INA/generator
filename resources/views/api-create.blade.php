@@ -38,14 +38,6 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    @if (!class_exists(class: \Laravel\Sanctum\Sanctum::class))
-                        <div class="alert alert-danger">
-                            Please install <a href="https://laravel.com/docs/12.x/sanctum">Laravel Sanctum</a> first, and
-                            read how to used in <a
-                                href="https://zzzul.github.io/generator-docs-next/usage#creating-api-crud">Generator</a>.
-                        </div>
-                    @endif
-
                     <div class="card">
                         <div class="card-body">
                             <form action="/api-generators" method="POST" id="form-generator">
