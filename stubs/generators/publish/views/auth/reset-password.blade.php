@@ -1,9 +1,9 @@
 @extends('layouts.auth')
 
-@section('title', __('Reset Password'))
+@section('title', __(key: 'Reset Password'))
 
 @push('css')
-    <link rel="stylesheet" href="{{ asset('mazer') }}/css/pages/auth.css">
+    <link rel="stylesheet" href="{{ asset(path: 'mazer') }}/css/pages/auth.css">
 @endpush
 
 @section('content')
@@ -26,14 +26,14 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('password.update') }}">
+                <form method="POST" action="{{ route(name: 'password.update') }}">
                     @csrf
                     <input type="hidden" name="token" value="{{ request()->token }}">
 
                     <div class="form-group position-relative has-icon-left mb-4">
                         <input type="email" class="form-control form-control-xl @error('email') is-invalid @enderror"
                             placeholder="{{ __(key: 'E-Mail Address') }}" name="email" required autocomplete="current-email"
-                            value="{{ request()->email ?? old('email') }}" readonly>
+                            value="{{ request()->email ?? old(key: 'email') }}" readonly>
                         <div class="form-control-icon">
                             <i class="bi bi-person"></i>
                         </div>

@@ -28,10 +28,10 @@ class UserController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:user view', only: ['index', 'show']),
-            new Middleware('permission:user create', only: ['create', 'store']),
-            new Middleware('permission:user edit', only: ['edit', 'update']),
-            new Middleware('permission:user delete', only: ['destroy']),
+            new Middleware(middleware: 'permission:user view', only: ['index', 'show']),
+            new Middleware(middleware: 'permission:user create', only: ['create', 'store']),
+            new Middleware(middleware: 'permission:user edit', only: ['edit', 'update']),
+            new Middleware(middleware: 'permission:user delete', only: ['destroy']),
         ];
     }
 
@@ -41,11 +41,11 @@ class UserController extends Controller implements HasMiddleware
     public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
-            $users = User::with('roles:id,name');
+            $users = User::with(relations: ['roles:id,name']);
 
-            return Datatables::of($users)
-                ->addColumn('action', 'users.include.action')
-                ->addColumn('role', fn ($row) => $row->getRoleNames()->toArray() !== [] ? $row->getRoleNames()[0] : '-')
+            return Datatables::of(source: $users)
+                ->addColumn(name: 'action', content: 'users.include.action')
+                ->addColumn(name: 'role', content: fn ($row) => $row->getRoleNames()->toArray() !== [] ? $row->getRoleNames()[0] : '-')
                 ->toJson();
         }
 
@@ -65,18 +65,18 @@ class UserController extends Controller implements HasMiddleware
      */
     public function store(StoreUserRequest $request): RedirectResponse
     {
-        return DB::transaction(function () use ($request): RedirectResponse {
+        return DB::transaction(callback: function () use ($request): RedirectResponse {
             $validated = $request->validated();
             $validated['avatar'] = $this->imageServiceV2->upload(name: 'avatar', path: $this->avatarPath);
             $validated['password'] = bcrypt(value: $request->password);
 
-            $user = User::create($validated);
+            $user = User::create(attributes: $validated);
 
-            $role = Role::select('id', 'name')->find($request->role);
+            $role = Role::select(columns: ['id', 'name'])->find(id: $request->role);
 
-            $user->assignRole($role->name);
+            $user->assignRole(roles: $role->name);
 
-            return to_route(route: 'users.index')->with('success', __(key: 'The user was created successfully.'));
+            return to_route(route: 'users.index')->with(key: 'success', value: __(key: 'The user was created successfully.'));
         });
     }
 
@@ -85,7 +85,7 @@ class UserController extends Controller implements HasMiddleware
      */
     public function show(User $user): View
     {
-        $user->load('roles:id,name');
+        $user->load(relations: ['roles:id,name']);
 
         return view(view: 'users.show', data: compact('user'));
     }
@@ -95,7 +95,7 @@ class UserController extends Controller implements HasMiddleware
      */
     public function edit(User $user): View
     {
-        $user->load('roles:id,name');
+        $user->load(relations: ['roles:id,name']);
 
         return view(view: 'users.edit', data: compact('user'));
     }
@@ -105,7 +105,7 @@ class UserController extends Controller implements HasMiddleware
      */
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        return DB::transaction(function () use ($request, $user): RedirectResponse {
+        return DB::transaction(callback: function () use ($request, $user): RedirectResponse {
             $validated = $request->validated();
             $validated['avatar'] = $this->imageServiceV2->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user?->avatar);
 
@@ -115,13 +115,13 @@ class UserController extends Controller implements HasMiddleware
                 $validated['password'] = bcrypt(value: $request->password);
             }
 
-            $user->update($validated);
+            $user->update(attributes: $validated);
 
-            $role = Role::select('id', 'name')->find($request->role);
+            $role = Role::select(columns: ['id', 'name'])->find(id: $request->role);
 
-            $user->syncRoles($role->name);
+            $user->syncRoles(roles: $role->name);
 
-            return to_route(route: 'users.index')->with('success', __(key: 'The user was updated successfully.'));
+            return to_route(route: 'users.index')->with(key: 'success', value: __(key: 'The user was updated successfully.'));
         });
     }
 
@@ -131,17 +131,17 @@ class UserController extends Controller implements HasMiddleware
     public function destroy(User $user): RedirectResponse
     {
         try {
-            return DB::transaction(function () use ($user): RedirectResponse {
+            return DB::transaction(callback: function () use ($user): RedirectResponse {
                 $avatar = $user->avatar;
 
                 $user->delete();
 
                 $this->imageServiceV2->delete(path: $this->avatarPath, image: $avatar, disk: $this->disk);
 
-                return to_route(route: 'users.index')->with('success', __(key: 'The user was deleted successfully.'));
+                return to_route(route: 'users.index')->with(key: 'success', value: __(key: 'The user was deleted successfully.'));
             });
         } catch (\Exception $e) {
-            return to_route(route: 'users.index')->with('error', __(key: "The user can't be deleted because it's related to another table."));
+            return to_route(route: 'users.index')->with(key: 'error', value: __(key: "The user can't be deleted because it's related to another table."));
         }
     }
 }

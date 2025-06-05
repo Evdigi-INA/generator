@@ -62,7 +62,7 @@ class SetSidebarType extends Command
                                     $sidebarCode .= "
                                     @can('".$menu['permission']."')
                                         <li class=\"sidebar-item{{ is_active_menu('".$menu['route']."') }}\">
-                                        <a href=\"{{ route('".str(string: $menu['route'])->remove('/')->singular()->plural().'.index'."') }}\" class=\"sidebar-link\">
+                                        <a href=\"{{ route(name: '".str(string: $menu['route'])->remove('/')->singular()->plural().'.index'."') }}\" class=\"sidebar-link\">
                                                 ".$menu['icon']."
                                                 <span>{{ __(key: '".$menu['title']."') }}</span>
                                             </a>
@@ -83,7 +83,7 @@ class SetSidebarType extends Command
                                         $sidebarCode .= "
                                         @can('".$submenu['permission']."')
                                             <li class=\"submenu-item{{ is_active_menu('".$submenu['route']."') }}\">
-                                            <a href=\"{{ route('".str(string: $submenu['route'])->remove('/')->singular()->plural().'.index'."') }}\">{{ __(key: '".$submenu['title']."') }}</a>
+                                            <a href=\"{{ route(name: '".str(string: $submenu['route'])->remove('/')->singular()->plural().'.index'."') }}\">{{ __(key: '".$submenu['title']."') }}</a>
                                             </li>
                                         @endcan\n";
                                     }
@@ -134,13 +134,13 @@ class SetSidebarType extends Command
      */
     public function checkGeneratorVariant(): void
     {
-        if (empty(config('generator.sidebars'))) {
+        if (empty(config(key: 'generator.sidebars'))) {
             $this->error('It looks that you are using the simple version, this command is only available in the full version. Please refer to the section on available commands at https://evdigi-ina.github.io/generator-docs/features/');
 
             return;
         }
 
-        $sidebar = file_exists(resource_path('views/layouts/sidebar.blade.php'));
+        $sidebar = file_exists(filename: resource_path(path: 'views/layouts/sidebar.blade.php'));
 
         if (! $sidebar) {
             $this->error('We cant find the sidebar view, in views/layouts/sidebar.blade.php.');

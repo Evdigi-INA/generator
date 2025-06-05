@@ -25,7 +25,7 @@ class RoleAndPermissionSeeder extends Seeder
         }
 
         $userAdmin = User::first();
-        $userAdmin->assignRole('admin');
+        $userAdmin->assignRole(roles: 'admin');
         $roleAdmin->givePermissionTo(permissions: Permission::all());
     }
 }

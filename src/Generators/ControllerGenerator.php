@@ -163,15 +163,15 @@ class ControllerGenerator
         /**
          * will generate something like:
          *
-         * User::create($request->validated());
-         * $user->update($request->validated());
+         * User::create(attributes: $request->validated());
+         * $user->update(attributes: $request->validated());
          */
         $insertDataAction = match (GeneratorUtils::isGenerateApi()) {
-            true => "$$modelNameSingularCamelCase = $modelNameSingularPascalCase::create(\$request->validated());",
-            false => "$modelNameSingularPascalCase::create(\$request->validated());",
+            true => "$$modelNameSingularCamelCase = $modelNameSingularPascalCase::create(attributes: \$request->validated());",
+            false => "$modelNameSingularPascalCase::create(attributes: \$request->validated());",
         };
 
-        $updateDataAction = "\${$modelNameSingularCamelCase}->update(\$request->validated());";
+        $updateDataAction = "\${$modelNameSingularCamelCase}->update(attributes: \$request->validated());";
         $requestValidatedAttr = '';
 
         if (in_array(needle: 'password', haystack: $request['input_types']) || in_array(needle: 'month', haystack: $request['input_types'])) {
@@ -181,8 +181,8 @@ class ControllerGenerator
              *  User::create($validated);
              *  $user->update($validated);
              */
-            $insertDataAction = "$modelNameSingularPascalCase::create(\$validated);";
-            $updateDataAction = "\${$modelNameSingularCamelCase}->update(\$validated);";
+            $insertDataAction = "$modelNameSingularPascalCase::create(attributes: \$validated);";
+            $updateDataAction = "\${$modelNameSingularCamelCase}->update(attributes: \$validated);";
             $requestValidatedAttr = "\$validated = \$request->validated();\n";
         }
 
@@ -193,13 +193,22 @@ class ControllerGenerator
             $passwordFieldUpdate .= $requestValidatedAttr;
 
             foreach ($request['input_types'] as $i => $input) {
+                info('pass', [
+                    'input' => $input,
+                    'i' => $i,
+                    'field' => $request['fields'][$i],
+                ]);
+
+                info('snake', [
+                    'field' => str()->snake($request['fields'][$i]),
+                ]);
                 if ($input === 'password') {
                     /**
                      * will generate something like:
                      *
                      * $validated['password'] = bcrypt($request->password);
                      */
-                    $passwordFieldStore .= "\t\t\$validated['".str()->snake($request['fields'][$i])."'] = bcrypt(\$request->".str()->snake($request['fields'][$i]).");\n";
+                    $passwordFieldStore .= "\t\t\$validated['".str(string: $request['fields'][$i])->snake()."'] = bcrypt(\$request->".str(string: $request['fields'][$i])->snake().");\n";
 
                     $passwordFieldUpdate .= '
         if (!$request->'.str()->snake($request['fields'][$i]).") {
@@ -290,7 +299,7 @@ class ControllerGenerator
                 $passwordFieldUpdate = str_replace(search: '$validated = $request->validated();', replace: '', subject: $passwordFieldUpdate);
 
                 $inputMonths = str_replace(search: '$validated = $request->validated();', replace: '', subject: $inputMonths);
-                $updateDataAction = "\${$modelNameSingularCamelCase}->update(\$validated);";
+                $updateDataAction = "\${$modelNameSingularCamelCase}->update(attributes: \$validated);";
 
                 if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
                     /**
@@ -300,7 +309,7 @@ class ControllerGenerator
                      *      Product::create($validated);
                      *  }
                      */
-                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $".$modelNameSingularCamelCase.'?->id], '.(str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated').');';
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(attributes: ['id' => $".$modelNameSingularCamelCase.'?->id], values: '.(str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated').');';
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }
@@ -323,7 +332,7 @@ class ControllerGenerator
                         'namespace' => $namespace,
                         'requestPath' => $requestPath,
                         'modelPath' => $path != '' ? "App\Models\\$path\\$modelNameSingularPascalCase" : "App\Models\\$modelNameSingularPascalCase",
-                        'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower($path)).'.' : '',
+                        'viewPath' => $path != '' ? str_replace(search: '\\', replace: '.', subject: strtolower(string: $path)).'.' : '',
                         'passwordFieldStore' => $passwordFieldStore,
                         'passwordFieldUpdate' => $passwordFieldUpdate,
                         'updateDataAction' => $updateDataAction,
@@ -354,7 +363,7 @@ class ControllerGenerator
                      *
                      * Product::updateOrCreate(['id' => $product?->id], $validated);
                      */
-                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(['id' => $".$modelNameSingularCamelCase.'?->id], '.(str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated').');';
+                    $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(attributes: ['id' => $".$modelNameSingularCamelCase.'?->id], values: '.(str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated').');';
 
                     $updateDataAction = $singleFormUpdateDataAction;
                 }

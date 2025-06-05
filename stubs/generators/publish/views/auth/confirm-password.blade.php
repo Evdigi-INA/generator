@@ -3,7 +3,7 @@
 @section('title', __('Confirm Password'))
 
 @push('css')
-    <link rel="stylesheet" href="{{ asset('mazer') }}/css/pages/auth.css">
+    <link rel="stylesheet" href="{{ asset(path: 'mazer') }}/css/pages/auth.css">
 @endpush
 
 @section('content')
@@ -12,7 +12,7 @@
             <div id="auth-left">
                 <div class="auth-logo" class="mb-0">
                     <a href="/">
-                        <img src="{{ asset('mazer') }}/static/images/logo/logo.svg" alt="Logo">
+                        <img src="{{ asset(path: 'mazer') }}/static/images/logo/logo.svg" alt="Logo">
                     </a>
                 </div>
 
@@ -33,7 +33,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('password.confirm') }}">
+                <form method="POST" action="{{ route(name: 'password.confirm') }}">
                     @csrf
 
                     <div class="form-group position-relative has-icon-left mb-4">

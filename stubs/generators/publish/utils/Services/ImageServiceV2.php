@@ -45,7 +45,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
             aspectRatio: $aspectRatio
         );
 
-        return $this->handleFileUpload($options);
+        return $this->handleFileUpload(options: $options);
     }
 
     /**
@@ -59,7 +59,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
 
         $imageName = $this->getActualImageName(name: $image, path: $path, disk: $disk);
         $fullPath = "$path/$imageName";
-        $actualDisk = $this->setDiskName($disk);
+        $actualDisk = $this->setDiskName(disk: $disk);
 
         return match ($actualDisk) {
             's3', 'public', 'local' => Storage::disk(name: $actualDisk)->delete(paths: $fullPath),
@@ -147,7 +147,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
             return $this->getPlaceholderImage();
         }
 
-        $setDiskName = $this->setDiskName($disk);
+        $setDiskName = $this->setDiskName(disk: $disk);
 
         return match (true) {
             $this->isPrivateS3(disk: $setDiskName) || $setDiskName === 'local' => $this->getTemporaryUrl(disk: $setDiskName, image: "$path/$image"),
@@ -161,8 +161,8 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      */
     private function handleFileUpload(ImageUploadOption $options): string
     {
-        $filename = $this->generateFilename($options->file);
-        $disk = $this->setDiskName($options->disk);
+        $filename = $this->generateFilename(file: $options->file);
+        $disk = $this->setDiskName(disk: $options->disk);
 
         if (! $this->isInterventionAvailable()) {
             return $this->handleWithoutIntervention(options: $options, filename: $filename, disk: $disk);
@@ -179,12 +179,12 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
     private function handleWithoutIntervention(ImageUploadOption $options, string $filename, string $disk): string
     {
         if (in_array(needle: $disk, haystack: ['s3', 'public', 'local'])) {
-            Storage::disk(name: $this->setDiskName($disk))->putFileAs(path: $options->path, file: $options->file, name: $filename);
+            Storage::disk(name: $this->setDiskName(disk: $disk))->putFileAs(path: $options->path, file: $options->file, name: $filename);
         } else {
             $options->file->move(directory: public_path(path: $options->path), name: $filename);
         }
 
-        $this->deleteOldImage($options);
+        $this->deleteOldImage(options: $options);
 
         return $filename;
     }
@@ -194,19 +194,19 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      */
     private function handleWithIntervention(ImageUploadOption $options, string $filename, string $disk): string
     {
-        $image = $this->processWithInterventionImage($options);
+        $image = $this->processWithInterventionImage(options: $options);
 
         if (in_array(needle: $disk, haystack: ['s3', 'public', 'local'])) {
-            Storage::disk(name: $this->setDiskName($disk))->put(path: "$options->path/$filename", contents: (string) $image);
+            Storage::disk(name: $this->setDiskName(disk: $disk))->put(path: "$options->path/$filename", contents: (string) $image);
         } else {
-            if (! file_exists(filename: public_path($options->path))) {
-                mkdir(directory: public_path($options->path), permissions: 0755, recursive: true);
+            if (! file_exists(filename: public_path(path: $options->path))) {
+                mkdir(directory: public_path(path: $options->path), permissions: 0755, recursive: true);
             }
 
-            $image->save(public_path(path: "$options->path/$filename"));
+            $image->save(filepath: public_path(path: "$options->path/$filename"));
         }
 
-        $this->deleteOldImage($options);
+        $this->deleteOldImage(options: $options);
 
         return $filename;
     }
@@ -219,7 +219,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      */
     private function deleteOldImage(ImageUploadOption $options): bool
     {
-        return $options->defaultImage ? $this->delete($options->path, $options->defaultImage, $options->disk) : false;
+        return $options->defaultImage ? $this->delete(path: $options->path, image: $options->defaultImage, disk: $options->disk) : false;
     }
 
     /**
@@ -243,14 +243,14 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      */
     private function processWithInterventionImage(ImageUploadOption $options): \Intervention\Image\Interfaces\EncodedImageInterface
     {
-        $image = \Intervention\Image\Laravel\Facades\Image::read($options->file);
-        $encode = new \Intervention\Image\Encoders\WebpEncoder(65);
+        $image = \Intervention\Image\Laravel\Facades\Image::read(input: $options->file);
+        $encode = new \Intervention\Image\Encoders\WebpEncoder(quality: 65);
 
         return $options->crop
             ? ($options->aspectRatio
-                ? $image->scaleDown($options->width, $options->height)->encode($encode)
-                : $image->resizeDown($options->width, $options->height)->encode($encode))
-            : $image->encode($encode);
+                ? $image->scaleDown(width: $options->width, height: $options->height)->encode(encoder: $encode)
+                : $image->resizeDown(width: $options->width, height: $options->height)->encode(encoder: $encode))
+            : $image->encode(encoder: $encode);
     }
 
     /**
@@ -281,11 +281,11 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
         $image = last(array: explode(separator: '/', string: $name));
         $cleanImg = str_contains(haystack: $image, needle: '?expires') ? str(string: $image)->before(search: '?expires')->toString() : $image;
         $fullPath = "$path/$cleanImg";
-        $actualDisk = $this->setDiskName($disk);
+        $actualDisk = $this->setDiskName(disk: $disk);
 
         $exists = match ($actualDisk) {
             's3', 'local', 'public' => Storage::disk(name: $actualDisk)->exists(path: $fullPath),
-            default => file_exists(filename: public_path($fullPath)),
+            default => file_exists(filename: public_path(path: $fullPath)),
         };
 
         if (! $exists) {

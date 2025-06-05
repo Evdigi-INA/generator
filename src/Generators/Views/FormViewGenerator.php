@@ -162,7 +162,7 @@ class FormViewGenerator
                          * <select class="form-select" name="year" id="year" class="form-control" required>
                          * <option value="" selected disabled>-- {{ __(key: 'Select year') }} --</option>
                          *
-                         *  @foreach (range(1900, strftime('%Y', time())) as $year)
+                         *  @foreach (start: range(1900, end: date(format: 'Y')) as $year)
                          *     <option value="{{ $year }}"
                          *        {{ isset($book) && $book->year == $year ? 'selected' : (old(key: 'year') == $year ? 'selected' : '') }}>
                          *      {{ $year }}
@@ -172,7 +172,7 @@ class FormViewGenerator
                          * </select>
                          */
                         $options = "
-                        @foreach (range($firstYear, date('Y')) as \$year)
+                        @foreach (start: range($firstYear, end: date(format: 'Y')) as \$year)
                             <option value=\"{{ \$year }}\" {{ isset($$modelNameSingularCamelCase) && $".$modelNameSingularCamelCase."?->$fieldSnakeCase == \$year ? 'selected' : (old(key: '$fieldSnakeCase') == \$year ? 'selected' : '') }}>
                                 {{ \$year }}
                             </option>

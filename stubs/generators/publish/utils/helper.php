@@ -3,46 +3,46 @@
 /**
  * Check the sidebar menu with the current Uri
  */
-if (! function_exists('is_active_menu')) {
+if (! function_exists(function: 'is_active_menu')) {
     function is_active_menu(string|array $route): string
     {
         $activeClass = ' active';
 
-        if (is_string($route)) {
-            if (request()->is(substr($route.'*', 1))) {
+        if (is_string(value: $route)) {
+            if (request()->is(patterns: substr(string: "$route*", offset: 1))) {
                 return $activeClass;
             }
 
-            if (request()->is(str($route)->slug().'*')) {
+            if (request()->is(patterns: str(string: $route)->slug().'*')) {
                 return $activeClass;
             }
 
-            if (request()->segment(2) === str($route)->before('/')) {
+            if (request()->segment(index: 2) === str(string: $route)->before(search: '/')) {
                 return $activeClass;
             }
 
-            if (request()->segment(3) === str($route)->after('/')) {
+            if (request()->segment(index: 3) === str(string: $route)->after(search: '/')) {
                 return $activeClass;
             }
         }
 
-        if (is_array($route)) {
+        if (is_array(value: $route)) {
             foreach ($route as $value) {
-                $actualRoute = str($value)->remove(' view')->plural();
+                $actualRoute = str(string: $value)->remove(' view')->plural();
 
-                if (request()->is(substr($actualRoute.'*', 1))) {
+                if (request()->is(patterns: substr(string: "$actualRoute*", offset: 1))) {
                     return $activeClass;
                 }
 
-                if (request()->is(str($actualRoute)->slug().'*')) {
+                if (request()->is(patterns: str(string: $actualRoute)->slug().'*')) {
                     return $activeClass;
                 }
 
-                if (request()->segment(2) === $actualRoute) {
+                if (request()->segment(index: 2) === $actualRoute) {
                     return $activeClass;
                 }
 
-                if (request()->segment(3) === $actualRoute) {
+                if (request()->segment(index: 3) === $actualRoute) {
                     return $activeClass;
                 }
             }

@@ -36,18 +36,16 @@
         <section class="section">
             <x-alert />
 
-            {{-- <div class="alert alert-info alert-dismissible fade show" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                <h6 class="alert-heading">{{ __(key: 'Info') }}</h6>
-                <p>
-                    <a href="https://zzzul.github.io/generator-docs-next/usage#creating-api-crud" target="_blank">
-                        {{ __(key: 'Please consider to read about new Laravel 11 API') }}
-                    </a>
-                </p>
-            </div> --}}
-
             <div class="row">
                 <div class="col-md-12">
+                    @if (!class_exists(class: \Laravel\Sanctum\Sanctum::class))
+                        <div class="alert alert-danger">
+                            Please install <a href="https://laravel.com/docs/12.x/sanctum">Laravel Sanctum</a> first, and
+                            read how to used in <a
+                                href="https://zzzul.github.io/generator-docs-next/usage#creating-api-crud">Generator</a>.
+                        </div>
+                    @endif
+
                     <div class="card">
                         <div class="card-body">
                             <form action="/api-generators" method="POST" id="form-generator">
@@ -56,10 +54,10 @@
 
                                 @include('generator::include.api-form')
 
-                                <a href="{{ url()->previous() }}" id="btn-back"
-                                    class="btn btn-secondary">{{ __(key: 'Back') }}</a>
+                                <a href="/api-generators/create" id="btn-back" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
 
-                                <button type="submit" id="btn-save" class="btn btn-primary">{{ __(key: 'Generate') }}</button>
+                                <button type="submit" id="btn-save" @disabled(!class_exists(class: \Laravel\Sanctum\Sanctum::class))
+                                    class="btn btn-primary">{{ __(key: 'Generate') }}</button>
                             </form>
                         </div>
                     </div>

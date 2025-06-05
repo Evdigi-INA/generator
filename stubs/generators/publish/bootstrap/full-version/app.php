@@ -16,17 +16,17 @@ return Application::configure(basePath: dirname(path: __DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withProviders([
+    ->withProviders(providers: [
         FortifyServiceProvider::class,
         ViewComposerServiceProvider::class,
     ])
-    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias([
+    ->withMiddleware(callback: function (Middleware $middleware): void {
+        $middleware->alias(aliases: [
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $e): void {
+    ->withExceptions(using: function (Exceptions $e): void {
         //
     })->create();

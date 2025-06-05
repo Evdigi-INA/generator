@@ -3,7 +3,7 @@
         <div class="form-group">
             <label for="name">{{ __(key: 'Name') }}</label>
             <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror"
-                placeholder="{{ __(key: 'Name') }}" value="{{ isset($user) ? $user->name : old('name') }}" required
+                placeholder="{{ __(key: 'Name') }}" value="{{ isset($user) ? $user->name : old(key: 'name') }}" required
                 autofocus>
             @error('name')
                 <span class="text-danger">
@@ -17,7 +17,7 @@
             <label for="email">{{ __(key: 'Email') }}</label>
             <input type="email" name="email" id="email"
                 class="form-control @error('email') is-invalid @enderror" placeholder="{{ __(key: 'Email') }}"
-                value="{{ isset($user) ? $user->email : old('email') }}" required>
+                value="{{ isset($user) ? $user->email : old(key: 'email') }}" required>
             @error('email')
                 <span class="text-danger">
                     {{ $message }}

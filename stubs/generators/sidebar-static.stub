@@ -4,7 +4,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
                     <a href="/">
-                        <img src="{{ asset('mazer') }}/static/images/logo/logo.svg" alt="Logo">
+                        <img src="{{ asset(path: 'mazer') }}/static/images/logo/logo.svg" alt="Logo">
                     </a>
                 </div>
                 <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
@@ -54,11 +54,11 @@
 
                 {{listSidebars}}
 
-               @if (env('APP_ENV') === 'local')
+               @if (config(key: 'app.env') === 'local')
                     <li class="sidebar-title">{{ __(key: 'Generators') }}</li>
 
                     <li class="sidebar-item{{ request()->is('generators/create') ? ' active' : '' }}">
-                        <a class="sidebar-link" href="{{ route('generators.create') }}">
+                        <a class="sidebar-link" href="{{ route(name: 'generators.create') }}">
                             <i class="bi bi-fire"></i>
                             <span> {{ __(key: 'CRUD Generator') }}</span>
                         </a>
@@ -83,20 +83,20 @@
                     <li class="sidebar-title">Account</li>
 
                     <li class="sidebar-item{{ request()->is('profile') ? ' active' : '' }}">
-                        <a class="sidebar-link" href="{{ route('profile') }}">
+                        <a class="sidebar-link" href="{{ route(name: 'profile') }}">
                             <i class="bi bi-person-badge-fill"></i>
                             <span> {{ __(key: 'Profile') }}</span>
                         </a>
                     </li>
 
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{ route('logout') }}"
+                        <a class="sidebar-link" href="{{ route(name: 'logout') }}"
                             onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                             <i class="bi bi-door-open-fill"></i>
                             <span> {{ __(key: 'Logout') }}</span>
                         </a>
 
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        <form id="logout-form" action="{{ route(name: 'logout') }}" method="POST" class="d-none">
                             @csrf
                         </form>
                     </li>

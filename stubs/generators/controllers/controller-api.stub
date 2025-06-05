@@ -20,10 +20,10 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             // {{middlewareName}}
 
             // TODO: uncomment this code below if you are using spatie permission
-            // new Middleware('permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
-            // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
-            // new Middleware('permission:{{modelNameSpaceLowercase}} edit', only: ['update']),
-            // new Middleware('permission:{{modelNameSpaceLowercase}} delete', only: ['destroy']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} edit', only: ['update']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} delete', only: ['destroy']),
         ];
     }
 
@@ -63,7 +63,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function show(string $id): {{modelNameSingularPascalCase}}Resource
     {
-        return (new {{modelNameSingularPascalCase}}Resource({{modelNameSingularPascalCase}}::{{relations}}findOrFail($id)))
+        return (new {{modelNameSingularPascalCase}}Resource({{modelNameSingularPascalCase}}::{{relations}}findOrFail(id: $id)))
             ->additional([
                 'message' => 'The {{modelNameCleanSingular}} was received successfully.',
                 // 'success' => true,
@@ -76,7 +76,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function update(Update{{modelNameSingularPascalCase}}Request $request, string $id): {{modelNameSingularPascalCase}}Resource
     {
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail($id);
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail(id: $id);
         {{passwordFieldUpdate}}{{inputMonths}}
         {{updateDataAction}}
 

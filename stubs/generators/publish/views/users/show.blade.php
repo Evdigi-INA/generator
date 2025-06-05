@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('Detail User'))
+@section('title', __(key: 'Detail User'))
 
 @section('content')
     <div class="page-heading">
@@ -18,7 +18,7 @@
                         <a href="/">{{ __(key: 'Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('users.index') }}">{{ __(key: 'User') }}</a>
+                        <a href="{{ route(name: 'users.index') }}">{{ __(key: 'User') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                         {{ __(key: 'Detail') }}
@@ -37,7 +37,8 @@
                                     <tr>
                                         <td colspan="2" class="text-center">
                                             <div class="avatar avatar-xl">
-                                                <img src="{{ $user->avatar }}" alt="Avatar" class="rounded img-fluid" style="object-fit: cover; width: 350px; height: 200px;" >
+                                                <img src="{{ $user->avatar }}" alt="Avatar" class="rounded img-fluid"
+                                                    style="object-fit: cover; width: 350px; height: 200px;">
                                             </div>
                                         </td>
                                     </tr>
@@ -51,7 +52,8 @@
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">{{ __(key: 'Role') }}</td>
-                                        <td>{{ $user->getRoleNames()->toArray() !== [] ? $user->getRoleNames()[0] : '-' }}</td>
+                                        <td>{{ $user->getRoleNames()->toArray() !== [] ? $user->getRoleNames()[0] : '-' }}
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="fw-bold">{{ __(key: 'Email verified at') }}</td>
@@ -69,7 +71,7 @@
                                 </table>
                             </div>
 
-                            <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
+                            <a href="{{ route(name: 'users.index') }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
                         </div>
                     </div>
                 </div>

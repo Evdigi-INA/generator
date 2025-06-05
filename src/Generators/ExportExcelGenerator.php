@@ -16,7 +16,7 @@ class ExportExcelGenerator
             $relations = '';
 
             if (in_array(needle: 'foreignId', haystack: $request['column_types'])) {
-                $relations .= 'with([';
+                $relations .= 'with(relations: [';
 
                 foreach ($request['constrains'] as $i => $c) {
                     if ($c) {

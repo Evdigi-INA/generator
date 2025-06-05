@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Roles\StoreRoleRequest;
@@ -11,6 +11,7 @@ use App\Http\Resources\Roles\RoleResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -36,7 +37,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      */
     public function index(): RoleCollection
     {
-        $roles = Role::query()->paginate(perPage: request()->query(key: 'per_page', default: 10));
+        $roles = Role::paginate(perPage: request()->query(key: 'per_page', default: 10));
 
         return (new RoleCollection(resource: $roles))
             ->additional(data: [
@@ -52,12 +53,8 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     public function store(StoreRoleRequest $request): RoleResource|JsonResponse
     {
         return DB::transaction(callback: function () use ($request): JsonResponse {
-            $role = Role::create(attributes: $request->validated());
-
-            $role->givePermissionTo(permissions: array_map(callback: 'intval', array: $request->permissions));
-
-            $role->load(relations: ['permissions']);
-            $role->permissions_count = $role->permissions->count();
+            $role = Role::create(attributes: ['name' => $request->name]);
+            $role->givePermissionTo(permissions: $request->permissions);
 
             return (new RoleResource(resource: $role))
                 ->additional(data: [
@@ -73,9 +70,9 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(int $id): RoleResource
+    public function show(string|int $id): RoleResource
     {
-        $role = Role::query()->with(relations: ['permissions:id,name,group'])->findOrFail(id: $id);
+        $role = Role::with(relations: ['permissions:id,name,group'])->findOrFail(id: $id);
 
         return (new RoleResource(resource: $role))
             ->additional(data: [
@@ -92,8 +89,8 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     {
         return DB::transaction(callback: function () use ($request, $id): RoleResource {
             $role = Role::findOrFail(id: $id);
-            $role->update(attributes: $request->validated());
-            $role->syncPermissions(permissions: array_map(callback: 'intval', array: $request->permissions));
+            $role->update(attributes: ['name' => $request->name]);
+            $role->syncPermissions(permissions: $request->permissions);
 
             return (new RoleResource(resource: $role))
                 ->additional(data: [
@@ -110,9 +107,9 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     public function destroy(string|int $id): RoleResource|JsonResponse
     {
         return DB::transaction(callback: function () use ($id): RoleResource|JsonResponse {
-            $role = Role::findOrFail(id: $id);
+            $role = Role::withCount(relations: ['users'])->findOrFail(id: $id);
 
-            if ($role->users()->count() < 1) {
+            if ($role->users_count < 1) {
                 $role->delete();
 
                 return (new RoleResource(resource: null))
@@ -132,5 +129,20 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
                 ->response()
                 ->setStatusCode(code: Response::HTTP_FORBIDDEN);
         });
+    }
+
+    /**
+     * Get all permissions.
+     */
+    public function getAllPermissions(): JsonResponse
+    {
+        $permissions = Permission::select(columns: ['id', 'name'])->get();
+
+        return response()->json(data: [
+            'permissions' => $permissions,
+            'message' => 'The permissions was received successfully.',
+            // 'success' => true,
+            // 'status_code' => Response::HTTP_OK,
+        ], status: Response::HTTP_OK);
     }
 }

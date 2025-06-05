@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('Edit Role'))
+@section('title', __(key: 'Edit Role'))
 
 @section('content')
     <div class="page-heading">
@@ -18,7 +18,7 @@
                         <a href="/">{{ __(key: 'Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('roles.index') }}">{{ __(key: 'Role') }}</a>
+                        <a href="{{ route(name: 'roles.index') }}">{{ __(key: 'Role') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                         {{ __(key: 'Edit') }}
@@ -32,15 +32,15 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('roles.update', $role->id) }}" method="POST"
+                            <form action="{{ route(name: 'roles.update', parameters: $role->id) }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 
                                 @include('roles.include.form')
 
-                                <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
-
+                                <a href="{{ route(name: 'roles.index') }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
+                                
                                 <button type="submit" class="btn btn-primary">{{ __(key: 'Update') }}</button>
                             </form>
                         </div>

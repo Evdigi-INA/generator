@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('Detail Role'))
+@section('title', __(key: 'Detail Role'))
 
 @section('content')
     <div class="page-heading">
@@ -18,7 +18,7 @@
                         <a href="/">{{ __(key: 'Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('roles.index') }}">{{ __(key: 'Role') }}</a>
+                        <a href="{{ route(name: 'roles.index') }}">{{ __(key: 'Role') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                         {{ __(key: 'Detail') }}
@@ -58,7 +58,7 @@
                                     </tr>
                                 </table>
                             </div>
-                            <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
+                            <a href="{{ route('roles.index') }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
                         </div>
                     </div>
                 </div>

@@ -13,9 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    // https://laravel.com/docs/11.x/sanctum#api-token-authentication
     // use \Laravel\Sanctum\HasApiTokens;
-
     use HasFactory, HasRoles, Notifiable, TwoFactorAuthenticatable;
 
     /**
@@ -76,7 +74,7 @@ class User extends Authenticatable
     {
         $path = 'avatars';
         $imageService = new ImageServiceV2;
-        $disk = $imageService->setDiskName('storage.public');
+        $disk = $imageService->setDiskName(disk: 'storage.public');
 
         if (! $value) {
             return $imageService->getPlaceholderImage();

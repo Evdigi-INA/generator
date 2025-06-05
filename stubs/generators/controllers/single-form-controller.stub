@@ -18,7 +18,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             // {{middlewareName}}
 
             // TODO: uncomment this code below if you are using spatie permission
-            // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['index', 'store']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} create', only: ['index', 'store']),
         ];
     }
 
@@ -37,7 +37,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function store(Store{{modelNameSingularPascalCase}}Request $request): RedirectResponse
     {
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::query()->first();
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::first();
 
         {{passwordFieldStore}}{{inputMonths}}
         {{updateDataAction}}

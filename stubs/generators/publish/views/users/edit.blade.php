@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('Edit User'))
+@section('title', __(key: 'Edit User'))
 
 @section('content')
     <div class="page-heading">
@@ -18,7 +18,7 @@
                         <a href="/">{{ __(key: 'Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('users.index') }}">{{ __(key: 'User') }}</a>
+                        <a href="{{ route(name: 'users.index') }}">{{ __(key: 'User') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                         {{ __(key: 'Edit') }}
@@ -32,14 +32,14 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('users.update', $user->id) }}" method="POST"
+                            <form action="{{ route(name: 'users.update', parameters: $user->id) }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 
                                 @include('users.include.form')
 
-                                <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
+                                <a href="{{ route(name: 'users.index') }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
 
                                 <button type="submit" class="btn btn-primary">{{ __(key: 'Update') }}</button>
                             </form>

@@ -24,10 +24,21 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'min:3', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email,'.$this?->user?->id ?? request()->segment(2)],
+            'email' => ['required', 'email', 'unique:users,email,'.$this->setId()],
             'avatar' => ['nullable', 'image', 'max:1024'],
             'role' => ['required', 'exists:roles,id'],
-            'password' => $this->passwordRules(),
+            'password' => ['nullable', ...$this->passwordRules()],
         ];
+    }
+
+    private function setId(): int|string
+    {
+        if (str_contains(haystack: request()->url(), needle: 'api')) {
+            // /api/users/1
+            return request()->segment(3);
+        }
+
+        // /users/1
+        return request()->segment(2);
     }
 }

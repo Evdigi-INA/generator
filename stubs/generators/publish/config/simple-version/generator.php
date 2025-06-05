@@ -9,7 +9,7 @@ return [
          * Path for store the image.
          *
          * Available options:
-         * 1. public or storage.path
+         * 1. public or storage.public
          * 2. local or storage.local
          * 3. public_path
          * 4. S3

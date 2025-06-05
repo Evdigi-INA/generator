@@ -19,7 +19,7 @@
             <div class="col-md-12">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <form action="{{ route('simple-generators.store') }}" method="POST" id="form-generator">
+                        <form action="{{ route(name: 'simple-generators.store') }}" method="POST" id="form-generator">
                             @csrf
                             @method('POST')
 
@@ -30,10 +30,10 @@
                                         <label for="model">{{ __(key: 'Model') }}</label>
                                         <input type="text" name="model" id="model"
                                             class="form-control @error('model') is-invalid @enderror"
-                                            placeholder="{{ __(key: 'Product') }}" value="{{ old('model') }}" autofocus
+                                            placeholder="{{ __(key: 'Product') }}" value="{{ old(key: 'model') }}" autofocus
                                             required>
                                         <small
-                                            class="text-secondary">{{ __("Use '/' for generate a sub folder. e.g.: Main/Product.") }}</small>
+                                            class="text-secondary">{{ __(key: "Use '/' for generate a sub folder. e.g.: Main/Product.") }}</small>
                                         @error('model')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
@@ -77,17 +77,26 @@
                                         </label>
                                     </div>
 
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="generate_variant"
-                                            id="generate-type-1" value="api">
-                                        <label class="form-check-label" for="generate-type-1">
-                                            {{ __(key: 'API') }}
-                                            <small style="font-size: 8px;">Beta</small>
-                                        </label>
+                                    <div class="form-check form-check-inline"
+                                        @if (!class_exists(class: \Laravel\Sanctum\Sanctum::class)) data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Execute 'php artisan install:api' to enable this feature" @endif>
+                                        <div class="checkbox">
+                                            <input class="form-check-input" type="radio" name="generate_variant"
+                                                id="generate-type-1" value="api"
+                                                @if (!class_exists(class: \Laravel\Sanctum\Sanctum::class)) disabled @endif>
+                                            <label for="generate-type-1">
+                                                {{ __(key: 'API') }}
+                                                <small style="font-size: 8px;">Beta</small>
+
+                                                @if (!class_exists(class: \Laravel\Sanctum\Sanctum::class))
+                                                    <i class="fas fa-question fa-xs"></i>
+                                                @endif
+                                            </label>
+                                        </div>
                                     </div>
 
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="generate_variant" id="generate-varaint-3"
+                                        <input class="form-check-input" type="radio" name="generate_variant"
+                                            id="generate-varaint-3"
                                             value="{{ \EvdigiIna\Generator\Enums\GeneratorVariant::SINGLE_FORM->value }}">
                                         <label class="form-check-label" for="generate-varaint-3">
                                             {{ __(key: 'Single Form (only create or update)') }}
@@ -114,11 +123,19 @@
                                             <label for="generate-factory">{{ __(key: 'Generate Factory') }}</label>
                                         </div>
                                     </div>
-                                    <div class="form-check">
+                                    <div class="form-check"
+                                        @if (!class_exists(class: \Maatwebsite\Excel\ExcelServiceProvider::class)) data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Install 'composer require maatwebsite/excel' to enable this feature" @endif>
                                         <div class="checkbox">
                                             <input type="checkbox" class="form-check-input" id="generate-export"
-                                                name="generate_export">
-                                            <label for="generate-export">{{ __(key: 'Generate Export') }}</label>
+                                                name="generate_export"
+                                                @if (!class_exists(class: \Maatwebsite\Excel\ExcelServiceProvider::class)) disabled @endif>
+                                            <label for="generate-export">
+                                                {{ __(key: 'Generate Export') }}
+
+                                                @if (!class_exists(class: \Maatwebsite\Excel\ExcelServiceProvider::class))
+                                                    <i class="fas fa-question fa-xs"></i>
+                                                @endif
+                                            </label>
                                         </div>
                                     </div>
                                 </div>

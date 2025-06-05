@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('Profile'))
+@section('title', __(key: 'Profile'))
 
 @section('content')
     <div class="page-heading">
@@ -34,7 +34,7 @@
                 <div class="col-md-9">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('user-profile-information.update') }}" method="POST"
+                            <form action="{{ route(name: 'user-profile-information.update') }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
@@ -44,7 +44,7 @@
                                     <input type="email" name="email"
                                         class="form-control @error('email', 'updateProfileInformation') is-invalid @enderror"
                                         id="email" placeholder="{{ __(key: 'E-mail Address') }}"
-                                        value="{{ old('email') ?? auth()?->user()?->email }}" required>
+                                        value="{{ old(key: 'email') ?? auth()?->user()?->email }}" required>
 
                                     @error('email', 'updateProfileInformation')
                                         <span class="text-danger">
@@ -58,7 +58,7 @@
                                     <input type="text" name="name"
                                         class="form-control  @error('name', 'updateProfileInformation') is-invalid @enderror"
                                         id="name" placeholder="{{ __(key: 'Name') }}"
-                                        value="{{ old('name') ?? auth()?->user()?->name }}" required>
+                                        value="{{ old(key: 'name') ?? auth()?->user()?->name }}" required>
                                     @error('name', 'updateProfileInformation')
                                         <span class="text-danger">
                                             {{ $message }}
@@ -107,7 +107,7 @@
                 <div class="col-md-9">
                     <div class="card">
                         <div class="card-body">
-                            <form method="POST" action="{{ route('user-password.update') }}">
+                            <form method="POST" action="{{ route(name: 'user-password.update') }}">
                                 @csrf
                                 @method('put')
                                 <div class="form-group">
@@ -174,7 +174,7 @@
                                         <div class="col-md-6">
                                             <p>{{ __(key: 'Save these Recovery Codes in a secure location.') }}</p>
                                             <ul>
-                                                @foreach (json_decode(decrypt(auth()?->user()?->two_factor_recovery_codes)) as $code)
+                                                @foreach (json_decode(json: decrypt(value: auth()?->user()?->two_factor_recovery_codes)) as $code)
                                                     <li>{{ $code }}</li>
                                                 @endforeach
                                             </ul>

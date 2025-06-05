@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Generators\Services\ImageServiceV2;
 use App\Http\Controllers\Controller;
@@ -30,10 +30,10 @@ class UserController extends Controller implements HasMiddleware
         return [
             // 'auth:sanctum',
 
-            // new Middleware('permission:user:view', only: ['index', 'show']),
-            // new Middleware('permission:user:create', only: ['create', 'store']),
-            // new Middleware('permission:user:edit', only: ['edit', 'update']),
-            // new Middleware('permission:user:delete', only: ['destroy']),
+            // new Middleware(middleware: 'permission:user:view', only: ['index', 'show']),
+            // new Middleware(middleware: 'permission:user:create', only: ['create', 'store']),
+            // new Middleware(middleware: 'permission:user:edit', only: ['edit', 'update']),
+            // new Middleware(middleware: 'permission:user:delete', only: ['destroy']),
         ];
     }
 
@@ -42,7 +42,7 @@ class UserController extends Controller implements HasMiddleware
      */
     public function index(): UserCollection
     {
-        $users = User::query()->with(['roles:id,name'])->paginate(perPage: request()->query(key: 'per_page', default: 10));
+        $users = User::with(relations: ['roles:id,name'])->paginate(perPage: request()->query(key: 'per_page', default: 10));
 
         return (new UserCollection(resource: $users))
             ->additional(data: [
@@ -60,13 +60,13 @@ class UserController extends Controller implements HasMiddleware
         return DB::transaction(callback: function () use ($request): JsonResponse {
             $validated = $request->validated();
             $validated['avatar'] = $this->imageServiceV2->upload(name: 'avatar', path: $this->avatarPath);
-            $validated['password'] = bcrypt($request->password);
+            $validated['password'] = bcrypt(value: $request->password);
 
-            $user = User::create($validated);
+            $user = User::create(attributes: $validated);
 
-            $role = Role::select('id', 'name')->find($request->role);
+            $role = Role::select(columns: ['id', 'name'])->find(id: $request->role);
 
-            $user->assignRole($role->name);
+            $user->assignRole(roles: $role->name);
 
             return (new UserResource(resource: $user->refresh()))
                 ->additional(data: [
@@ -100,21 +100,21 @@ class UserController extends Controller implements HasMiddleware
     public function update(UpdateUserRequest $request, string|int $id): UserResource
     {
         return DB::transaction(callback: function () use ($request, $id): UserResource {
-            $user = User::findOrFail($id);
+            $user = User::findOrFail(id: $id);
             $validated = $request->validated();
             $validated['avatar'] = $this->imageServiceV2->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user?->avatar);
 
             if (! $request->password) {
                 unset($validated['password']);
             } else {
-                $validated['password'] = bcrypt($request->password);
+                $validated['password'] = bcrypt(value: $request->password);
             }
 
-            $user->update($validated);
+            $user->update(attributes: $validated);
 
-            $role = Role::select('id', 'name')->find($request->role);
+            $role = Role::select(columns: ['id', 'name'])->find(id: $request->role);
 
-            $user->syncRoles($role->name);
+            $user->syncRoles(roles: $role->name);
 
             return (new UserResource(resource: $user->refresh()))
                 ->additional(data: [
@@ -132,7 +132,7 @@ class UserController extends Controller implements HasMiddleware
     {
         try {
             return DB::transaction(callback: function () use ($id): UserResource {
-                $user = User::findOrFail($id);
+                $user = User::findOrFail(id: $id);
                 $avatar = $user->avatar;
 
                 $user->delete();

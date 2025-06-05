@@ -25,10 +25,10 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             // {{middlewareName}}
 
             // TODO: uncomment this code below if you are using spatie permission
-            // new Middleware('permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
-            // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
-            // new Middleware('permission:{{modelNameSpaceLowercase}} edit', only: ['edit', 'update']),
-            // new Middleware('permission:{{modelNameSpaceLowercase}} delete', only: ['destroy']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} edit', only: ['edit', 'update']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} delete', only: ['destroy']),
         ];
     }
 
@@ -40,7 +40,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
         if (request()->ajax()) {
             ${{modelNamePluralCamelCase}} = {{query}};
 
-            return Datatables::of(${{modelNamePluralCamelCase}})
+            return Datatables::of(source: ${{modelNamePluralCamelCase}})
                 {{addColumns}}
                 ->addColumn(name: 'action', content: '{{viewPath}}{{modelNamePluralKebabCase}}.include.action')
                 ->toJson();

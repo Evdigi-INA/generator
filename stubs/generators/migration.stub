@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('{{tableNamePluralLowercase}}', function (Blueprint $table): void {
+        Schema::create(table: '{{tableNamePluralLowercase}}', callback: function (Blueprint $table): void {
             $table->id();
             {{fields}}
             $table->timestamps();
@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('{{tableNamePluralLowercase}}');
+        Schema::dropIfExists(table: '{{tableNamePluralLowercase}}');
     }
 };

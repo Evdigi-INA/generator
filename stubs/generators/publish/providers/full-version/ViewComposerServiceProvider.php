@@ -23,8 +23,8 @@ class ViewComposerServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer(views: ['users.create', 'users.edit'], callback: fn (ViewContract $view) => $view->with(
-            'roles',
-            Role::select('id', 'name')->get()
+            key: 'roles',
+            value: Role::select(columns: ['id', 'name'])->get()
         ));
     }
 }

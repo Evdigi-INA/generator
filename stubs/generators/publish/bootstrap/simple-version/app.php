@@ -12,12 +12,12 @@ return Application::configure(basePath: dirname(path: __DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withProviders([
+    ->withProviders(providers: [
         ViewComposerServiceProvider::class,
     ])
-    ->withMiddleware(function (Middleware $middleware): void {
+    ->withMiddleware(callback: function (Middleware $middleware): void {
         //
     })
-    ->withExceptions(function (Exceptions $e): void {
+    ->withExceptions(using: function (Exceptions $e): void {
         //
     })->create();

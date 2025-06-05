@@ -43,8 +43,7 @@
 
                                 @include('generator::include.form')
 
-                                <a href="{{ url()->previous() }}" id="btn-back"
-                                    class="btn btn-secondary">{{ __(key: 'Back') }}</a>
+                                <a href="{{ route(name: 'generators.create') }}" id="btn-back" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
 
                                 <button type="submit" id="btn-save" class="btn btn-primary">{{ __(key: 'Generate') }}</button>
                             </form>

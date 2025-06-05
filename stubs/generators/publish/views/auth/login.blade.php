@@ -1,9 +1,9 @@
 @extends('layouts.auth')
 
-@section('title', __('Log in'))
+@section('title', __(key: 'Log in'))
 
 @push('css')
-    <link rel="stylesheet" href="{{ asset('mazer') }}/css/pages/auth.css">
+    <link rel="stylesheet" href="{{ asset(path: 'mazer') }}/css/pages/auth.css">
 @endpush
 
 @section('content')
@@ -12,7 +12,7 @@
             <div id="auth-left">
                 <div class="auth-logo">
                     <a href="/">
-                        <img src="{{ asset('mazer') }}/static/images/logo/logo.svg" alt="Logo">
+                        <img src="{{ asset(path: 'mazer') }}/static/images/logo/logo.svg" alt="Logo">
                     </a>
                 </div>
                 <h1 class="auth-title">{{ __(key: 'Log in.') }}</h1>
@@ -31,14 +31,14 @@
                     </div>
                 @endif
 
-                @if (session('status'))
+                @if (session(key: 'status'))
                     <div class="alert alert-success alert-dismissible show fade">
-                        {{ session('status') }}
+                        {{ session(key: 'status') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('login') }}">
+                <form method="POST" action="{{ route(name: 'login') }}">
                     @csrf
 
                     <div class="form-group position-relative has-icon-left mb-4">
@@ -59,7 +59,7 @@
 
                     <div class="form-check form-check-lg d-flex align-items-end">
                         <input class="form-check-input me-2" type="checkbox" value="" name="remember" id="remember"
-                            {{ old('remember') ? 'checked' : '' }}>
+                            {{ old(key: 'remember') ? 'checked' : '' }}>
                         <label class="form-check-label text-gray-600" for="remember">
                             Keep me logged in
                         </label>
@@ -69,15 +69,15 @@
                 </form>
 
                 <div class="text-center mt-4 text-lg fs-4">
-                    <p class="text-gray-600">{{ __("Don't have an account") }}?
+                    <p class="text-gray-600">{{ __(key: "Don't have an account") }}?
                         <a href="/register" class="font-bold">
                             {{ __(key: 'Sign up.') }}
                         </a>
                     </p>
 
-                    @if (Route::has('password.request'))
+                    @if (Route::has(name: 'password.request'))
                         <p>
-                            <a class="font-bold" href="{{ route('password.request') }}">
+                            <a class="font-bold" href="{{ route(name: 'password.request') }}">
                                 {{ __(key: 'Forgot password') }}?
                             </a>
                         </p>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('Create Role'))
+@section('title', __(key: 'Create Role'))
 
 @section('content')
     <div class="page-heading">
@@ -18,7 +18,7 @@
                         <a href="/">{{ __(key: 'Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('roles.index') }}">{{ __(key: 'Roles') }}</a>
+                        <a href="{{ route(name: 'roles.index') }}">{{ __(key: 'Roles') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
                         {{ __(key: 'Create') }}
@@ -32,13 +32,13 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('roles.store') }}" method="POST">
+                            <form action="{{ route(name: 'roles.store') }}" method="POST">
                                 @csrf
                                 @method('POST')
 
                                 @include('roles.include.form')
 
-                                <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
+                                <a href="{{ route(name: 'roles.index') }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
 
                                 <button type="submit" class="btn btn-primary">{{ __(key: 'Save') }}</button>
                             </form>

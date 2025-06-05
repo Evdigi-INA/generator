@@ -15,16 +15,16 @@ class AuthController extends Controller
 {
     public function login(LoginRequest $request): JsonResponse
     {
-        $user = User::where('email', $request->email)->first();
-        $credentials = $request->only(['email', 'password']);
+        $user = User::where(column: 'email', operator: $request->email)->first();
+        $credentials = $request->only(keys: ['email', 'password']);
 
-        if (! Auth::attempt($credentials)) {
+        if (! Auth::attempt(credentials: $credentials)) {
             return response()->json(data: [
                 'message' => 'These credentials do not match our records.',
             ], status: Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $token = $user->createToken('apiToken')->plainTextToken;
+        $token = $user->createToken(name: 'apiToken')->plainTextToken;
 
         return response()->json(data: [
             'message' => 'Successfully logged in',
@@ -36,11 +36,11 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        $validated['password'] = Hash::make($request->password);
+        $validated['password'] = Hash::make(value: $request->password);
         unset($validated['password_confirmation']);
 
-        $user = User::create($validated);
-        $token = $user->createToken('apiToken')->plainTextToken;
+        $user = User::create(attributes: $validated);
+        $token = $user->createToken(name: 'apiToken')->plainTextToken;
 
         return response()->json(data: [
             'message' => 'Successfully registered',

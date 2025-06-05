@@ -11,11 +11,11 @@ trait PasswordValidationRules
      */
     protected function passwordRules(): array
     {
-        $validations = request()->segment(2) ? ['nullable'] : ['required', 'confirmed'];
+        $validations = ['confirmed'];
 
         if (app()->isProduction()) {
             $validations[] = [
-                Password::min(8)
+                Password::min(size: 8)
                     ->letters()
                     ->mixedCase()
                     ->numbers()
