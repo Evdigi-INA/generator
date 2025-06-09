@@ -118,7 +118,7 @@ class ModelGenerator
                         'fieldCamelCase' => str(string: $field)->camel(),
                         'path' => GeneratorUtils::pluralKebabCase(string: $field),
                         'disk' => config(key: 'generator.image.disk', default: 'storage.local'),
-                        'defaultImage' => config(key: 'generator.image.default', default: 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
+                        'defaultImage' => config(key: 'generator.image.default', default: 'https://placehold.co/300?text=No+Image+Available'),
                         'fieldSnakeCase' => str()->snake($field),
                         'fieldPascalCase' => GeneratorUtils::pascalCase(string: $field),
                     ], stubName: 'model-cast')."\n\t";

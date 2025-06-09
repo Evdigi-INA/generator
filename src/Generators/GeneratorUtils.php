@@ -365,7 +365,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
                 'index_code' => 'if (!$'.self::singularCamelCase($model).'->'.str()->snake($field).' || $'.self::singularCamelCase($model).'->'.str()->snake($field)." == \$defaultImage = '".$default."') return \$defaultImage;",
                 /**
                  * Generated code:
-                 * !$book->cover || $book->cover == 'https://via.placeholder.com/350?text=No+Image+Avaiable'"
+                 * !$book->cover || $book->cover == 'https://placehold.co/300?text=No+Image+Available'"
                  */
                 'form_code' => '!$'.self::singularCamelCase($model).'->'.str()->snake($field).' || $'.self::singularCamelCase($model).'->'.str()->snake($field)." == '".$default."'",
             ];
@@ -377,7 +377,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
                 /**
                  * Generated code:
                  *
-                 *  if (!$generator->image == null) return 'https://via.placeholder.com/350?text=No+Image+Avaiable';
+                 *  if (!$generator->image == null) return 'https://placehold.co/300?text=No+Image+Available';
                  */
                 'index_code' => 'if (!$'.self::singularCamelCase($model).'->'.str()->snake($field).") return '".config('generator.image.default')."';",
                 /**
@@ -390,8 +390,8 @@ class GeneratorUtils implements GeneratorUtilsInterface
         }
 
         return [
-            'image' => 'https://via.placeholder.com/350?text=No+Image+Avaiable',
-            'index_code' => 'if (!$'.self::singularCamelCase($model).'->'.str()->snake($field).") return 'https://via.placeholder.com/350?text=No+Image+Avaiable';",
+            'image' => 'https://placehold.co/300?text=No+Image+Available',
+            'index_code' => 'if (!$'.self::singularCamelCase($model).'->'.str()->snake($field).") return 'https://placehold.co/300?text=No+Image+Available';",
             'form_code' => '!$'.self::singularCamelCase($model).'->'.str()->snake($field),
         ];
     }

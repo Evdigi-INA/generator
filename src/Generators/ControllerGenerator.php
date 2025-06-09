@@ -258,7 +258,7 @@ class ControllerGenerator
 
                 /**
                  *    if (!$generator->image) {
-                 *     $generator->image = 'https://via.placeholder.com/350?text=No+Image+Avaiable';
+                 *     $generator->image = 'https://placehold.co/300?text=No+Image+Available';
                  *    } else {
                  *      $generator->image =  asset('/uploads/images/' . $generator->image);
                  *    }
@@ -457,7 +457,7 @@ class ControllerGenerator
             'modelNamePluralCamelCase' => GeneratorUtils::pluralCamelCase(string: $model),
             'modelNameSingularCamelCase' => GeneratorUtils::singularCamelCase(string: $model),
             'field' => $field,
-            'defaultImage' => config(key: 'generator.image.default', default: 'https://via.placeholder.com/350?text=No+Image+Avaiable'),
+            'defaultImage' => config(key: 'generator.image.default', default: 'https://placehold.co/300?text=No+Image+Available'),
             'castImage' => GeneratorUtils::setDiskCodeForCastImage(model: $model, field: $field),
             'fieldPluralKebabCase' => GeneratorUtils::pluralKebabCase(string: $field),
         ];
