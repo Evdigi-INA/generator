@@ -178,8 +178,8 @@ class ControllerGenerator
             /**
              * * will generate something like:
              *
-             *  User::create($validated);
-             *  $user->update($validated);
+             *  User::create(attributes: $validated);
+             *  $user->update(attributes: $validated);
              */
             $insertDataAction = "$modelNameSingularPascalCase::create(attributes: \$validated);";
             $updateDataAction = "\${$modelNameSingularCamelCase}->update(attributes: \$validated);";
@@ -306,7 +306,7 @@ class ControllerGenerator
                      *  if($product) {
                      *      $product->update($validated);
                      *  } else {
-                     *      Product::create($validated);
+                     *      Product::create(attributes: $validated);
                      *  }
                      */
                     $singleFormUpdateDataAction = "$modelNameSingularPascalCase::updateOrCreate(attributes: ['id' => $".$modelNameSingularCamelCase.'?->id], values: '.(str_contains(haystack: $updateDataAction, needle: '$request->validated()') ? '$request->validated()' : '$validated').');';
@@ -356,9 +356,9 @@ class ControllerGenerator
                 if (GeneratorUtils::checkGeneratorVariant() == GeneratorVariant::SINGLE_FORM->value) {
                     /**
                      *  if($product) {
-                     *      $product->update($validated);
+                     *      $product->update(attributes: $validated);
                      *  } else {
-                     *      Product::create($validated);
+                     *      Product::create(attributes: $validated);
                      *  }
                      *
                      * Product::updateOrCreate(['id' => $product?->id], $validated);

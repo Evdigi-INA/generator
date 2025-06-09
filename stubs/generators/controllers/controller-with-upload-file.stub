@@ -65,7 +65,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
         $validated = $request->validated();
         {{passwordFieldStore}}{{inputMonths}}
 {{storeCode}}
-        {{modelNameSingularPascalCase}}::create($validated);
+        {{modelNameSingularPascalCase}}::create(attributes: $validated);
 
         return to_route(route: '{{modelNamePluralKebabCase}}.index')->with(key: 'success', value: __(key: 'The {{modelNameCleanSingular}} was created successfully.'));
     }

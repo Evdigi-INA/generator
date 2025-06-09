@@ -118,13 +118,11 @@ class GeneratorServiceProvider extends ServiceProvider
             __DIR__.'/../../stubs/generators/publish/utils' => app_path('Generators'),
         ], 'generator-utils');
 
-        $this->publishes([
+        $this->publishes(paths: [
             __DIR__.'/../../stubs/generators/publish/utils/Interfaces/ImageServiceInterfaceV2.php' => app_path('Generators/Interfaces/ImageServiceInterfaceV2.php'),
-        ], 'image-service-v2');
-
-        $this->publishes([
             __DIR__.'/../../stubs/generators/publish/utils/Services/ImageServiceV2.php' => app_path('Generators/Services/ImageServiceV2.php'),
-        ], 'image-service-v2');
+            __DIR__.'/../../stubs/generators/publish/utils/ImageUploadOption.php' => app_path('Generators/ImageUploadOption.php'),
+        ], groups: 'image-service-v2');
 
         // bootstrap app (laravel 11)
         $this->publishes([
@@ -137,10 +135,10 @@ class GeneratorServiceProvider extends ServiceProvider
 
         if (class_exists(\Illuminate\Foundation\Console\AboutCommand::class)) {
             \Illuminate\Foundation\Console\AboutCommand::add('Generator', fn () => [
-                'Version' => '0.3.0',
+                'Version' => '0.4.0',
                 'Source' => 'https://github.com/evdigiina/generator',
-                'Docs' => 'https://evdigi-ina.github.io/generator-docs',
-                'About' => 'Package for building basic CRUD, specially for your main data.',
+                'Docs' => 'https://zzzul.github.io/generator-docs-next/',
+                'About' => 'Automate CRUD, Focus on Core Features.',
             ]);
         }
 

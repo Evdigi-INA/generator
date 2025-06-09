@@ -58,7 +58,7 @@
                                     </tr>
                                 </table>
                             </div>
-                            <a href="{{ route('roles.index') }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
+                            <a href="{{ route(name: 'roles.index') }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
                         </div>
                     </div>
                 </div>
