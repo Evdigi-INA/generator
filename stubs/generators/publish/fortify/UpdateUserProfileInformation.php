@@ -19,30 +19,30 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     /**
      * Validate and update the given user's profile information.
      */
-    public function update(User $user, array $input)
+    public function update(User $user, array $input): void
     {
-        Validator::make($input, [
+        Validator::make(data: $input, rules: [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('users')->ignore($user->id),
+                Rule::unique(table: 'users')->ignore(id: $user->id),
             ],
-            'avatar' => ['nullable', 'image', 'max:1024']
-        ])->validateWithBag('updateProfileInformation');
+            'avatar' => ['nullable', 'image', 'max:1024'],
+        ])->validateWithBag(errorBag: 'updateProfileInformation');
 
         if (isset($input['avatar']) && $input['avatar']->isValid()) {
             $filename = (new ImageServiceV2)->upload(name: 'avatar', path: $this->avatarPath, defaultImage: $user?->avatar);
 
-            $user->forceFill(['avatar' => $filename])->save();
+            $user->forceFill(attributes: ['avatar' => $filename])->save();
         }
 
         if ($input['email'] !== $user->email && $user instanceof MustVerifyEmail) {
-            $this->updateVerifiedUser($user, $input);
+            $this->updateVerifiedUser(user: $user, input: $input);
         } else {
-            $user->forceFill([
+            $user->forceFill(attributes: [
                 'name' => $input['name'],
                 'email' => $input['email'],
             ])->save();

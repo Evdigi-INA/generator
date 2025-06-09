@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Roles\{StoreRoleRequest, UpdateRoleRequest};
-use Spatie\Permission\Models\Role;
-use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Routing\Controllers\{HasMiddleware, Middleware};
+use App\Http\Requests\Roles\StoreRoleRequest;
+use App\Http\Requests\Roles\UpdateRoleRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Yajra\DataTables\Facades\DataTables;
 
 class RoleAndPermissionController extends Controller implements HasMiddleware
 {
@@ -18,10 +21,10 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('permission:role & permission view', only: ['index', 'show']),
-            new Middleware('permission:role & permission create', only: ['create', 'store']),
-            new Middleware('permission:role & permission edit', only: ['edit', 'store']),
-            new Middleware('permission:role & permission delete', only: ['destroy']),
+            new Middleware(middleware: 'permission:role & permission view', only: ['index', 'show']),
+            new Middleware(middleware: 'permission:role & permission create', only: ['create', 'store']),
+            new Middleware(middleware: 'permission:role & permission edit', only: ['edit', 'store']),
+            new Middleware(middleware: 'permission:role & permission delete', only: ['destroy']),
         ];
     }
 
@@ -30,19 +33,19 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      *
      * @return \Illuminate\Http\Response
      */
-    public function index():  View|JsonResponse
+    public function index(): View|JsonResponse
     {
         if (request()->ajax()) {
             $users = Role::query();
 
-            return DataTables::of($users)
-                ->addColumn('created_at', fn($row) => $row->created_at->format('Y-m-d H:i:s'))
-                ->addColumn('updated_at',fn($row) => $row->updated_at->format('Y-m-d H:i:s'))
-                ->addColumn('action', 'roles.include.action')
+            return DataTables::of(source: $users)
+                ->addColumn(name: 'created_at', content: fn ($row) => $row->created_at->format('Y-m-d H:i:s'))
+                ->addColumn(name: 'updated_at', content: fn ($row) => $row->updated_at->format('Y-m-d H:i:s'))
+                ->addColumn(name: 'action', content: 'roles.include.action')
                 ->toJson();
         }
 
-        return view('roles.index');
+        return view(view: 'roles.index');
     }
 
     /**
@@ -50,7 +53,7 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      */
     public function create(): View
     {
-        return view('roles.create');
+        return view(view: 'roles.create');
     }
 
     /**
@@ -58,10 +61,12 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      */
     public function store(StoreRoleRequest $request): RedirectResponse
     {
-        $role = Role::create(['name' => $request->name]);
-        $role->givePermissionTo($request->permissions);
+        return DB::transaction(callback: function () use ($request): RedirectResponse {
+            $role = Role::create(attributes: ['name' => $request->name]);
+            $role->givePermissionTo(permissions: $request->permissions);
 
-        return to_route('roles.index')->with('success', __('The role was created successfully.'));
+            return to_route(route: 'roles.index')->with(key: 'success', value: __(key: 'The role was created successfully.'));
+        });
     }
 
     /**
@@ -69,9 +74,9 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      */
     public function show(int $id): View
     {
-        $role = Role::with('permissions')->findOrFail($id);
+        $role = Role::with(relations: ['permissions'])->findOrFail(id: $id);
 
-        return view('roles.show', compact('role'));
+        return view(view: 'roles.show', data: compact('role'));
     }
 
     /**
@@ -79,9 +84,9 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      */
     public function edit(int $id): View
     {
-        $role = Role::with('permissions')->findOrFail($id);
+        $role = Role::with(relations: ['permissions'])->findOrFail(id: $id);
 
-        return view('roles.edit', compact('role'));
+        return view(view: 'roles.edit', data: compact('role'));
     }
 
     /**
@@ -89,11 +94,13 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      */
     public function update(UpdateRoleRequest $request, string $id): RedirectResponse
     {
-        $role = Role::findOrFail($id);
-        $role->update(['name' => $request->name]);
-        $role->syncPermissions($request->permissions);
+        return DB::transaction(callback: function () use ($request, $id): RedirectResponse {
+            $role = Role::findOrFail(id: $id);
+            $role->update(attributes: ['name' => $request->name]);
+            $role->syncPermissions(permissions: $request->permissions);
 
-        return to_route('roles.index')->with('success', __('The role was updated successfully.'));
+            return to_route(route: 'roles.index')->with(key: 'success', value: __(key: 'The role was updated successfully.'));
+        });
     }
 
     /**
@@ -101,14 +108,16 @@ class RoleAndPermissionController extends Controller implements HasMiddleware
      */
     public function destroy(string $id): RedirectResponse
     {
-        $role = Role::withCount('users')->findOrFail($id);
+        return DB::transaction(callback: function () use ($id): RedirectResponse {
+            $role = Role::withCount(relations: 'users')->findOrFail(id: $id);
 
-        if ($role->users_count < 1) {
-            $role->delete();
+            if ($role->users_count < 1) {
+                $role->delete();
 
-            return to_route('roles.index')->with('success', __('The role was deleted successfully.'));
-        }
+                return to_route(route: 'roles.index')->with(key: 'success', value: __(key: 'The role was deleted successfully.'));
+            }
 
-        return to_route('roles.index')->with('error', __('Can`t delete role.'));
+            return to_route(route: 'roles.index')->with(key: 'error', value: __(key: 'Can`t delete role.'));
+        });
     }
 }

@@ -26,10 +26,10 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             // {{middlewareName}}
 
             // TODO: uncomment this code below if you are using spatie permission
-            // new Middleware('permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
-            // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
-            // new Middleware('permission:{{modelNameSpaceLowercase}} edit', only: ['update']),
-            // new Middleware('permission:{{modelNameSpaceLowercase}} delete', only: ['destroy']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} view', only: ['index', 'show']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} create', only: ['create', 'store']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} edit', only: ['update']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} delete', only: ['destroy']),
         ];
     }
 
@@ -38,9 +38,9 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function index(): {{modelNameSingularPascalCase}}Collection|{{modelNameSingularPascalCase}}Resource
     {
-        ${{modelNamePluralCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}latest()->paginate(request()->query('per_page', 10));
-        return (new {{modelNameSingularPascalCase}}Collection(${{modelNamePluralCamelCase}}))
-            ->additional([
+        ${{modelNamePluralCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}latest()->paginate(perPage: request()->query(key: 'per_page', default: 10));
+        return (new {{modelNameSingularPascalCase}}Collection(resource: ${{modelNamePluralCamelCase}}))
+            ->additional(data: [
                 'message' => 'The {{modelNameCleanPlural}} was received successfully.',
                 // 'success' => true,
                 // 'status_code' => Response::HTTP_OK
@@ -55,16 +55,16 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
         $validated = $request->validated();
         {{passwordFieldStore}}{{inputMonths}}
 {{storeCode}}
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::create($validated);
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::create(attributes: $validated);
 
-        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))
-            ->additional([
+        return (new {{modelNameSingularPascalCase}}Resource(resource: ${{modelNameSingularCamelCase}}))
+            ->additional(data: [
                 'message' => 'The {{modelNameCleanSingular}} was created successfully.',
                 // 'success' => true,
                 // 'status_code' => Response::HTTP_CREATED
             ])
             ->response()
-            ->setStatusCode(Response::HTTP_CREATED);
+            ->setStatusCode(code: Response::HTTP_CREATED);
     }
 
     /**
@@ -72,9 +72,9 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function show(string $id): {{modelNameSingularPascalCase}}Resource
     {
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail($id);
-        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))
-            ->additional([
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::{{relations}}findOrFail(id: $id);
+        return (new {{modelNameSingularPascalCase}}Resource(resource: ${{modelNameSingularCamelCase}}))
+            ->additional(data: [
                 'message' => 'The {{modelNameCleanSingular}} was received successfully.',
                 // 'success' => true,
                 // 'status_code' => Response::HTTP_OK
@@ -86,14 +86,14 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function update(Update{{modelNameSingularPascalCase}}Request $request, string $id): {{modelNameSingularPascalCase}}Resource
     {
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail($id);
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail(id: $id);
         $validated = $request->validated();
         {{passwordFieldUpdate}}{{inputMonths}}
 {{updateCode}}
         {{updateDataAction}}
 
-        return (new {{modelNameSingularPascalCase}}Resource(${{modelNameSingularCamelCase}}))
-            ->additional([
+        return (new {{modelNameSingularPascalCase}}Resource(resource: ${{modelNameSingularCamelCase}}))
+            ->additional(data: [
                 'message' => 'The {{modelNameCleanSingular}} was updated successfully.',
                 // 'success' => true,
                 // 'status_code' => Response::HTTP_OK
@@ -106,28 +106,29 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     public function destroy(string $id): {{modelNameSingularPascalCase}}Resource|JsonResponse
     {
         try {
-            ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail($id);
+            ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::findOrFail(id: $id);
 
             {{assignImageDelete}}
             ${{modelNameSingularCamelCase}}->delete();
 
             {{deleteImageCodes}}
-            return (new {{modelNameSingularPascalCase}}Resource(null))
-                ->additional([
+            return (new {{modelNameSingularPascalCase}}Resource(resource: null))
+                ->additional(data: [
                     'message' => 'The {{modelNameCleanSingular}} was deleted successfully.',
                     // 'success' => true,
                     // 'status_code' => Response::HTTP_OK
                 ]);
         } catch (\Exception $e) {
-            return (new {{modelNameSingularPascalCase}}Resource(null))
-                ->additional([
+            return (new {{modelNameSingularPascalCase}}Resource(resource: null))
+                ->additional(data: [
                     'message' => $e->getMessage(),
                     // 'success' => false,
                     // 'status_code' => Response::HTTP_INTERNAL_SERVER_ERROR
                 ])
                 ->response()
-                ->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+                ->setStatusCode(code: Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
     {{exportFunction}}
 }

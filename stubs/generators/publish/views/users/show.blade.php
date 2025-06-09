@@ -1,27 +1,27 @@
 @extends('layouts.app')
 
-@section('title', __('Detail User'))
+@section('title', __(key: 'Detail User'))
 
 @section('content')
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-8 order-md-1 order-last">
-                    <h3>{{ __('User') }}</h3>
+                    <h3>{{ __(key: 'User') }}</h3>
                     <p class="text-subtitle text-muted">
-                        {{ __('Detail user information.') }}
+                        {{ __(key: 'Detail user information.') }}
                     </p>
                 </div>
 
                 <x-breadcrumb>
                     <li class="breadcrumb-item">
-                        <a href="/">{{ __('Dashboard') }}</a>
+                        <a href="/">{{ __(key: 'Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('users.index') }}">{{ __('User') }}</a>
+                        <a href="{{ route(name: 'users.index') }}">{{ __(key: 'User') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
-                        {{ __('Detail') }}
+                        {{ __(key: 'Detail') }}
                     </li>
                 </x-breadcrumb>
             </div>
@@ -37,39 +37,41 @@
                                     <tr>
                                         <td colspan="2" class="text-center">
                                             <div class="avatar avatar-xl">
-                                                <img src="{{ $user->avatar }}" alt="Avatar" class="rounded img-fluid" style="object-fit: cover; width: 350px; height: 200px;" >
+                                                <img src="{{ $user->avatar }}" alt="Avatar" class="rounded img-fluid"
+                                                    style="object-fit: cover; width: 350px; height: 200px;">
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">{{ __('Name') }}</td>
+                                        <td class="fw-bold">{{ __(key: 'Name') }}</td>
                                         <td>{{ $user->name }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">{{ __('Email') }}</td>
+                                        <td class="fw-bold">{{ __(key: 'Email') }}</td>
                                         <td>{{ $user->email }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">{{ __('Role') }}</td>
-                                        <td>{{ $user->getRoleNames()->toArray() !== [] ? $user->getRoleNames()[0] : '-' }}</td>
+                                        <td class="fw-bold">{{ __(key: 'Role') }}</td>
+                                        <td>{{ $user->getRoleNames()->toArray() !== [] ? $user->getRoleNames()[0] : '-' }}
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">{{ __('Email verified at') }}</td>
+                                        <td class="fw-bold">{{ __(key: 'Email verified at') }}</td>
                                         <td>{{ $user->email_verified_at ? $user->email_verified_at->format('Y-m-d H:i:s') : '-' }}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">{{ __('Created at') }}</td>
+                                        <td class="fw-bold">{{ __(key: 'Created at') }}</td>
                                         <td>{{ $user->created_at->format('Y-m-d H:i:s') }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="fw-bold">{{ __('Updated at') }}</td>
+                                        <td class="fw-bold">{{ __(key: 'Updated at') }}</td>
                                         <td>{{ $user->updated_at->format('Y-m-d H:i:s') }}</td>
                                     </tr>
                                 </table>
                             </div>
 
-                            <a href="{{ url()->previous() }}" class="btn btn-secondary">{{ __('Back') }}</a>
+                            <a href="{{ route(name: 'users.index') }}" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
                         </div>
                     </div>
                 </div>

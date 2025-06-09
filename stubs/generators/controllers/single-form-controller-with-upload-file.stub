@@ -24,7 +24,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
             // {{middlewareName}}
 
             // TODO: uncomment this code below if you are using spatie permission
-            // new Middleware('permission:{{modelNameSpaceLowercase}} create', only: ['index', 'store']),
+            // new Middleware(middleware: 'permission:{{modelNameSpaceLowercase}} create', only: ['index', 'store']),
         ];
     }
 
@@ -35,7 +35,7 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
     {
         ${{modelNameSingularCamelCase}} = {{query}}->first();
 
-        return view('{{viewPath}}{{modelNamePluralKebabCase}}.create', compact('{{modelNameSingularCamelCase}}'));
+        return view(view: '{{viewPath}}{{modelNamePluralKebabCase}}.create', data: compact('{{modelNameSingularCamelCase}}'));
     }
 
     /**
@@ -43,14 +43,14 @@ class {{modelNameSingularPascalCase}}Controller extends Controller implements Ha
      */
     public function store(Store{{modelNameSingularPascalCase}}Request $request): RedirectResponse
     {
-        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::query()->first();
+        ${{modelNameSingularCamelCase}} = {{modelNameSingularPascalCase}}::first();
 
         $validated = $request->validated();
         {{passwordFieldUpdate}}{{inputMonths}}
 {{updateCode}}
         {{updateDataAction}}
 
-        return to_route('{{modelNamePluralKebabCase}}.index')->with('success', __('The {{modelNameCleanSingular}} was created successfully.'));
+        return to_route(route: '{{modelNamePluralKebabCase}}.index')->with('success', __(key: 'The {{modelNameCleanSingular}} was created successfully.'));
     }
     {{exportFunction}}
 }

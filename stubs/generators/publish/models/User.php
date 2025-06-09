@@ -3,20 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Generators\Services\ImageServiceV2;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Generators\Services\ImageServiceV2;
 
 class User extends Authenticatable
 {
-    // https://laravel.com/docs/11.x/sanctum#api-token-authentication
     // use \Laravel\Sanctum\HasApiTokens;
-
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles;
+    use HasFactory, HasRoles, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +25,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'avatar'
+        'avatar',
     ];
 
     /**
@@ -60,7 +58,7 @@ class User extends Authenticatable
     protected function avatar(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value): string => $this->getAvatarUrl(value: $value)
+            get: fn (?string $value): string => $this->getAvatarUrl(value: $value)
         );
     }
 
@@ -75,10 +73,10 @@ class User extends Authenticatable
     private function getAvatarUrl(?string $value): string
     {
         $path = 'avatars';
-        $imageService = new ImageServiceV2();
-        $disk = $imageService->setDiskName('storage.public');
+        $imageService = new ImageServiceV2;
+        $disk = $imageService->setDiskName(disk: 'storage.public');
 
-        if (!$value) {
+        if (! $value) {
             return $imageService->getPlaceholderImage();
         }
 

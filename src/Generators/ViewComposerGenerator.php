@@ -12,7 +12,7 @@ class ViewComposerGenerator
     public function generate(array $request): void
     {
         if (in_array(needle: 'foreignId', haystack: $request['column_types'], strict: true)) {
-            $template = "";
+            $template = '';
 
             $model = GeneratorUtils::setModelName(model: $request['model'], style: 'default');
             $viewPath = GeneratorUtils::getModelLocation(model: $request['model']);
@@ -28,19 +28,20 @@ class ViewComposerGenerator
                     if ($relatedModelPath != '') {
                         $relatedModelPath = "\App\Models\\$relatedModelPath\\$constrainModel";
                     } else {
-                        $relatedModelPath = "\App\Models\\" . GeneratorUtils::singularPascalCase(string: $constrainModel);
+                        $relatedModelPath = "\App\Models\\".GeneratorUtils::singularPascalCase(string: $constrainModel);
                     }
 
                     $allColumns = Schema::getColumnListing($table);
 
-                    if (sizeof(value: $allColumns) > 0) {
+                    if (count(value: $allColumns) > 0) {
                         $fieldsSelect = "'id', '$allColumns[1]'";
                     } else {
                         $fieldsSelect = "'id'";
                     }
 
-                    if ($i > 1)
+                    if ($i > 1) {
                         $template .= "\t\t";
+                    }
 
                     $template .= GeneratorUtils::replaceStub(
                         replaces: [
@@ -49,7 +50,7 @@ class ViewComposerGenerator
                             'constrainsSingularPascalCase' => GeneratorUtils::singularPascalCase(string: $constrainModel),
                             'fieldsSelect' => $fieldsSelect,
                             'relatedModelPath' => $relatedModelPath,
-                            'viewPath' => $viewPath != '' ? str_replace(search: '\\', replace: '.', subject: strtolower(string: $viewPath)) . "." : '',
+                            'viewPath' => $viewPath != '' ? str_replace(search: '\\', replace: '.', subject: strtolower(string: $viewPath)).'.' : '',
                         ],
                         stubName: 'view-composer'
                     );
@@ -57,7 +58,7 @@ class ViewComposerGenerator
             }
             $path = app_path(path: 'Providers/ViewComposerServiceProvider.php');
 
-            $viewProviderTemplate = substr(string: file_get_contents(filename: $path), offset: 0, length: -6) . "\n\n\t\t" . $template . "\t}\n}";
+            $viewProviderTemplate = substr(string: file_get_contents(filename: $path), offset: 0, length: -6)."\n\n\t\t".$template."\t}\n}";
 
             file_put_contents(filename: $path, data: $viewProviderTemplate);
         }

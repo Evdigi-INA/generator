@@ -22,7 +22,7 @@ class MigrationGenerator
              * will generate something like:
              * $table->string('name
              */
-            $setFields .= "\$table->" . $request['column_types'][$i] . "('" . str()->snake($field);
+            $setFields .= '$table->'.$request['column_types'][$i]."('".str()->snake($field);
 
             /**
              * will generate something like:
@@ -32,7 +32,7 @@ class MigrationGenerator
                 $options = explode('|', $request['select_options'][$i]);
                 $totalOptions = count($options);
 
-                $enum = "[";
+                $enum = '[';
 
                 foreach ($options as $key => $value) {
                     if ($key + 1 != $totalOptions) {
@@ -46,7 +46,7 @@ class MigrationGenerator
                  * will generate something like:
                  * $table->string('name', ['water', 'fire']
                  */
-                $setFields .= "', " . $enum;
+                $setFields .= "', ".$enum;
             }
 
             if (isset($request['max_lengths'][$i]) && $request['max_lengths'][$i] >= 0) {
@@ -56,7 +56,7 @@ class MigrationGenerator
                          * will generate something like:
                          * $table->string('name', ['water', 'fire'])
                          */
-                        $setFields .= ")";
+                        $setFields .= ')';
                         break;
 
                     default:
@@ -66,7 +66,7 @@ class MigrationGenerator
                          */
                         $setFields .= match ($request['input_types'][$i]) {
                             'range' => "')",
-                            default => "', " . $request['max_lengths'][$i] . ")",
+                            default => "', ".$request['max_lengths'][$i].')',
                         };
                         break;
                 }
@@ -77,7 +77,7 @@ class MigrationGenerator
                          * will generate something like:
                          * $table->string('name', ['water', 'fire'])
                          */
-                        $setFields .= ")";
+                        $setFields .= ')';
                         break;
 
                     default:
@@ -95,7 +95,7 @@ class MigrationGenerator
                  * will generate something like:
                  * $table->string('name', 30)->nullable() or $table->string('name')->nullable()
                  */
-                $setFields .= "->nullable()";
+                $setFields .= '->nullable()';
             }
 
             if ($request['default_values'][$i]) {
@@ -103,11 +103,10 @@ class MigrationGenerator
                  * will generate something like:
                  * $table->string('name', 30)->nullable() or $table->string('name')->nullable()
                  */
-
-                $defaultValue = "'" . $request['default_values'][$i] . "'";
+                $defaultValue = "'".$request['default_values'][$i]."'";
 
                 if ($request['input_types'][$i] == 'month') {
-                    $defaultValue = "\Carbon\Carbon::createFromFormat('Y-m', '" . $request['default_values'][$i] . "')";
+                    $defaultValue = "\Carbon\Carbon::createFromFormat('Y-m', '".$request['default_values'][$i]."')";
                 }
 
                 $setFields .= "->default($defaultValue)";
@@ -118,7 +117,7 @@ class MigrationGenerator
                  * will generate something like:
                  * ->unique()
                  */
-                $setFields .= "->unique()";
+                $setFields .= '->unique()';
             }
 
             $constrainName = '';
@@ -131,15 +130,15 @@ class MigrationGenerator
                 switch ($request['column_types'][$i]) {
                     case 'foreignId':
                         if ($request['on_delete_foreign'][$i] == ActionForeign::NULL->value) {
-                            $setFields .= "->nullable()";
+                            $setFields .= '->nullable()';
                         }
 
-                        $setFields .= "->constrained('" . GeneratorUtils::pluralSnakeCase($constrainName) . "')";
+                        $setFields .= "->constrained('".GeneratorUtils::pluralSnakeCase($constrainName)."')";
 
                         $setFields .= match ($request['on_update_foreign'][$i]) {
-                            ActionForeign::CASCADE->value => "->cascadeOnUpdate()",
-                            ActionForeign::RESTRICT->value => "->restrictOnUpdate()",
-                            default => "",
+                            ActionForeign::CASCADE->value => '->cascadeOnUpdate()',
+                            ActionForeign::RESTRICT->value => '->restrictOnUpdate()',
+                            default => '',
                         };
 
                         $setFields .= match ($request['on_delete_foreign'][$i]) {
@@ -157,24 +156,24 @@ class MigrationGenerator
             } else {
                 switch ($request['column_types'][$i]) {
                     case 'foreignId':
-                        $setFields .= "->constrained('" . GeneratorUtils::pluralSnakeCase($constrainName) . "')";
+                        $setFields .= "->constrained('".GeneratorUtils::pluralSnakeCase($constrainName)."')";
 
                         $setFields .= match ($request['on_update_foreign'][$i]) {
-                            ActionForeign::CASCADE->value => "->cascadeOnUpdate()",
-                            ActionForeign::RESTRICT->value => "->restrictOnUpdate()",
-                            default => "",
+                            ActionForeign::CASCADE->value => '->cascadeOnUpdate()',
+                            ActionForeign::RESTRICT->value => '->restrictOnUpdate()',
+                            default => '',
                         };
 
                         $setFields .= match ($request['on_delete_foreign'][$i]) {
-                            ActionForeign::CASCADE->value => "->cascadeOnDelete();",
-                            ActionForeign::RESTRICT->value => "->restrictOnDelete();",
-                            ActionForeign::NULL->value => "->nullOnDelete();",
-                            default => ";",
+                            ActionForeign::CASCADE->value => '->cascadeOnDelete();',
+                            ActionForeign::RESTRICT->value => '->restrictOnDelete();',
+                            ActionForeign::NULL->value => '->nullOnDelete();',
+                            default => ';',
                         };
                         break;
 
                     default:
-                        $setFields .= ";";
+                        $setFields .= ';';
                         break;
                 }
             }
@@ -185,7 +184,7 @@ class MigrationGenerator
             'fields' => $setFields,
         ], stubName: 'migration');
 
-        $migrationName = date('Y') . '_' . date('m') . '_' . date('d') . '_' . date('h') . date('i') . date('s') . '_create_' . $tableNamePluralLowercase . '_table.php';
+        $migrationName = date('Y').'_'.date('m').'_'.date('d').'_'.date('h').date('i').date('s').'_create_'.$tableNamePluralLowercase.'_table.php';
 
         file_put_contents(filename: database_path("/migrations/$migrationName"), data: $template);
     }

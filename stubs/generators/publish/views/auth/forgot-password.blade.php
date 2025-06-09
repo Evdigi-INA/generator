@@ -1,9 +1,9 @@
 @extends('layouts.auth')
 
-@section('title', __('Forgot Password'))
+@section('title', __(key: 'Forgot Password'))
 
 @push('css')
-    <link rel="stylesheet" href="{{ asset('mazer') }}/css/pages/auth.css">
+    <link rel="stylesheet" href="{{ asset(path: 'mazer') }}/css/pages/auth.css">
 @endpush
 
 @section('content')
@@ -12,14 +12,14 @@
             <div id="auth-left">
                 <div class="auth-logo" class="mb-0">
                     <a href="/">
-                        <img src="{{ asset('mazer') }}/static/images/logo/logo.svg" alt="Logo">
+                        <img src="{{ asset(path: 'mazer') }}/static/images/logo/logo.svg" alt="Logo">
                     </a>
                 </div>
 
-                <h1 class="auth-title">{{ __('Forgot Password.') }}</h1>
+                <h1 class="auth-title">{{ __(key: 'Forgot Password.') }}</h1>
 
                 <p class="auth-subtitle mb-3">
-                    {{ __('Enter your email and we\'ll send your a link to reset your password.') }}</p>
+                    {{ __(key: 'Enter your email and we\'ll send your a link to reset your password.') }}</p>
 
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible show fade">
@@ -41,30 +41,30 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('password.email') }}">
+                <form method="POST" action="{{ route(name: 'password.email') }}">
                     @csrf
 
                     <div class="form-group position-relative has-icon-left mb-4">
                         <input type="email" class="form-control form-control-xl @error('email') is-invalid @enderror"
-                            placeholder="{{ __('E-Mail Address') }}" name="email" required autocomplete="current-email">
+                            placeholder="{{ __(key: 'E-Mail Address') }}" name="email" required autocomplete="current-email">
                         <div class="form-control-icon">
                             <i class="bi bi-person"></i>
                         </div>
                     </div>
 
                     <button
-                        class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __('Send Password Reset Link') }}</button>
+                        class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __(key: 'Send Password Reset Link') }}</button>
                 </form>
 
                 <div class="text-center mt-4 text-lg fs-4">
 {{--                    <p class="text-gray-600">{{ __("Don't have an account") }}?--}}
 {{--                        <a href="/register" class="font-bold">--}}
-{{--                            {{ __('Sign up.') }}--}}
+{{--                            {{ __(key: 'Sign up.') }}--}}
 {{--                        </a>--}}
 {{--                    </p>--}}
 
-                    <p class="text-gray-600">{{ __('Already have an account') }}?
-                        <a href="/login" class="font-bold">{{ __('Log in.') }}</a>
+                    <p class="text-gray-600">{{ __(key: 'Already have an account') }}?
+                        <a href="/login" class="font-bold">{{ __(key: 'Log in.') }}</a>
                     </p>
                 </div>
             </div>

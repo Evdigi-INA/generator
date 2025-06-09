@@ -2,11 +2,12 @@
 
 namespace EvdigiIna\Generator\Http\Controllers;
 
-use EvdigiIna\Generator\Enums\{GeneratorType, GeneratorVariant};
-use EvdigiIna\Generator\Generators\Services\GeneratorService;
-use Symfony\Component\HttpFoundation\Response;
-use EvdigiIna\Generator\Http\Requests\StoreSimpleGeneratorRequest;
+use EvdigiIna\Generator\Enums\GeneratorType;
+use EvdigiIna\Generator\Enums\GeneratorVariant;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
+use EvdigiIna\Generator\Generators\Services\GeneratorService;
+use EvdigiIna\Generator\Http\Requests\StoreSimpleGeneratorRequest;
+use Symfony\Component\HttpFoundation\Response;
 
 class SimpleGeneratorController extends Controller
 {
@@ -55,12 +56,12 @@ class SimpleGeneratorController extends Controller
         $model = GeneratorUtils::setModelName($request->model, 'default');
 
         $route = $request->generate_type == GeneratorType::ALL->value
-            ? (GeneratorUtils::isGenerateApi() ? 'api/' . GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model))
-            : request()->path() . '/create';
+            ? (GeneratorUtils::isGenerateApi() ? 'api/'.GeneratorUtils::pluralKebabCase($model) : GeneratorUtils::pluralKebabCase($model))
+            : request()->path().'/create';
 
         return response()->json([
             'message' => 'success',
-            'route' => $route
+            'route' => $route,
         ], Response::HTTP_CREATED);
     }
 }

@@ -1,9 +1,9 @@
 @extends('layouts.auth')
 
-@section('title', __('Confirm Password'))
+@section('title', __(key: 'Confirm Password'))
 
 @push('css')
-    <link rel="stylesheet" href="{{ asset('mazer') }}/css/pages/auth.css">
+    <link rel="stylesheet" href="{{ asset(path: 'mazer') }}/css/pages/auth.css">
 @endpush
 
 @section('content')
@@ -12,13 +12,13 @@
             <div id="auth-left">
                 <div class="auth-logo" class="mb-0">
                     <a href="/">
-                        <img src="{{ asset('mazer') }}/static/images/logo/logo.svg" alt="Logo">
+                        <img src="{{ asset(path: 'mazer') }}/static/images/logo/logo.svg" alt="Logo">
                     </a>
                 </div>
 
-                <h1 class="auth-title">{{ __('Two Factor Challenge.') }}</h1>
+                <h1 class="auth-title">{{ __(key: 'Two Factor Challenge.') }}</h1>
 
-                <p class="auth-subtitle mb-3">{{ __('Enter the authentication code to log in.') }}</p>
+                <p class="auth-subtitle mb-3">{{ __(key: 'Enter the authentication code to log in.') }}</p>
 
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible show fade">
@@ -33,7 +33,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('two-factor.login') }}">
+                <form method="POST" action="{{ route(name: 'two-factor.login') }}">
                     @csrf
 
                     <div class="form-group position-relative has-icon-left mb-4">
@@ -45,7 +45,7 @@
                     </div>
 
                     <div class="divider">
-                        <div class="divider-text">{{ __('Or you can enter one of the recovery codes') }}</div>
+                        <div class="divider-text">{{ __(key: 'Or you can enter one of the recovery codes') }}</div>
                     </div>
 
                     <div class="form-group position-relative has-icon-left mb-4">
@@ -56,7 +56,7 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __('Submit') }}</button>
+                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __(key: 'Submit') }}</button>
                 </form>
             </div>
         </div>

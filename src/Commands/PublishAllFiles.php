@@ -2,9 +2,9 @@
 
 namespace EvdigiIna\Generator\Commands;
 
+use EvdigiIna\Generator\Generators\GeneratorUtils;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use EvdigiIna\Generator\Generators\GeneratorUtils;
 use Illuminate\Support\Facades\File;
 
 class PublishAllFiles extends Command
@@ -32,24 +32,27 @@ class PublishAllFiles extends Command
             case 'full':
                 $composerFileText = file_get_contents(base_path('composer.json'));
 
-                if (!str_contains($composerFileText, 'laravel/fortify') && !str_contains($composerFileText, 'spatie/laravel-permission')) {
+                if (! str_contains($composerFileText, 'laravel/fortify') && ! str_contains($composerFileText, 'spatie/laravel-permission')) {
                     $this->error('You must be install laravel/fortify and spatie/laravel-permission before running this command.');
 
                     $this->info('Install the package: composer require laravel/fortify spatie/laravel-permission');
+
                     return;
                 }
 
-                if (!str_contains($composerFileText, 'laravel/fortify')) {
+                if (! str_contains($composerFileText, 'laravel/fortify')) {
                     $this->error('You must be install laravel/fortify before running this command.');
 
                     $this->info('Install the package: composer require laravel/fortify');
+
                     return;
                 }
 
-                if (!str_contains($composerFileText, 'spatie/laravel-permission')) {
+                if (! str_contains($composerFileText, 'spatie/laravel-permission')) {
                     $this->error('You must be install spatie/laravel-permission before running this command.');
 
                     $this->info('Install the package: composer require spatie/laravel-permission');
+
                     return;
                 }
 
@@ -58,7 +61,7 @@ class PublishAllFiles extends Command
                 if (
                     $totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1
                 ) {
-                    if (!$this->confirm('Do you wish to continue? You are already using the full version.')) {
+                    if (! $this->confirm('Do you wish to continue? You are already using the full version.')) {
                         return;
                     }
                 }
@@ -67,9 +70,10 @@ class PublishAllFiles extends Command
 
                     if ($totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1) {
 
-                        if ($this->confirm('Do you wish to continue? you are already running this command ' . $totalRunningCommand['full_version_publish_count'] . ' for times.')) {
+                        if ($this->confirm('Do you wish to continue? you are already running this command '.$totalRunningCommand['full_version_publish_count'].' for times.')) {
                             $this->totalRunningCommand('full_version_publish_count', true);
                             $this->runPublishAll();
+
                             return;
                         }
                     }
@@ -90,13 +94,12 @@ class PublishAllFiles extends Command
                 }
 
                 if ($totalRunningCommand['simple_version_publish_count'] == 1 || $totalRunningCommand['simple_version_publish_count'] > 1) {
-                    $this->info('You are already running this command ' . $totalRunningCommand['simple_version_publish_count'] . ' times.');
+                    $this->info('You are already running this command '.$totalRunningCommand['simple_version_publish_count'].' times.');
 
                     return;
                 }
 
                 $this->totalRunningCommand('simple_version_publish_count', true);
-
 
                 $this->info('Installing the simple version...');
                 $this->info('Please wait a bit, this process may take several minutes.');
@@ -147,12 +150,12 @@ class PublishAllFiles extends Command
         // $dir = __DIR__ . '/../../generator.cache';
         $dir = storage_path('generator.cache');
 
-        if (!file_exists($dir)) {
+        if (! file_exists($dir)) {
             file_put_contents(
                 $dir,
                 json_encode([
                     'simple_version_publish_count' => 0,
-                    'full_version_publish_count' => 0
+                    'full_version_publish_count' => 0,
                 ])
             );
         }
@@ -169,7 +172,7 @@ class PublishAllFiles extends Command
                             $dir,
                             json_encode([
                                 'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'],
-                                'full_version_publish_count' => 1
+                                'full_version_publish_count' => 1,
                             ])
                         );
                     }
@@ -179,7 +182,7 @@ class PublishAllFiles extends Command
                             $dir,
                             json_encode([
                                 'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'],
-                                'full_version_publish_count' => $totalRunningCommand['full_version_publish_count'] + 1
+                                'full_version_publish_count' => $totalRunningCommand['full_version_publish_count'] + 1,
                             ])
                         );
                     }
@@ -192,7 +195,7 @@ class PublishAllFiles extends Command
                             $dir,
                             json_encode([
                                 'simple_version_publish_count' => 1,
-                                'full_version_publish_count' => $totalRunningCommand['full_version_publish_count']
+                                'full_version_publish_count' => $totalRunningCommand['full_version_publish_count'],
                             ])
                         );
                     }
@@ -202,7 +205,7 @@ class PublishAllFiles extends Command
                             $dir,
                             json_encode([
                                 'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'] + 1,
-                                'full_version_publish_count' => $totalRunningCommand['full_version_publish_count']
+                                'full_version_publish_count' => $totalRunningCommand['full_version_publish_count'],
                             ])
                         );
                     }

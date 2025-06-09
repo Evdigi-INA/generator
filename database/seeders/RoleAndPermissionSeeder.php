@@ -4,7 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\{Role, Permission};
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleAndPermissionSeeder extends Seeder
 {
@@ -15,16 +16,16 @@ class RoleAndPermissionSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $roleAdmin = Role::create(['name' => 'admin']);
+        $roleAdmin = Role::create(attributes: ['name' => 'admin']);
 
-        foreach (config('permission.permissions') as $permission) {
+        foreach (config(key: 'permission.permissions') as $permission) {
             foreach ($permission['access'] as $access) {
-                Permission::create(['name' => $access]);
+                Permission::create(attributes: ['name' => $access]);
             }
         }
 
         $userAdmin = User::first();
-        $userAdmin->assignRole('admin');
-        $roleAdmin->givePermissionTo(Permission::all());
+        $userAdmin->assignRole(roles: 'admin');
+        $roleAdmin->givePermissionTo(permissions: Permission::all());
     }
 }

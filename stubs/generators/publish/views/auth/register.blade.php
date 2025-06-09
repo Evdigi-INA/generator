@@ -1,9 +1,9 @@
 @extends('layouts.auth')
 
-@section('title', __('Sign Up'))
+@section('title', __(key: 'Sign Up'))
 
 @push('css')
-    <link rel="stylesheet" href="{{ asset('mazer') }}/css/pages/auth.css">
+    <link rel="stylesheet" href="{{ asset(path: 'mazer') }}/css/pages/auth.css">
 @endpush
 
 @section('content')
@@ -12,12 +12,12 @@
             <div id="auth-left">
                 <div class="auth-logo" class="mb-0">
                     <a href="/">
-                        <img src="{{ asset('mazer') }}/static/images/logo/logo.svg" alt="Logo">
+                        <img src="{{ asset(path: 'mazer') }}/static/images/logo/logo.svg" alt="Logo">
                     </a>
                 </div>
 
-                <h1 class="auth-title">{{ __('Sign Up.') }}</h1>
-                <p class="auth-subtitle mb-3">{{ __('Input your data to register to our website.') }}</p>
+                <h1 class="auth-title">{{ __(key: 'Sign Up.') }}</h1>
+                <p class="auth-subtitle mb-3">{{ __(key: 'Input your data to register to our website.') }}</p>
 
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible show fade">
@@ -30,13 +30,13 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('register') }}">
+                <form method="POST" action="{{ route(name: 'register') }}">
                     @csrf
 
                     <div class="form-group position-relative has-icon-left mb-4">
                         <input type="text" name="name"
                             class="form-control form-control-xl @error('name') is-invalid @enderror" placeholder="Name"
-                            value="{{ old('name') }}" autofocus>
+                            value="{{ old(key: 'name') }}" autofocus>
                         <div class="form-control-icon">
                             <i class="bi bi-envelope"></i>
                         </div>
@@ -44,7 +44,7 @@
                     <div class="form-group position-relative has-icon-left mb-4">
                         <input type="email" name="email"
                             class="form-control form-control-xl @error('email') is-invalid @enderror"
-                            value="{{ old('email') }}" placeholder="Username">
+                            value="{{ old(key: 'email') }}" placeholder="Username">
                         <div class="form-control-icon">
                             <i class="bi bi-person"></i>
                         </div>
@@ -64,18 +64,18 @@
                             <i class="bi bi-shield-lock"></i>
                         </div>
                     </div>
-                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __('Sign Up') }}</button>
+                    <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">{{ __(key: 'Sign Up') }}</button>
                 </form>
 
                 <div class="text-center mt-4 text-lg fs-4">
-                    <p class="text-gray-600">{{ __('Already have an account') }}?
-                        <a href="/login" class="font-bold">{{ __('Log in.') }}</a>
+                    <p class="text-gray-600">{{ __(key: 'Already have an account') }}?
+                        <a href="/login" class="font-bold">{{ __(key: 'Log in.') }}</a>
                     </p>
 
-                    @if (Route::has('password.request'))
+                    @if (Route::has(name: 'password.request'))
                         <p>
-                            <a class="font-bold" href="{{ route('password.request') }}">
-                                {{ __('Forgot password?.') }}
+                            <a class="font-bold" href="{{ route(name: 'password.request') }}">
+                                {{ __(key: 'Forgot password?.') }}
                             </a>
                         </p>
                     @endif

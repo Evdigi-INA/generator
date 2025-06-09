@@ -123,6 +123,7 @@ interface GeneratorUtilsInterface
      * Converts camelCase string to have spaces between each.
      */
     public static function fromCamelCase(string $string): string;
+
     /**
      * Set model name from the latest of array(if exists).
      */
@@ -131,7 +132,7 @@ interface GeneratorUtilsInterface
     /**
      * Set default image and code to controller.
      */
-    public static function setDefaultImage(null|string $default, string $field, string $model): array;
+    public static function setDefaultImage(?string $default, string $field, string $model): array;
 
     /**
      * Convert array from config to string like array.

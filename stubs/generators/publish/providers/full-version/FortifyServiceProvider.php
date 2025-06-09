@@ -2,13 +2,16 @@
 
 namespace App\Providers;
 
-use App\Actions\Fortify\{CreateNewUser, ResetUserPassword, UpdateUserPassword, UpdateUserProfileInformation};
+use App\Actions\Fortify\CreateNewUser;
+use App\Actions\Fortify\ResetUserPassword;
+use App\Actions\Fortify\UpdateUserPassword;
+use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Fortify\Fortify;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -25,29 +28,29 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Fortify::createUsersUsing(CreateNewUser::class);
-        Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
-        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
-        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+        Fortify::createUsersUsing(callback: CreateNewUser::class);
+        Fortify::updateUserProfileInformationUsing(callback: UpdateUserProfileInformation::class);
+        Fortify::updateUserPasswordsUsing(callback: UpdateUserPassword::class);
+        Fortify::resetUserPasswordsUsing(callback: ResetUserPassword::class);
 
-        RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
+        RateLimiter::for(name: 'login', callback: function (Request $request): Limit {
+            $throttleKey = Str::transliterate(string: Str::lower(value: $request->input(key: Fortify::username())).'|'.$request->ip());
 
-            return Limit::perMinute(5)->by($throttleKey);
+            return Limit::perMinute(maxAttempts: 5)->by(key: $throttleKey);
         });
 
-        RateLimiter::for('two-factor', fn (Request $request)  => Limit::perMinute(5)->by($request->session()->get('login.id')));
+        RateLimiter::for(name: 'two-factor', callback: fn (Request $request) => Limit::perMinute(maxAttempts: 5)->by(key: $request->session()->get(key: 'login.id')));
 
-        Fortify::registerView(fn () => view('auth.register'));
+        Fortify::registerView(view: fn () => view(view: 'auth.register'));
 
-        Fortify::loginView(fn() => view('auth.login'));
+        Fortify::loginView(view: fn () => view(view: 'auth.login'));
 
-        Fortify::confirmPasswordView(fn() => view('auth.confirm-password'));
+        Fortify::confirmPasswordView(view: fn () => view(view: 'auth.confirm-password'));
 
-        Fortify::twoFactorChallengeView(fn () => view('auth.two-factor-challenge'));
+        Fortify::twoFactorChallengeView(view: fn () => view(view: 'auth.two-factor-challenge'));
 
-        Fortify::requestPasswordResetLinkView(fn() => view('auth.forgot-password'));
+        Fortify::requestPasswordResetLinkView(view: fn () => view(view: 'auth.forgot-password'));
 
-        Fortify::resetPasswordView(fn (Request $request) => view('auth.reset-password', ['request' => $request]));
+        Fortify::resetPasswordView(view: fn (Request $request) => view(view: 'auth.reset-password', data: ['request' => $request]));
     }
 }

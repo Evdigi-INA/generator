@@ -26,11 +26,11 @@ class ActionViewGenerator
         );
 
         if ($path != '') {
-            $fullPath = resource_path(path: "/views/" . strtolower(string: $path) . "/$modelNamePluralKebabCase/include");
+            $fullPath = resource_path(path: '/views/'.strtolower(string: $path)."/$modelNamePluralKebabCase/include");
 
             GeneratorUtils::checkFolder(path: $fullPath);
 
-            file_put_contents(filename: $fullPath . "/action.blade.php", data: $template);
+            file_put_contents(filename: $fullPath.'/action.blade.php', data: $template);
         } else {
             GeneratorUtils::checkFolder(path: resource_path(path: "/views/$modelNamePluralKebabCase/include"));
 

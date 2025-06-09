@@ -5,7 +5,7 @@
     {
         $path = '{{path}}';
         $imageService = new ImageServiceV2();
-        $disk = $imageService->setDiskName('{{disk}}');
+        $disk = $imageService->setDiskName(disk: '{{disk}}');
 
         return Attribute::make(
             get: fn(?string $value): string => $imageService->getImageCastUrl(image: $value, path: $path, disk: $disk)

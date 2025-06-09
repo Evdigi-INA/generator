@@ -4,8 +4,8 @@ namespace EvdigiIna\Generator\Http\Requests;
 
 use EvdigiIna\Generator\Enums\GeneratorType;
 use EvdigiIna\Generator\Generators\Services\GeneratorService;
-use Illuminate\Validation\Rules\Enum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreSimpleGeneratorRequest extends FormRequest
 {
@@ -55,7 +55,7 @@ class StoreSimpleGeneratorRequest extends FormRequest
             'select_options.*' => ['nullable', 'required_if:column_types.*,enum'],
             'constrains.*' => ['nullable', 'required_if:column_types.*,foreignId'],
             'file_types.*' => ['nullable', 'required_if:input_types.*,file', 'in:image,mimes'],
-            'column_types.*' => ['required', 'in:' . implode(',', (new GeneratorService)->columnTypes())],
+            'column_types.*' => ['required', 'in:'.implode(',', (new GeneratorService)->columnTypes())],
             'on_update_foreign.*' => ['nullable'],
             'on_delete_foreign.*' => ['nullable'],
             'generate_seeder' => ['nullable'],

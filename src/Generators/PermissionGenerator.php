@@ -3,7 +3,8 @@
 namespace EvdigiIna\Generator\Generators;
 
 use Illuminate\Support\Facades\Artisan;
-use Spatie\Permission\Models\{Role, Permission};
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class PermissionGenerator
 {
@@ -24,15 +25,15 @@ class PermissionGenerator
                     ':',
                     '"',
                     ',',
-                    ']]'
+                    ']]',
                 ],
                 replace: [
                     '[',
                     ']',
-                    " => ",
+                    ' => ',
                     "'",
                     ', ',
-                    "]], \n\t\t"
+                    "]], \n\t\t",
                 ],
                 subject: json_encode(value: [
                     'group' => $modelNamePlural,
@@ -41,13 +42,13 @@ class PermissionGenerator
                         "$modelNameSingular create",
                         "$modelNameSingular edit",
                         "$modelNameSingular delete",
-                    ]
+                    ],
                 ])
             );
 
             $path = config_path('permission.php');
 
-            $newPermissionFile = substr(string: file_get_contents(filename: $path), offset: 0, length: -8) . $stringPermissions . "],];";
+            $newPermissionFile = substr(string: file_get_contents(filename: $path), offset: 0, length: -8).$stringPermissions.'],];';
 
             file_put_contents(filename: $path, data: $newPermissionFile);
 
@@ -67,20 +68,20 @@ class PermissionGenerator
         $permissions = [
             [
                 'name' => "$model view",
-                'guard_name' => 'web'
+                'guard_name' => 'web',
             ],
             [
                 'name' => "$model create",
-                'guard_name' => 'web'
+                'guard_name' => 'web',
             ],
             [
                 'name' => "$model edit",
-                'guard_name' => 'web'
+                'guard_name' => 'web',
             ],
             [
                 'name' => "$model delete",
-                'guard_name' => 'web'
-            ]
+                'guard_name' => 'web',
+            ],
         ];
 
         foreach ($permissions as $p) {

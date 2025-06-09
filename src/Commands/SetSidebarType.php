@@ -30,8 +30,8 @@ class SetSidebarType extends Command
             case 'static':
                 $this->checkGeneratorVariant();
 
-                $sidebarCode = "";
-                $sidebarCode .= "@canany([";
+                $sidebarCode = '';
+                $sidebarCode .= '@canany([';
 
                 foreach (config(key: 'generator.sidebars') as $sidebar) {
                     if (isset($sidebar['permissions'])) {
@@ -44,7 +44,7 @@ class SetSidebarType extends Command
                 foreach (config(key: 'generator.sidebars') as $sidebar) {
                     if (isset($sidebar['permissions'])) {
                         $sidebarCode .= "
-                            <li class=\"sidebar-title\">{{ __('" . $sidebar['header'] . "') }}</li>
+                            <li class=\"sidebar-title\">{{ __(key: '".$sidebar['header']."') }}</li>
                             @canany([";
 
                         foreach ($sidebar['menus'] as $menu) {
@@ -60,30 +60,30 @@ class SetSidebarType extends Command
                             switch (empty($menu['submenus'])) {
                                 case true:
                                     $sidebarCode .= "
-                                    @can('" . $menu['permission'] . "')
-                                        <li class=\"sidebar-item{{ is_active_menu('" . $menu['route'] . "') }}\">
-                                        <a href=\"{{ route('" . str(string: $menu['route'])->remove('/')->singular()->plural() . '.index' . "') }}\" class=\"sidebar-link\">
-                                                " . $menu['icon'] . "
-                                                <span>{{ __('" . $menu['title'] . "') }}</span>
+                                    @can('".$menu['permission']."')
+                                        <li class=\"sidebar-item{{ is_active_menu('".$menu['route']."') }}\">
+                                        <a href=\"{{ route(name: '".str(string: $menu['route'])->remove('/')->singular()->plural().'.index'."') }}\" class=\"sidebar-link\">
+                                                ".$menu['icon']."
+                                                <span>{{ __(key: '".$menu['title']."') }}</span>
                                             </a>
                                         </li>
                                     @endcan\n";
                                     break;
 
                                 case false:
-                                    $sidebarCode .= "\n@canany([" . GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions) . "])<li class=\"sidebar-item has-sub{{  is_active_menu([" . GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions) . "]) }}\">
-                                    <a href=\"#\" class=\"sidebar-link\">
-                                        " . $menu['icon'] . "
-                                        <span>{{ __('" . $menu['title'] . "') }}</span>
+                                    $sidebarCode .= "\n@canany([".GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions).'])<li class="sidebar-item has-sub{{  is_active_menu(['.GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions).']) }}">
+                                    <a href="#" class="sidebar-link">
+                                        '.$menu['icon']."
+                                        <span>{{ __(key: '".$menu['title']."') }}</span>
                                     </a>
                                     <ul class=\"submenu\">
-                                    @canany([" . GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions) . "])";
+                                    @canany([".GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions).'])';
 
                                     foreach ($menu['submenus'] as $submenu) {
                                         $sidebarCode .= "
-                                        @can('" . $submenu['permission'] . "')
-                                            <li class=\"submenu-item{{ is_active_menu('" . $submenu['route'] . "') }}\">
-                                            <a href=\"{{ route('" . str(string: $submenu['route'])->remove('/')->singular()->plural() . '.index' . "') }}\">{{ __('" . $submenu['title'] . "') }}</a>
+                                        @can('".$submenu['permission']."')
+                                            <li class=\"submenu-item{{ is_active_menu('".$submenu['route']."') }}\">
+                                            <a href=\"{{ route(name: '".str(string: $submenu['route'])->remove('/')->singular()->plural().'.index'."') }}\">{{ __(key: '".$submenu['title']."') }}</a>
                                             </li>
                                         @endcan\n";
                                     }
@@ -134,15 +134,17 @@ class SetSidebarType extends Command
      */
     public function checkGeneratorVariant(): void
     {
-        if (empty(config('generator.sidebars'))) {
-            $this->error("It looks that you are using the simple version, this command is only available in the full version. Please refer to the section on available commands at https://evdigi-ina.github.io/generator-docs/features/");
+        if (empty(config(key: 'generator.sidebars'))) {
+            $this->error('It looks that you are using the simple version, this command is only available in the full version. Please refer to the section on available commands at https://evdigi-ina.github.io/generator-docs/features/');
+
             return;
         }
 
-        $sidebar = file_exists(resource_path('views/layouts/sidebar.blade.php'));
+        $sidebar = file_exists(filename: resource_path(path: 'views/layouts/sidebar.blade.php'));
 
-        if (!$sidebar) {
-            $this->error("We cant find the sidebar view, in views/layouts/sidebar.blade.php.");
+        if (! $sidebar) {
+            $this->error('We cant find the sidebar view, in views/layouts/sidebar.blade.php.');
+
             return;
         }
     }

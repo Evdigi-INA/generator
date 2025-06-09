@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('Create Module'))
+@section('title', __(key: 'Create Module'))
 
 @push('css')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
@@ -13,18 +13,18 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-8 order-md-1 order-last">
-                    <h3>{{ __('Generators') }}</h3>
+                    <h3>{{ __(key: 'Generators') }}</h3>
                     <p class="text-subtitle text-muted">
-                        {{ __('Create a new CRUD Module.') }}
+                        {{ __(key: 'Create a new CRUD Module.') }}
                     </p>
                 </div>
 
                 <x-breadcrumb>
                     <li class="breadcrumb-item">
-                        <a href="/">{{ __('Dashboard') }}</a>
+                        <a href="/">{{ __(key: 'Dashboard') }}</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">
-                        {{ __('Generators') }}
+                        {{ __(key: 'Generators') }}
                     </li>
                 </x-breadcrumb>
             </div>
@@ -37,16 +37,15 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('generators.store') }}" method="POST" id="form-generator">
+                            <form action="{{ route(name: 'generators.store') }}" method="POST" id="form-generator">
                                 @csrf
                                 @method('POST')
 
                                 @include('generator::include.form')
 
-                                <a href="{{ url()->previous() }}" id="btn-back"
-                                    class="btn btn-secondary">{{ __('Back') }}</a>
+                                <a href="{{ route(name: 'generators.create') }}" id="btn-back" class="btn btn-secondary">{{ __(key: 'Back') }}</a>
 
-                                <button type="submit" id="btn-save" class="btn btn-primary">{{ __('Generate') }}</button>
+                                <button type="submit" id="btn-save" class="btn btn-primary">{{ __(key: 'Generate') }}</button>
                             </form>
                         </div>
                     </div>

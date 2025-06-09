@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->text('two_factor_secret')
-                    ->after('password')
-                    ->nullable();
+        Schema::table(table: 'users', callback: function (Blueprint $table): void {
+            $table->text(column: 'two_factor_secret')
+                ->after(column: 'password')
+                ->nullable();
 
-            $table->text('two_factor_recovery_codes')
-                    ->after('two_factor_secret')
-                    ->nullable();
+            $table->text(column: 'two_factor_recovery_codes')
+                ->after(column: 'two_factor_secret')
+                ->nullable();
         });
     }
 
@@ -27,8 +27,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('two_factor_secret', 'two_factor_recovery_codes');
+        Schema::table(table: 'users', callback: function (Blueprint $table): void {
+            $table->dropColumn(columns: ['two_factor_secret', 'two_factor_recovery_codes']);
         });
     }
 };

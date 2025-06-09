@@ -32,7 +32,10 @@ class {{modelName}} extends Model
     {
         return {{casts}};
     }
+
     {{protectedHidden}}
+
 {{relations}}
+
     {{castImages}}
 }

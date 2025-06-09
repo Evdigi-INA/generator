@@ -29,18 +29,30 @@ class PublishApiCommand extends Command
      */
     public function handle(): void
     {
-        if(!(new GeneratorService)->apiRouteAlreadyExists()){
+        if (! (new GeneratorService)->apiRouteAlreadyExists()) {
             $this->error("'You have not yet installed the API, to use this feature, you must be running the artisan command: \"php artisan install:api\"'");
 
             return;
         }
 
+        $template = GeneratorUtils::getStub(path: 'api');
+
+        if ($this->confirm('Do you want to publish user and role resources? (require spatie/laravel-permission)', false)) {
+            Artisan::call('vendor:publish --tag=generator-role-user-resource-api --force');
+
+            $template .= "\n// Route::middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::get('permissions', [App\Http\Controllers\API\RoleAndPermissionController::class, 'getAllPermissions']);
+    Route::resource('users', App\Http\Controllers\API\UserController::class);
+    Route::resource('roles', App\Http\Controllers\API\RoleAndPermissionController::class);
+// });\n";
+        }
+
         Artisan::call('vendor:publish --tag=generator-request-api --force');
         Artisan::call('vendor:publish --tag=generator-controller-api --force');
+        Artisan::call('vendor:publish --tag=generator-request-role');
+        Artisan::call('vendor:publish --tag=generator-request-user');
 
-        $template = GeneratorUtils::getStub('api');
-
-        File::append(base_path('routes/api.php'), $template);
+        File::append(base_path(path: 'routes/api.php'), $template);
 
         $this->info('Published api files successfully.');
     }
