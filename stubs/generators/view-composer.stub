@@ -1,5 +1,5 @@
 View::composer(views: ['{{viewPath}}{{modelNamePluralKebabCase}}.create', '{{viewPath}}{{modelNamePluralKebabCase}}.edit'], callback: fn(ViewContract $view) => $view->with(
             key: '{{constrainsPluralCamelCase}}',
-            value: {{relatedModelPath}}::select((columns: [{{fieldsSelect}}])->get()
+            value: {{relatedModelPath}}::select(columns: [{{fieldsSelect}}])->get()
         ));
 
