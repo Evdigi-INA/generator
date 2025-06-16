@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests\Users;
 
-use App\Actions\Fortify\PasswordValidationRules;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Actions\Fortify\PasswordValidationRules;
 
 class StoreUserRequest extends FormRequest
 {
@@ -24,10 +25,14 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'min:3', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'avatar' => ['nullable', 'image', 'max:1024'],
-            'role' => ['required', 'exists:roles,id'],
+            'email' => ['required', Rule::email(), Rule::unique(table: 'users', column: 'email')],
+            'avatar' => ['nullable', 'max:1024', Rule::imageFile()],
+            'role' => ['required', Rule::exists(table: 'roles', column: 'id')],
             'password' => ['required', ...$this->passwordRules()],
+            'price' => ['required', Rule::numeric()],
+            'date' => [Rule::date()],
+            'in' => [Rule::in(values: ['foo', 'bar'])],
+            // 'enum' => [Rule::enum(enum: \App\Enums\UserStatus::class)],
         ];
     }
 }
