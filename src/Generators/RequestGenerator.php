@@ -3,37 +3,10 @@
 namespace EvdigiIna\Generator\Generators;
 
 use EvdigiIna\Generator\Enums\GeneratorVariant;
+use EvdigiIna\Generator\Enums\RequestGeneratorEnum;
 
 class RequestGenerator
 {
-    // Basic validation rules
-    protected const RULE_URL = "'url', ";
-    protected const RULE_DATE = "Rule::date(), ";
-    protected const RULE_BOOLEAN = "'boolean', ";
-    protected const RULE_STRING = "'string', ";
-    protected const RULE_NUMERIC = "Rule::numeric(), ";
-    protected const RULE_CONFIRMED = "'confirmed', ";
-    protected const RULE_EMAIL = "Rule::email(), ";
-    protected const RULE_PASSWORD_MIN = "Password::min(size: 8), ";
-    protected const RULE_IMAGE = "File::image()";
-    protected const RULE_REQUIRED = "'required', ";
-    protected const RULE_NULLABLE = "'nullable', ";
-
-    // Rule builders
-    protected const RULE_IMAGE_MAX = "->max(size: ";
-    protected const RULE_IMAGE_CLOSE = "), ";
-    protected const RULE_EXISTS_OPEN = "Rule::exists(table: '";
-    protected const RULE_EXISTS_CLOSE = "', column: 'id'), ";
-    protected const RULE_UNIQUE_OPEN = "Rule::unique(table: '";
-    protected const RULE_UNIQUE_MIDDLE = "', column: '";
-    protected const RULE_UNIQUE_CLOSE = "'), ";
-    protected const RULE_IN_OPEN = "Rule::in(values: [";
-    protected const RULE_IN_CLOSE = "]), ";
-    protected const RULE_BETWEEN = "'between:";
-    protected const RULE_MIN = "'min:";
-    protected const RULE_MAX = "'max:";
-    protected const RULE_LENGTH_CLOSE = "', ";
-
     /**
      * Generate a request validation class file.
      *
@@ -100,17 +73,17 @@ class RequestGenerator
      */
     protected function buildFieldValidation(array $request, string $model, int $index, string $field): string
     {
-        $validation = "'" . str($field)->snake() . "' => ";
+        $validation = "'".str($field)->snake()."' => ";
         $validation .= $request['requireds'][$index] == 'yes'
-            ? "[" . self::RULE_REQUIRED
-            : "[" . self::RULE_NULLABLE;
+            ? '['.RequestGeneratorEnum::getRule('required')
+            : '['.RequestGeneratorEnum::getRule('nullable');
 
         $validation = $this->addInputTypeValidations($validation, $request, $model, $index, $field);
         $validation = $this->addColumnTypeValidations($validation, $request, $index);
         $validation = $this->addLengthValidations($validation, $request, $index);
 
         // Remove trailing comma and close array
-        return substr($validation, 0, -2) . "], ";
+        return substr($validation, 0, -2).'], ';
     }
 
     /**
@@ -120,32 +93,33 @@ class RequestGenerator
     {
         switch ($request['input_types'][$index]) {
             case 'url':
-                return $validation . self::RULE_URL;
-
+                return $validation.RequestGeneratorEnum::getRule('url');
             case 'email':
                 if (GeneratorUtils::checkGeneratorVariant() != GeneratorVariant::SINGLE_FORM->value) {
-                    return $validation . self::RULE_EMAIL . $this->buildUniqueRule($model, $field);
+                    return $validation.$this->buildUniqueRule($model, $field);
                 }
+
                 return $validation;
-
             case 'date':
-                return $validation . self::RULE_DATE;
-
+                return $validation.RequestGeneratorEnum::getRule('date');
+            case 'week':
+                return $validation.RequestGeneratorEnum::getRule('week');
+            case 'time':
+                return $validation.RequestGeneratorEnum::getRule('time');
+            case 'month':
+                return $validation.RequestGeneratorEnum::getRule('month');
+            case 'datetime-local':
+                return $validation.RequestGeneratorEnum::getRule('datetime');
             case 'password':
-                return $validation . self::RULE_CONFIRMED . self::RULE_PASSWORD_MIN;
-
+                return $validation.RequestGeneratorEnum::getRule('password');
             case 'file':
                 return $this->addFileValidations($validation, $request, $index);
-
             case 'text':
             case 'textarea':
-                return $validation . self::RULE_STRING;
-
+                return $validation.RequestGeneratorEnum::getRule('string');
             case 'number':
             case 'range':
-            case 'year':
-                return $validation . self::RULE_NUMERIC;
-
+                return $validation.RequestGeneratorEnum::getRule('numeric');
             default:
                 return $validation;
         }
@@ -156,8 +130,7 @@ class RequestGenerator
      */
     protected function buildUniqueRule(string $model, string $field): string
     {
-        return self::RULE_UNIQUE_OPEN . GeneratorUtils::pluralSnakeCase($model) .
-            self::RULE_UNIQUE_MIDDLE . GeneratorUtils::singularSnakeCase($field) . self::RULE_UNIQUE_CLOSE;
+        return RequestGeneratorEnum::unique($model, $field);
     }
 
     /**
@@ -182,7 +155,8 @@ class RequestGenerator
     protected function buildImageValidation(string $validation, array $request, int $index): string
     {
         $maxSize = $request['files_sizes'][$index] ?? config('generator.image.size_max', 1024);
-        return $validation . self::RULE_IMAGE . self::RULE_IMAGE_MAX . $maxSize . self::RULE_IMAGE_CLOSE;
+
+        return $validation.RequestGeneratorEnum::image($maxSize);
     }
 
     /**
@@ -192,7 +166,8 @@ class RequestGenerator
     {
         $mimes = implode(',', $request['mimes'][$index]);
         $size = $request['files_sizes'][$index];
-        return $validation . "'mimes:$mimes', 'size:$size', ";
+
+        return $validation."'mimes:$mimes', 'size:$size', ";
     }
 
     /**
@@ -202,14 +177,13 @@ class RequestGenerator
     {
         switch ($request['column_types'][$index]) {
             case 'enum':
-                return $validation . $this->buildEnumValidation($request['select_options'][$index]);
-
+                return $validation.$this->buildEnumValidation($request['select_options'][$index]);
             case 'boolean':
-                return $validation . self::RULE_BOOLEAN;
-
+                return $validation.RequestGeneratorEnum::getRule('boolean');
+            case 'year':
+                return $validation.RequestGeneratorEnum::getRule('year');
             case 'foreignId':
                 return $this->addForeignKeyValidation($validation, $request, $index);
-
             default:
                 return $validation;
         }
@@ -220,15 +194,9 @@ class RequestGenerator
      */
     protected function buildEnumValidation(string $options): string
     {
-        $in = self::RULE_IN_OPEN;
         $options = explode('|', $options);
-        $totalOptions = count($options);
 
-        foreach ($options as $key => $option) {
-            $in .= "'" . $option . "'" . ($key + 1 != $totalOptions ? ', ' : '');
-        }
-
-        return $in . self::RULE_IN_CLOSE;
+        return RequestGeneratorEnum::in($options);
     }
 
     /**
@@ -241,15 +209,8 @@ class RequestGenerator
         $replacedModel = str_replace('/', '\\', $constrainsPath);
 
         $table = $replacedModel ?: $constrainModel;
-        return $validation . $this->buildExistsRule($table);
-    }
 
-    /**
-     * Build exists rule for foreign key validation.
-     */
-    protected function buildExistsRule(string $table): string
-    {
-        return self::RULE_EXISTS_OPEN . GeneratorUtils::pluralSnakeCase($table) . self::RULE_EXISTS_CLOSE;
+        return $validation.RequestGeneratorEnum::exists($table);
     }
 
     /**
@@ -257,15 +218,18 @@ class RequestGenerator
      */
     protected function addLengthValidations(string $validation, array $request, int $index): string
     {
+        $min = $request['min_lengths'][$index] ?? 0;
+        $max = $request['max_lengths'][$index] ?? 0;
+
         if ($this->shouldAddBetweenRule($request, $index)) {
-            return $validation . $this->buildBetweenRule(
-                $request['min_lengths'][$index],
-                $request['max_lengths'][$index]
-            );
+            return $validation.RequestGeneratorEnum::between($min, $max);
         }
 
-        $validation = $this->addMinValidation($validation, $request, $index);
-        return $this->addMaxValidation($validation, $request, $index);
+        if (in_array($request['column_types'][$index], ['string', 'text', 'char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext']) && $min && $max) {
+            return $validation.RequestGeneratorEnum::min($min).RequestGeneratorEnum::max($max);
+        }
+
+        return $validation;
     }
 
     /**
@@ -273,40 +237,7 @@ class RequestGenerator
      */
     protected function shouldAddBetweenRule(array $request, int $index): bool
     {
-        return $request['input_types'][$index] == 'range' && $request['max_lengths'][$index] >= 0;
-    }
-
-    /**
-     * Build between validation rule.
-     */
-    protected function buildBetweenRule(int $min, int $max): string
-    {
-        return self::RULE_BETWEEN . $min . "," . $max . self::RULE_LENGTH_CLOSE;
-    }
-
-    /**
-     * Add min length validation if needed.
-     */
-    protected function addMinValidation(string $validation, array $request, int $index): string
-    {
-        if ($request['min_lengths'][$index] && $request['input_types'][$index] !== 'range') {
-            return $validation . self::RULE_MIN . $request['min_lengths'][$index] . self::RULE_LENGTH_CLOSE;
-        }
-        return $validation;
-    }
-
-    /**
-     * Add max length validation if needed.
-     */
-    protected function addMaxValidation(string $validation, array $request, int $index): string
-    {
-        if (
-            $request['max_lengths'][$index] && $request['max_lengths'][$index] >= 0 &&
-            $request['input_types'][$index] !== 'range'
-        ) {
-            return $validation . self::RULE_MAX . $request['max_lengths'][$index] . self::RULE_LENGTH_CLOSE;
-        }
-        return $validation;
+        return $request['input_types'][$index] == 'range' && $request['max_lengths'][$index];
     }
 
     /**
@@ -349,6 +280,7 @@ class RequestGenerator
         $updateValidations = $validations;
         $updateValidations = $this->handlePasswordFields($updateValidations, $request);
         $updateValidations = $this->handleImageFields($updateValidations, $request);
+
         return $this->handleEmailFields($updateValidations, $request);
     }
 
@@ -357,15 +289,16 @@ class RequestGenerator
      */
     protected function handlePasswordFields(string $validations, array $request): string
     {
-        foreach ($request['input_types'] as $key => $input) {
-            if ($input == 'password' && $request['requireds'][$key] == 'yes') {
+        foreach ($request['input_types'] as $index => $input) {
+            if ($input == 'password' && $request['requireds'][$index] == 'yes') {
                 $validations = str_replace(
-                    "'" . $request['fields'][$key] . "' => ['required'",
-                    "'" . $request['fields'][$key] . "' => ['nullable'",
+                    "'".$request['fields'][$index]."' => ['required'",
+                    "'".$request['fields'][$index]."' => ['nullable'",
                     $validations
                 );
             }
         }
+
         return $validations;
     }
 
@@ -374,19 +307,20 @@ class RequestGenerator
      */
     protected function handleImageFields(string $validations, array $request): string
     {
-        foreach ($request['input_types'] as $key => $input) {
+        foreach ($request['input_types'] as $index => $input) {
             if (
-                isset($request['file_types'][$key]) &&
-                $request['file_types'][$key] == 'image' &&
-                $request['requireds'][$key] == 'yes'
+                isset($request['file_types'][$index]) &&
+                $request['file_types'][$index] == 'image' &&
+                $request['requireds'][$index] == 'yes'
             ) {
                 $validations = str_replace(
-                    "'" . $request['fields'][$key] . "' => ['required'",
-                    "'" . $request['fields'][$key] . "' => ['nullable'",
+                    "'".$request['fields'][$index]."' => ['required'",
+                    "'".$request['fields'][$index]."' => ['nullable'",
                     $validations
                 );
             }
         }
+
         return $validations;
     }
 
@@ -395,16 +329,17 @@ class RequestGenerator
      */
     protected function handleEmailFields(string $validations, array $request): string
     {
-        foreach ($request['input_types'] as $key => $input) {
+        $ignoreTemplate = "')->ignore(id: request()->segment(index: ".(GeneratorUtils::isGenerateApi() ? 3 : 2).'))';
+        foreach ($request['input_types'] as $index => $input) {
             if ($input == 'email') {
                 $validations = str_replace(
-                    "column: '" . str($request['fields'][$key])->snake() . "')",
-                    "column: '" . str($request['fields'][$key])->snake() . "')->ignore(id: request()->segment(index: " .
-                    (GeneratorUtils::isGenerateApi() ? 3 : 2) . ")), ",
+                    "column: '".str($request['fields'][$index])->snake()."')",
+                    "column: '".str($request['fields'][$index])->snake().$ignoreTemplate,
                     $validations
                 );
             }
         }
+
         return $validations;
     }
 
@@ -427,22 +362,21 @@ class RequestGenerator
      */
     protected function importRuleFilePasswordClass(string $validation): string
     {
-        $imports = [
-            'Rule' => str_contains($validation, "Rule::"),
-            'Password' => str_contains($validation, "Password::"),
-            'File' => str_contains($validation, "File::"),
+        $replacements = [
+            '{{ruleImport}}' => str_contains($validation, 'Rule::')
+                ? "use Illuminate\Validation\Rule;\n"
+                : '',
+            '{{passwordImport}}' => str_contains($validation, 'Password::')
+                ? "use Illuminate\Validation\Rules\Password;\n"
+                : '',
+            '{{fileImport}}' => str_contains($validation, 'File::')
+                ? "use Illuminate\Validation\Rules\File;\n"
+                : '',
         ];
 
-        $useStatements = '';
-        foreach ($imports as $class => $needed) {
-            if ($needed) {
-                $useStatements .= "use Illuminate\\Validation\\Rules\\{$class};\n";
-            }
-        }
-
         return str_replace(
-            ['{{validationRule}}', '{{passwordRule}}', '{{fileRule}}'],
-            $useStatements,
+            array_keys($replacements),
+            array_values($replacements),
             $validation
         );
     }

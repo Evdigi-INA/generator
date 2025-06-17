@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Contracts\View\View as ViewContract;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class ViewComposerServiceProvider extends ServiceProvider
