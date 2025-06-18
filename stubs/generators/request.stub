@@ -2,6 +2,7 @@
 
 {{namespace}}
 
+{{ruleImport}}{{passwordImport}}{{fileImport}}
 use Illuminate\Foundation\Http\FormRequest;
 
 class {{modelNamePascalCase}}Request extends FormRequest

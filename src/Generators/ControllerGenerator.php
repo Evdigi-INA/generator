@@ -193,15 +193,6 @@ class ControllerGenerator
             $passwordFieldUpdate .= $requestValidatedAttr;
 
             foreach ($request['input_types'] as $i => $input) {
-                info('pass', [
-                    'input' => $input,
-                    'i' => $i,
-                    'field' => $request['fields'][$i],
-                ]);
-
-                info('snake', [
-                    'field' => str()->snake($request['fields'][$i]),
-                ]);
                 if ($input === 'password') {
                     /**
                      * will generate something like:
@@ -240,7 +231,7 @@ class ControllerGenerator
                      *
                      * $validated['month'] = $request->month ? \Carbon\Carbon::createFromFormat('Y-m', $request->month)->toDateTimeString() : null;
                      */
-                    $inputMonths .= "\t\t\$validated['".str()->snake($request['fields'][$i])."'] = \$request->".str()->snake($request['fields'][$i])." ? \Carbon\Carbon::createFromFormat('Y-m', \$request->".str()->snake($request['fields'][$i]).")->toDateTimeString() : null;\n";
+                    $inputMonths .= "\t\t\$validated['".str($request['fields'][$i])->snake()."'] = \$request->".str($request['fields'][$i])->snake()." ? \Carbon\Carbon::createFromFormat(format: 'Y-m', time: \$request->".str($request['fields'][$i])->snake().")->toDateTimeString() : null;\n";
                 }
             }
         }
