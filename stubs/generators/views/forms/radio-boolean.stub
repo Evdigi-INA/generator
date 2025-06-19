@@ -1,0 +1,13 @@
+    <div class="col-md-6">
+        <p>{{fieldUcWords}}</p>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="{{fieldSnakeCase}}" id="{{fieldKebabCase}}-1" value="1"
+                {{ isset(${{modelNameSingularCamelCase}}) && ${{modelNameSingularCamelCase}}?->{{fieldSnakeCase}} == '1' ? 'checked' : (old(key: '{{fieldSnakeCase}}') == '1' ? 'checked' : '') }}>
+            <label class="form-check-label" for="{{fieldSnakeCase}}-1">{{ __(key: 'True') }}</label>
+        </div>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="{{fieldSnakeCase}}" id="{{fieldKebabCase}}-0" value="0"
+                {{ isset(${{modelNameSingularCamelCase}}) && ${{modelNameSingularCamelCase}}?->{{fieldSnakeCase}} == '0' ? 'checked' : (old(key: '{{fieldSnakeCase}}') == '0' ? 'checked' : '') }}>
+            <label class="form-check-label" for="{{fieldSnakeCase}}-0">{{ __(key: 'False') }}</label>
+        </div>
+    </div>

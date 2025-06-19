@@ -103,7 +103,7 @@
                     @endif
                 @endforeach
 
-                @if (env('APP_ENV') === 'local')
+                @if (env(key: 'APP_ENV') === 'local')
                     <li class="sidebar-title">{{ __(key: 'Generators') }}</li>
 
                     <li class="sidebar-item{{ request()->is(patterns: 'generators/create') ? ' active' : '' }}">

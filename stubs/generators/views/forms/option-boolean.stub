@@ -1,0 +1,2 @@
+<option value="1" {{ isset(${{modelNameSingularCamelCase}}) && ${{modelNameSingularCamelCase}}?->{{fieldSnakeCase}} == 1 ? 'selected' : (old(key: '{{fieldSnakeCase}}') == 1 ? 'selected' : '') }}>{{ __(key: 'True') }}</option>"
+<option value="0" {{ isset(${{modelNameSingularCamelCase}}) && ${{modelNameSingularCamelCase}}?->{{fieldSnakeCase}} == 0 ? 'selected' : (old(key: '{{fieldSnakeCase}}') == 0 ? 'selected' : '') }}>{{ __(key: 'False') }}</option>
