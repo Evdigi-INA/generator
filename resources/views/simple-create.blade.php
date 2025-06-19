@@ -30,8 +30,8 @@
                                         <label for="model">{{ __(key: 'Model') }}</label>
                                         <input type="text" name="model" id="model"
                                             class="form-control @error('model') is-invalid @enderror"
-                                            placeholder="{{ __(key: 'Product') }}" value="{{ old(key: 'model') }}" autofocus
-                                            required>
+                                            placeholder="{{ __(key: 'Product') }}" value="{{ old(key: 'model') }}"
+                                            autofocus required>
                                         <small
                                             class="text-secondary">{{ __(key: "Use '/' for generate a sub folder. e.g.: Main/Product.") }}</small>
                                         @error('model')
@@ -185,7 +185,7 @@
                                                             class="form-select form-column-types" required>
                                                             <option value="" disabled selected>
                                                                 --{{ __(key: 'Select column type') }}--</option>
-                                                            @foreach (['string', 'integer', 'text', 'bigInteger', 'boolean', 'char', 'date', 'time', 'year', 'dateTime', 'decimal', 'double', 'enum', 'float', 'foreignId', 'tinyInteger', 'mediumInteger', 'tinyText', 'mediumText', 'longText'] as $type)
+                                                            @foreach (['string', 'text', 'char', 'tinyText', 'mediumText', 'longText', 'integer', 'tinyInteger', 'mediumInteger', 'bigInteger', 'decimal', 'double', 'float', 'boolean', 'date', 'time', 'year', 'dateTime', 'enum', 'foreignId'] as $type)
                                                                 <option value="{{ $type }}">
                                                                     {{ ucwords($type) }}</option>
                                                             @endforeach

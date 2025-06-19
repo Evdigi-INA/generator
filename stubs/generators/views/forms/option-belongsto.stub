@@ -1,0 +1,6 @@
+                @foreach (${{constrainModelPluralCamelCase}} as ${{constrainModelSingularCamelCase}})
+                    <option value="{{ ${{constrainModelSingularCamelCase}}?->id }}"
+                        {{ isset(${{modelNameSingularCamelCase}}) && ${{modelNameSingularCamelCase}}?->{{fieldSnakeCase}} == ${{constrainModelSingularCamelCase}}?->id ? 'selected' : (old(key: '{{fieldSnakeCase}}') == ${{constrainModelSingularCamelCase}}?->id ? 'selected' : '') }}>
+                        {{ ${{constrainModelSingularCamelCase}}?->{{columnAfterId}} }}
+                    </option>
+                @endforeach

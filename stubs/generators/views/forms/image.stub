@@ -14,7 +14,7 @@
                             @enderror
                             @isset(${{modelCamelCase}})
                                 <div id="{{fieldKebabCase}}-help-block" class="form-text">
-                                    {{ __(key: 'Leave the {{fieldLowercase}} blank if you don`t want to change it.') }}
+                                    {{ __(key: 'If you do not want to change the {{fieldLowercase}}, leave it blank.') }}
                                 </div>
                             @endisset
                         </div>

@@ -5,7 +5,8 @@
             <label for="model">{{ __(key: 'Model') }}</label>
             <input type="text" name="model" id="model" class="form-control @error('model') is-invalid @enderror"
                 placeholder="{{ __(key: 'Product') }}" value="{{ old(key: 'model') }}" autofocus required>
-            <small class="text-secondary">{{ __(key: "Use '/' for generate a sub folder. e.g.: Main/Product.") }}</small>
+            <small
+                class="text-secondary">{{ __(key: "Use '/' for generate a sub folder. e.g.: Main/Product.") }}</small>
             @error('model')
                 <div class="invalid-feedback">
                     {{ $message }}
@@ -74,10 +75,11 @@
                 <label for="generate-factory">{{ __(key: 'Generate Factory') }}</label>
             </div>
         </div>
-        <div class="form-check" @if(!class_exists(class: \Maatwebsite\Excel\ExcelServiceProvider::class)) data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Install 'composer require maatwebsite/excel' to enable this feature" @endif>
+        <div class="form-check"
+            @if (!class_exists(class: \Maatwebsite\Excel\ExcelServiceProvider::class)) data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Install 'composer require maatwebsite/excel' to enable this feature" @endif>
             <div class="checkbox">
-                <input type="checkbox" class="form-check-input" id="generate-export"
-                    name="generate_export" @if(!class_exists(class: \Maatwebsite\Excel\ExcelServiceProvider::class)) disabled @endif>
+                <input type="checkbox" class="form-check-input" id="generate-export" name="generate_export"
+                    @if (!class_exists(class: \Maatwebsite\Excel\ExcelServiceProvider::class)) disabled @endif>
                 <label for="generate-export">
                     {{ __(key: 'Generate Export') }}
 
@@ -126,8 +128,9 @@
                     <td>
                         <div class="form-group">
                             <select name="column_types[]" class="form-select form-column-types" required>
-                                <option value="" disabled selected>--{{ __(key: 'Select column type') }}--</option>
-                                @foreach (['string', 'integer', 'text', 'bigInteger', 'boolean', 'char', 'date', 'time', 'year', 'dateTime', 'decimal', 'double', 'enum', 'float', 'foreignId', 'tinyInteger', 'mediumInteger', 'tinyText', 'mediumText', 'longText'] as $type)
+                                <option value="" disabled selected>--{{ __(key: 'Select column type') }}--
+                                </option>
+                                @foreach (['string', 'text', 'char', 'tinyText', 'mediumText', 'longText', 'integer', 'tinyInteger', 'mediumInteger', 'bigInteger', 'decimal', 'double', 'float', 'boolean', 'date', 'time', 'year', 'dateTime', 'enum', 'foreignId'] as $type)
                                     <option value="{{ $type }}">{{ ucwords($type) }}</option>
                                 @endforeach
                             </select>
@@ -155,7 +158,8 @@
                     <td>
                         <div class="form-group">
                             <select name="input_types[]" class="form-select form-input-types" required>
-                                <option value="" disabled selected>-- {{ __(key: 'Select input type') }} --</option>
+                                <option value="" disabled selected>-- {{ __(key: 'Select input type') }} --
+                                </option>
                                 <option value="" disabled>{{ __(key: 'Select the column type first') }}</option>
                             </select>
                         </div>
@@ -209,7 +213,8 @@
                 <div class="form-group" id="input-menu">
                     <label for="select-menu">{{ __(key: 'Menu') }}</label>
                     <select name="menu" id="select-menu" class="form-select" required disabled>
-                        <option value="" disabled selected>-- {{ __(key: 'Choose the header first') }} --</option>
+                        <option value="" disabled selected>-- {{ __(key: 'Choose the header first') }} --
+                        </option>
                     </select>
                     <small id="helper-text-menu"></small>
                 </div>
