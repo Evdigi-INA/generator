@@ -366,11 +366,11 @@ class GeneratorServiceProvider extends ServiceProvider
     {
         $this->publishes(paths: [
             __DIR__.'/../../stubs/generators/publish/bootstrap/full-version/app.stub' => base_path(path: 'bootstrap/app.php'),
-        ], groups: 'bootstrap-app-full');
+        ], groups: 'generator-bootstrap-app-full');
 
         $this->publishes(paths: [
             __DIR__.'/../../stubs/generators/publish/bootstrap/simple-version/app.stub' => base_path(path: 'bootstrap/app.php'),
-        ], groups: 'bootstrap-app-simple');
+        ], groups: 'generator-bootstrap-app-simple');
     }
 
     /**
@@ -451,12 +451,15 @@ class GeneratorServiceProvider extends ServiceProvider
             str_starts_with(haystack: $category, needle: 'providers') => app_path(
                 path: "Providers/{$file}.php"
             ),
-            str_starts_with(haystack: $category, needle: 'utils') => $this->buildUtilsPath($file),
+            str_starts_with(haystack: $category, needle: 'utils') => $this->buildUtilsPath(file: $file),
             str_starts_with(haystack: $category, needle: 'database/migrations') => database_path(
                 path: "migrations/{$file}.php"
             ),
             str_starts_with(haystack: $category, needle: 'database/seeders') => database_path(
                 path: "seeders/{$file}.php"
+            ),
+             str_starts_with(haystack: $category, needle: 'config') => config_path(
+                path: "{$file}.php"
             ),
             default => ''
         };

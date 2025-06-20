@@ -104,35 +104,33 @@ class PublishAllFiles extends Command
                 $this->info('Installing the simple version...');
                 $this->info('Please wait a bit, this process may take several minutes.');
 
-                // $this->info('Loading');
+                $this->info('Loading');
 
-                Artisan::call('vendor:publish --tag=generator-config-simple --force');
+                Artisan::call('vendor:publish --tag=generator-config-simple');
 
-                // $this->info('Loading.');
+                $this->info('Loading.');
 
-                Artisan::call('vendor:publish --tag=generator-model-simple --force');
+                $this->info('Loading..');
 
-                // $this->info('Loading..');
+                Artisan::call('vendor:publish --tag=generator-simple-provider');
 
-                Artisan::call('vendor:publish --tag=generator-view-provider --force');
+                $this->info('Loading...');
 
-                // $this->info('Loading...');
+                Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');
 
-                Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider" --force');
+                $this->info('Loading....');
 
-                // $this->info('Loading....');
+                Artisan::call('vendor:publish --tag=datatables');
 
-                Artisan::call('vendor:publish --tag=datatables --force');
+                $this->info('Loading.....');
 
-                // $this->info('Loading.....');
+                Artisan::call('vendor:publish --tag=generator-utils');
 
-                Artisan::call('vendor:publish --tag=generator-utils --force');
+                $this->info('Loading......');
 
-                // $this->info('Loading......');
+                Artisan::call('vendor:publish --tag=generator-bootstrap-app-simple');
 
-                Artisan::call('vendor:publish --tag=bootstrap-app-simple --force');
-
-                // $this->info('Loading......');
+                $this->info('Loading......');
 
                 $this->info('Installed successfully.');
                 break;
@@ -224,74 +222,74 @@ class PublishAllFiles extends Command
         $this->info('Installing...');
         $this->info('Please wait a bit, this process may take several minutes.');
 
-        // $this->info('Loading.');
+        $this->info('Loading.');
 
-        Artisan::call('vendor:publish --tag=generator-view --force');
+        Artisan::call('vendor:publish --tag=generator-views');
 
-        // $this->info('Loading..');
+        $this->info('Loading..');
 
-        Artisan::call('vendor:publish --tag=generator-config --force');
+        Artisan::call('vendor:publish --tag=generator-full-config');
 
-        // $this->info('Loading...');
+        $this->info('Loading...');
 
-        Artisan::call('vendor:publish --tag=generator-controller --force');
+        Artisan::call('vendor:publish --tag=generator-controller');
 
-        // $this->info('Loading....');
+        $this->info('Loading....');
 
-        Artisan::call('vendor:publish --tag=generator-request-user --force');
+        Artisan::call('vendor:publish --tag=generator-request-user');
 
-        // $this->info('Loading.....');
+        $this->info('Loading.....');
 
-        Artisan::call('vendor:publish --tag=generator-request-role --force');
+        Artisan::call('vendor:publish --tag=generator-request-role');
 
-        // $this->info('Loading......');
+        $this->info('Loading......');
 
-        Artisan::call('vendor:publish --tag=generator-action --force');
+        Artisan::call('vendor:publish --tag=generator-action');
 
-        // $this->info('Loading.......');
+        $this->info('Loading.......');
 
-        // Artisan::call('vendor:publish --tag=generator-kernel --force');
-        Artisan::call('vendor:publish --tag=generator-provider --force');
+        // Artisan::call('vendor:publish --tag=generator-kernel');
+        Artisan::call('vendor:publish --tag=generator-full-provider');
 
-        // $this->info('Loading........');
+        $this->info('Loading........');
 
-        Artisan::call('vendor:publish --tag=generator-migration --force');
+        Artisan::call('vendor:publish --tag=generator-migration');
 
-        // $this->info('Loading.........');
+        $this->info('Loading.........');
 
-        Artisan::call('vendor:publish --tag=generator-seeder --force');
+        Artisan::call('vendor:publish --tag=generator-seeder');
 
-        // $this->info('Loading..........');
+        $this->info('Loading..........');
 
-        Artisan::call('vendor:publish --tag=generator-model --force');
+        Artisan::call('vendor:publish --tag=generator-model');
 
-        // $this->info('Loading...........');
+        $this->info('Loading...........');
 
-        Artisan::call('vendor:publish --tag=generator-assets --force');
+        Artisan::call('vendor:publish --tag=generator-assets');
 
-        // $this->info('Loading............');
+        $this->info('Loading............');
 
-        Artisan::call('vendor:publish --tag=generator-utils --force');
+        Artisan::call('vendor:publish --tag=generator-utils');
 
-        // $this->info('Loading.............');
+        $this->info('Loading.............');
 
-        Artisan::call('vendor:publish --tag=datatables --force');
+        Artisan::call('vendor:publish --tag=datatables');
 
-        // $this->info('Loading..............');
+        $this->info('Loading..............');
 
-        Artisan::call('vendor:publish --tag=bootstrap-app-full --force');
+        Artisan::call('vendor:publish --tag=generator-bootstrap-app-full');
 
-        // $this->info('Loading...............');
+        $this->info('Loading...............');
 
         Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');
 
-        // $this->info('Loading................');
+        $this->info('Loading................');
 
         $template = GeneratorUtils::getStub('route');
 
         File::append(base_path('routes/web.php'), $template);
 
-        // $this->info('Loading.................');
+        $this->info('Loading.................');
 
         $this->info('Installed successfully.');
     }
