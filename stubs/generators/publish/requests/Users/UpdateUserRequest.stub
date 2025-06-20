@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests\Users;
 
-use App\Actions\Fortify\PasswordValidationRules;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Actions\Fortify\PasswordValidationRules;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -24,10 +25,10 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'min:3', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email,'.$this->setId()],
+            'email' => ['required', 'email', Rule::unique(table: 'users', column: 'email')->ignore(id: $this->setId())],
             'avatar' => ['nullable', 'image', 'max:1024'],
-            'role' => ['required', 'exists:roles,id'],
-            'password' => ['nullable', ...$this->passwordRules()],
+            'role' => ['required', Rule::exists(table: 'roles', column: 'id')],
+            'password' => ['required', ...$this->passwordRules()],
         ];
     }
 
@@ -35,10 +36,10 @@ class UpdateUserRequest extends FormRequest
     {
         if (str_contains(haystack: request()->url(), needle: 'api')) {
             // /api/users/1
-            return request()->segment(3);
+            return request()->segment(index: 3);
         }
 
         // /users/1
-        return request()->segment(2);
+        return request()->segment(index: 2);
     }
 }

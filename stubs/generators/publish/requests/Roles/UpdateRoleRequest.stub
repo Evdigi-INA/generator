@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Roles;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRoleRequest extends FormRequest
 {
@@ -20,8 +21,19 @@ class UpdateRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'min:2', 'max:30', 'unique:roles,name,'.$this->role],
+            'name' => ['required', ' min:2', 'max:30', Rule::unique(table: 'roles', column: 'name')->ignore(id: $this->setId())],
             'permissions' => ['required'],
         ];
+    }
+
+    private function setId(): int|string
+    {
+        if (str_contains(haystack: request()->url(), needle: 'api')) {
+            // /api/roles/1
+            return request()->segment(index: 3);
+        }
+
+        // /roles/1
+        return request()->segment(index: 2);
     }
 }

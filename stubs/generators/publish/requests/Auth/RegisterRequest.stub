@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
@@ -17,18 +18,27 @@ class RegisterRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique(table: 'users', column: 'email')],
             'name' => ['required', 'string', 'max:255'],
             'password' => $this->passwordRules(),
         ];
     }
 
+    /**
+     * Get the validation rules used to validate passwords.
+     *
+     * In production, passwords must be at least 8 characters long, contain at
+     * least one uppercase and one lowercase letter, one number, and one symbol.
+     * They must also not be compromised (i.e. not found in the compromised
+     * password list).
+     *
+     * In development, passwords must be at least 3 characters long and contain
+     * at least one uppercase and one lowercase letter.
+     */
     protected function passwordRules(): array
     {
         if (app()->isProduction()) {
@@ -36,7 +46,7 @@ class RegisterRequest extends FormRequest
                 'required',
                 'string',
                 'confirmed',
-                Password::min(8)
+                Password::min(size: 8)
                     ->letters()
                     ->mixedCase()
                     ->numbers()

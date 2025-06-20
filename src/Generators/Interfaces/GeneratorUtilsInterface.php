@@ -25,7 +25,7 @@ interface GeneratorUtilsInterface
     public static function singularPascalCase(string $string): string;
 
     /**
-     * Convert string to singular pascal case.
+     * Convert string to pascal case.
      */
     public static function pascalCase(string $string): string;
 
@@ -45,97 +45,97 @@ interface GeneratorUtilsInterface
     public static function singularSnakeCase(string $string): string;
 
     /**
-     * Convert string to plural pascal case.
+     * Convert string to plural camel case.
      */
     public static function pluralCamelCase(string $string): string;
 
     /**
-     * Convert string to singular pascal case.
+     * Convert string to singular camel case.
      */
     public static function singularCamelCase(string $string): string;
 
     /**
-     * Convert string to plural, kebab case, and lowercase.
+     * Convert string to plural kebab case.
      */
     public static function pluralKebabCase(string $string): string;
 
     /**
-     * Convert string to kebab case, and lowercase.
+     * Convert string to kebab case.
      */
     public static function kebabCase(string $string): string;
 
     /**
-     * Convert string to singular, kebab case, and lowercase.
+     * Convert string to singular kebab case.
      */
     public static function singularKebabCase(string $string): string;
 
     /**
-     * Convert string to singular, remove special characters, and lowercase.
+     * Convert string to singular, clean lowercase.
      */
     public static function cleanSingularLowerCase(string $string): string;
 
     /**
-     * Remove special characters, and lowercase.
+     * Convert string to clean lowercase.
      */
     public static function cleanLowerCase(string $string): string;
 
     /**
-     * Convert string to plural, remove special characters, and uppercase every first letters.
+     * Convert string to plural, clean uppercase words.
      */
     public static function cleanPluralUcWords(string $string): string;
 
     /**
-     * Convert string to singular, remove special characters, and uppercase every first letters.
+     * Convert string to singular, clean uppercase words.
      */
     public static function cleanSingularUcWords(string $string): string;
 
     /**
-     * Remove special characters, and uppercase every first letters.
+     * Convert string to clean uppercase words.
      */
     public static function cleanUcWords(string $string): string;
 
     /**
-     * Convert string to plural, remove special characters, and lowercase.
+     * Convert string to plural, clean lowercase.
      */
     public static function cleanPluralLowerCase(string $string): string;
 
     /**
-     * Check if the given string ends with 'ia' or 'ium'.
+     * Check if string ends with 'ia' or 'ium'.
      */
     public static function checkStringEndWith(string $string): bool;
 
     /**
-     * Get 1 column after id on the table.
+     * Get column after id in table.
      */
     public static function getColumnAfterId(string $table): string;
 
     /**
-     * Select id and column after id on the table.
+     * Select column after id and id itself.
      */
     public static function selectColumnAfterIdAndIdItself(string $table): string;
 
     /**
-     * Get model location or path if contains '/'.
+     * Get model location/path.
      */
     public static function getModelLocation(string $model): string;
 
     /**
-     * Converts camelCase string to have spaces between each.
+     * Convert camelCase to spaced string.
      */
     public static function fromCamelCase(string $string): string;
 
     /**
-     * Set model name from the latest of array(if exists).
+     * Set model name from path.
      */
     public static function setModelName(string $model, string $style = 'pascal case'): string;
 
     /**
-     * Set default image and code to controller.
+     * Set default image settings.
      */
     public static function setDefaultImage(?string $default, string $field, string $model): array;
 
     /**
-     * Convert array from config to string like array.
+     * Convert sidebar array to string.
      */
     public static function convertArraySidebarToString(array $sidebars): string;
 
@@ -145,22 +145,22 @@ interface GeneratorUtilsInterface
     public static function isActiveMenu(string|array $route): string;
 
     /**
-     * Check if generate blade(default) or api.
+     * Check if generating API.
      */
     public static function isGenerateApi(): bool;
 
     /**
-     * Check if package exist in composer.
+     * Check if package exists.
      */
     public static function checkPackage(string $name): bool;
 
     /**
-     * Check if package exist in composer and return version.
+     * Check package version.
      */
-    public static function checkPackageVersion(string $name): string;
+    public static function checkPackageVersion(string $name, bool $strict = false): string;
 
     /**
-     * Check package in composer.json
+     * Get composer package info.
      */
     public static function getComposerPackage(string $name): string;
 
@@ -170,7 +170,7 @@ interface GeneratorUtilsInterface
     public static function setDiskCodeForController(string $name): string;
 
     /**
-     * Set disk code for cast an image.
+     * Set disk code for image cast.
      */
     public static function setDiskCodeForCastImage(string $model, string $field): string;
 }
