@@ -4,6 +4,7 @@ namespace EvdigiIna\Generator\Commands;
 
 use EvdigiIna\Generator\Generators\GeneratorUtils;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class SetSidebarType extends Command
 {
@@ -19,133 +20,202 @@ class SetSidebarType extends Command
      *
      * @var string
      */
-    protected $description = 'Set a sidebar menu to fully blade code(static) or use a list from config(dynamic)';
+    protected $description = 'Configure sidebar menu type (static blade code or dynamic config-based)';
 
     /**
      * Execute the console command.
      */
     public function handle(): void
     {
-        switch ($this->argument('type')) {
-            case 'static':
-                $this->checkGeneratorVariant();
+        $type = $this->argument('type');
 
-                $sidebarCode = '';
-                $sidebarCode .= '@canany([';
-
-                foreach (config(key: 'generator.sidebars') as $sidebar) {
-                    if (isset($sidebar['permissions'])) {
-                        $sidebarCode .= GeneratorUtils::convertArraySidebarToString(sidebars: $sidebar['permissions']);
-                    }
-                }
-
-                $sidebarCode .= "])\n\t";
-
-                foreach (config(key: 'generator.sidebars') as $sidebar) {
-                    if (isset($sidebar['permissions'])) {
-                        $sidebarCode .= "
-                            <li class=\"sidebar-title\">{{ __(key: '".$sidebar['header']."') }}</li>
-                            @canany([";
-
-                        foreach ($sidebar['menus'] as $menu) {
-                            $permissions = empty($menu['permission']) ? $menu['permissions'] : [$menu['permission']];
-                            $sidebarCode .= GeneratorUtils::convertArraySidebarToString(sidebars: $permissions);
-                        }
-
-                        $sidebarCode .= "])\n\t";
-
-                        foreach ($sidebar['menus'] as $menu) {
-                            $subPermissions = empty($menu['permission']) ? $menu['permissions'] : [$menu['permission']];
-
-                            switch (empty($menu['submenus'])) {
-                                case true:
-                                    $sidebarCode .= "
-                                    @can('".$menu['permission']."')
-                                        <li class=\"sidebar-item{{ is_active_menu('".$menu['route']."') }}\">
-                                        <a href=\"{{ route(name: '".str(string: $menu['route'])->remove('/')->singular()->plural().'.index'."') }}\" class=\"sidebar-link\">
-                                                ".$menu['icon']."
-                                                <span>{{ __(key: '".$menu['title']."') }}</span>
-                                            </a>
-                                        </li>
-                                    @endcan\n";
-                                    break;
-
-                                case false:
-                                    $sidebarCode .= "\n@canany([".GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions).'])<li class="sidebar-item has-sub{{  is_active_menu(['.GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions).']) }}">
-                                    <a href="#" class="sidebar-link">
-                                        '.$menu['icon']."
-                                        <span>{{ __(key: '".$menu['title']."') }}</span>
-                                    </a>
-                                    <ul class=\"submenu\">
-                                    @canany([".GeneratorUtils::convertArraySidebarToString(sidebars: $subPermissions).'])';
-
-                                    foreach ($menu['submenus'] as $submenu) {
-                                        $sidebarCode .= "
-                                        @can('".$submenu['permission']."')
-                                            <li class=\"submenu-item{{ is_active_menu('".$submenu['route']."') }}\">
-                                            <a href=\"{{ route(name: '".str(string: $submenu['route'])->remove('/')->singular()->plural().'.index'."') }}\">{{ __(key: '".$submenu['title']."') }}</a>
-                                            </li>
-                                        @endcan\n";
-                                    }
-
-                                    $sidebarCode .= "\n\t@endcanany\n</ul>\n\t</li>\n@endcanany\n";
-                                    break;
-                            }
-
-                        }
-                        $sidebarCode .= "@endcanany\n";
-                    }
-                }
-
-                $sidebarCode .= "\n\t@endcanany";
-
-                $sidebarCodeReplaced = str_replace(
-                    search: "', ]",
-                    replace: "']",
-                    subject: $sidebarCode
-                );
-
-                $template = GeneratorUtils::replaceStub(
-                    replaces: [
-                        'listSidebars' => $sidebarCodeReplaced,
-                    ],
-                    stubName: 'sidebar-static'
-                );
-
-                file_put_contents(filename: resource_path(path: 'views/layouts/sidebar.blade.php'), data: $template);
-
-                $this->info('You have successfully switched to full blade code in the sidebar view.');
-                break;
-            case 'dynamic':
-                $this->checkGeneratorVariant();
-
-                file_put_contents(filename: resource_path(path: 'views/layouts/sidebar.blade.php'), data: GeneratorUtils::getStub(path: 'sidebar-dynamic'));
-
-                $this->info('A dynamic list from the config(config.generator) was used in the sidebar.');
-                break;
-            default:
-                $this->error("The type must be 'static' or 'dynamic'.");
-                break;
+        if (! $this->validateSidebarType($type)) {
+            return;
         }
+
+        if (! $this->validateEnvironment()) {
+            return;
+        }
+
+        $this->processSidebarType($type);
     }
 
-    /**
-     * Check if user using the simple version or not.
-     */
-    public function checkGeneratorVariant(): void
+    protected function validateSidebarType(string $type): bool
     {
-        if (empty(config(key: 'generator.sidebars'))) {
-            $this->error('It looks that you are using the simple version, this command is only available in the full version. Please refer to the section on available commands at https://evdigi-ina.github.io/generator-docs/features/');
+        if (! in_array($type, ['static', 'dynamic'])) {
+            $this->error("Invalid type. Please specify either 'static' or 'dynamic'.");
 
-            return;
+            return false;
         }
 
-        $sidebar = file_exists(filename: resource_path(path: 'views/layouts/sidebar.blade.php'));
+        return true;
+    }
 
-        if (! $sidebar) {
-            $this->error('We cant find the sidebar view, in views/layouts/sidebar.blade.php.');
+    protected function validateEnvironment(): bool
+    {
+        if (empty(config('generator.sidebars'))) {
+            $this->error('This command requires the full version of the generator package.');
+            $this->line('Please upgrade or refer to the documentation at:');
+            $this->line('https://evdigi-ina.github.io/generator-docs/features/');
 
-            return;
+            return false;
         }
+
+        if (! file_exists(resource_path('views/layouts/sidebar.blade.php'))) {
+            $this->error('Sidebar view not found at: views/layouts/sidebar.blade.php');
+
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function processSidebarType(string $type): void
+    {
+        $this->info("Configuring {$type} sidebar...");
+
+        $method = 'process'.Str::studly($type).'Sidebar';
+        $this->{$method}();
+
+        $this->newLine();
+        $this->info("Sidebar successfully configured to {$type} mode!");
+        $this->line('The menu will now be '.
+            ($type === 'static' ? 'rendered as static blade code.' : 'dynamically loaded from config.'));
+    }
+
+    protected function processStaticSidebar(): void
+    {
+        $bar = $this->output->createProgressBar(3);
+        $bar->setFormat(' %current%/%max% [%bar%] %message%');
+
+        $bar->setMessage('Generating sidebar code...');
+        $bar->start();
+
+        $sidebarCode = $this->generateStaticSidebarCode();
+        $bar->advance();
+
+        $bar->setMessage('Preparing template...');
+        $template = GeneratorUtils::replaceStub(
+            ['listSidebars' => $this->cleanSidebarCode($sidebarCode)],
+            'sidebar-static'
+        );
+        $bar->advance();
+
+        $bar->setMessage('Writing to file...');
+        file_put_contents(resource_path('views/layouts/sidebar.blade.php'), $template);
+        $bar->advance();
+
+        $bar->finish();
+    }
+
+    protected function processDynamicSidebar(): void
+    {
+        $bar = $this->output->createProgressBar(1);
+        $bar->setFormat(' %current%/%max% [%bar%] %message%');
+        $bar->setMessage('Configuring dynamic sidebar...');
+        $bar->start();
+
+        file_put_contents(
+            resource_path('views/layouts/sidebar.blade.php'),
+            GeneratorUtils::getStub('sidebar-dynamic')
+        );
+
+        $bar->finish();
+    }
+
+    protected function generateStaticSidebarCode(): string
+    {
+        $code = '@canany([';
+
+        foreach (config('generator.sidebars') as $sidebar) {
+            if (isset($sidebar['permissions'])) {
+                $code .= GeneratorUtils::convertArraySidebarToString($sidebar['permissions']);
+            }
+        }
+
+        $code .= "])\n\t";
+
+        foreach (config('generator.sidebars') as $sidebar) {
+            if (isset($sidebar['permissions'])) {
+                $code .= $this->generateSidebarHeader($sidebar);
+                $code .= $this->generateMenuItems($sidebar['menus']);
+            }
+        }
+
+        return $code."\n\t@endcanany";
+    }
+
+    protected function generateSidebarHeader(array $sidebar): string
+    {
+        return "
+            <li class=\"sidebar-title\">{{ __('{$sidebar['header']}') }}</li>
+            @canany([";
+    }
+
+    protected function generateMenuItems(array $menus): string
+    {
+        $code = '';
+
+        foreach ($menus as $menu) {
+            $permissions = empty($menu['permission']) ? $menu['permissions'] : [$menu['permission']];
+            $code .= GeneratorUtils::convertArraySidebarToString($permissions);
+        }
+
+        $code .= "])\n\t";
+
+        foreach ($menus as $menu) {
+            $code .= empty($menu['submenus'])
+                ? $this->generateSimpleMenuItem($menu)
+                : $this->generateSubmenuItem($menu);
+        }
+
+        return $code."@endcanany\n";
+    }
+
+    protected function generateSimpleMenuItem(array $menu): string
+    {
+        $route = Str::of($menu['route'])->remove('/')->singular()->plural().'.index';
+
+        return "
+            @can('{$menu['permission']}')
+                <li class=\"sidebar-item{{ is_active_menu('{$menu['route']}') }}\">
+                    <a href=\"{{ route('{$route}') }}\" class=\"sidebar-link\">
+                        {$menu['icon']}
+                        <span>{{ __('{$menu['title']}') }}</span>
+                    </a>
+                </li>
+            @endcan\n";
+    }
+
+    protected function generateSubmenuItem(array $menu): string
+    {
+        $subPermissions = empty($menu['permission']) ? $menu['permissions'] : [$menu['permission']];
+        $permissionString = GeneratorUtils::convertArraySidebarToString($subPermissions);
+
+        $code = "\n@canany([{$permissionString}])
+            <li class=\"sidebar-item has-sub{{ is_active_menu([{$permissionString}]) }}\">
+                <a href=\"#\" class=\"sidebar-link\">
+                    {$menu['icon']}
+                    <span>{{ __('{$menu['title']}') }}</span>
+                </a>
+                <ul class=\"submenu\">
+                @canany([{$permissionString}])";
+
+        foreach ($menu['submenus'] as $submenu) {
+            $route = Str::of($submenu['route'])->remove('/')->singular()->plural().'.index';
+            $code .= "
+                    @can('{$submenu['permission']}')
+                        <li class=\"submenu-item{{ is_active_menu('{$submenu['route']}') }}\">
+                            <a href=\"{{ route('{$route}') }}\">{{ __('{$submenu['title']}') }}</a>
+                        </li>
+                    @endcan";
+        }
+
+        return $code."\n\t@endcanany\n</ul>\n</li>\n@endcanany\n";
+    }
+
+    protected function cleanSidebarCode(string $code): string
+    {
+        return str_replace("', ]", "']", $code);
     }
 }

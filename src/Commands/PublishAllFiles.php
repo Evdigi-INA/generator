@@ -21,276 +21,231 @@ class PublishAllFiles extends Command
      *
      * @var string
      */
-    protected $description = 'Publish the required file for the generator.';
+    protected $description = 'Publish all required files for the generator package';
 
     /**
      * Execute the console command.
      */
     public function handle(): void
     {
-        switch ($this->argument('type')) {
-            case 'full':
-                $composerFileText = file_get_contents(base_path('composer.json'));
+        $type = $this->argument('type');
 
-                if (! str_contains($composerFileText, 'laravel/fortify') && ! str_contains($composerFileText, 'spatie/laravel-permission')) {
-                    $this->error('You must be install laravel/fortify and spatie/laravel-permission before running this command.');
+        if (! in_array($type, ['full', 'simple'])) {
+            $this->error("Invalid type. Please specify either 'full' for the complete version or 'simple' for basic functionality.");
 
-                    $this->info('Install the package: composer require laravel/fortify spatie/laravel-permission');
+            return;
+        }
 
-                    return;
-                }
-
-                if (! str_contains($composerFileText, 'laravel/fortify')) {
-                    $this->error('You must be install laravel/fortify before running this command.');
-
-                    $this->info('Install the package: composer require laravel/fortify');
-
-                    return;
-                }
-
-                if (! str_contains($composerFileText, 'spatie/laravel-permission')) {
-                    $this->error('You must be install spatie/laravel-permission before running this command.');
-
-                    $this->info('Install the package: composer require spatie/laravel-permission');
-
-                    return;
-                }
-
-                $totalRunningCommand = $this->totalRunningCommand('full_version_publish_count');
-
-                if (
-                    $totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1
-                ) {
-                    if (! $this->confirm('Do you wish to continue? You are already using the full version.')) {
-                        return;
-                    }
-                }
-
-                if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
-
-                    if ($totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1) {
-
-                        if ($this->confirm('Do you wish to continue? you are already running this command '.$totalRunningCommand['full_version_publish_count'].' for times.')) {
-                            $this->totalRunningCommand('full_version_publish_count', true);
-                            $this->runPublishAll();
-
-                            return;
-                        }
-                    }
-
-                    $this->totalRunningCommand('full_version_publish_count', true);
-                    $this->runPublishAll();
-
-                    return;
-                }
-                break;
-            case 'simple':
-                $totalRunningCommand = $this->totalRunningCommand('simple_version_publish_count');
-
-                if ($totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1) {
-                    $this->info('You are using the full version, which already includes the simple version. This command may not be affected.');
-
-                    return;
-                }
-
-                if ($totalRunningCommand['simple_version_publish_count'] == 1 || $totalRunningCommand['simple_version_publish_count'] > 1) {
-                    $this->info('You are already running this command '.$totalRunningCommand['simple_version_publish_count'].' times.');
-
-                    return;
-                }
-
-                $this->totalRunningCommand('simple_version_publish_count', true);
-
-                $this->info('Installing the simple version...');
-                $this->info('Please wait a bit, this process may take several minutes.');
-
-                $this->info('Loading');
-
-                Artisan::call('vendor:publish --tag=generator-config-simple');
-
-                $this->info('Loading.');
-
-                $this->info('Loading..');
-
-                Artisan::call('vendor:publish --tag=generator-simple-provider');
-
-                $this->info('Loading...');
-
-                Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');
-
-                $this->info('Loading....');
-
-                Artisan::call('vendor:publish --tag=datatables');
-
-                $this->info('Loading.....');
-
-                Artisan::call('vendor:publish --tag=generator-utils');
-
-                $this->info('Loading......');
-
-                Artisan::call('vendor:publish --tag=generator-bootstrap-app-simple');
-
-                $this->info('Loading......');
-
-                $this->info('Installed successfully.');
-                break;
-            default:
-                $this->error("The type must be 'full' to use the full version or 'simple' to use the simple version.");
-                break;
+        if ($type === 'full') {
+            $this->handleFullInstallation();
+        } else {
+            $this->handleSimpleInstallation();
         }
     }
 
     /**
-     * Check total running of generator:publish all command.
-     * */
-    public function totalRunningCommand(string $type = 'full_version_publish_count', bool $increment = false): array
+     * Handle full version installation.
+     */
+    protected function handleFullInstallation(): void
     {
-        // $dir = __DIR__ . '/../../generator.cache';
-        $dir = storage_path('generator.cache');
-
-        if (! file_exists($dir)) {
-            file_put_contents(
-                $dir,
-                json_encode([
-                    'simple_version_publish_count' => 0,
-                    'full_version_publish_count' => 0,
-                ])
-            );
+        if (! $this->verifyPackageRequirements()) {
+            return;
         }
 
-        $cache = file_get_contents($dir);
+        $runCount = $this->getRunCount('full_version_publish_count');
 
-        $totalRunningCommand = json_decode($cache, true);
+        if ($runCount >= 1) {
+            if (! $this->confirm('The full version is already installed. Continue anyway?')) {
+                return;
+            }
 
-        switch ($type) {
-            case 'full_version_publish_count':
-                if ($totalRunningCommand['full_version_publish_count'] == 0) {
-                    if ($increment) {
-                        file_put_contents(
-                            $dir,
-                            json_encode([
-                                'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'],
-                                'full_version_publish_count' => 1,
-                            ])
-                        );
-                    }
-                } else {
-                    if ($increment) {
-                        file_put_contents(
-                            $dir,
-                            json_encode([
-                                'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'],
-                                'full_version_publish_count' => $totalRunningCommand['full_version_publish_count'] + 1,
-                            ])
-                        );
-                    }
-                }
-                break;
-            default:
-                if ($totalRunningCommand['simple_version_publish_count'] == 0) {
-                    if ($increment) {
-                        file_put_contents(
-                            $dir,
-                            json_encode([
-                                'simple_version_publish_count' => 1,
-                                'full_version_publish_count' => $totalRunningCommand['full_version_publish_count'],
-                            ])
-                        );
-                    }
-                } else {
-                    if ($increment) {
-                        file_put_contents(
-                            $dir,
-                            json_encode([
-                                'simple_version_publish_count' => $totalRunningCommand['simple_version_publish_count'] + 1,
-                                'full_version_publish_count' => $totalRunningCommand['full_version_publish_count'],
-                            ])
-                        );
-                    }
-                }
-                break;
+            if (! $this->confirm(sprintf(
+                'You\'ve run this command %d time(s) before. Proceed with installation?',
+                $runCount
+            ))) {
+                return;
+            }
         }
 
-        return $totalRunningCommand;
+        if (! $this->confirm('This will publish all files and may overwrite existing ones. Continue?')) {
+            return;
+        }
+
+        $this->incrementRunCount('full_version_publish_count');
+        $this->executeFullInstallation();
     }
 
     /**
-     * Publish all files required by the full version.
-     * */
-    public function runPublishAll(): void
+     * Handle simple version installation.
+     */
+    protected function handleSimpleInstallation(): void
     {
-        $this->info('Installing...');
-        $this->info('Please wait a bit, this process may take several minutes.');
+        $runCount = $this->getRunCount('simple_version_publish_count');
+        $fullRunCount = $this->getRunCount('full_version_publish_count');
 
-        $this->info('Loading.');
+        if ($fullRunCount >= 1) {
+            $this->info('Note: The full version includes all simple version features. No additional installation needed.');
 
-        Artisan::call('vendor:publish --tag=generator-views');
+            return;
+        }
 
-        $this->info('Loading..');
+        if ($runCount >= 1) {
+            $this->info(sprintf(
+                'The simple version was already installed %d time(s). No changes made.',
+                $runCount
+            ));
 
-        Artisan::call('vendor:publish --tag=generator-full-config');
+            return;
+        }
 
-        $this->info('Loading...');
+        $this->incrementRunCount('simple_version_publish_count');
 
-        Artisan::call('vendor:publish --tag=generator-controller');
+        $this->info('Starting simple version installation...');
+        $this->info('This may take a few moments. Please wait...');
 
-        $this->info('Loading....');
+        $this->executeWithProgress([
+            'vendor:publish --tag=generator-config-simple',
+            'vendor:publish --tag=generator-simple-provider',
+            'vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"',
+            'vendor:publish --tag=datatables',
+            'vendor:publish --tag=generator-utils',
+            'vendor:publish --tag=generator-bootstrap-app-simple',
+        ]);
 
-        Artisan::call('vendor:publish --tag=generator-request-user');
+        $this->info('Simple version installed successfully!');
+    }
 
-        $this->info('Loading.....');
+    /**
+     * Verify required packages are installed.
+     */
+    protected function verifyPackageRequirements(): bool
+    {
+        $composerContent = file_get_contents(base_path('composer.json'));
+        $missing = [];
 
-        Artisan::call('vendor:publish --tag=generator-request-role');
+        if (! str_contains($composerContent, 'laravel/fortify')) {
+            $missing[] = 'laravel/fortify';
+        }
 
-        $this->info('Loading......');
+        if (! str_contains($composerContent, 'spatie/laravel-permission')) {
+            $missing[] = 'spatie/laravel-permission';
+        }
 
-        Artisan::call('vendor:publish --tag=generator-action');
+        if (! empty($missing)) {
+            $this->error('Required packages missing:');
+            $this->error(implode(', ', $missing));
+            $this->line('Please install them first using:');
+            $this->line('composer require '.implode(' ', $missing));
 
-        $this->info('Loading.......');
+            return false;
+        }
 
-        // Artisan::call('vendor:publish --tag=generator-kernel');
-        Artisan::call('vendor:publish --tag=generator-full-provider');
+        return true;
+    }
 
-        $this->info('Loading........');
+    /**
+     * Execute commands with progress feedback.
+     */
+    protected function executeWithProgress(array $commands): void
+    {
+        $bar = $this->output->createProgressBar(count($commands));
+        $bar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %message%');
+        $bar->setMessage('Starting...');
+        $bar->start();
 
-        Artisan::call('vendor:publish --tag=generator-migration');
+        foreach ($commands as $command) {
+            $bar->setMessage("Running: {$command}");
+            Artisan::call($command);
+            $bar->advance();
+            usleep(200000); // 0.2s delay for smoother progress
+        }
 
-        $this->info('Loading.........');
+        $bar->setMessage('Complete!');
+        $bar->finish();
+        $this->newLine();
+    }
 
-        Artisan::call('vendor:publish --tag=generator-seeder');
+    /**
+     * Get the run count for a specific type.
+     */
+    protected function getRunCount(string $type): int
+    {
+        $counts = $this->getRunCounts();
 
-        $this->info('Loading..........');
+        return $counts[$type] ?? 0;
+    }
 
-        Artisan::call('vendor:publish --tag=generator-model');
+    /**
+     * Increment the run count for a specific type.
+     */
+    protected function incrementRunCount(string $type): void
+    {
+        $counts = $this->getRunCounts();
+        $counts[$type] = ($counts[$type] ?? 0) + 1;
+        $this->saveRunCounts($counts);
+    }
 
-        $this->info('Loading...........');
+    /**
+     * Get all run counts from storage.
+     */
+    protected function getRunCounts(): array
+    {
+        $file = storage_path('generator.cache');
 
-        Artisan::call('vendor:publish --tag=generator-assets');
+        if (! file_exists($file)) {
+            return [
+                'simple_version_publish_count' => 0,
+                'full_version_publish_count' => 0,
+            ];
+        }
 
-        $this->info('Loading............');
+        return json_decode(file_get_contents($file), true) ?? [];
+    }
 
-        Artisan::call('vendor:publish --tag=generator-utils');
+    /**
+     * Save run counts to storage.
+     */
+    protected function saveRunCounts(array $counts): void
+    {
+        file_put_contents(
+            storage_path('generator.cache'),
+            json_encode($counts)
+        );
+    }
 
-        $this->info('Loading.............');
+    /**
+     * Execute full version installation.
+     */
+    protected function executeFullInstallation(): void
+    {
+        $this->info('Beginning full version installation...');
+        $this->info('This process may take a few minutes. Thank you for your patience.');
 
-        Artisan::call('vendor:publish --tag=datatables');
+        $commands = [
+            'vendor:publish --tag=generator-views',
+            'vendor:publish --tag=generator-full-config',
+            'vendor:publish --tag=generator-controller',
+            'vendor:publish --tag=generator-request-user',
+            'vendor:publish --tag=generator-request-role',
+            'vendor:publish --tag=generator-action',
+            'vendor:publish --tag=generator-full-provider',
+            'vendor:publish --tag=generator-migration',
+            'vendor:publish --tag=generator-seeder',
+            'vendor:publish --tag=generator-model',
+            'vendor:publish --tag=generator-assets',
+            'vendor:publish --tag=generator-utils',
+            'vendor:publish --tag=datatables',
+            'vendor:publish --tag=generator-bootstrap-app-full',
+            'vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"',
+        ];
 
-        $this->info('Loading..............');
+        $this->executeWithProgress($commands);
 
-        Artisan::call('vendor:publish --tag=generator-bootstrap-app-full');
-
-        $this->info('Loading...............');
-
-        Artisan::call('vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"');
-
-        $this->info('Loading................');
-
+        // Append routes
         $template = GeneratorUtils::getStub('route');
-
         File::append(base_path('routes/web.php'), $template);
 
-        $this->info('Loading.................');
-
-        $this->info('Installed successfully.');
+        $this->info('Full version installed successfully!');
+        $this->line('Thank you for using our generator package!');
     }
 }

@@ -458,7 +458,7 @@ class GeneratorServiceProvider extends ServiceProvider
             str_starts_with(haystack: $category, needle: 'database/seeders') => database_path(
                 path: "seeders/{$file}.php"
             ),
-             str_starts_with(haystack: $category, needle: 'config') => config_path(
+            str_starts_with(haystack: $category, needle: 'config') => config_path(
                 path: "{$file}.php"
             ),
             default => ''
