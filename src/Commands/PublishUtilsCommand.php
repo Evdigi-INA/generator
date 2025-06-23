@@ -26,15 +26,15 @@ class PublishUtilsCommand extends Command
      */
     public function handle(): void
     {
-        $this->info('Preparing utility files...');
+        $this->info(string: 'Preparing utility files...');
 
         $this->executeWithProgress(
-            'vendor:publish --tag=generator-utils --force',
-            'Publishing utility classes'
+            command: 'vendor:publish --tag=generator-utils',
+            message: 'Publishing utility classes'
         );
 
-        $this->info('Utility classes published successfully!');
-        $this->line('The generator utilities are now ready for use.');
+        $this->info(string: 'Utility classes published successfully!');
+        $this->line(string: 'The generator utilities are now ready for use.');
     }
 
     /**
@@ -42,12 +42,12 @@ class PublishUtilsCommand extends Command
      */
     protected function executeWithProgress(string $command, string $message): void
     {
-        $bar = $this->output->createProgressBar(1);
-        $bar->setFormat(" %message%\n %current%/%max% [%bar%] %percent:3s%%");
-        $bar->setMessage($message);
+        $bar = $this->output->createProgressBar(max: 1);
+        $bar->setFormat(format: " %message%\n %current%/%max% [%bar%] %percent:3s%%");
+        $bar->setMessage(message: $message);
         $bar->start();
 
-        Artisan::call($command);
+        Artisan::call(command: $command);
         $bar->advance();
 
         $bar->finish();

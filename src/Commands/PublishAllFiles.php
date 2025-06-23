@@ -28,10 +28,10 @@ class PublishAllFiles extends Command
      */
     public function handle(): void
     {
-        $type = $this->argument('type');
+        $type = $this->argument(key: 'type');
 
-        if (! in_array($type, ['full', 'simple'])) {
-            $this->error("Invalid type. Please specify either 'full' for the complete version or 'simple' for basic functionality.");
+        if (!in_array(needle: $type, haystack: ['full', 'simple'])) {
+            $this->error(string: "Invalid type. Please specify either 'full' for the complete version or 'simple' for basic functionality.");
 
             return;
         }
@@ -48,30 +48,32 @@ class PublishAllFiles extends Command
      */
     protected function handleFullInstallation(): void
     {
-        if (! $this->verifyPackageRequirements()) {
+        if (!$this->verifyPackageRequirements()) {
             return;
         }
 
-        $runCount = $this->getRunCount('full_version_publish_count');
+        $runCount = $this->getRunCount(type: 'full_version_publish_count');
 
         if ($runCount >= 1) {
-            if (! $this->confirm('The full version is already installed. Continue anyway?')) {
+            if (!$this->confirm(question: 'The full version is already installed. Continue anyway?')) {
                 return;
             }
 
-            if (! $this->confirm(sprintf(
-                'You\'ve run this command %d time(s) before. Proceed with installation?',
-                $runCount
-            ))) {
+            if (
+                !$this->confirm(question: sprintf(
+                    'You\'ve run this command %d time(s) before. Proceed with installation?',
+                    $runCount
+                ))
+            ) {
                 return;
             }
         }
 
-        if (! $this->confirm('This will publish all files and may overwrite existing ones. Continue?')) {
+        if (!$this->confirm(question: 'This will publish all files and may overwrite existing ones. Continue?')) {
             return;
         }
 
-        $this->incrementRunCount('full_version_publish_count');
+        $this->incrementRunCount(type: 'full_version_publish_count');
         $this->executeFullInstallation();
     }
 
@@ -80,30 +82,30 @@ class PublishAllFiles extends Command
      */
     protected function handleSimpleInstallation(): void
     {
-        $runCount = $this->getRunCount('simple_version_publish_count');
-        $fullRunCount = $this->getRunCount('full_version_publish_count');
+        $runCount = $this->getRunCount(type: 'simple_version_publish_count');
+        $fullRunCount = $this->getRunCount(type: 'full_version_publish_count');
 
         if ($fullRunCount >= 1) {
-            $this->info('Note: The full version includes all simple version features. No additional installation needed.');
+            $this->info(string: 'Note: The full version includes all simple version features. No additional installation needed.');
 
             return;
         }
 
         if ($runCount >= 1) {
-            $this->info(sprintf(
-                'The simple version was already installed %d time(s). No changes made.',
-                $runCount
+            $this->info(string: sprintf(
+                format: 'The simple version was already installed %d time(s). No changes made.',
+                values: $runCount
             ));
 
             return;
         }
 
-        $this->incrementRunCount('simple_version_publish_count');
+        $this->incrementRunCount(type: 'simple_version_publish_count');
 
-        $this->info('Starting simple version installation...');
-        $this->info('This may take a few moments. Please wait...');
+        $this->info(string: 'Starting simple version installation...');
+        $this->info(string: 'This may take a few moments. Please wait...');
 
-        $this->executeWithProgress([
+        $this->executeWithProgress(commands: [
             'vendor:publish --tag=generator-config-simple',
             'vendor:publish --tag=generator-simple-provider',
             'vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"',
@@ -112,7 +114,7 @@ class PublishAllFiles extends Command
             'vendor:publish --tag=generator-bootstrap-app-simple',
         ]);
 
-        $this->info('Simple version installed successfully!');
+        $this->info(string: 'Simple version installed successfully!');
     }
 
     /**
@@ -120,22 +122,22 @@ class PublishAllFiles extends Command
      */
     protected function verifyPackageRequirements(): bool
     {
-        $composerContent = file_get_contents(base_path('composer.json'));
+        // $composerContent = file_get_contents(filename: base_path(path: 'composer.json'));
         $missing = [];
 
-        if (! str_contains($composerContent, 'laravel/fortify')) {
+        if (!class_exists(class: "Laravel\Fortify\Fortify")) {
             $missing[] = 'laravel/fortify';
         }
 
-        if (! str_contains($composerContent, 'spatie/laravel-permission')) {
+        if (!class_exists(class: "Spatie\Permission\PermissionServiceProvider")) {
             $missing[] = 'spatie/laravel-permission';
         }
 
-        if (! empty($missing)) {
-            $this->error('Required packages missing:');
-            $this->error(implode(', ', $missing));
-            $this->line('Please install them first using:');
-            $this->line('composer require '.implode(' ', $missing));
+        if (!empty($missing)) {
+            $this->error(string: 'Required packages missing:');
+            $this->error(string: implode(', ', $missing));
+            $this->line(string: 'Please install them first using:');
+            $this->line(string: 'composer require ' . implode(' ', $missing));
 
             return false;
         }
@@ -148,19 +150,19 @@ class PublishAllFiles extends Command
      */
     protected function executeWithProgress(array $commands): void
     {
-        $bar = $this->output->createProgressBar(count($commands));
-        $bar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %message%');
-        $bar->setMessage('Starting...');
+        $bar = $this->output->createProgressBar(max: count(value: $commands));
+        $bar->setFormat(format: ' %current%/%max% [%bar%] %percent:3s%% %message%');
+        $bar->setMessage(message: 'Starting...');
         $bar->start();
 
         foreach ($commands as $command) {
-            $bar->setMessage("Running: {$command}");
-            Artisan::call($command);
+            $bar->setMessage(message: "Running: {$command}");
+            Artisan::call(command: $command);
             $bar->advance();
-            usleep(200000); // 0.2s delay for smoother progress
+            usleep(microseconds: 200000); // 0.2s delay for smoother progress
         }
 
-        $bar->setMessage('Complete!');
+        $bar->setMessage(message: 'Complete!');
         $bar->finish();
         $this->newLine();
     }
@@ -182,7 +184,7 @@ class PublishAllFiles extends Command
     {
         $counts = $this->getRunCounts();
         $counts[$type] = ($counts[$type] ?? 0) + 1;
-        $this->saveRunCounts($counts);
+        $this->saveRunCounts(counts: $counts);
     }
 
     /**
@@ -190,16 +192,16 @@ class PublishAllFiles extends Command
      */
     protected function getRunCounts(): array
     {
-        $file = storage_path('generator.cache');
+        $file = storage_path(path: 'generator.cache');
 
-        if (! file_exists($file)) {
+        if (!file_exists(filename: $file)) {
             return [
                 'simple_version_publish_count' => 0,
                 'full_version_publish_count' => 0,
             ];
         }
 
-        return json_decode(file_get_contents($file), true) ?? [];
+        return json_decode(json: file_get_contents(filename: $file), associative: true) ?? [];
     }
 
     /**
@@ -208,8 +210,8 @@ class PublishAllFiles extends Command
     protected function saveRunCounts(array $counts): void
     {
         file_put_contents(
-            storage_path('generator.cache'),
-            json_encode($counts)
+            filename: storage_path(path: 'generator.cache'),
+            data: json_encode(value: $counts)
         );
     }
 
@@ -218,8 +220,8 @@ class PublishAllFiles extends Command
      */
     protected function executeFullInstallation(): void
     {
-        $this->info('Beginning full version installation...');
-        $this->info('This process may take a few minutes. Thank you for your patience.');
+        $this->info(string: 'Beginning full version installation...');
+        $this->info(string: 'This process may take a few minutes. Thank you for your patience.');
 
         $commands = [
             'vendor:publish --tag=generator-views',
@@ -239,13 +241,13 @@ class PublishAllFiles extends Command
             'vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"',
         ];
 
-        $this->executeWithProgress($commands);
+        $this->executeWithProgress(commands: $commands);
 
         // Append routes
-        $template = GeneratorUtils::getStub('route');
-        File::append(base_path('routes/web.php'), $template);
+        $template = GeneratorUtils::getStub(path: 'route');
+        File::append(path: base_path(path: 'routes/web.php'), data: $template);
 
-        $this->info('Full version installed successfully!');
-        $this->line('Thank you for using our generator package!');
+        $this->info(string: 'Full version installed successfully!');
+        $this->line(string: 'Thank you for using our generator package!');
     }
 }

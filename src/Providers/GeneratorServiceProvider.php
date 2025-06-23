@@ -18,7 +18,7 @@ class GeneratorServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(abstract: 'generator', concrete: fn (): Generator => new Generator);
+        $this->app->bind(abstract: 'generator', concrete: fn(): Generator => new Generator);
     }
 
     /**
@@ -39,9 +39,9 @@ class GeneratorServiceProvider extends ServiceProvider
      */
     protected function loadBaseResources(): void
     {
-        $this->loadRoutesFrom(path: __DIR__.'/../../routes/generator.php');
-        $this->loadViewsFrom(path: __DIR__.'/../../resources/views', namespace: 'generator');
-        $this->mergeConfigFrom(path: __DIR__.'/../../config/generator.php', key: 'generator');
+        $this->loadRoutesFrom(path: __DIR__ . '/../../routes/generator.php');
+        $this->loadViewsFrom(path: __DIR__ . '/../../views', namespace: 'generator');
+        $this->mergeConfigFrom(path: __DIR__ . '/../../config/generator.php', key: 'generator');
     }
 
     /**
@@ -121,8 +121,8 @@ class GeneratorServiceProvider extends ServiceProvider
             ]),
 
             // Dashboard & profile
-            __DIR__.'/../../stubs/generators/publish/views/dashboard.blade.stub' => resource_path(path: 'views/dashboard.blade.php'),
-            __DIR__.'/../../stubs/generators/publish/views/profile.blade.stub' => resource_path(path: 'views/profile.blade.php'),
+            __DIR__ . '/../../stubs/publish/views/dashboard.blade.stub' => resource_path(path: 'views/dashboard.blade.php'),
+            __DIR__ . '/../../stubs/publish/views/profile.blade.stub' => resource_path(path: 'views/profile.blade.php'),
         ], groups: 'generator-views');
     }
 
@@ -146,7 +146,7 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // Simple config
         $this->publishes(paths: [
-            __DIR__.'/../../stubs/generators/publish/config/simple-version/generator.stub' => config_path(path: 'generator.php'),
+            __DIR__ . '/../../stubs/publish/config/simple-version/generator.stub' => config_path(path: 'generator.php'),
         ], groups: 'generator-simple-config');
     }
 
@@ -180,10 +180,16 @@ class GeneratorServiceProvider extends ServiceProvider
         $this->publishes(paths: [
             ...$this->mapStubsToPaths(category: 'controllers/api', files: [
                 'AuthController',
+            ]),
+        ], groups: 'generator-controller-api');
+
+        $this->publishes(paths: [
+            ...$this->mapStubsToPaths(category: 'controllers/api', files: [
                 'RoleAndPermissionController',
                 'UserController',
             ]),
-        ], groups: 'generator-controller-api');
+        ], groups: 'generator-controller-user-role-api');
+
     }
 
     /**
@@ -277,7 +283,7 @@ class GeneratorServiceProvider extends ServiceProvider
 
         // Simple provider
         $this->publishes(paths: [
-            __DIR__.'/../../stubs/generators/publish/providers/simple-version/ViewServiceProvider.stub' => app_path(path: 'Providers/ViewServiceProvider.php'),
+            __DIR__ . '/../../stubs/publish/providers/simple-version/ViewServiceProvider.stub' => app_path(path: 'Providers/ViewServiceProvider.php'),
         ], groups: 'generator-simple-provider');
     }
 
@@ -314,7 +320,7 @@ class GeneratorServiceProvider extends ServiceProvider
     protected function publishModels(): void
     {
         $this->publishes(paths: [
-            __DIR__.'/../../stubs/generators/publish/models/User.stub' => app_path(path: 'Models/User.php'),
+            __DIR__ . '/../../stubs/publish/models/User.stub' => app_path(path: 'Models/User.php'),
         ], groups: 'generator-model');
     }
 
@@ -327,7 +333,7 @@ class GeneratorServiceProvider extends ServiceProvider
     protected function publishAssets(): void
     {
         $this->publishes(paths: [
-            __DIR__.'/../../assets' => public_path(path: 'mazer'),
+            __DIR__ . '/../../assets' => public_path(path: 'mazer'),
         ], groups: 'generator-assets');
     }
 
@@ -365,11 +371,11 @@ class GeneratorServiceProvider extends ServiceProvider
     protected function publishBootstrapFiles(): void
     {
         $this->publishes(paths: [
-            __DIR__.'/../../stubs/generators/publish/bootstrap/full-version/app.stub' => base_path(path: 'bootstrap/app.php'),
+            __DIR__ . '/../../stubs/publish/bootstrap/full-version/app.stub' => base_path(path: 'bootstrap/app.php'),
         ], groups: 'generator-bootstrap-app-full');
 
         $this->publishes(paths: [
-            __DIR__.'/../../stubs/generators/publish/bootstrap/simple-version/app.stub' => base_path(path: 'bootstrap/app.php'),
+            __DIR__ . '/../../stubs/publish/bootstrap/simple-version/app.stub' => base_path(path: 'bootstrap/app.php'),
         ], groups: 'generator-bootstrap-app-simple');
     }
 
@@ -380,7 +386,7 @@ class GeneratorServiceProvider extends ServiceProvider
      */
     protected function registerAboutInfo(): void
     {
-        AboutCommand::add(section: 'Generator', data: fn (): array => [
+        AboutCommand::add(section: 'Generator', data: fn(): array => [
             'Version' => '0.5.0',
             'Source' => 'https://github.com/evdigiina/generator',
             'Docs' => 'https://zzzul.github.io/generator-docs-next/',
@@ -414,7 +420,7 @@ class GeneratorServiceProvider extends ServiceProvider
         $paths = [];
 
         foreach ($files as $file) {
-            $stubPath = __DIR__."/../../stubs/generators/publish/{$category}/{$file}.stub";
+            $stubPath = __DIR__ . "/../../stubs/publish/{$category}/{$file}.stub";
             $destination = $this->getDestinationPath(category: $category, file: $file);
 
             $paths[$stubPath] = $destination;
@@ -430,10 +436,13 @@ class GeneratorServiceProvider extends ServiceProvider
     {
         return match (true) {
             str_starts_with(haystack: $category, needle: 'views/') => resource_path(
-                path: 'views/'.str_replace('views/', '', $category)."/{$file}.php"
+                path: 'views/' . str_replace('views/', '', $category) . "/{$file}.php"
             ),
-            str_starts_with(haystack: $category, needle: 'controllers') => app_path(
+            str_starts_with(haystack: $category, needle: 'controllers') && !str_starts_with(haystack: $category, needle: 'controllers/api') => app_path(
                 path: "Http/Controllers/{$file}.php"
+            ),
+            str_starts_with(haystack: $category, needle: 'controllers/api') => app_path(
+                path: "Http/Controllers/Api/{$file}.php"
             ),
             str_starts_with(haystack: $category, needle: 'requests') => $this->buildNamespacedPath(
                 category: $category,

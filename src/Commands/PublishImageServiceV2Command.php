@@ -26,15 +26,15 @@ class PublishImageServiceV2Command extends Command
      */
     public function handle(): void
     {
-        $this->info('Preparing to publish Image Service v2...');
+        $this->info(string: 'Preparing to publish Image Service v2...');
 
         $this->executeWithProgress(
-            'vendor:publish --tag=image-service-v2',
-            'Publishing Image Service files'
+            command: 'vendor:publish --tag=image-service-v2',
+            message: 'Publishing Image Service files'
         );
 
-        $this->info('Image Service v2 published successfully!');
-        $this->line('The enhanced image processing service is now ready for use.');
+        $this->info(string: 'Image Service v2 published successfully!');
+        $this->line(string: 'The enhanced image processing service is now ready for use.');
     }
 
     /**
@@ -42,12 +42,12 @@ class PublishImageServiceV2Command extends Command
      */
     protected function executeWithProgress(string $command, string $message): void
     {
-        $bar = $this->output->createProgressBar(1);
-        $bar->setFormat(" %message%\n %current%/%max% [%bar%] %percent:3s%%");
-        $bar->setMessage($message);
+        $bar = $this->output->createProgressBar(max: 1);
+        $bar->setFormat(format: " %message%\n %current%/%max% [%bar%] %percent:3s%%");
+        $bar->setMessage(message: $message);
         $bar->start();
 
-        Artisan::call($command);
+        Artisan::call(command: $command);
         $bar->advance();
 
         $bar->finish();

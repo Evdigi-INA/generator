@@ -13,12 +13,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
+    protected const USERNAME = 'email';
+
     public function login(LoginRequest $request): JsonResponse
     {
-        $user = User::where(column: 'email', operator: $request->email)->first();
-        $credentials = $request->only(keys: ['email', 'password']);
+        $user = User::where(column: self::USERNAME, operator: $request->email)->first();
+        $credentials = $request->only(keys: [self::USERNAME, 'password']);
 
-        if (! Auth::attempt(credentials: $credentials)) {
+        if (!Auth::attempt(credentials: $credentials)) {
             return response()->json(data: [
                 'message' => 'These credentials do not match our records.',
             ], status: Response::HTTP_UNPROCESSABLE_ENTITY);

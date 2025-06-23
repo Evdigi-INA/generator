@@ -44,7 +44,8 @@
         <div class="sidebar-menu">
             <ul class="menu">
                 @auth
-                    <li class="sidebar-item{{ request()->is('/') || request()->is('dashboard') ? ' active' : '' }}">
+                    <li
+                        class="sidebar-item{{ request()->is(patterns: '/') || request()->is(patterns: 'dashboard') ? ' active' : '' }}">
                         <a class="sidebar-link" href="/">
                             <i class="bi bi-speedometer"></i>
                             <span> {{ __(key: 'Dashboard') }}</span>
@@ -52,26 +53,78 @@
                     </li>
                 @endauth
 
-                {{listSidebars}}
+                @foreach (config(key: 'generator.sidebars') as $sidebar)
+                    @if (isset($sidebar['permissions']))
+                        @canany($sidebar['permissions'])
+                            <li class="sidebar-title">{{ $sidebar['header'] }}</li>
 
-               @if (config(key: 'app.env') === 'local')
+                            @foreach ($sidebar['menus'] as $menu)
+                                @php
+                                    $permissions = empty($menu['permission'])
+                                        ? $menu['permissions']
+                                        : [$menu['permission']];
+                                @endphp
+
+                                @canany($permissions)
+                                    @if (empty($menu['submenus']))
+                                        @can($menu['permission'])
+                                            <li class="sidebar-item{{ is_active_menu(route: $menu['route']) }}">
+                                                <a href="{{ route(name: str(string: $menu['route'])->remove(search: '/')->singular()->plural() . '.index') }}"
+                                                    class="sidebar-link">
+                                                    {!! $menu['icon'] !!}
+                                                    <span>{{ __(key: $menu['title']) }}</span>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                    @else
+                                        <li class="sidebar-item has-sub{{ is_active_menu(route: $menu['permissions']) }}">
+                                            <a href="#" class="sidebar-link">
+                                                {!! $menu['icon'] !!}
+                                                <span>{{ __(key: $menu['title']) }}</span>
+                                            </a>
+                                            <ul class="submenu">
+                                                @canany($menu['permissions'])
+                                                    @foreach ($menu['submenus'] as $submenu)
+                                                        @can($submenu['permission'])
+                                                            <li class="submenu-item{{ is_active_menu(route: $submenu['route']) }}">
+                                                                <a
+                                                                    href="{{ route(name: str(string: $submenu['route'])->remove(search: '/')->singular()->plural() . '.index') }}">
+                                                                    {{ __(key: $submenu['title']) }}
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                    @endforeach
+                                                @endcanany
+                                            </ul>
+                                        </li>
+                                    @endif
+                                @endcanany
+                            @endforeach
+                        @endcanany
+                    @endif
+                @endforeach
+
+                @if (config(key: 'app.env') === 'local')
                     <li class="sidebar-title">{{ __(key: 'Generators') }}</li>
 
-                    <li class="sidebar-item{{ request()->is('generators/create') ? ' active' : '' }}">
+                    <li class="sidebar-item{{ request()->is(patterns: 'generators/create') ? ' active' : '' }}">
                         <a class="sidebar-link" href="{{ route(name: 'generators.create') }}">
                             <i class="bi bi-fire"></i>
                             <span> {{ __(key: 'CRUD Generator') }}</span>
                         </a>
                     </li>
 
-                    <li class="sidebar-item{{ request()->is('api-generators/create') ? ' active' : '' }}">
-                        <a class="sidebar-link" href="/api-generators/create">
-                            <i class="bi bi-rocket"></i>
-                            <span> {{ __(key: 'API CRUD Generator') }}</span>
-                        </a>
-                    </li>
+                    @if (class_exists(class: \Laravel\Sanctum\Sanctum::class))
+                        <li
+                            class="sidebar-item{{ request()->is(patterns: 'api-generators/create') ? ' active' : '' }}">
+                            <a class="sidebar-link" href="/api-generators/create">
+                                <i class="bi bi-rocket"></i>
+                                <span> {{ __(key: 'API CRUD Generator') }}</span>
+                            </a>
+                        </li>
+                    @endif
 
-                    <li class="sidebar-item{{ request()->is('simple-generators/create') ? ' active' : '' }}">
+                    <li class="sidebar-item{{ request()->is(patterns: 'simple-generators/create') ? ' active' : '' }}">
                         <a class="sidebar-link" href="/simple-generators/create">
                             <i class="bi bi-droplet"></i>
                             <span> {{ __(key: 'Simple CRUD Generator') }}</span>
@@ -82,7 +135,7 @@
                 @auth
                     <li class="sidebar-title">Account</li>
 
-                    <li class="sidebar-item{{ request()->is('profile') ? ' active' : '' }}">
+                    <li class="sidebar-item{{ request()->is(patterns: 'profile') ? ' active' : '' }}">
                         <a class="sidebar-link" href="{{ route(name: 'profile') }}">
                             <i class="bi bi-person-badge-fill"></i>
                             <span> {{ __(key: 'Profile') }}</span>

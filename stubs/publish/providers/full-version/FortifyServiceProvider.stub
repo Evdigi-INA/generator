@@ -7,6 +7,7 @@ use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -39,18 +40,18 @@ class FortifyServiceProvider extends ServiceProvider
             return Limit::perMinute(maxAttempts: 5)->by(key: $throttleKey);
         });
 
-        RateLimiter::for(name: 'two-factor', callback: fn (Request $request) => Limit::perMinute(maxAttempts: 5)->by(key: $request->session()->get(key: 'login.id')));
+        RateLimiter::for(name: 'two-factor', callback: fn (Request $request): Limit => Limit::perMinute(maxAttempts: 5)->by(key: $request->session()->get(key: 'login.id')));
 
-        Fortify::registerView(view: fn () => view(view: 'auth.register'));
+        Fortify::registerView(view: fn (): View => view(view: 'auth.register'));
 
-        Fortify::loginView(view: fn () => view(view: 'auth.login'));
+        Fortify::loginView(view: fn (): View => view(view: 'auth.login'));
 
-        Fortify::confirmPasswordView(view: fn () => view(view: 'auth.confirm-password'));
+        Fortify::confirmPasswordView(view: fn (): View => view(view: 'auth.confirm-password'));
 
-        Fortify::twoFactorChallengeView(view: fn () => view(view: 'auth.two-factor-challenge'));
+        Fortify::twoFactorChallengeView(view: fn (): View => view(view: 'auth.two-factor-challenge'));
 
-        Fortify::requestPasswordResetLinkView(view: fn () => view(view: 'auth.forgot-password'));
+        Fortify::requestPasswordResetLinkView(view: fn (): View => view(view: 'auth.forgot-password'));
 
-        Fortify::resetPasswordView(view: fn (Request $request) => view(view: 'auth.reset-password', data: ['request' => $request]));
+        Fortify::resetPasswordView(view: fn (Request $request): View => view(view: 'auth.reset-password', data: ['request' => $request]));
     }
 }

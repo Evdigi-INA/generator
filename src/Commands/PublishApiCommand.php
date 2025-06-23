@@ -31,33 +31,59 @@ class PublishApiCommand extends Command
     {
         $this->verifyApiInstallation();
 
-        $this->info('Preparing to publish API files...');
+        $this->info(string: 'Preparing to publish API files...');
 
         $commands = [
-            'vendor:publish --tag=generator-request-api',
             'vendor:publish --tag=generator-controller-api',
-            'vendor:publish --tag=generator-request-role',
-            'vendor:publish --tag=generator-request-user',
         ];
 
-        $template = GeneratorUtils::getStub('api');
+        $template = GeneratorUtils::getStub(path: 'api');
+        $isPublishUserRoles = false;
 
-        if ($this->confirm('Include user and role resources? (requires spatie/laravel-permission)', false)) {
-            array_unshift($commands, 'vendor:publish --tag=generator-role-user-resource-api');
+        if ($this->confirm(question: 'Include user and role resources? (requires spatie/laravel-permission)', default: false)) {
+            $commands = array_merge($commands, [
+                'vendor:publish --tag=generator-request-api',
+                'vendor:publish --tag=generator-request-role',
+                'vendor:publish --tag=generator-request-user',
+                'vendor:publish --tag=generator-resource-api',
+                'vendor:publish --tag=generator-controller-user-role-api'
+            ]);
 
-            $template .= "\n// Route::middleware(['api', 'auth:sanctum'])->group(function () {
-    Route::get('permissions', [App\Http\Controllers\API\RoleAndPermissionController::class, 'getAllPermissions']);
-    Route::resource('users', App\Http\Controllers\API\UserController::class);
-    Route::resource('roles', App\Http\Controllers\API\RoleAndPermissionController::class);
-// });\n";
+            $template .= GeneratorUtils::getStub(path: 'user-role-api');
+
+            $isPublishUserRoles = true;
         }
 
-        $this->executeWithProgress($commands);
+        $this->executeWithProgress(commands: $commands);
 
-        File::append(base_path('routes/api.php'), $template);
+        File::append(path: base_path(path: 'routes/api.php'), data: $template);
 
-        $this->info('API files published successfully!');
-        $this->line('API endpoints are now ready for use.');
+        $this->info(string: 'API files published successfully!');
+
+        $this->newLine();
+
+        $this->info(string: '[POST]: /api/auth/login, [Body]: {email: admin@example.com, password: password}');
+        $this->info(string: '[POST]: /api/auth/register');
+
+        if ($isPublishUserRoles) {
+            $this->newLine();
+
+            $this->info(string: '[GET]: /api/users');
+            $this->info(string: '[POST]: /api/users');
+            $this->info(string: '[GET]: /api/users/{id}');
+            $this->info(string: '[PUT|PATCH]: /api/users/{id}');
+            $this->info(string: '[DELETE]: /api/users/{id}');
+
+            $this->newLine();
+
+            $this->info(string: '[GET]: /api/roles');
+            $this->info(string: '[POST]: /api/roles');
+            $this->info(string: '[GET]: /api/roles/{id}');
+            $this->info(string: '[PUT|PATCH]: /api/roles/{id}');
+            $this->info(string: '[DELETE]: /api/roles/{id}');
+        }
+
+        $this->line(string: 'API endpoints are now ready for use.');
     }
 
     /**
@@ -65,10 +91,10 @@ class PublishApiCommand extends Command
      */
     protected function verifyApiInstallation(): void
     {
-        if (! (new GeneratorService)->apiRouteAlreadyExists()) {
-            $this->error('API installation not detected.');
-            $this->line('To use this feature, please first install the API by running:');
-            $this->line('php artisan install:api');
+        if (!(new GeneratorService)->apiRouteAlreadyExists()) {
+            $this->error(string: 'API installation not detected.');
+            $this->line(string: 'To use this feature, please first install the API by running:');
+            $this->line(string: 'php artisan install:api');
             exit(1);
         }
     }
@@ -78,19 +104,29 @@ class PublishApiCommand extends Command
      */
     protected function executeWithProgress(array $commands): void
     {
-        $bar = $this->output->createProgressBar(count($commands));
-        $bar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %message%');
-        $bar->setMessage('Initializing...');
-        $bar->start();
-
+        // Flatten the commands array in case any elements are arrays themselves
+        $flatCommands = [];
         foreach ($commands as $command) {
-            $bar->setMessage("Publishing: {$command}");
-            Artisan::call($command);
-            $bar->advance();
-            usleep(200000); // 0.2s delay for smoother progress
+            if (is_array(value: $command)) {
+                $flatCommands = array_merge($flatCommands, $command);
+            } else {
+                $flatCommands[] = $command;
+            }
         }
 
-        $bar->setMessage('Finalizing...');
+        $bar = $this->output->createProgressBar(max: count(value: $flatCommands));
+        $bar->setFormat(format: ' %current%/%max% [%bar%] %percent:3s%% %message%');
+        $bar->setMessage(message: 'Initializing...');
+        $bar->start();
+
+        foreach ($flatCommands as $command) {
+            $bar->setMessage(message: "Publishing: {$command}");
+            Artisan::call(command: $command);
+            $bar->advance();
+            usleep(microseconds: 200000);
+        }
+
+        $bar->setMessage(message: 'Finalizing...');
         $bar->finish();
         $this->newLine();
     }
