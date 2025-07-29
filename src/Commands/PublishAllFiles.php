@@ -224,21 +224,21 @@ class PublishAllFiles extends Command
         $this->info(string: 'This process may take a few minutes. Thank you for your patience.');
 
         $commands = [
-            'vendor:publish --tag=generator-views',
-            'vendor:publish --tag=generator-full-config',
-            'vendor:publish --tag=generator-controller',
-            'vendor:publish --tag=generator-request-user',
-            'vendor:publish --tag=generator-request-role',
-            'vendor:publish --tag=generator-action',
-            'vendor:publish --tag=generator-full-provider',
-            'vendor:publish --tag=generator-migration',
-            'vendor:publish --tag=generator-seeder',
-            'vendor:publish --tag=generator-model',
-            'vendor:publish --tag=generator-assets',
-            'vendor:publish --tag=generator-utils',
-            'vendor:publish --tag=datatables',
-            'vendor:publish --tag=generator-bootstrap-app-full',
-            'vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider"',
+            'vendor:publish --tag=generator-views --force',
+            'vendor:publish --tag=generator-full-config --force',
+            'vendor:publish --tag=generator-controller --force',
+            'vendor:publish --tag=generator-request-user --force',
+            'vendor:publish --tag=generator-request-role --force',
+            'vendor:publish --tag=generator-action --force',
+            'vendor:publish --tag=generator-full-provider --force',
+            'vendor:publish --tag=generator-migration --force',
+            'vendor:publish --tag=generator-seeder --force',
+            'vendor:publish --tag=generator-model --force',
+            'vendor:publish --tag=generator-assets --force',
+            'vendor:publish --tag=generator-utils --force',
+            'vendor:publish --tag=datatables --force',
+            'vendor:publish --tag=generator-bootstrap-app-full --force',
+            'vendor:publish --provider="Intervention\Image\Laravel\ServiceProvider" --force',
         ];
 
         $this->executeWithProgress(commands: $commands);
