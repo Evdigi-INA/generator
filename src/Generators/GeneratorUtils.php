@@ -14,7 +14,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
      */
     public static function getStub(string $path): string
     {
-        return file_get_contents(__DIR__."/../../stubs/generators/$path.stub");
+        return file_get_contents(__DIR__."/../../stubs/$path.stub");
     }
 
     /**
