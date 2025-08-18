@@ -30,7 +30,7 @@ class PublishAllFiles extends Command
     {
         $type = $this->argument(key: 'type');
 
-        if (!in_array(needle: $type, haystack: ['full', 'simple'])) {
+        if (! in_array(needle: $type, haystack: ['full', 'simple'])) {
             $this->error(string: "Invalid type. Please specify either 'full' for the complete version or 'simple' for basic functionality.");
 
             return;
@@ -48,19 +48,19 @@ class PublishAllFiles extends Command
      */
     protected function handleFullInstallation(): void
     {
-        if (!$this->verifyPackageRequirements()) {
+        if (! $this->verifyPackageRequirements()) {
             return;
         }
 
         $runCount = $this->getRunCount(type: 'full_version_publish_count');
 
         if ($runCount >= 1) {
-            if (!$this->confirm(question: 'The full version is already installed. Continue anyway?')) {
+            if (! $this->confirm(question: 'The full version is already installed. Continue anyway?')) {
                 return;
             }
 
             if (
-                !$this->confirm(question: sprintf(
+                ! $this->confirm(question: sprintf(
                     'You\'ve run this command %d time(s) before. Proceed with installation?',
                     $runCount
                 ))
@@ -69,7 +69,7 @@ class PublishAllFiles extends Command
             }
         }
 
-        if (!$this->confirm(question: 'This will publish all files and may overwrite existing ones. Continue?')) {
+        if (! $this->confirm(question: 'This will publish all files and may overwrite existing ones. Continue?')) {
             return;
         }
 
@@ -125,19 +125,19 @@ class PublishAllFiles extends Command
         // $composerContent = file_get_contents(filename: base_path(path: 'composer.json'));
         $missing = [];
 
-        if (!class_exists(class: "Laravel\Fortify\Fortify")) {
+        if (! class_exists(class: "Laravel\Fortify\Fortify")) {
             $missing[] = 'laravel/fortify';
         }
 
-        if (!class_exists(class: "Spatie\Permission\PermissionServiceProvider")) {
+        if (! class_exists(class: "Spatie\Permission\PermissionServiceProvider")) {
             $missing[] = 'spatie/laravel-permission';
         }
 
-        if (!empty($missing)) {
+        if (! empty($missing)) {
             $this->error(string: 'Required packages missing:');
             $this->error(string: implode(', ', $missing));
             $this->line(string: 'Please install them first using:');
-            $this->line(string: 'composer require ' . implode(' ', $missing));
+            $this->line(string: 'composer require '.implode(' ', $missing));
 
             return false;
         }
@@ -194,7 +194,7 @@ class PublishAllFiles extends Command
     {
         $file = storage_path(path: 'generator.cache');
 
-        if (!file_exists(filename: $file)) {
+        if (! file_exists(filename: $file)) {
             return [
                 'simple_version_publish_count' => 0,
                 'full_version_publish_count' => 0,

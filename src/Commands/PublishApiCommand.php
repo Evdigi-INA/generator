@@ -46,7 +46,7 @@ class PublishApiCommand extends Command
                 'vendor:publish --tag=generator-request-role',
                 'vendor:publish --tag=generator-request-user',
                 'vendor:publish --tag=generator-resource-api',
-                'vendor:publish --tag=generator-controller-user-role-api'
+                'vendor:publish --tag=generator-controller-user-role-api',
             ]);
 
             $template .= GeneratorUtils::getStub(path: 'user-role-api');
@@ -91,7 +91,7 @@ class PublishApiCommand extends Command
      */
     protected function verifyApiInstallation(): void
     {
-        if (!(new GeneratorService)->apiRouteAlreadyExists()) {
+        if (! (new GeneratorService)->apiRouteAlreadyExists()) {
             $this->error(string: 'API installation not detected.');
             $this->line(string: 'To use this feature, please first install the API by running:');
             $this->line(string: 'php artisan install:api');

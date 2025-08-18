@@ -8,10 +8,13 @@ use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Contracts\LoginResponse;
+use Laravel\Fortify\Contracts\LogoutResponse;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -43,15 +46,26 @@ class FortifyServiceProvider extends ServiceProvider
         RateLimiter::for(name: 'two-factor', callback: fn (Request $request): Limit => Limit::perMinute(maxAttempts: 5)->by(key: $request->session()->get(key: 'login.id')));
 
         Fortify::registerView(view: fn (): View => view(view: 'auth.register'));
-
         Fortify::loginView(view: fn (): View => view(view: 'auth.login'));
-
         Fortify::confirmPasswordView(view: fn (): View => view(view: 'auth.confirm-password'));
-
         Fortify::twoFactorChallengeView(view: fn (): View => view(view: 'auth.two-factor-challenge'));
-
         Fortify::requestPasswordResetLinkView(view: fn (): View => view(view: 'auth.forgot-password'));
-
         Fortify::resetPasswordView(view: fn (Request $request): View => view(view: 'auth.reset-password', data: ['request' => $request]));
+
+        $this->app->instance(abstract: LogoutResponse::class, instance: new class implements LogoutResponse
+        {
+            public function toResponse($request): RedirectResponse
+            {
+                return redirect(to: '/login');
+            }
+        });
+
+        $this->app->instance(abstract: LoginResponse::class, instance: new class implements LoginResponse
+        {
+            public function toResponse($request): RedirectResponse
+            {
+                return redirect(to: '/');
+            }
+        });
     }
 }
