@@ -178,32 +178,18 @@ class MenuGenerator
     }
 
     /**
-     * Convert json to string with format like an array.
+     * Convert array to string with format like a PHP array.
      */
     protected function convertJsonToArrayString(array $replace): string
     {
-        return str_replace(
-            search: [
-                '{',
-                '}',
-                ':',
-                '"',
-                "','",
-                '\\',
-                "='",
-                "'>",
-            ],
-            replace: [
-                '[',
-                ']',
-                ' =>',
-                "'",
-                "', '",
-                '',
-                '="',
-                '">',
-            ],
-            subject: json_encode(value: $replace, flags: JSON_PRETTY_PRINT)
-        );
+        $export = var_export($replace, true);
+
+        // Convert "array (" to "[" and ")" to "]" for short array syntax
+        $export = preg_replace('/^array\s*\(/m', '[', $export);
+        $export = preg_replace('/^\s*\)/m', ']', $export);
+        // Fix nested closing: "  )," -> "  ],"
+        $export = preg_replace('/\)(,?)$/m', ']$1', $export);
+
+        return $export;
     }
 }

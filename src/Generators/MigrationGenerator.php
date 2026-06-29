@@ -184,7 +184,7 @@ class MigrationGenerator
             'fields' => $setFields,
         ], stubName: 'migration');
 
-        $migrationName = date('Y').'_'.date('m').'_'.date('d').'_'.date('h').date('i').date('s').'_create_'.$tableNamePluralLowercase.'_table.php';
+        $migrationName = date('Y_m_d_His').'_create_'.$tableNamePluralLowercase.'_table.php';
 
         file_put_contents(filename: database_path("/migrations/$migrationName"), data: $template);
     }

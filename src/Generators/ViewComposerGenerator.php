@@ -58,7 +58,9 @@ class ViewComposerGenerator
             }
             $path = app_path(path: 'Providers/ViewComposerServiceProvider.php');
 
-            $viewProviderTemplate = substr(string: file_get_contents(filename: $path), offset: 0, length: -6)."\n\n\t\t".$template."\t}\n}";
+            $content = file_get_contents(filename: $path);
+            $lastBrace = strrpos(haystack: $content, needle: '}');
+            $viewProviderTemplate = substr(string: $content, offset: 0, length: $lastBrace)."\n\n\t\t".$template."\n\t}\n}\n".substr(string: $content, offset: $lastBrace + 1);
 
             file_put_contents(filename: $path, data: $viewProviderTemplate);
         }

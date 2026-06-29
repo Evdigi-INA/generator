@@ -23,8 +23,10 @@ use EvdigiIna\Generator\Generators\Views\EditViewGenerator;
 use EvdigiIna\Generator\Generators\Views\FormViewGenerator;
 use EvdigiIna\Generator\Generators\Views\IndexViewGenerator;
 use EvdigiIna\Generator\Generators\Views\ShowViewGenerator;
+use EvdigiIna\Generator\Exceptions\GeneratorRollbackException;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class GeneratorService implements GeneratorServiceInterface
 {
@@ -37,42 +39,61 @@ class GeneratorService implements GeneratorServiceInterface
             abort(code: Response::HTTP_FORBIDDEN, message: 'You have not yet installed the API, to use this feature, you must be running the artisan command: "php artisan install:api".');
         }
 
-        (new PermissionGenerator)->generate($request);
-        (new ModelGenerator)->generate($request);
-        (new MigrationGenerator)->generate($request);
-        (new ControllerGenerator)->generate($request);
-        (new RequestGenerator)->generate($request);
+        $createdFiles = [];
 
-        // blade template
-        if (isset($request['generate_variant']) || $request['generate_variant'] !== 'api') {
-            // for single form
-            (new CreateViewGenerator)->generate($request);
-            (new FormViewGenerator)->generate($request);
+        try {
+            (new PermissionGenerator)->generate($request);
+            (new ModelGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('model', $request));
 
-            // for full CRUD
-            if ($request['generate_variant'] === GeneratorVariant::DEFAULT->value) {
-                (new IndexViewGenerator)->generate($request);
-                (new ShowViewGenerator)->generate($request);
-                (new EditViewGenerator)->generate($request);
-                (new ActionViewGenerator)->generate($request);
+            (new MigrationGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('migration', $request));
+
+            (new ControllerGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('controller', $request));
+
+            (new RequestGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('request', $request));
+
+            // blade template
+            if (($request['generate_variant'] ?? '') !== 'api') {
+                // for single form
+                (new CreateViewGenerator)->generate($request);
+                (new FormViewGenerator)->generate($request);
+
+                // for full CRUD
+                if ($request['generate_variant'] === GeneratorVariant::DEFAULT->value) {
+                    (new IndexViewGenerator)->generate($request);
+                    (new ShowViewGenerator)->generate($request);
+                    (new EditViewGenerator)->generate($request);
+                    (new ActionViewGenerator)->generate($request);
+                }
+
+                (new MenuGenerator)->generate($request);
+                (new ViewComposerGenerator)->generate($request);
             }
 
-            (new MenuGenerator)->generate($request);
-            (new ViewComposerGenerator)->generate($request);
+            (new RouteGenerator)->generate($request);
+            (new SeederGenerator)->generate($request);
+            (new FactoryGenerator)->generate($request);
+            (new ResourceApiGenerator)->generate($request);
+
+            if ((($request['generate_variant'] ?? '') !== 'api') && empty($request['is_simple_generator'])) {
+                $this->checkSidebarType();
+            }
+
+            (new ExportExcelGenerator)->generate($request);
+
+            Artisan::call('migrate');
+        } catch (\Throwable $e) {
+            $this->cleanupCreatedFiles($createdFiles);
+
+            throw new GeneratorRollbackException(
+                message: 'Generator failed and rolled back: '.$e->getMessage(),
+                createdFiles: $createdFiles,
+                previous: $e,
+            );
         }
-
-        (new RouteGenerator)->generate($request);
-        (new SeederGenerator)->generate($request);
-        (new FactoryGenerator)->generate($request);
-        (new ResourceApiGenerator)->generate($request);
-
-        if ((empty($request['generate_variant']) && $request['generate_variant'] !== 'api') || empty($request['is_simple_generator'])) {
-            $this->checkSidebarType();
-        }
-
-        (new ExportExcelGenerator)->generate($request);
-
-        Artisan::call('migrate');
     }
 
     /**
@@ -196,5 +217,69 @@ class GeneratorService implements GeneratorServiceInterface
             'mediumText',
             'longText',
         ];
+    }
+
+    /**
+     * Track created files for potential rollback.
+     */
+    private function captureCreatedFiles(string $type, array $request): array
+    {
+        $model = GeneratorUtils::setModelName($request['model'], 'default');
+        $path = GeneratorUtils::getModelLocation($request['model']);
+        $files = [];
+
+        switch ($type) {
+            case 'model':
+                $modelName = GeneratorUtils::singularPascalCase($model);
+                if ($path) {
+                    $files[] = app_path("/Models/$path/$modelName.php");
+                } else {
+                    $files[] = app_path("/Models/$modelName.php");
+                }
+                break;
+            case 'migration':
+                $tableName = GeneratorUtils::pluralSnakeCase($model);
+                foreach (glob(database_path("/migrations/*_create_{$tableName}_table.php")) as $file) {
+                    $files[] = $file;
+                }
+                break;
+            case 'controller':
+                $modelName = GeneratorUtils::singularPascalCase($model);
+                if ($path) {
+                    $dir = GeneratorUtils::isGenerateApi() ? app_path("/Http/Controllers/Api/$path/") : app_path("/Http/Controllers/$path/");
+                    $files[] = "$dir{$modelName}Controller.php";
+                } else {
+                    $dir = GeneratorUtils::isGenerateApi() ? app_path('/Http/Controllers/Api/') : app_path('/Http/Controllers/');
+                    $files[] = "{$dir}{$modelName}Controller.php";
+                }
+                break;
+            case 'request':
+                $modelPascal = GeneratorUtils::singularPascalCase($model);
+                $modelPluralPascal = GeneratorUtils::pluralPascalCase($model);
+                if ($path) {
+                    $dir = app_path("/Http/Requests/$path/$modelPluralPascal");
+                    $files[] = "$dir/Store{$modelPascal}Request.php";
+                    $files[] = "$dir/Update{$modelPascal}Request.php";
+                } else {
+                    $dir = app_path("/Http/Requests/$modelPluralPascal");
+                    $files[] = "$dir/Store{$modelPascal}Request.php";
+                    $files[] = "$dir/Update{$modelPascal}Request.php";
+                }
+                break;
+        }
+
+        return $files;
+    }
+
+    /**
+     * Clean up created files during rollback.
+     */
+    private function cleanupCreatedFiles(array $files): void
+    {
+        foreach ($files as $file) {
+            if ($file && file_exists($file)) {
+                unlink($file);
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace EvdigiIna\Generator\Generators;
 
-use Illuminate\Support\Facades\Artisan;
+
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -48,7 +48,9 @@ class PermissionGenerator
 
             $path = config_path('permission.php');
 
-            $newPermissionFile = substr(string: file_get_contents(filename: $path), offset: 0, length: -8).$stringPermissions.'],];';
+            $content = file_get_contents(filename: $path);
+            $lastClosing = strrpos(haystack: $content, needle: '];');
+            $newPermissionFile = substr(string: $content, offset: 0, length: $lastClosing).$stringPermissions.'],];';
 
             file_put_contents(filename: $path, data: $newPermissionFile);
 
@@ -61,27 +63,17 @@ class PermissionGenerator
      */
     protected function insertRoleAndPermissions(string $model): void
     {
-        Artisan::call('optimize:clear');
+        $role = Role::where('name', 'admin')->first();
 
-        $role = Role::findByName(name: 'admin');
+        if (! $role) {
+            return;
+        }
 
         $permissions = [
-            [
-                'name' => "$model view",
-                'guard_name' => 'web',
-            ],
-            [
-                'name' => "$model create",
-                'guard_name' => 'web',
-            ],
-            [
-                'name' => "$model edit",
-                'guard_name' => 'web',
-            ],
-            [
-                'name' => "$model delete",
-                'guard_name' => 'web',
-            ],
+            ['name' => "$model view", 'guard_name' => 'web'],
+            ['name' => "$model create", 'guard_name' => 'web'],
+            ['name' => "$model edit", 'guard_name' => 'web'],
+            ['name' => "$model delete", 'guard_name' => 'web'],
         ];
 
         foreach ($permissions as $p) {

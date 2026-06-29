@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use EvdigiIna\Generator\Enums\GeneratorType;
+use EvdigiIna\Generator\Enums\GeneratorVariant;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
 use PHPUnit\Framework\Attributes\Test;
 use Random\RandomException;
@@ -71,5 +73,43 @@ class GeneratorTest extends TestCase
         }
 
         return $randomString;
+    }
+
+    #[Test]
+    public function it_validates_required_fields_on_store(): void
+    {
+        $this->postJson('/simple-generators', [])
+            ->assertStatus(422);
+    }
+
+    #[Test]
+    public function it_can_store_simple_module_with_minimal_fields(): void
+    {
+        $modelName = 'SimpleTest'.$this->generateRandomString();
+
+        $response = $this->postJson('/simple-generators', [
+            'model' => $modelName,
+            'generate_type' => GeneratorType::ALL->value,
+            'generate_variant' => GeneratorVariant::DEFAULT->value,
+            'fields' => ['name', 'description'],
+            'column_types' => ['string', 'text'],
+            'input_types' => ['text', 'textarea'],
+            'requireds' => ['yes', 'no'],
+            'select_options' => [null, null],
+            'constrains' => [null, null],
+            'foreign_ids' => [null, null],
+            'on_update_foreign' => [null, null],
+            'on_delete_foreign' => [null, null],
+            'min_lengths' => [null, null],
+            'max_lengths' => [null, null],
+            'mimes' => [null, null],
+            'files_sizes' => [null, null],
+            'file_types' => [null, null],
+            'steps' => [null, null],
+            'default_values' => [null, null],
+        ]);
+
+        $response->assertCreated()
+            ->assertJson(['message' => 'success']);
     }
 }

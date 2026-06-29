@@ -68,7 +68,7 @@ class PublishAllFiles extends Command
 
                 if ($this->confirm('Do you wish to continue? This command may overwrite several files.')) {
 
-                    if ($totalRunningCommand['full_version_publish_count'] == 1 || $totalRunningCommand['full_version_publish_count'] > 1) {
+                if ($totalRunningCommand['simple_version_publish_count'] == 1 || $totalRunningCommand['simple_version_publish_count'] > 1) {
 
                         if ($this->confirm('Do you wish to continue? you are already running this command '.$totalRunningCommand['full_version_publish_count'].' for times.')) {
                             $this->totalRunningCommand('full_version_publish_count', true);

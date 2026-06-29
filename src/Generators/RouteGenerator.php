@@ -25,32 +25,24 @@ class RouteGenerator
         $routeFacade = GeneratorUtils::isGenerateApi() ? "Route::apiResource('" : "Route::resource('";
         $controllerPath = '';
 
-        switch ($path) {
-            case true:
-                switch (GeneratorUtils::isGenerateApi()) {
-                    case true:
-                        $controllerClass = "\n".$routeFacade.$modelNamePluralKebabCase."', App\Http\Controllers\Api\\";
-                        $controllerPath = "App\Http\Controllers\Api\\".$path.$modelNameSingularPascalCase.'Controller::class';
-                        break;
-                    default:
-                        $controllerPath = "App\Http\Controllers\\".$path.$modelNameSingularPascalCase.'Controller::class';
-                        $controllerClass = "\n".$routeFacade.$modelNamePluralKebabCase."', App\Http\Controllers\\";
-                        break;
-                }
-                $controllerClass .= str_replace('/', '\\', $path).'\\';
-                break;
-            default:
-                switch (GeneratorUtils::isGenerateApi()) {
-                    case true:
-                        $controllerClass = "\n".$routeFacade.$modelNamePluralKebabCase."', App\Http\Controllers\Api\\";
-                        $controllerPath = "App\Http\Controllers\Api\\".$modelNameSingularPascalCase.'Controller::class';
-                        break;
-                    default:
-                        $controllerPath = "App\Http\Controllers\\".$modelNameSingularPascalCase.'Controller::class';
-                        $controllerClass = "\n".$routeFacade.$modelNamePluralKebabCase."', App\Http\Controllers\\";
-                        break;
-                }
-                break;
+        if ($path !== '') {
+            if (GeneratorUtils::isGenerateApi()) {
+                $controllerClass = "\n".$routeFacade.$modelNamePluralKebabCase."', App\Http\Controllers\Api\\";
+                $controllerPath = "App\Http\Controllers\Api\\".$path.$modelNameSingularPascalCase.'Controller::class';
+            } else {
+                $controllerPath = "App\Http\Controllers\\".$path.$modelNameSingularPascalCase.'Controller::class';
+                $controllerClass = "\n".$routeFacade.$modelNamePluralKebabCase."', App\Http\Controllers\\";
+            }
+
+            $controllerClass .= str_replace('/', '\\', $path).'\\';
+        } else {
+            if (GeneratorUtils::isGenerateApi()) {
+                $controllerClass = "\n".$routeFacade.$modelNamePluralKebabCase."', App\Http\Controllers\Api\\";
+                $controllerPath = "App\Http\Controllers\Api\\".$modelNameSingularPascalCase.'Controller::class';
+            } else {
+                $controllerPath = "App\Http\Controllers\\".$modelNameSingularPascalCase.'Controller::class';
+                $controllerClass = "\n".$routeFacade.$modelNamePluralKebabCase."', App\Http\Controllers\\";
+            }
         }
 
         $controllerClass .= $modelNameSingularPascalCase.'Controller::class)'.$middleware;

@@ -94,69 +94,34 @@ class ControllerGenerator
 
         // load the relations for create, show, and edit
         if (in_array(needle: 'foreignId', haystack: $request['column_types'])) {
+            $constrainRelations = [];
+
+            foreach ($request['constrains'] as $i => $constrain) {
+                if ($constrain != null) {
+                    $constrainName = GeneratorUtils::setModelName(model: $request['constrains'][$i]);
+                    $constrainSnakeCase = GeneratorUtils::singularSnakeCase(string: $constrainName);
+                    $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself(table: $constrainName);
+                    $columnAfterId = GeneratorUtils::getColumnAfterId(table: $constrainName);
+
+                    $constrainRelations[] = "'$constrainSnakeCase:$selectedColumns'";
+                    $addColumns .= "->addColumn(name: '$constrainSnakeCase', content: fn(\$row): ?string => \$row?->".$constrainSnakeCase."?->$columnAfterId ?? '')\n\t\t\t\t";
+                }
+            }
+
+            $relationList = implode(', ', $constrainRelations);
+
             if (GeneratorUtils::isGenerateApi()) {
-                $relations .= 'with(relations: [';
-
-                $countForeignId = count(value: array_keys(array: $request['column_types'], filter_value: 'foreignId'));
-
-                foreach ($request['constrains'] as $i => $constrain) {
-                    if ($constrain != null) {
-                        // remove path or '/' if exists
-                        $constrainName = GeneratorUtils::setModelName(model: $request['constrains'][$i]);
-
-                        $constrainSnakeCase = GeneratorUtils::singularSnakeCase(string: $constrainName);
-                        $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself(table: $constrainName);
-
-                        $relations .= "'$constrainSnakeCase:$selectedColumns', ";
-
-                        if ($countForeignId + 1 < $i) {
-                            $query .= "'$constrainSnakeCase:$selectedColumns', ";
-                        } else {
-                            $query .= "'$constrainSnakeCase:$selectedColumns'";
-                        }
-                    }
+                $relations = "with(relations: [$relationList])->";
+                $query = "$modelNameSingularPascalCase::query()";
+                // Replace query with with() if there are relations
+                if (! empty($constrainRelations)) {
+                    $query = "$modelNameSingularPascalCase::with(relations: [$relationList])";
                 }
-
-                $relations .= '])->';
-                $relations = str_replace(search: "', ])->", replace: "'])->", subject: $relations);
             } else {
-                $relations .= '$'.$modelNameSingularCamelCase.'->load(relations: [';
-
-                $countForeignId = count(value: array_keys(array: $request['column_types'], filter_value: 'foreignId'));
-
-                $query = "$modelNameSingularPascalCase::with(relations: [";
-
-                foreach ($request['constrains'] as $i => $constrain) {
-                    if ($constrain != null) {
-                        // remove path or '/' if exists
-                        $constrainName = GeneratorUtils::setModelName(model: $request['constrains'][$i]);
-
-                        $constrainSnakeCase = GeneratorUtils::singularSnakeCase(string: $constrainName);
-                        $selectedColumns = GeneratorUtils::selectColumnAfterIdAndIdItself(table: $constrainName);
-                        $columnAfterId = GeneratorUtils::getColumnAfterId(table: $constrainName);
-
-                        if ($countForeignId + 1 < $i) {
-                            $relations .= "'$constrainSnakeCase:$selectedColumns', ";
-                            $query .= "'$constrainSnakeCase:$selectedColumns', ";
-                        } else {
-                            $relations .= "'$constrainSnakeCase:$selectedColumns'";
-                            $query .= "'$constrainSnakeCase:$selectedColumns'";
-                        }
-
-                        /**
-                         * Will generate something like:
-                         *
-                         *  ->addColumn(name: 'user', content: fn($row) => $row?->user?->name ?? '')
-                         */
-                        $addColumns .= "->addColumn(name: '$constrainSnakeCase', content: fn(\$row): ?string => \$row?->".$constrainSnakeCase."?->$columnAfterId ?? '')\n\t\t\t\t";
-                    }
-                }
-
-                $query .= '])';
-                $relations .= "]);\n\n\t\t";
-
-                $query = str_replace(search: "''", replace: "', '", subject: $query);
-                $relations = str_replace(search: "''", replace: "', '", subject: $relations);
+                $relations = '$'.$modelNameSingularCamelCase."->load(relations: [$relationList]);\n\n\t\t";
+                $query = ! empty($constrainRelations)
+                    ? "$modelNameSingularPascalCase::with(relations: [$relationList])"
+                    : "$modelNameSingularPascalCase::query()";
             }
         }
 
