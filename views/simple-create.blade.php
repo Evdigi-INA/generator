@@ -175,6 +175,7 @@
                                                     <small>{{ __(key: 'Used for validation request') }}</small>
                                                 </th>
                                                 <th>{{ __(key: 'Required') }}</th>
+                                                <th>{{ __(key: 'Unique') }}</th>
                                                 <th>{{ __(key: 'Action') }}</th>
                                             </tr>
                                         </thead>
@@ -252,6 +253,12 @@
                                                     <input type="hidden" name="default_values[]"
                                                         class="form-default-value"
                                                         placeholder="{{ __(key: 'Default Value (optional)') }}">
+                                                </td>
+                                                <td>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" name="uniques[]"
+                                                            class="form-check-input" value="1">
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <button type="button"

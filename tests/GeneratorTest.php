@@ -4,6 +4,7 @@ namespace Tests;
 
 use EvdigiIna\Generator\Enums\GeneratorType;
 use EvdigiIna\Generator\Enums\GeneratorVariant;
+use EvdigiIna\Generator\Generators\GeneratorUtils;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
 use PHPUnit\Framework\Attributes\Test;
 use Random\RandomException;
@@ -148,6 +149,49 @@ class GeneratorTest extends TestCase
         $modelContent = file_get_contents($modelPath);
         $this->assertStringContainsString('use Illuminate\Database\Eloquent\SoftDeletes;', $modelContent);
         $this->assertStringContainsString('use SoftDeletes;', $modelContent);
+    }
+
+    #[Test]
+    public function it_can_generate_module_with_unique_validation(): void
+    {
+        $modelName = 'UniqueTest'.$this->generateRandomString();
+
+        $response = $this->postJson('/simple-generators', [
+            'model' => $modelName,
+            'generate_type' => GeneratorType::ALL->value,
+            'generate_variant' => GeneratorVariant::DEFAULT->value,
+            'fields' => ['email', 'name'],
+            'column_types' => ['string', 'string'],
+            'input_types' => ['email', 'text'],
+            'requireds' => ['yes', 'yes'],
+            'uniques' => ['1', null],
+            'select_options' => [null, null],
+            'constrains' => [null, null],
+            'foreign_ids' => [null, null],
+            'on_update_foreign' => [null, null],
+            'on_delete_foreign' => [null, null],
+            'min_lengths' => [null, null],
+            'max_lengths' => [null, null],
+            'mimes' => [null, null],
+            'files_sizes' => [null, null],
+            'file_types' => [null, null],
+            'steps' => [null, null],
+            'default_values' => [null, null],
+        ]);
+
+        $response->assertCreated();
+
+        $modelPath = app_path("Models/$modelName.php");
+        $this->assertFileExists($modelPath);
+        $modelContent = file_get_contents($modelPath);
+        $this->assertStringContainsString("class $modelName extends Model", $modelContent);
+
+        $pluralPascal = GeneratorUtils::pluralPascalCase($modelName);
+        $requestPath = app_path("Http/Requests/{$pluralPascal}/Store{$modelName}Request.php");
+        $this->assertFileExists($requestPath);
+        $requestContent = file_get_contents($requestPath);
+        $this->assertStringContainsString("'unique:", $requestContent);
+        $this->assertStringContainsString(",email'", $requestContent);
     }
 
     #[Test]

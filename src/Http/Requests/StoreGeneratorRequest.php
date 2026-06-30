@@ -73,6 +73,7 @@ class StoreGeneratorRequest extends FormRequest
             'generate_seeder' => ['nullable'],
             'generate_factory' => ['nullable'],
             'soft_delete' => ['nullable', 'in:1,0,true,false'],
+            'uniques.*' => ['nullable', 'in:1,0,on'],
             // 'new_route' => ['required_if:header,new'],
             'new_submenu' => ['nullable'],
             'generate_variant' => ['required'],

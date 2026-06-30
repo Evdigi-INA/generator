@@ -81,6 +81,7 @@ class RequestGenerator
         $validation = $this->addInputTypeValidations($validation, $request, $model, $index, $field);
         $validation = $this->addColumnTypeValidations($validation, $request, $index);
         $validation = $this->addLengthValidations($validation, $request, $index);
+        $validation = $this->addUniqueValidation($validation, $request, $model, $index, $field);
 
         // Remove trailing comma and close array
         return substr($validation, 0, -2).'], ';
@@ -227,6 +228,20 @@ class RequestGenerator
 
         if (in_array($request['column_types'][$index], ['string', 'text', 'char', 'varchar', 'tinytext', 'text', 'mediumtext', 'longtext']) && $min && $max) {
             return $validation.RequestGeneratorEnum::min($min).RequestGeneratorEnum::max($max);
+        }
+
+        return $validation;
+    }
+
+    /**
+     * Add unique validation rule for the field if checked.
+     */
+    protected function addUniqueValidation(string $validation, array $request, string $model, int $index, string $field): string
+    {
+        if (! empty($request['uniques'][$index])) {
+            $tableName = GeneratorUtils::pluralSnakeCase($model);
+
+            return $validation."'unique:{$tableName},".str($field)->snake()."', ";
         }
 
         return $validation;
