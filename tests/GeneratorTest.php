@@ -261,4 +261,54 @@ class GeneratorTest extends TestCase
         $response->assertCreated()
             ->assertJson(['message' => 'success']);
     }
+
+    #[Test]
+    public function it_detects_file_conflict_on_duplicate_generation(): void
+    {
+        $modelName = 'ConflictTest'.$this->generateRandomString();
+
+        $this->postJson('/simple-generators', [
+            'model' => $modelName,
+            'generate_type' => GeneratorType::ALL->value,
+            'generate_variant' => GeneratorVariant::DEFAULT->value,
+            'fields' => ['name'],
+            'column_types' => ['string'],
+            'input_types' => ['text'],
+            'requireds' => ['yes'],
+            'select_options' => [null],
+            'constrains' => [null],
+            'foreign_ids' => [null],
+            'on_update_foreign' => [null],
+            'on_delete_foreign' => [null],
+            'min_lengths' => [null],
+            'max_lengths' => [null],
+            'mimes' => [null],
+            'files_sizes' => [null],
+            'file_types' => [null],
+            'steps' => [null],
+            'default_values' => [null],
+        ])->assertCreated();
+
+        $this->postJson('/simple-generators', [
+            'model' => $modelName,
+            'generate_type' => GeneratorType::ALL->value,
+            'generate_variant' => GeneratorVariant::DEFAULT->value,
+            'fields' => ['name'],
+            'column_types' => ['string'],
+            'input_types' => ['text'],
+            'requireds' => ['yes'],
+            'select_options' => [null],
+            'constrains' => [null],
+            'foreign_ids' => [null],
+            'on_update_foreign' => [null],
+            'on_delete_foreign' => [null],
+            'min_lengths' => [null],
+            'max_lengths' => [null],
+            'mimes' => [null],
+            'files_sizes' => [null],
+            'file_types' => [null],
+            'steps' => [null],
+            'default_values' => [null],
+        ])->assertStatus(403);
+    }
 }

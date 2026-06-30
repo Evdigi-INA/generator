@@ -155,43 +155,40 @@ class GeneratorService implements GeneratorServiceInterface
      */
     public function checkFilesAreSame(array $request): array
     {
-        // TODO:
-        // $sameFile = [];
+        $sameFile = [];
 
-        // $path = GeneratorUtils::getModelLocation($request['model']);
-        // $model = GeneratorUtils::singularPascalCase(GeneratorUtils::setModelName($request['model']));
+        $path = GeneratorUtils::getModelLocation($request['model']);
+        $model = GeneratorUtils::singularPascalCase(GeneratorUtils::setModelName($request['model']));
 
-        // if (
-        //     file_exists(app_path("/Models/$model.php")) ||
-        //     file_exists(app_path("/Models/$path") . "/$model.php")
-        // ) {
-        //     $sameFile[] = [
-        //         'model' => "The $model model is already exists"
-        //     ];
-        // }
+        if (
+            file_exists(app_path("/Models/$model.php")) ||
+            file_exists(app_path("/Models/$path") . "/{$model}.php")
+        ) {
+            $sameFile[] = [
+                'model' => "The $model model is already exists",
+            ];
+        }
 
-        // $checkMigrationFile = array_diff(scandir(database_path('/migrations')), array('.', '..'));
+        $checkMigrationFile = array_diff(scandir(database_path('/migrations')), array('.', '..'));
 
-        // foreach ($checkMigrationFile as $file) {
-        //     if (str($file)->contains(GeneratorUtils::pluralSnakeCase($model))) {
-        //         $sameFile[] = [
-        //             'migration' => "The $model migration is already exists"
-        //         ];
-        //     }
-        // }
+        foreach ($checkMigrationFile as $file) {
+            if (str($file)->contains(GeneratorUtils::pluralSnakeCase($model))) {
+                $sameFile[] = [
+                    'migration' => "The $model migration is already exists",
+                ];
+            }
+        }
 
-        // if (
-        //     file_exists(app_path("/Http/Controllers/{$model}Controller.php")) ||
-        //     file_exists(app_path("/Http/Controllers/$path") . "/{$model}Controller.php")
-        // ) {
-        //     $sameFile[] = [
-        //         'controller' => "The {$model}Controller is already exists"
-        //     ];
-        // }
+        if (
+            file_exists(app_path("/Http/Controllers/{$model}Controller.php")) ||
+            file_exists(app_path("/Http/Controllers/$path") . "/{$model}Controller.php")
+        ) {
+            $sameFile[] = [
+                'controller' => "The {$model}Controller is already exists",
+            ];
+        }
 
-        // return $sameFile;
-
-        return [];
+        return $sameFile;
     }
 
     /**

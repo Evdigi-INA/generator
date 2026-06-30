@@ -35,16 +35,11 @@ class SimpleGeneratorController extends Controller
         $validated['is_simple_generator'] = true;
         $validated['generate_variant'] = GeneratorVariant::DEFAULT->value;
 
-        /**
-         * will added in next release
-         * now it's not working, because it's not implemented
-         * only focus to fix the bug
-         */
-        // $checkFile = $this->generatorService->checkFilesAreSame($validated);
+        $checkFile = $this->generatorService->checkFilesAreSame($validated);
 
-        // if(count($checkFile) > 0){
-        //     return response()->json($checkFile, 403);
-        // }
+        if (count($checkFile) > 0) {
+            return response()->json($checkFile, 403);
+        }
 
         switch ($request->generate_type) {
             case GeneratorType::ALL->value:
