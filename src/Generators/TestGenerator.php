@@ -21,13 +21,13 @@ class TestGenerator
         $path = base_path("tests/Feature/{$pluralPascal}");
         GeneratorUtils::checkFolder($path);
 
-        $stub = GeneratorUtils::getStub('test');
         $content = GeneratorUtils::replaceStub(
             replaces: [
                 '{{ modelName }}' => $name,
                 '{{ modelPluralPascal }}' => $pluralPascal,
                 '{{ modelPluralKebab }}' => $pluralKebab,
                 '{{ modelSingularCamel }}' => $singularCamel,
+                '{{ modelSingularKebab }}' => GeneratorUtils::singularKebabCase($model),
                 '{{ modelPluralSnake }}' => GeneratorUtils::pluralSnakeCase($model),
                 '{{ fields.0.name }}' => $request['fields'][0] ?? 'name',
             ],

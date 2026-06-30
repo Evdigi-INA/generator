@@ -1,0 +1,360 @@
+# Review package: 2c12a8a..HEAD
+
+## Commits
+c9f47ac feat: add test scaffolding generator (Pest)
+
+## Files changed
+ src/Generators/Services/GeneratorService.php      |  2 +
+ src/Generators/TestGenerator.php                  | 39 +++++++++++++
+ src/Http/Requests/StoreGeneratorRequest.php       |  1 +
+ src/Http/Requests/StoreSimpleGeneratorRequest.php |  1 +
+ stubs/shared/test.stub                            | 67 +++++++++++++++++++++++
+ tests/GeneratorTest.php                           | 37 +++++++++++++
+ views/include/form.blade.php                      |  8 +++
+ views/simple-create.blade.php                     |  9 +++
+ 8 files changed, 164 insertions(+)
+
+## Diff
+diff --git a/src/Generators/Services/GeneratorService.php b/src/Generators/Services/GeneratorService.php
+index 4525db7..cfad7fe 100644
+--- a/src/Generators/Services/GeneratorService.php
++++ b/src/Generators/Services/GeneratorService.php
+@@ -1,19 +1,20 @@
+ <?php
+ 
+ namespace EvdigiIna\Generator\Generators\Services;
+ 
+ use EvdigiIna\Generator\Enums\GeneratorVariant;
+ use EvdigiIna\Generator\Exceptions\GeneratorRollbackException;
+ use EvdigiIna\Generator\Generators\ControllerGenerator;
+ use EvdigiIna\Generator\Generators\ExportExcelGenerator;
+ use EvdigiIna\Generator\Generators\FactoryGenerator;
++use EvdigiIna\Generator\Generators\TestGenerator;
+ use EvdigiIna\Generator\Generators\GeneratorUtils;
+ use EvdigiIna\Generator\Generators\Interfaces\GeneratorServiceInterface;
+ use EvdigiIna\Generator\Generators\MenuGenerator;
+ use EvdigiIna\Generator\Generators\MigrationGenerator;
+ use EvdigiIna\Generator\Generators\ModelGenerator;
+ use EvdigiIna\Generator\Generators\PermissionGenerator;
+ use EvdigiIna\Generator\Generators\RequestGenerator;
+ use EvdigiIna\Generator\Generators\ResourceApiGenerator;
+ use EvdigiIna\Generator\Generators\RouteGenerator;
+ use EvdigiIna\Generator\Generators\SeederGenerator;
+@@ -78,20 +79,21 @@ class GeneratorService implements GeneratorServiceInterface
+             (new RouteGenerator)->generate($request);
+             (new SeederGenerator)->generate($request);
+             (new FactoryGenerator)->generate($request);
+             (new ResourceApiGenerator)->generate($request);
+ 
+             if ((($request['generate_variant'] ?? '') !== 'api') && empty($request['is_simple_generator'])) {
+                 $this->checkSidebarType();
+             }
+ 
+             (new ExportExcelGenerator)->generate($request);
++            (new TestGenerator)->generate($request);
+ 
+             Artisan::call('migrate');
+         } catch (Throwable $e) {
+             $this->cleanupCreatedFiles($createdFiles);
+ 
+             throw new GeneratorRollbackException(
+                 message: 'Generator failed and rolled back: '.$e->getMessage(),
+                 createdFiles: $createdFiles,
+                 previous: $e,
+             );
+diff --git a/src/Generators/TestGenerator.php b/src/Generators/TestGenerator.php
+new file mode 100644
+index 0000000..b0b9130
+--- /dev/null
++++ b/src/Generators/TestGenerator.php
+@@ -0,0 +1,39 @@
++<?php
++
++declare(strict_types=1);
++
++namespace EvdigiIna\Generator\Generators;
++
++class TestGenerator
++{
++    public function generate(array $request): void
++    {
++        if (empty($request['generate_tests'])) {
++            return;
++        }
++
++        $model = GeneratorUtils::setModelName($request['model'], 'default');
++        $name = GeneratorUtils::singularPascalCase($model);
++        $pluralKebab = GeneratorUtils::pluralKebabCase($model);
++        $singularCamel = GeneratorUtils::singularCamelCase($model);
++        $pluralPascal = GeneratorUtils::pluralPascalCase($model);
++
++        $path = base_path("tests/Feature/{$pluralPascal}");
++        GeneratorUtils::checkFolder($path);
++
++        $stub = GeneratorUtils::getStub('test');
++        $content = GeneratorUtils::replaceStub(
++            replaces: [
++                '{{ modelName }}' => $name,
++                '{{ modelPluralPascal }}' => $pluralPascal,
++                '{{ modelPluralKebab }}' => $pluralKebab,
++                '{{ modelSingularCamel }}' => $singularCamel,
++                '{{ modelPluralSnake }}' => GeneratorUtils::pluralSnakeCase($model),
++                '{{ fields.0.name }}' => $request['fields'][0] ?? 'name',
++            ],
++            stubName: 'test'
++        );
++
++        file_put_contents("{$path}/{$name}Test.php", $content);
++    }
++}
+diff --git a/src/Http/Requests/StoreGeneratorRequest.php b/src/Http/Requests/StoreGeneratorRequest.php
+index e996600..65bb34c 100644
+--- a/src/Http/Requests/StoreGeneratorRequest.php
++++ b/src/Http/Requests/StoreGeneratorRequest.php
+@@ -66,20 +66,21 @@ class StoreGeneratorRequest extends FormRequest
+             'file_types.*' => ['nullable', 'required_if:input_types.*,file', 'in:image,mimes'],
+             'column_types.*' => ['required', 'in:'.implode(',', (new GeneratorService)->columnTypes())],
+             'on_update_foreign.*' => ['nullable'],
+             'on_delete_foreign.*' => ['nullable'],
+             'new_header' => ['nullable'],
+             'new_icon' => ['nullable'],
+             'new_menu' => ['nullable'],
+             'generate_seeder' => ['nullable'],
+             'generate_factory' => ['nullable'],
+             'soft_delete' => ['nullable', 'in:1,0,true,false'],
++            'generate_tests' => ['nullable', 'in:1,0,on'],
+             'uniques.*' => ['nullable', 'in:1,0,on'],
+             // 'new_route' => ['required_if:header,new'],
+             'new_submenu' => ['nullable'],
+             'generate_variant' => ['required'],
+             'generate_export' => ['nullable'],
+             'target' => ['nullable', 'in:blade,livewire,inertia-vue,inertia-react'],
+         ];
+ 
+         if (GeneratorUtils::isGenerateApi() || request()->input('generate_type') == GeneratorType::ONLY_MODEL_AND_MIGRATION->value) {
+             return $validations;
+diff --git a/src/Http/Requests/StoreSimpleGeneratorRequest.php b/src/Http/Requests/StoreSimpleGeneratorRequest.php
+index c0e6d6a..add6ef6 100644
+--- a/src/Http/Requests/StoreSimpleGeneratorRequest.php
++++ b/src/Http/Requests/StoreSimpleGeneratorRequest.php
+@@ -55,17 +55,18 @@ class StoreSimpleGeneratorRequest extends FormRequest
+             'files_sizes.*' => ['nullable', 'required_if:input_types.*,file'],
+             'select_options.*' => ['nullable', 'required_if:column_types.*,enum'],
+             'constrains.*' => ['nullable', 'required_if:column_types.*,foreignId'],
+             'file_types.*' => ['nullable', 'required_if:input_types.*,file', 'in:image,mimes'],
+             'column_types.*' => ['required', 'in:'.implode(',', (new GeneratorService)->columnTypes())],
+             'on_update_foreign.*' => ['nullable'],
+             'on_delete_foreign.*' => ['nullable'],
+             'generate_seeder' => ['nullable'],
+             'generate_factory' => ['nullable'],
+             'soft_delete' => ['nullable', 'in:1,0,true,false'],
++            'generate_tests' => ['nullable', 'in:1,0,on'],
+             'uniques.*' => ['nullable', 'in:1,0,on'],
+             'generate_variant' => ['required'],
+             'generate_export' => ['nullable'],
+             'target' => ['nullable', 'in:blade,livewire,inertia-vue,inertia-react'],
+         ];
+     }
+ }
+diff --git a/stubs/shared/test.stub b/stubs/shared/test.stub
+new file mode 100644
+index 0000000..7628bcd
+--- /dev/null
++++ b/stubs/shared/test.stub
+@@ -0,0 +1,67 @@
++<?php
++
++declare(strict_types=1);
++
++namespace Tests\Feature\{{ modelPluralPascal }};
++
++use App\Models\{{ modelName }};
++use Illuminate\Foundation\Testing\RefreshDatabase;
++use Tests\TestCase;
++
++uses(RefreshDatabase::class);
++
++it('can list {{ modelPluralKebab }}', function () {
++    {{ modelSingularCamel }} = {{ modelName }}::factory()->create();
++
++    $response = $this->get('/{{ modelPluralKebab }}');
++
++    $response->assertOk();
++});
++
++it('can create a {{ modelSingularKebab }}', function () {
++    $response = $this->post('/{{ modelPluralKebab }}', [
++        '{{ fields.0.name }}' => 'Test {{ modelName }}',
++    ]);
++
++    $response->assertCreated();
++    $this->assertDatabaseHas('{{ modelPluralSnake }}', [
++        '{{ fields.0.name }}' => 'Test {{ modelName }}',
++    ]);
++});
++
++it('validates required fields', function () {
++    $response = $this->post('/{{ modelPluralKebab }}', []);
++
++    $response->assertSessionHasErrors(['{{ fields.0.name }}']);
++});
++
++it('can show a {{ modelSingularKebab }}', function () {
++    ${{ modelSingularCamel }} = {{ modelName }}::factory()->create();
++
++    $response = $this->get('/{{ modelPluralKebab }}/'.${{ modelSingularCamel }}->id);
++
++    $response->assertOk();
++});
++
++it('can update a {{ modelSingularKebab }}', function () {
++    ${{ modelSingularCamel }} = {{ modelName }}::factory()->create();
++
++    $response = $this->put('/{{ modelPluralKebab }}/'.${{ modelSingularCamel }}->id, [
++        '{{ fields.0.name }}' => 'Updated {{ modelName }}',
++    ]);
++
++    $response->assertOk();
++    $this->assertDatabaseHas('{{ modelPluralSnake }}', [
++        'id' => ${{ modelSingularCamel }}->id,
++        '{{ fields.0.name }}' => 'Updated {{ modelName }}',
++    ]);
++});
++
++it('can delete a {{ modelSingularKebab }}', function () {
++    ${{ modelSingularCamel }} = {{ modelName }}::factory()->create();
++
++    $response = $this->delete('/{{ modelPluralKebab }}/'.${{ modelSingularCamel }}->id);
++
++    $response->assertOk();
++    $this->assertModelMissing(${{ modelSingularCamel }});
++});
+diff --git a/tests/GeneratorTest.php b/tests/GeneratorTest.php
+index 5753ea5..6b16c99 100644
+--- a/tests/GeneratorTest.php
++++ b/tests/GeneratorTest.php
+@@ -187,20 +187,57 @@ class GeneratorTest extends TestCase
+         $this->assertStringContainsString("class $modelName extends Model", $modelContent);
+ 
+         $pluralPascal = GeneratorUtils::pluralPascalCase($modelName);
+         $requestPath = app_path("Http/Requests/{$pluralPascal}/Store{$modelName}Request.php");
+         $this->assertFileExists($requestPath);
+         $requestContent = file_get_contents($requestPath);
+         $this->assertStringContainsString("'unique:", $requestContent);
+         $this->assertStringContainsString(",email'", $requestContent);
+     }
+ 
++    #[Test]
++    public function it_can_generate_module_with_tests(): void
++    {
++        $modelName = 'TestGen'.$this->generateRandomString();
++
++        $response = $this->postJson('/simple-generators', [
++            'model' => $modelName,
++            'generate_type' => GeneratorType::ALL->value,
++            'generate_variant' => GeneratorVariant::DEFAULT->value,
++            'generate_tests' => '1',
++            'fields' => ['name'],
++            'column_types' => ['string'],
++            'input_types' => ['text'],
++            'requireds' => ['yes'],
++            'select_options' => [null],
++            'constrains' => [null],
++            'foreign_ids' => [null],
++            'on_update_foreign' => [null],
++            'on_delete_foreign' => [null],
++            'min_lengths' => [null],
++            'max_lengths' => [null],
++            'mimes' => [null],
++            'files_sizes' => [null],
++            'file_types' => [null],
++            'steps' => [null],
++            'default_values' => [null],
++        ]);
++
++        $response->assertCreated();
++
++        $pluralPascal = GeneratorUtils::pluralPascalCase($modelName);
++        $testPath = base_path("tests/Feature/{$pluralPascal}/{$modelName}Test.php");
++        $this->assertFileExists($testPath);
++        $testContent = file_get_contents($testPath);
++        $this->assertStringContainsString("namespace Tests\Feature\\{$pluralPascal};", $testContent);
++    }
++
+     #[Test]
+     public function it_can_store_simple_module_with_minimal_fields(): void
+     {
+         $modelName = 'SimpleTest'.$this->generateRandomString();
+ 
+         $response = $this->postJson('/simple-generators', [
+             'model' => $modelName,
+             'generate_type' => GeneratorType::ALL->value,
+             'generate_variant' => GeneratorVariant::DEFAULT->value,
+             'fields' => ['name', 'description'],
+diff --git a/views/include/form.blade.php b/views/include/form.blade.php
+index eea13bc..fd1717d 100644
+--- a/views/include/form.blade.php
++++ b/views/include/form.blade.php
+@@ -90,20 +90,28 @@
+             </div>
+         </div>
+         <div class="form-check">
+             <div class="checkbox">
+                 <input type="checkbox" class="form-check-input" id="soft_delete" name="soft_delete" value="1">
+                 <label for="soft_delete">{{ __(key: 'Soft Deletes') }}</label>
+                 <br>
+                 <small class="text-secondary">{{ __(key: 'Add soft deletes to the model and migration') }}</small>
+             </div>
+         </div>
++        <div class="form-check">
++            <div class="checkbox">
++                <input type="checkbox" class="form-check-input" id="generate_tests" name="generate_tests" value="1">
++                <label for="generate_tests">{{ __(key: 'Generate Tests') }}</label>
++                <br>
++                <small class="text-secondary">{{ __(key: 'Generate Pest feature tests') }}</small>
++            </div>
++        </div>
+     </div>
+ 
+     <div class="col-md-6 mt-3">
+         <h6>{{ __(key: 'Table Fields') }}</h6>
+     </div>
+ 
+     <div class="col-md-6 mt-3 d-flex justify-content-end">
+         <button type="button" id="btn-add" class="btn btn-success">
+             <i class="fas fa-plus"></i>
+             {{ __(key: 'Add') }}
+diff --git a/views/simple-create.blade.php b/views/simple-create.blade.php
+index 06e9e08..3c6a92a 100644
+--- a/views/simple-create.blade.php
++++ b/views/simple-create.blade.php
+@@ -140,20 +140,29 @@
+                                     </div>
+                                     <div class="form-check">
+                                         <div class="checkbox">
+                                             <input type="checkbox" class="form-check-input" id="soft_delete"
+                                                 name="soft_delete" value="1">
+                                             <label for="soft_delete">{{ __(key: 'Soft Deletes') }}</label>
+                                             <br>
+                                             <small class="text-secondary">{{ __(key: 'Add soft deletes to the model and migration') }}</small>
+                                         </div>
+                                     </div>
++                                    <div class="form-check">
++                                        <div class="checkbox">
++                                            <input type="checkbox" class="form-check-input" id="generate_tests"
++                                                name="generate_tests" value="1">
++                                            <label for="generate_tests">{{ __(key: 'Generate Tests') }}</label>
++                                            <br>
++                                            <small class="text-secondary">{{ __(key: 'Generate Pest feature tests') }}</small>
++                                        </div>
++                                    </div>
+                                 </div>
+ 
+                                 <div class="col-md-6 mt-3">
+                                     <h6>{{ __(key: 'Table Fields') }}</h6>
+                                 </div>
+ 
+                                 <div class="col-md-6 mt-3 d-flex justify-content-end">
+                                     <button type="button" id="btn-add" class="btn btn-success">
+                                         <i class="fas fa-plus"></i>
+                                         {{ __(key: 'Add') }}
