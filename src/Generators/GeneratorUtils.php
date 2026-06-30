@@ -12,9 +12,24 @@ class GeneratorUtils implements GeneratorUtilsInterface
     /**
      * Get template/stub file.
      */
-    public static function getStub(string $path): string
+    public static function getStub(string $path, ?string $target = null): string
     {
-        return file_get_contents(__DIR__."/../../stubs/$path.stub");
+        $target ??= request('target', 'blade');
+
+        $paths = [
+            __DIR__."/../../stubs/{$target}/{$path}.stub",
+            __DIR__."/../../stubs/shared/{$path}.stub",
+            __DIR__."/../../stubs/shared/api/{$path}.stub",
+            __DIR__."/../../stubs/blade/{$path}.stub",
+        ];
+
+        foreach ($paths as $stubPath) {
+            if (file_exists($stubPath)) {
+                return file_get_contents($stubPath);
+            }
+        }
+
+        throw new \RuntimeException("Stub not found: {$path} (target: {$target})");
     }
 
     /**

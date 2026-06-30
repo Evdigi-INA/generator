@@ -210,4 +210,101 @@ class GeneratorUtilsTest extends TestCase
     {
         $this->assertTrue(method_exists(GeneratorUtils::class, 'setDiskCodeForCastImage'));
     }
+
+    #[Test]
+    public function it_resolves_blade_controller_stub(): void
+    {
+        $content = GeneratorUtils::getStub(path: 'controllers/controller');
+
+        $this->assertNotEmpty($content);
+        $this->assertStringContainsString('<?php', $content);
+    }
+
+    #[Test]
+    public function it_resolves_shared_model_stub(): void
+    {
+        $content = GeneratorUtils::getStub(path: 'model');
+
+        $this->assertNotEmpty($content);
+        $this->assertStringContainsString('<?php', $content);
+    }
+
+    #[Test]
+    public function it_resolves_blade_route_stub(): void
+    {
+        $content = GeneratorUtils::getStub(path: 'route');
+
+        $this->assertNotEmpty($content);
+        $this->assertStringContainsString('Route::', $content);
+    }
+
+    #[Test]
+    public function it_resolves_api_stub_from_shared(): void
+    {
+        $content = GeneratorUtils::getStub(path: 'api');
+
+        $this->assertNotEmpty($content);
+        $this->assertStringContainsString('Route::', $content);
+    }
+
+    #[Test]
+    public function it_falls_back_to_shared_when_target_directory_lacks_stub(): void
+    {
+        $content = GeneratorUtils::getStub(path: 'export', target: 'api');
+
+        $this->assertNotEmpty($content);
+        $this->assertStringContainsString('<?php', $content);
+    }
+
+    #[Test]
+    public function it_falls_back_to_blade_as_last_resort(): void
+    {
+        $content = GeneratorUtils::getStub(path: 'route', target: 'api');
+
+        $this->assertNotEmpty($content);
+        $this->assertStringContainsString('Route::', $content);
+    }
+
+    #[Test]
+    public function it_throws_exception_for_nonexistent_stub(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        GeneratorUtils::getStub(path: 'nonexistent-stub-that-does-not-exist');
+    }
+
+    #[Test]
+    public function it_resolves_shared_sidebar_dynamic_stub(): void
+    {
+        $content = GeneratorUtils::getStub(path: 'sidebar-dynamic');
+
+        $this->assertNotEmpty($content);
+    }
+
+    #[Test]
+    public function it_resolves_user_role_api_stub(): void
+    {
+        $content = GeneratorUtils::getStub(path: 'user-role-api');
+
+        $this->assertNotEmpty($content);
+        $this->assertStringContainsString('Route::', $content);
+    }
+
+    #[Test]
+    public function it_resolves_with_explicit_target(): void
+    {
+        $content = GeneratorUtils::getStub(path: 'controllers/controller', target: 'blade');
+
+        $this->assertNotEmpty($content);
+        $this->assertStringContainsString('<?php', $content);
+    }
+
+    #[Test]
+    public function it_resolves_shared_model_cast_stub(): void
+    {
+        $content = GeneratorUtils::getStub(path: 'model-cast');
+
+        $this->assertNotEmpty($content);
+        $this->assertStringContainsString('Attribute', $content);
+    }
 }
