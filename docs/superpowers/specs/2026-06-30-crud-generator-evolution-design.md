@@ -233,7 +233,20 @@ When `--dry-run`:
 
 ### 4.3 Progress Bar
 
-CLI output uses Laravel `ProgressBar`:
+CLI output uses Laravel `ProgressBar` for all long-running commands:
+
+**`php artisan generator:install full` / `php artisan generator:install simple`:**
+```
+Installing full version...
+  1/17 [▓░░░░░░░░░░░░░░░░░░░░░░░]   6% Running: vendor:publish --tag=generator-views --force
+  2/17 [▓▓░░░░░░░░░░░░░░░░░░░░░░]  12% Running: vendor:publish --tag=generator-full-config --force
+  ...
+ 17/17 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100% Complete!
+
+Full version installed successfully!
+```
+
+**`php artisan make:crud Product` (generating module):**
 ```
 Generating Product module...
   Model       [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
@@ -245,6 +258,8 @@ Generating Product module...
 
 Module generated successfully! Route: /products
 ```
+
+The `generator:install` progress bar shows each `vendor:publish` step with its name. Implemented via `executeWithProgress()` in `PublishAllFiles.php` — already present in current merge.
 
 ### 4.4 Overwrite Prevention
 
