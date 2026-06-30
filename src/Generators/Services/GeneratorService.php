@@ -7,6 +7,7 @@ use EvdigiIna\Generator\Exceptions\GeneratorRollbackException;
 use EvdigiIna\Generator\Generators\ControllerGenerator;
 use EvdigiIna\Generator\Generators\ExportExcelGenerator;
 use EvdigiIna\Generator\Generators\FactoryGenerator;
+use EvdigiIna\Generator\Generators\TestGenerator;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
 use EvdigiIna\Generator\Generators\Interfaces\GeneratorServiceInterface;
 use EvdigiIna\Generator\Generators\MenuGenerator;
@@ -85,6 +86,7 @@ class GeneratorService implements GeneratorServiceInterface
             }
 
             (new ExportExcelGenerator)->generate($request);
+            (new TestGenerator)->generate($request);
 
             Artisan::call('migrate');
         } catch (Throwable $e) {

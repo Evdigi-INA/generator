@@ -195,6 +195,43 @@ class GeneratorTest extends TestCase
     }
 
     #[Test]
+    public function it_can_generate_module_with_tests(): void
+    {
+        $modelName = 'TestGen'.$this->generateRandomString();
+
+        $response = $this->postJson('/simple-generators', [
+            'model' => $modelName,
+            'generate_type' => GeneratorType::ALL->value,
+            'generate_variant' => GeneratorVariant::DEFAULT->value,
+            'generate_tests' => '1',
+            'fields' => ['name'],
+            'column_types' => ['string'],
+            'input_types' => ['text'],
+            'requireds' => ['yes'],
+            'select_options' => [null],
+            'constrains' => [null],
+            'foreign_ids' => [null],
+            'on_update_foreign' => [null],
+            'on_delete_foreign' => [null],
+            'min_lengths' => [null],
+            'max_lengths' => [null],
+            'mimes' => [null],
+            'files_sizes' => [null],
+            'file_types' => [null],
+            'steps' => [null],
+            'default_values' => [null],
+        ]);
+
+        $response->assertCreated();
+
+        $pluralPascal = GeneratorUtils::pluralPascalCase($modelName);
+        $testPath = base_path("tests/Feature/{$pluralPascal}/{$modelName}Test.php");
+        $this->assertFileExists($testPath);
+        $testContent = file_get_contents($testPath);
+        $this->assertStringContainsString("namespace Tests\Feature\\{$pluralPascal};", $testContent);
+    }
+
+    #[Test]
     public function it_can_store_simple_module_with_minimal_fields(): void
     {
         $modelName = 'SimpleTest'.$this->generateRandomString();

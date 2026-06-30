@@ -97,6 +97,14 @@
                 <small class="text-secondary">{{ __(key: 'Add soft deletes to the model and migration') }}</small>
             </div>
         </div>
+        <div class="form-check">
+            <div class="checkbox">
+                <input type="checkbox" class="form-check-input" id="generate_tests" name="generate_tests" value="1">
+                <label for="generate_tests">{{ __(key: 'Generate Tests') }}</label>
+                <br>
+                <small class="text-secondary">{{ __(key: 'Generate Pest feature tests') }}</small>
+            </div>
+        </div>
     </div>
 
     <div class="col-md-6 mt-3">

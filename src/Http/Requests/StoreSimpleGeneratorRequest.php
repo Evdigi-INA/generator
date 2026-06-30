@@ -62,6 +62,7 @@ class StoreSimpleGeneratorRequest extends FormRequest
             'generate_seeder' => ['nullable'],
             'generate_factory' => ['nullable'],
             'soft_delete' => ['nullable', 'in:1,0,true,false'],
+            'generate_tests' => ['nullable', 'in:1,0,on'],
             'uniques.*' => ['nullable', 'in:1,0,on'],
             'generate_variant' => ['required'],
             'generate_export' => ['nullable'],

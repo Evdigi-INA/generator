@@ -1,0 +1,67 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature\{{ modelPluralPascal }};
+
+use App\Models\{{ modelName }};
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+uses(RefreshDatabase::class);
+
+it('can list {{ modelPluralKebab }}', function () {
+    {{ modelSingularCamel }} = {{ modelName }}::factory()->create();
+
+    $response = $this->get('/{{ modelPluralKebab }}');
+
+    $response->assertOk();
+});
+
+it('can create a {{ modelSingularKebab }}', function () {
+    $response = $this->post('/{{ modelPluralKebab }}', [
+        '{{ fields.0.name }}' => 'Test {{ modelName }}',
+    ]);
+
+    $response->assertCreated();
+    $this->assertDatabaseHas('{{ modelPluralSnake }}', [
+        '{{ fields.0.name }}' => 'Test {{ modelName }}',
+    ]);
+});
+
+it('validates required fields', function () {
+    $response = $this->post('/{{ modelPluralKebab }}', []);
+
+    $response->assertSessionHasErrors(['{{ fields.0.name }}']);
+});
+
+it('can show a {{ modelSingularKebab }}', function () {
+    ${{ modelSingularCamel }} = {{ modelName }}::factory()->create();
+
+    $response = $this->get('/{{ modelPluralKebab }}/'.${{ modelSingularCamel }}->id);
+
+    $response->assertOk();
+});
+
+it('can update a {{ modelSingularKebab }}', function () {
+    ${{ modelSingularCamel }} = {{ modelName }}::factory()->create();
+
+    $response = $this->put('/{{ modelPluralKebab }}/'.${{ modelSingularCamel }}->id, [
+        '{{ fields.0.name }}' => 'Updated {{ modelName }}',
+    ]);
+
+    $response->assertOk();
+    $this->assertDatabaseHas('{{ modelPluralSnake }}', [
+        'id' => ${{ modelSingularCamel }}->id,
+        '{{ fields.0.name }}' => 'Updated {{ modelName }}',
+    ]);
+});
+
+it('can delete a {{ modelSingularKebab }}', function () {
+    ${{ modelSingularCamel }} = {{ modelName }}::factory()->create();
+
+    $response = $this->delete('/{{ modelPluralKebab }}/'.${{ modelSingularCamel }}->id);
+
+    $response->assertOk();
+    $this->assertModelMissing(${{ modelSingularCamel }});
+});
