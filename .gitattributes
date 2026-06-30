@@ -1,0 +1,20 @@
+# GitHub Linguist overrides
+# https://github.com/github/linguist/blob/master/docs/overrides.md
+
+# Vendored: 3rd-party libs shipped as source, not own code
+# Lingusit ignore in language stats
+assets/extensions/** linguist-vendored
+assets/static/** linguist-vendored
+
+# Generated: build output, not source
+assets/compiled/** linguist-generated
+
+# Compiled/minified JS in any location
+*.min.js linguist-vendored
+*.bundle.js linguist-vendored
+
+# Published stubs: scaffold users copy, not core package code
+stubs/publish/** linguist-vendored
+
+# Documentation
+docs/** linguist-documentation
