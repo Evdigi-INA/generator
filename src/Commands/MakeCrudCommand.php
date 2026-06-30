@@ -35,6 +35,8 @@ class MakeCrudCommand extends Command
 
         if ($this->option('dry-run')) {
             $this->info('Dry-run mode: files will not be written.');
+
+            return Command::SUCCESS;
         }
 
         try {
