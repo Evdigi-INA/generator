@@ -1,0 +1,6 @@
+Route::middleware(['api', 'auth:sanctum'])->group(function () {
+    Route::get('permissions', [App\Http\Controllers\API\RoleAndPermissionController::class, 'getAllPermissions']);
+
+    Route::resource('users', App\Http\Controllers\API\UserController::class);
+    Route::resource('roles', App\Http\Controllers\API\RoleAndPermissionController::class);
+});

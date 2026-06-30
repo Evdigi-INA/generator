@@ -19,15 +19,38 @@ class PublishUtilsCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Publish utility class.';
+    protected $description = 'Publish essential utility classes for the generator package';
 
     /**
      * Execute the console command.
      */
     public function handle(): void
     {
-        Artisan::call('vendor:publish --tag=generator-utils --force');
+        $this->info(string: 'Preparing utility files...');
 
-        $this->info('Utility class published successfully.');
+        $this->executeWithProgress(
+            command: 'vendor:publish --tag=generator-utils',
+            message: 'Publishing utility classes'
+        );
+
+        $this->info(string: 'Utility classes published successfully!');
+        $this->line(string: 'The generator utilities are now ready for use.');
+    }
+
+    /**
+     * Execute command with progress feedback.
+     */
+    protected function executeWithProgress(string $command, string $message): void
+    {
+        $bar = $this->output->createProgressBar(max: 1);
+        $bar->setFormat(format: " %message%\n %current%/%max% [%bar%] %percent:3s%%");
+        $bar->setMessage(message: $message);
+        $bar->start();
+
+        Artisan::call(command: $command);
+        $bar->advance();
+
+        $bar->finish();
+        $this->newLine();
     }
 }

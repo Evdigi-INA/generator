@@ -1,0 +1,1 @@
+ <option value="{{value}}" {{ isset(${{modelNameSingularCamelCase}}) && ${{modelNameSingularCamelCase}}->{{fieldSnakeCase}} == '{{value}}' ? 'selected' : (old(key: '{{fieldSnakeCase}}') == '{{value}}' ? 'selected' : '') }}>{{value}}</option>

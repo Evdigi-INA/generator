@@ -1,0 +1,6 @@
+                @foreach (range(start: {{firstYear}}, end: date(format: 'Y')) as $year)
+                    <option value="{{ $year }}"
+                        {{ isset(${{modelNameSingularCamelCase}}) && ${{modelNameSingularCamelCase}}?->{{fieldSnakeCase}} == $year ? 'selected' : (old(key: '{{fieldSnakeCase}}') == $year ? 'selected' : '') }}>
+                        {{ $year }}
+                    </option>
+                @endforeach
