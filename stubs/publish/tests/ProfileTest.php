@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Fortify\Features;
 
@@ -21,7 +22,7 @@ beforeEach(function () {
         Features::twoFactorAuthentication(),
     ]]);
 
-    /** @var \Illuminate\Contracts\Auth\Authenticatable */
+    /** @var Authenticatable */
     $this->user = User::first();
 
     actingAs($this->user);

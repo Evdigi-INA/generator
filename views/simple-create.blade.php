@@ -138,6 +138,15 @@
                                             </label>
                                         </div>
                                     </div>
+                                    <div class="form-check">
+                                        <div class="checkbox">
+                                            <input type="checkbox" class="form-check-input" id="soft_delete"
+                                                name="soft_delete" value="1">
+                                            <label for="soft_delete">{{ __(key: 'Soft Deletes') }}</label>
+                                            <br>
+                                            <small class="text-secondary">{{ __(key: 'Add soft deletes to the model and migration') }}</small>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="col-md-6 mt-3">

@@ -2,11 +2,15 @@
 
 namespace Tests;
 
+use EvdigiIna\Generator\Providers\GeneratorServiceProvider;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\ServiceProvider;
 use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use PHPUnit\Framework\Attributes\Test;
+use Yajra\DataTables\DataTablesServiceProvider;
 
 #[WithMigration]
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -32,21 +36,21 @@ class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Get package providers.
      *
-     * @param  \Illuminate\Foundation\Application  $app
-     * @return array<int, class-string<\Illuminate\Support\ServiceProvider>>
+     * @param  Application  $app
+     * @return array<int, class-string<ServiceProvider>>
      */
     protected function getPackageProviders($app)
     {
         return [
-            \EvdigiIna\Generator\Providers\GeneratorServiceProvider::class,
-            \Yajra\DataTables\DataTablesServiceProvider::class,
+            GeneratorServiceProvider::class,
+            DataTablesServiceProvider::class,
         ];
     }
 
     /**
      * Define environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      * @return void
      */
     protected function defineEnvironment($app)

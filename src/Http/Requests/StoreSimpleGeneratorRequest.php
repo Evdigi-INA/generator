@@ -61,6 +61,7 @@ class StoreSimpleGeneratorRequest extends FormRequest
             'on_delete_foreign.*' => ['nullable'],
             'generate_seeder' => ['nullable'],
             'generate_factory' => ['nullable'],
+            'soft_delete' => ['nullable', 'in:1,0,true,false'],
             'generate_variant' => ['required'],
             'generate_export' => ['nullable'],
             'target' => ['nullable', 'in:blade,livewire,inertia-vue,inertia-react'],

@@ -182,6 +182,9 @@ class MigrationGenerator
         $template = GeneratorUtils::replaceStub(replaces: [
             'tableNamePluralLowercase' => $tableNamePluralLowercase,
             'fields' => $setFields,
+            'softDeleteColumn' => ! empty($request['soft_delete'])
+                ? '$table->softDeletes();'
+                : '',
         ], stubName: 'migration');
 
         $migrationName = date('Y_m_d_His').'_create_'.$tableNamePluralLowercase.'_table.php';

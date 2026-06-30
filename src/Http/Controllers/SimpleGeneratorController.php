@@ -7,6 +7,8 @@ use EvdigiIna\Generator\Enums\GeneratorVariant;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
 use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use EvdigiIna\Generator\Http\Requests\StoreSimpleGeneratorRequest;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class SimpleGeneratorController extends Controller
@@ -19,7 +21,7 @@ class SimpleGeneratorController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): \Illuminate\Contracts\View\View
+    public function create(): View
     {
         return view('generator::simple-create');
     }
@@ -27,7 +29,7 @@ class SimpleGeneratorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreSimpleGeneratorRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreSimpleGeneratorRequest $request): JsonResponse
     {
         $validated = $request->validated();
         $validated['is_simple_generator'] = true;

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 
@@ -14,7 +15,7 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     seed();
 
-    /** @var \Illuminate\Contracts\Auth\Authenticatable */
+    /** @var Authenticatable */
     $this->user = User::first();
 
     actingAs($this->user);

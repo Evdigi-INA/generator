@@ -157,6 +157,12 @@ class ModelGenerator
             'pluralSnakeCase' => GeneratorUtils::pluralSnakeCase(string: $model),
             'castImages' => $castImages,
             'importCastImage' => "use Illuminate\Database\Eloquent\Casts\Attribute;\nuse App\Generators\Services\ImageServiceV2;\n",
+            'hasSoftDelete' => ! empty($request['soft_delete'])
+                ? 'use SoftDeletes;'
+                : '',
+            'importSoftDelete' => ! empty($request['soft_delete'])
+                ? "use Illuminate\\Database\\Eloquent\\SoftDeletes;\n"
+                : '',
         ], stubName: 'model');
 
         if (! $path) {

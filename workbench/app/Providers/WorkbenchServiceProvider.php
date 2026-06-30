@@ -2,6 +2,7 @@
 
 namespace Workbench\App\Providers;
 
+use App\View\Components\Breadcrumb;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +21,6 @@ class WorkbenchServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Blade::component('breadcrumb', \App\View\Components\Breadcrumb::class);
+        Blade::component('breadcrumb', Breadcrumb::class);
     }
 }

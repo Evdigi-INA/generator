@@ -498,7 +498,7 @@ class GeneratorUtils implements GeneratorUtilsInterface
     /**
      * Check if package exist in composer and return version.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function checkPackageVersion(string $name, bool $strict = false): string
     {

@@ -3,6 +3,7 @@
 namespace EvdigiIna\Generator\Generators\Services;
 
 use EvdigiIna\Generator\Enums\GeneratorVariant;
+use EvdigiIna\Generator\Exceptions\GeneratorRollbackException;
 use EvdigiIna\Generator\Generators\ControllerGenerator;
 use EvdigiIna\Generator\Generators\ExportExcelGenerator;
 use EvdigiIna\Generator\Generators\FactoryGenerator;
@@ -23,7 +24,6 @@ use EvdigiIna\Generator\Generators\Views\EditViewGenerator;
 use EvdigiIna\Generator\Generators\Views\FormViewGenerator;
 use EvdigiIna\Generator\Generators\Views\IndexViewGenerator;
 use EvdigiIna\Generator\Generators\Views\ShowViewGenerator;
-use EvdigiIna\Generator\Exceptions\GeneratorRollbackException;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -87,7 +87,7 @@ class GeneratorService implements GeneratorServiceInterface
             (new ExportExcelGenerator)->generate($request);
 
             Artisan::call('migrate');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->cleanupCreatedFiles($createdFiles);
 
             throw new GeneratorRollbackException(

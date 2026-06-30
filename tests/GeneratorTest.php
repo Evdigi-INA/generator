@@ -114,6 +114,43 @@ class GeneratorTest extends TestCase
     }
 
     #[Test]
+    public function it_can_generate_module_with_soft_deletes(): void
+    {
+        $modelName = 'SoftDeleteTest'.$this->generateRandomString();
+
+        $response = $this->postJson('/simple-generators', [
+            'model' => $modelName,
+            'generate_type' => GeneratorType::ALL->value,
+            'generate_variant' => GeneratorVariant::DEFAULT->value,
+            'soft_delete' => '1',
+            'fields' => ['name'],
+            'column_types' => ['string'],
+            'input_types' => ['text'],
+            'requireds' => ['yes'],
+            'select_options' => [null],
+            'constrains' => [null],
+            'foreign_ids' => [null],
+            'on_update_foreign' => [null],
+            'on_delete_foreign' => [null],
+            'min_lengths' => [null],
+            'max_lengths' => [null],
+            'mimes' => [null],
+            'files_sizes' => [null],
+            'file_types' => [null],
+            'steps' => [null],
+            'default_values' => [null],
+        ]);
+
+        $response->assertCreated();
+
+        $modelPath = app_path("Models/$modelName.php");
+        $this->assertFileExists($modelPath);
+        $modelContent = file_get_contents($modelPath);
+        $this->assertStringContainsString('use Illuminate\Database\Eloquent\SoftDeletes;', $modelContent);
+        $this->assertStringContainsString('use SoftDeletes;', $modelContent);
+    }
+
+    #[Test]
     public function it_can_store_simple_module_with_minimal_fields(): void
     {
         $modelName = 'SimpleTest'.$this->generateRandomString();

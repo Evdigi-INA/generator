@@ -5,10 +5,11 @@
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 {{importCastImage}}
+{{importSoftDelete}}
 class {{modelName}} extends Model
 {
     use HasFactory;
-
+    {{hasSoftDelete}}
     /**
      * The table associated with the model.
      *
