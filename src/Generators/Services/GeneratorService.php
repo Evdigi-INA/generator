@@ -7,7 +7,6 @@ use EvdigiIna\Generator\Exceptions\GeneratorRollbackException;
 use EvdigiIna\Generator\Generators\ControllerGenerator;
 use EvdigiIna\Generator\Generators\ExportExcelGenerator;
 use EvdigiIna\Generator\Generators\FactoryGenerator;
-use EvdigiIna\Generator\Generators\TestGenerator;
 use EvdigiIna\Generator\Generators\GeneratorUtils;
 use EvdigiIna\Generator\Generators\Interfaces\GeneratorServiceInterface;
 use EvdigiIna\Generator\Generators\MenuGenerator;
@@ -18,6 +17,7 @@ use EvdigiIna\Generator\Generators\RequestGenerator;
 use EvdigiIna\Generator\Generators\ResourceApiGenerator;
 use EvdigiIna\Generator\Generators\RouteGenerator;
 use EvdigiIna\Generator\Generators\SeederGenerator;
+use EvdigiIna\Generator\Generators\TestGenerator;
 use EvdigiIna\Generator\Generators\ViewComposerGenerator;
 use EvdigiIna\Generator\Generators\Views\ActionViewGenerator;
 use EvdigiIna\Generator\Generators\Views\CreateViewGenerator;
@@ -162,14 +162,14 @@ class GeneratorService implements GeneratorServiceInterface
 
         if (
             file_exists(app_path("/Models/$model.php")) ||
-            file_exists(app_path("/Models/$path") . "/{$model}.php")
+            file_exists(app_path("/Models/$path")."/{$model}.php")
         ) {
             $sameFile[] = [
                 'model' => "The $model model is already exists",
             ];
         }
 
-        $checkMigrationFile = array_diff(scandir(database_path('/migrations')), array('.', '..'));
+        $checkMigrationFile = array_diff(scandir(database_path('/migrations')), ['.', '..']);
 
         foreach ($checkMigrationFile as $file) {
             if (str($file)->contains(GeneratorUtils::pluralSnakeCase($model))) {
@@ -181,7 +181,7 @@ class GeneratorService implements GeneratorServiceInterface
 
         if (
             file_exists(app_path("/Http/Controllers/{$model}Controller.php")) ||
-            file_exists(app_path("/Http/Controllers/$path") . "/{$model}Controller.php")
+            file_exists(app_path("/Http/Controllers/$path")."/{$model}Controller.php")
         ) {
             $sameFile[] = [
                 'controller' => "The {$model}Controller is already exists",

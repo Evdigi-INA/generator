@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace EvdigiIna\Generator\Commands;
 
 use EvdigiIna\Generator\Enums\GeneratorType;
-use EvdigiIna\Generator\Enums\GeneratorVariant;
 use EvdigiIna\Generator\Generators\Services\GeneratorService;
 use Illuminate\Console\Command;
 
@@ -43,6 +42,7 @@ class MakeCrudCommand extends Command
             $this->info("Module '{$model}' generated successfully!");
         } catch (\Throwable $e) {
             $this->error("Failed: {$e->getMessage()}");
+
             return Command::FAILURE;
         }
 
@@ -178,6 +178,7 @@ class MakeCrudCommand extends Command
         $model = $this->ask('What is the model name? (e.g. Product)');
         if (! $model) {
             $this->error('Model name is required.');
+
             return Command::FAILURE;
         }
 
@@ -188,7 +189,9 @@ class MakeCrudCommand extends Command
         $this->info('Define your fields. Leave name empty to finish.');
         do {
             $name = $this->ask('Field name (or empty to finish)');
-            if (! $name) break;
+            if (! $name) {
+                break;
+            }
             $type = $this->anticipate("Type for '{$name}'", ['string', 'integer', 'text', 'boolean', 'date', 'decimal', 'foreignId']);
             $fields[] = ['name' => $name, 'type' => $type];
         } while (true);

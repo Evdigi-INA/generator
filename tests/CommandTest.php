@@ -12,7 +12,7 @@ class CommandTest extends TestCase
         // Testbench stores migrations under vendor/orchestra/testbench-core/laravel/database/migrations.
         // Without cleanup, old migration files accumulate across tests and cause
         // "table already exists" errors when a new migration for the same table is created.
-        $migrationsDir = __DIR__ . '/../vendor/orchestra/testbench-core/laravel/database/migrations';
+        $migrationsDir = __DIR__.'/../vendor/orchestra/testbench-core/laravel/database/migrations';
         foreach (glob("$migrationsDir/*.php") as $file) {
             unlink($file);
         }
