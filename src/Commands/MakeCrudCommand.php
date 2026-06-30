@@ -193,9 +193,18 @@ class MakeCrudCommand extends Command
             $fields[] = ['name' => $name, 'type' => $type];
         } while (true);
 
-        $request = $this->buildRequest($model);
-        $request['target'] = $target;
-        $request['generate_variant'] = $variant;
+        $parsedFields = $this->parseFields(implode(',', array_map(fn ($f) => $f['name'].':'.$f['type'], $fields)));
+
+        $request = array_merge($parsedFields, [
+            'model' => $model,
+            'target' => $target,
+            'generate_type' => 'all',
+            'generate_variant' => $variant,
+            'is_simple_generator' => true,
+            'soft_delete' => $this->option('soft-deletes'),
+            'generate_tests' => $this->option('tests'),
+            'generate_events' => $this->option('events'),
+        ]);
 
         $generatorService->generate($request);
         $this->info("Module '{$model}' generated successfully!");
