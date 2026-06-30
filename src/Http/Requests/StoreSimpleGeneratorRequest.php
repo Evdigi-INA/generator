@@ -30,6 +30,7 @@ class StoreSimpleGeneratorRequest extends FormRequest
             'requireds.*.required' => 'The requireds field is required.',
             'column_types.*.required' => 'The column types field is required.',
             'generate_variant.required' => 'The generate variant field is required.',
+            'target.in' => 'The target must be one of: blade, livewire, inertia-vue, inertia-react.',
         ];
     }
 
@@ -62,6 +63,7 @@ class StoreSimpleGeneratorRequest extends FormRequest
             'generate_factory' => ['nullable'],
             'generate_variant' => ['required'],
             'generate_export' => ['nullable'],
+            'target' => ['nullable', 'in:blade,livewire,inertia-vue,inertia-react'],
         ];
     }
 }

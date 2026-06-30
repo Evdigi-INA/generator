@@ -35,6 +35,8 @@ class GeneratorService implements GeneratorServiceInterface
      */
     public function generate(array $request): void
     {
+        $request['target'] ??= 'blade';
+
         if (GeneratorUtils::isGenerateApi() && ! $this->apiRouteAlreadyExists()) {
             abort(code: Response::HTTP_FORBIDDEN, message: 'You have not yet installed the API, to use this feature, you must be running the artisan command: "php artisan install:api".');
         }

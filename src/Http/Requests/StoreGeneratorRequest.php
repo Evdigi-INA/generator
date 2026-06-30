@@ -31,6 +31,7 @@ class StoreGeneratorRequest extends FormRequest
             'requireds.*.required' => 'The requireds field is required.',
             'column_types.*.required' => 'The column types field is required.',
             'generate_variant.required' => 'The generate variant field is required.',
+            'target.in' => 'The target must be one of: blade, livewire, inertia-vue, inertia-react.',
             'menu.required_unless' => 'The menu field is required when header is not new.',
             'header.required' => 'The header field is required.',
         ];
@@ -75,6 +76,7 @@ class StoreGeneratorRequest extends FormRequest
             'new_submenu' => ['nullable'],
             'generate_variant' => ['required'],
             'generate_export' => ['nullable'],
+            'target' => ['nullable', 'in:blade,livewire,inertia-vue,inertia-react'],
         ];
 
         if (GeneratorUtils::isGenerateApi() || request()->input('generate_type') == GeneratorType::ONLY_MODEL_AND_MIGRATION->value) {
