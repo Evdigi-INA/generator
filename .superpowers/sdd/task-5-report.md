@@ -18,3 +18,17 @@
 **Test Summary:** 78 tests, 100 assertions, all passing.
 
 **Concerns:** None.
+
+---
+
+### Fix: Add missing `{{ modelSingularKebab }}` replace key
+
+**Commit:** `6603e79`
+
+**Problem:** `TestGenerator::generate()` missing `'{{ modelSingularKebab }}'` in its `replaceStub` replaces array. The stub `test.stub` uses this token in 4 test descriptions.
+
+**Fix:**
+- Added `'{{ modelSingularKebab }}' => GeneratorUtils::singularKebabCase($model),` to the replaces array (used `singularKebabCase()` utility method, not the incorrect `$singularCamel` variable from the bug report)
+- Removed unused `$stub = GeneratorUtils::getStub('test');` line
+
+**Tests:** 78 tests, 100 assertions, all passing.

@@ -29,4 +29,14 @@ class CommandTest extends TestCase
 
         $this->artisan('generator:install simple')->assertSuccessful()->assertExitCode(0);
     }
+
+    #[Test]
+    public function it_can_run_make_crud_command(): void
+    {
+        $this->artisan('make:crud', [
+            'model' => 'CliTest',
+            '--variant' => 'default',
+            '--target' => 'blade',
+        ])->assertSuccessful();
+    }
 }

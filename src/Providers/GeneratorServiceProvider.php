@@ -2,6 +2,7 @@
 
 namespace EvdigiIna\Generator\Providers;
 
+use EvdigiIna\Generator\Commands\MakeCrudCommand;
 use EvdigiIna\Generator\Commands\PublishAllFiles;
 use EvdigiIna\Generator\Commands\PublishApiCommand;
 use EvdigiIna\Generator\Commands\PublishImageServiceV2Command;
@@ -403,6 +404,7 @@ class GeneratorServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands(commands: [
+                MakeCrudCommand::class,
                 PublishAllFiles::class,
                 SetSidebarType::class,
                 PublishApiCommand::class,

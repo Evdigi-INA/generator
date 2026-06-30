@@ -93,8 +93,8 @@ class PublishAllFiles extends Command
 
         if ($runCount >= 1) {
             $this->info(string: sprintf(
-                format: 'The simple version was already installed %d time(s). No changes made.',
-                values: $runCount
+                'The simple version was already installed %d time(s). No changes made.',
+                $runCount
             ));
 
             return;
