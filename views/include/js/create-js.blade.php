@@ -66,6 +66,11 @@
                     </div>
                 </td>
                 <td>
+                    <div class="form-check">
+                        <input type="checkbox" name="uniques[]" class="form-check-input" value="1">
+                    </div>
+                </td>
+                <td>
                     <button type="button" class="btn btn-outline-danger btn-sm btn-delete">
                         <i class="fa fa-trash-alt"></i>
                     </button>
