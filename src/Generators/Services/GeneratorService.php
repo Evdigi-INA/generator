@@ -62,14 +62,20 @@ class GeneratorService implements GeneratorServiceInterface
             if (($request['generate_variant'] ?? '') !== 'api') {
                 // for single form
                 (new CreateViewGenerator)->generate($request);
+                $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('view-create', $request));
                 (new FormViewGenerator)->generate($request);
+                $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('view-form', $request));
 
                 // for full CRUD
                 if ($request['generate_variant'] === GeneratorVariant::DEFAULT->value) {
                     (new IndexViewGenerator)->generate($request);
+                    $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('view-index', $request));
                     (new ShowViewGenerator)->generate($request);
+                    $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('view-show', $request));
                     (new EditViewGenerator)->generate($request);
+                    $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('view-edit', $request));
                     (new ActionViewGenerator)->generate($request);
+                    $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('view-action', $request));
                 }
 
                 (new MenuGenerator)->generate($request);
@@ -78,15 +84,20 @@ class GeneratorService implements GeneratorServiceInterface
 
             (new RouteGenerator)->generate($request);
             (new SeederGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('seeder', $request));
             (new FactoryGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('factory', $request));
             (new ResourceApiGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('resource', $request));
 
             if ((($request['generate_variant'] ?? '') !== 'api') && empty($request['is_simple_generator'])) {
                 $this->checkSidebarType();
             }
 
             (new ExportExcelGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('export', $request));
             (new TestGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('test', $request));
 
             Artisan::call('migrate');
         } catch (Throwable $e) {
@@ -105,10 +116,29 @@ class GeneratorService implements GeneratorServiceInterface
      */
     public function onlyGenerateModelAndMigration(array $request): void
     {
-        (new ModelGenerator)->generate($request);
-        (new MigrationGenerator)->generate($request);
-        (new SeederGenerator)->generate($request);
-        (new FactoryGenerator)->generate($request);
+        $createdFiles = [];
+
+        try {
+            (new ModelGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('model', $request));
+
+            (new MigrationGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('migration', $request));
+
+            (new SeederGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('seeder', $request));
+
+            (new FactoryGenerator)->generate($request);
+            $createdFiles = array_merge($createdFiles, $this->captureCreatedFiles('factory', $request));
+        } catch (Throwable $e) {
+            $this->cleanupCreatedFiles($createdFiles);
+
+            throw new GeneratorRollbackException(
+                message: 'Generator failed and rolled back: '.$e->getMessage(),
+                createdFiles: $createdFiles,
+                previous: $e,
+            );
+        }
     }
 
     /**
@@ -227,11 +257,12 @@ class GeneratorService implements GeneratorServiceInterface
     {
         $model = GeneratorUtils::setModelName($request['model'], 'default');
         $path = GeneratorUtils::getModelLocation($request['model']);
+        $modelName = GeneratorUtils::singularPascalCase($model);
+        $viewDir = $path ? resource_path('/views/'.strtolower($path).'/'.GeneratorUtils::pluralKebabCase($model)) : resource_path('/views/'.GeneratorUtils::pluralKebabCase($model));
         $files = [];
 
         switch ($type) {
             case 'model':
-                $modelName = GeneratorUtils::singularPascalCase($model);
                 if ($path) {
                     $files[] = app_path("/Models/$path/$modelName.php");
                 } else {
@@ -245,7 +276,6 @@ class GeneratorService implements GeneratorServiceInterface
                 }
                 break;
             case 'controller':
-                $modelName = GeneratorUtils::singularPascalCase($model);
                 if ($path) {
                     $dir = GeneratorUtils::isGenerateApi() ? app_path("/Http/Controllers/Api/$path/") : app_path("/Http/Controllers/$path/");
                     $files[] = "$dir{$modelName}Controller.php";
@@ -255,17 +285,56 @@ class GeneratorService implements GeneratorServiceInterface
                 }
                 break;
             case 'request':
-                $modelPascal = GeneratorUtils::singularPascalCase($model);
                 $modelPluralPascal = GeneratorUtils::pluralPascalCase($model);
                 if ($path) {
                     $dir = app_path("/Http/Requests/$path/$modelPluralPascal");
-                    $files[] = "$dir/Store{$modelPascal}Request.php";
-                    $files[] = "$dir/Update{$modelPascal}Request.php";
+                    $files[] = "$dir/Store{$modelName}Request.php";
+                    $files[] = "$dir/Update{$modelName}Request.php";
                 } else {
                     $dir = app_path("/Http/Requests/$modelPluralPascal");
-                    $files[] = "$dir/Store{$modelPascal}Request.php";
-                    $files[] = "$dir/Update{$modelPascal}Request.php";
+                    $files[] = "$dir/Store{$modelName}Request.php";
+                    $files[] = "$dir/Update{$modelName}Request.php";
                 }
+                break;
+            case 'view-create':
+                $files[] = "$viewDir/create.blade.php";
+                break;
+            case 'view-form':
+                $files[] = "$viewDir/include/form.blade.php";
+                break;
+            case 'view-index':
+                $files[] = "$viewDir/index.blade.php";
+                break;
+            case 'view-show':
+                $files[] = "$viewDir/show.blade.php";
+                break;
+            case 'view-edit':
+                $files[] = "$viewDir/edit.blade.php";
+                break;
+            case 'view-action':
+                $files[] = "$viewDir/include/action.blade.php";
+                break;
+            case 'seeder':
+                $files[] = database_path("seeders/{$modelName}Seeder.php");
+                break;
+            case 'factory':
+                $files[] = database_path("factories/{$modelName}Factory.php");
+                break;
+            case 'resource':
+                $modelPluralPascal = GeneratorUtils::pluralPascalCase($model);
+                if ($path) {
+                    $dir = app_path("/Http/Resources/$path/$modelPluralPascal");
+                } else {
+                    $dir = app_path("/Http/Resources/$modelPluralPascal");
+                }
+                $files[] = "$dir/{$modelName}Resource.php";
+                $files[] = "$dir/{$modelName}Collection.php";
+                break;
+            case 'export':
+                $files[] = app_path('Exports/'.GeneratorUtils::pluralPascalCase($model).'Export.php');
+                break;
+            case 'test':
+                $files[] = base_path('tests/Feature/'.GeneratorUtils::pluralPascalCase($model)."/{$modelName}Test.php");
                 break;
         }
 

@@ -6,6 +6,9 @@ use App\Generators\ImageUploadOption;
 use App\Generators\Interfaces\ImageServiceInterfaceV2;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Encoders\WebpEncoder;
+use Intervention\Image\Interfaces\EncodedImageInterface;
+use Intervention\Image\Laravel\Facades\Image;
 
 class ImageServiceV2 implements ImageServiceInterfaceV2
 {
@@ -241,10 +244,10 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      * a specified quality. It optionally crops and resizes the image based on
      * the provided options.
      */
-    private function processWithInterventionImage(ImageUploadOption $options): \Intervention\Image\Interfaces\EncodedImageInterface
+    private function processWithInterventionImage(ImageUploadOption $options): EncodedImageInterface
     {
-        $image = \Intervention\Image\Laravel\Facades\Image::read(input: $options->file);
-        $encode = new \Intervention\Image\Encoders\WebpEncoder(quality: 65);
+        $image = Image::decodeSplFileInfo($options->file);
+        $encode = new WebpEncoder(quality: 65);
 
         return $options->crop
             ? ($options->aspectRatio
@@ -262,7 +265,7 @@ class ImageServiceV2 implements ImageServiceInterfaceV2
      */
     private function isInterventionAvailable(): bool
     {
-        return class_exists(class: \Intervention\Image\Laravel\Facades\Image::class);
+        return class_exists(class: Image::class);
     }
 
     /**

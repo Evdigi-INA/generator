@@ -18,22 +18,8 @@ class PermissionGenerator
             $modelNameSingular = GeneratorUtils::cleanSingularLowerCase(string: $model);
 
             $stringPermissions = str_replace(
-                search: [
-                    '{',
-                    '}',
-                    ':',
-                    '"',
-                    ',',
-                    ']]',
-                ],
-                replace: [
-                    '[',
-                    ']',
-                    ' => ',
-                    "'",
-                    ', ',
-                    "]], \n\t\t",
-                ],
+                search: ['{', '}', ':', '"', ','],
+                replace: ['[', ']', ' => ', "'", ', '],
                 subject: json_encode(value: [
                     'group' => $modelNamePlural,
                     'access' => [
@@ -48,8 +34,10 @@ class PermissionGenerator
             $path = config_path('permission.php');
 
             $content = file_get_contents(filename: $path);
-            $lastClosing = strrpos(haystack: $content, needle: '];');
-            $newPermissionFile = substr(string: $content, offset: 0, length: $lastClosing).$stringPermissions.'],];';
+            $closingPattern = "\n    ],\n];";
+            $pos = strrpos(haystack: $content, needle: $closingPattern);
+            $replacement = ",\n        " . $stringPermissions . "\n    ],\n];";
+            $newPermissionFile = substr_replace(string: $content, replace: $replacement, offset: $pos, length: strlen(string: $closingPattern));
 
             file_put_contents(filename: $path, data: $newPermissionFile);
 

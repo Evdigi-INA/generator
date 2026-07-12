@@ -185,10 +185,14 @@ class MenuGenerator
         $export = var_export($replace, true);
 
         // Convert "array (" to "[" and ")" to "]" for short array syntax
-        $export = preg_replace('/^array\s*\(/m', '[', $export);
+        $export = preg_replace('/^\s*array\s*\(/m', '[', $export);
         $export = preg_replace('/^\s*\)/m', ']', $export);
         // Fix nested closing: "  )," -> "  ],"
         $export = preg_replace('/\)(,?)$/m', ']$1', $export);
+        // Strip numeric keys (e.g., "    0 => 'value'" -> "    'value'")
+        $export = preg_replace('/^(\s+)\d+ => /m', '$1', $export);
+        // Strip numeric keys with value on next line (e.g., "    0 =>\n" -> remove entire line)
+        $export = preg_replace('/^[ \t]*\d+ =>\n/m', '', $export);
 
         return $export;
     }
